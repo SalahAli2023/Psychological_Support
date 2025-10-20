@@ -62,10 +62,11 @@
         <div class="flex flex-col text-center space-y-4 mt-20 text-xl max-w-xs sm:max-w-md">
           <p
             v-for="item in menuItems"
-            :key="item"
+            :key="item.name"
             class="hover:text-[#9EBF3B] hover:scale-110 transition-all duration-300 cursor-pointer py-2"
+            @click="handleMenuClick(item)"
           >
-            {{ item }}
+            {{ item.name }}
           </p>
         </div>
 
@@ -82,10 +83,28 @@ import SocialLinks from '../layouts/SocialLinks.vue'
 const menuVisible = ref(false)
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
+// تحديث menuItems لتشمل actions
 const menuItems = [
-  'من نحن', 'خدماتنا', 'الأخصائيون', 'جلسات الدعم',  
-  'الفعاليات والورش', 'شهادات المستفيدين', 'الأسئلة الشائعة', 'اتصل بنا'
+  { name: 'من نحن', action: 'about' },
+  { name: 'خدماتنا', action: 'services' },
+  { name: 'الأخصائيون', action: 'specialists' },
+  { name: 'جلسات الدعم', action: 'sessions' },
+  { name: 'الفعاليات والورش', action: 'events' },
+  { name: 'شهادات المستفيدين', action: 'testimonials' },
+  { name: 'الأسئلة الشائعة', action: 'faq' },
+  { name: 'اتصل بنا', action: 'contact' }
 ]
+
+const handleMenuClick = (item) => {
+  toggleMenu()
+  
+  if (item.action === 'events') {
+    // إرسال حدث لتغيير الصفحة
+    window.dispatchEvent(new CustomEvent('change-page', {
+      detail: { page: 'events' }
+    }))
+  }
+}
 
 const scrolled = ref(false)
 const handleScroll = () => {
@@ -95,14 +114,14 @@ const handleScroll = () => {
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 </script>
+
 <style scoped>
-/* انتقال القائمة */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
-  transform: translateY(-20px); /* انزلاق للأعلى عند الظهور والاختفاء */
+  transform: translateY(-20px);
 }
 .fade-enter-to, .fade-leave-from {
   opacity: 1;
