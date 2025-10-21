@@ -2,7 +2,7 @@
   <header 
     :class="[ 
       'fixed top-0 left-0 right-0 z-[100] w-full font-almarai transition-colors duration-500',
-      scrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+      scrolled ? 'bg-white shadow-lg' : 'bg-white shadow-sm'
     ]" 
     dir="rtl"
   >

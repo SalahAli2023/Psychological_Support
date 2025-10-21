@@ -1,24 +1,40 @@
-<!-- EventsHero.vue - مع مسافة مناسبة -->
 <template>
-  <!-- هيدر الفعاليات -->
-  <section class="relative py-20 bg-gradient-to-br from-[#9EBF3B]/10 to-[#D6A29A]/10 font-almarai overflow-hidden" dir="rtl">
+  <!-- هيرو الفعاليات فقط -->
+  <section class="relative font-almarai overflow-hidden" dir="rtl" style="height: 60vh; min-height: 400px;">
+    
+    <!-- خلفية متدرجة لونية: أخضر - أبيض - وردي -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#9EBF3B] via-white to-[#D6A29A]"></div>
+    
+    <!-- تأثيرات إضافية للعمق -->
+    <div class="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent"></div>
+    
     <!-- أشكال زخرفية -->
-    <div class="absolute top-10 left-10 w-60 h-60 bg-[#9EBF3B] opacity-5 rounded-full blur-3xl animate-pulse-slow"></div>
-    <div class="absolute bottom-10 right-10 w-80 h-80 bg-[#D6A29A] opacity-5 rounded-full blur-3xl animate-pulse-slow"></div>
+    <div class="absolute top-10 left-10 w-60 h-60 bg-[#9EBF3B]/10 rounded-full blur-2xl"></div>
+    <div class="absolute bottom-10 right-10 w-80 h-80 bg-[#D6A29A]/10 rounded-full blur-2xl"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/20 rounded-full blur-3xl"></div>
 
-    <div class="relative z-10 max-w-6xl mx-auto px-6 text-center">
-      <!-- العنوان الرئيسي -->
-      <div class="inline-block relative mb-8 animate-fade-in-up">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          <span class="text-[#9EBF3B]"> الفعاليات </span>
-          <span class="text-[#D6A29A]">والورش </span>
-        </h1>
-        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] rounded-full"></div>
+    <div class="relative z-10 w-full h-full flex items-center justify-center">
+      <div class="max-w-4xl mx-auto px-6 w-full">
+        <div class="max-w-2xl mx-auto text-center">
+          
+          <!-- العنوان الرئيسي -->
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 leading-tight">
+            رحلة نحو
+            <span class="text-[#9EBF3B] block mt-2">الصحة النفسية</span>
+            <span class="text-gray-700 text-xl md:text-2xl block mt-2">والتوازن الداخلي</span>
+          </h1>
+          
+          <!-- الخط الفاصل -->
+          <div class="w-16 h-1 bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] mx-auto mb-6 rounded-full"></div>
+
+          <!-- الوصف -->
+          <p class="text-base md:text-lg text-gray-600 leading-relaxed max-w-md mx-auto font-medium">
+            اكتشف فعالياتنا وورش العمل المتنوعة المصممة خصيصاً لدعم صحتك النفسية 
+            وتطوير مهاراتك الشخصية
+          </p>
+
+        </div>
       </div>
-      
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
-        اكتشف فعالياتنا وورش العمل المتنوعة لدعم صحتك النفسية وتطوير مهاراتك
-      </p>
     </div>
   </section>
 </template>
@@ -28,35 +44,8 @@
 </script>
 
 <style scoped>
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulseSlow {
-  0%, 100% {
-    opacity: 0.05;
-  }
-  50% {
-    opacity: 0.08;
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-
-.animate-pulse-slow {
-  animation: pulseSlow 4s ease-in-out infinite;
+/* تأثيرات بسيطة */
+section {
+  transition: all 0.3s ease-in-out;
 }
 </style>
