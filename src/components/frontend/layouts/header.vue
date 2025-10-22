@@ -2,26 +2,28 @@
   <header 
     :class="[ 
       'fixed top-0 left-0 right-0 z-[100] w-full font-almarai transition-colors duration-500',
-      scrolled ? 'bg-white shadow-lg' : 'bg-white shadow-sm'
+      scrolled ? 'bg-white shadow-lg' : 'bg-transparent'
     ]" 
     dir="rtl"
   >
     <!-- الشعار والأزرار -->
     <div class="flex justify-between items-center px-4 sm:px-8 py-3 relative z-10">
-      <!-- الشعار -->
+      <!-- الشعار مع رابط للرئيسية -->
       <div class="flex-shrink-0">
-        <img 
-          src="/images/flogcs.png" 
-          alt="شعار منصة الدعم النفسي" 
-          class="h-10 sm:h-[60px] w-auto" 
-        />
+        <router-link to="/">
+          <img 
+            src="/images/flogcs.png" 
+            alt="شعار منصة الدعم النفسي" 
+            class="h-10 sm:h-[60px] w-auto" 
+          />
+        </router-link>
       </div>
 
       <!-- زر الانضمام وزر فتح القائمة -->
       <div class="flex flex-row items-center gap-3 md:gap-6 sm:gap-4 relative">
         <!-- زر الانضمام -->
-        <a
-          href="#"
+        <router-link
+          to="/join"
           class="bg-[#9EBF3B] text-white font-semibold h-12 w-[130px] sm:w-[180px] md:w-[200px] rounded-2xl flex items-center justify-center gap-2 hover:bg-[#8aab34] transition-all duration-300 shadow-md hover:shadow-lg text-base sm:text-lg"
         >
           <img
@@ -30,7 +32,7 @@
             class="w-5 sm:w-7"
           />
           <span>انضم إلينا</span>
-        </a>
+        </router-link>
 
         <!-- زر فتح القائمة -->
         <button
@@ -60,14 +62,15 @@
 
         <!-- عناصر القائمة -->
         <div class="flex flex-col text-center space-y-4 mt-20 text-xl max-w-xs sm:max-w-md">
-          <p
+          <router-link
             v-for="item in menuItems"
-            :key="item.name"
-            class="hover:text-[#9EBF3B] hover:scale-110 transition-all duration-300 cursor-pointer py-2"
-            @click="handleMenuClick(item)"
+            :key="item.path"
+            :to="item.path"
+            @click="toggleMenu"
+            class="hover:text-[#9EBF3B] hover:scale-110 transition-all duration-300 cursor-pointer py-2 block"
           >
             {{ item.name }}
-          </p>
+          </router-link>
         </div>
 
         <SocialLinks />
@@ -78,33 +81,24 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import SocialLinks from '../layouts/SocialLinks.vue'
 
+const router = useRouter()
 const menuVisible = ref(false)
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
-// تحديث menuItems لتشمل actions
+// ربط عناصر القائمة مع الـ routes
 const menuItems = [
-  { name: 'من نحن', action: 'about' },
-  { name: 'خدماتنا', action: 'services' },
-  { name: 'الأخصائيون', action: 'specialists' },
-  { name: 'جلسات الدعم', action: 'sessions' },
-  { name: 'الفعاليات والورش', action: 'events' },
-  { name: 'شهادات المستفيدين', action: 'testimonials' },
-  { name: 'الأسئلة الشائعة', action: 'faq' },
-  { name: 'اتصل بنا', action: 'contact' }
+  { name: 'من نحن', path: '/about' },
+  { name: 'خدماتنا', path: '/services' },
+  { name: 'الأخصائيون', path: '/experts' },
+  { name: 'جلسات الدعم', path: '/sessions' },
+  { name: 'الفعاليات والورش', path: '/events' },
+  { name: 'شهادات المستفيدين', path: '/testimonials' },
+  { name: 'الأسئلة الشائعة', path: '/faq' },
+  { name: 'اتصل بنا', path: '/contact' }
 ]
-
-const handleMenuClick = (item) => {
-  toggleMenu()
-  
-  if (item.action === 'events') {
-    // إرسال حدث لتغيير الصفحة
-    window.dispatchEvent(new CustomEvent('change-page', {
-      detail: { page: 'events' }
-    }))
-  }
-}
 
 const scrolled = ref(false)
 const handleScroll = () => {
@@ -116,6 +110,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 </script>
 
 <style scoped>
+/* انتقال القائمة */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -126,5 +121,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .fade-enter-to, .fade-leave-from {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* تأثير active للروابط */
+.router-link-active {
+  color: #9EBF3B;
+  font-weight: bold;
 }
 </style>
