@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  
     <Header />
     
     <!-- محتوى صفحة الفعاليات -->
-    <main class="pt-8"> <!-- مسافة صغيرة من الهيدر -->
+    <main class="pt-0"> <!-- مسافة صغيرة من الهيدر -->
       <!-- هيدر الفعاليات -->
       <EventsHero />
       
@@ -30,7 +30,7 @@
     </main>
     
     <Footer />
-  </div>
+
 </template>
 
 <script setup>
