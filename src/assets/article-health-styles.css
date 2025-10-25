@@ -738,7 +738,7 @@
 }
 
 .dropdown-item.active {
-  background: linear-gradient(to left, #9EBF3B, #8aaa2f);
+  background: linear-gradient(to left, #9EBF3B, #D6A29A);
   color: white;
 }
 
