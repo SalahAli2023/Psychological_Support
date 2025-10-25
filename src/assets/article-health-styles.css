@@ -608,27 +608,27 @@
 }
 
 
-
-/* أنماط شريط البحث والتصفية */
+/* تحديث أنماط شريط البحث والتصفية */
 .search-filter-container {
   display: flex;
   justify-content: center;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .search-filter-bar {
   display: flex;
   gap: 1rem;
   align-items: center;
-  max-width: 600px;
   width: 100%;
+  max-width: 1200px; /* نفس عرض articles-grid */
   justify-content: center;
 }
 
 .search-box {
   position: relative;
   flex: 1;
-  max-width: 800px;
+  min-width: 0; /* يسمح للعنصر بالتصغير */
 }
 
 .search-icon {
@@ -659,10 +659,11 @@
   box-shadow: 0 0 0 3px rgba(158, 191, 59, 0.15), 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* أنماط القائمة المنسدلة */
+/* تحديث أنماط القائمة المنسدلة */
 .dropdown-container {
   position: relative;
-  min-width: 200px;
+  min-width: 220px;
+  flex-shrink: 0; /* يمنع تصغير القائمة المنسدلة */
 }
 
 .dropdown-trigger {
@@ -678,6 +679,8 @@
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   gap: 0.5rem;
+  width: 100%;
+  min-width: 200px;
 }
 
 .dropdown-trigger:hover {
@@ -753,12 +756,19 @@
   text-align: center;
 }
 
-/* تصميم متجاوب */
+/* تصميم متجاوب محدث */
+@media (max-width: 1200px) {
+  .search-filter-bar {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .search-filter-bar {
     flex-direction: column;
     gap: 1rem;
-    max-width: 400px;
+    max-width: 500px; /* نفس عرض articles-grid على الموبايل */
   }
   
   .search-box {
@@ -767,5 +777,16 @@
   
   .dropdown-container {
     width: 100%;
+    min-width: auto;
+  }
+  
+  .dropdown-trigger {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-filter-bar {
+    max-width: 350px; /* نفس عرض articles-grid على الشاشات الصغيرة */
   }
 }
