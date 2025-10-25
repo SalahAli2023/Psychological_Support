@@ -571,7 +571,7 @@ export const categoriesData = [
     {
         id: 'women',
         title: 'للمرأة',
-        description: 'مقاييس مخصصة للأفراد البالغين لتقييم الشخصية والميول والمهارات',
+        description: 'مقاييس متخصصة لصحة المرأة النفسية والتربوية',
         icon: 'fas fa-female',
         filter: 'forWomen',
         color: 'bg-gradient-to-l from-primary-green to-primary-pink'
