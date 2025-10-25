@@ -96,6 +96,7 @@ const menuItems = [
   { name: 'جلسات الدعم', path: '/sessions' },
   { name: 'الفعاليات والورش', path: '/events' },
   { name: 'شهادات المستفيدين', path: '/testimonials' },
+  { name: ' المقالات والتوعية', path: '/article' },
   { name: 'الأسئلة الشائعة', path: '/faq' },
   { name: 'اتصل بنا', path: '/contact' }
 ]
