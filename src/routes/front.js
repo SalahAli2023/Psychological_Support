@@ -3,6 +3,9 @@ import HomePage from '../components/frontend/home.vue'
 import EventsPage from '../components/frontend/EventsPage.vue'
 import MeasuresPage from '../components/frontend/MeasuresPage.vue'
 
+import ArticleMain from '../components/frontend/article/ArticleMain.vue'
+import ArticleDetail from '../components/frontend/article/ArticleDetail.vue'
+
 const routes = [
   {
     path: '/',
@@ -18,7 +21,19 @@ const routes = [
     path: '/measures',
     name: 'Measures',
     component: MeasuresPage
+  },
+  {
+    path: '/article',
+    name: 'Article',
+    component: ArticleMain
+  },
+  {
+    path: '/article/:id',
+    name: 'ArticleDetail',
+    component: ArticleDetail,
+    props: true
   }
+
 ]
 
 const router = createRouter({

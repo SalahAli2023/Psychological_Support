@@ -1,46 +1,57 @@
 <template>
-  
+  <div>
     <Header />
     
-    <!-- محتوى صفحة الفعاليات -->
-    <main class="pt-0"> <!-- مسافة صغيرة من الهيدر -->
-      <!-- هيدر الفعاليات -->
-      <EventsHero />
-      
-      <!-- قسم الفعاليات والورش -->
-      <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-          <EventsFilter @filter-change="handleFilterChange" />
-          
-          <!-- عرض قائمة الفعاليات أو تفاصيل الفعالية -->
-          <EventsList 
-            v-if="!selectedEvent"
-            :filter="filterCriteria"
-            @event-selected="handleEventSelected"
-          />
-          
-          <EventDetails 
-            v-else
-            :event="selectedEvent"
-            @close="handleCloseDetails"
-            @navigate-to-event="handleNavigateToEvent"
-          />
-        </div>
-      </section>
-    </main>
+    <!-- الهيرو المعدل -->
+    <ArticleHero
+      type="video"
+      src="hipno-video.mp4" 
+      height="60vh"
+      title="فعاليات الصحة"
+      highlight="النفسية"
+      subtitle="انضم إلى رحلتنا التفاعلية لاكتساب المعرفة وتبادل الخبرات في مجال الصحة النفسية"
+      :buttons="[
+        {
+          text: 'استكشف الفعاليات',
+          class: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg'
+        }
+      ]"
+      scroll-indicator
+      @cta="handleCta"
+    />
+    
+    <!-- قسم الفعاليات والورش -->
+    <section id="events-section" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <EventsFilter @filter-change="handleFilterChange" />
+        
+        <EventsList 
+          v-if="!selectedEvent"
+          :filter="filterCriteria"
+          @event-selected="handleEventSelected"
+        />
+        
+        <EventDetails 
+          v-else
+          :event="selectedEvent"
+          @close="handleCloseDetails"
+          @navigate-to-event="handleNavigateToEvent"
+        />
+      </div>
+    </section>
     
     <Footer />
-
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
-import EventsHero from '@/components/frontend/events/EventsHero.vue'
 import EventsFilter from '@/components/frontend/events/EventsFilter.vue'
 import EventsList from '@/components/frontend/events/EventsList.vue'
 import EventDetails from '@/components/frontend/events/EventDetails.vue'
+import ArticleHero from './layouts/ArticleHero.vue'
 
 // معايير الفلترة
 const filterCriteria = ref({
@@ -51,6 +62,19 @@ const filterCriteria = ref({
 // الفعالية المحددة
 const selectedEvent = ref(null)
 
+// معالجة أزرار الهيرو
+const handleCta = (button) => {
+  if (button.text === 'استكشف الفعاليات') {
+    // التمرير لقسم الفعاليات
+    document.getElementById('events-section').scrollIntoView({ 
+      behavior: 'smooth' 
+    })
+  } else if (button.text === 'انضم إلينا') {
+    // التنقل لصفحة الانضمام
+    window.location.href = '/join'
+  }
+}
+
 // معالجة تغيير الفلترة
 const handleFilterChange = (filter) => {
   filterCriteria.value = filter
@@ -59,7 +83,6 @@ const handleFilterChange = (filter) => {
 // معالجة اختيار فعالية
 const handleEventSelected = (event) => {
   selectedEvent.value = event
-  // التمرير لأعلى الصفحة عند عرض التفاصيل
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -71,7 +94,6 @@ const handleCloseDetails = () => {
 // معالجة التنقل إلى فعالية أخرى
 const handleNavigateToEvent = (event) => {
   selectedEvent.value = event
-  // التمرير لأعلى الصفحة عند عرض التفاصيل
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
