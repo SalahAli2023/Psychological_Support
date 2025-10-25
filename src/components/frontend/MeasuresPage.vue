@@ -103,7 +103,7 @@ export default {
       
       if (activeFilter.value !== 'allMeasures') {
         const categoryMap = {
-          'forAdults': 'adults',
+          'forWomen': 'women',
           'forChildren': 'children',
           'forSpecialists': 'specialists'
         }
