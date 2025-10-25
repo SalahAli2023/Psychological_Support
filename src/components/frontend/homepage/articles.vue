@@ -33,12 +33,15 @@
 
       <!-- دعوة للعمل (عرض جميع المقالات) -->
       <div class="text-center mt-12">
-        <button class="curtain-hover-btn relative bg-transparent text-[#9EBF3B] font-bold text-base px-8 py-4 rounded-xl border-2 border-[#9EBF3B] transition-all duration-500 transform hover:scale-105 hover:shadow-xl overflow-hidden group">
+       <router-link
+          to="/article"
+          class="curtain-hover-btn relative bg-transparent text-[#9EBF3B] font-bold text-base px-8 py-4 rounded-xl border-2 border-[#9EBF3B] transition-all duration-500 transform hover:scale-105 hover:shadow-xl overflow-hidden group inline-block text-center"
+        >
           <span class="flex items-center gap-2 relative z-10 transition-colors duration-500 group-hover:text-white">
             عرض جميع المقالات
             <i class="fas fa-arrow-left transition-colors duration-500 group-hover:text-white"></i>
           </span>
-        </button>
+        </router-link>
       </div>
     </div>
   </section>
