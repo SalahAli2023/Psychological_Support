@@ -95,6 +95,7 @@ const menuItems = [
   { name: 'الأخصائيون', path: '/experts' },
   { name: 'جلسات الدعم', path: '/sessions' },
   { name: 'الفعاليات والورش', path: '/events' },
+  { name: 'المقاييس', path: '/measures' },
   { name: 'شهادات المستفيدين', path: '/testimonials' },
   { name: 'الأسئلة الشائعة', path: '/faq' },
   { name: 'اتصل بنا', path: '/contact' }
