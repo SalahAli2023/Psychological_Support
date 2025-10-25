@@ -11,6 +11,9 @@
       <source src="http://localhost:5173/images/hipno-video.mp4" type="video/mp4">
     </video>
 
+    <!-- طبقة شفافة فوق الفيديو -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent z-10"></div>
+
     <!-- المحتوى الرئيسي -->
     <div
       class="absolute inset-0 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-start px-4 gap-6 items-center justify-center text-center sm:text-right sm:bottom-20 sm:right-20 sm:inset-auto"

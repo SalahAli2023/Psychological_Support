@@ -49,7 +49,7 @@
     <transition name="fade">
       <div
         v-if="menuVisible"
-        class="fixed inset-0 bg-[#D6A29A]/50 backdrop-blur-md z-[999] flex flex-col justify-center items-center text-white text-2xl space-y-6"
+        class="fixed inset-0 bg-[#000000]/80 backdrop-blur-md z-[999] flex flex-col justify-center items-center text-white text-2xl space-y-6"
       >
         <!-- زر الإغلاق أعلى يسار القائمة -->
         <button
