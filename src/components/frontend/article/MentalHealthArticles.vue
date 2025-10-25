@@ -31,12 +31,14 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-16">
       <!-- Category Filter -->
-      <CategoryFilter 
-         :categories="categories"
-        :activeCategory="activeCategory"
-        @category-change="handleCategoryChange"
-        @search-change="handleSearchChange"
-      />
+       <div class="w-full flex justify-center">
+        <CategoryFilter 
+          :categories="categories"
+          :activeCategory="activeCategory"
+          @category-change="handleCategoryChange"
+          @search-change="handleSearchChange"
+        />
+       </div>
 
       <!-- Articles Grid -->
       <div class="articles-container">
