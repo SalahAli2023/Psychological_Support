@@ -3,7 +3,7 @@
     <Header /> 
     <!-- قسم الهيرو المبسط -->
       <HeroSection />
-    <main class="container mx-auto ">
+    <main class=" max-w-7xl mx-auto px-6">
       <!-- المقاييس الأكثر استخداماً -->
       <PopularMeasures 
         :measures="popularMeasures"
