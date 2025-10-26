@@ -1,6 +1,6 @@
 <template>
   <!-- قسم مجالات التخصص -->
-  <section class="relative py-16 bg-white font-almarai" dir="rtl">
+  <section class="relative py-16 bg-white font-almarai" >
     <div class="max-w-6xl mx-auto px-6">
       <!-- العنوان الرئيسي -->
       <div class="text-center mb-12">
