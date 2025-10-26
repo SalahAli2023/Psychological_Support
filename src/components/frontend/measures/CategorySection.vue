@@ -52,7 +52,7 @@
 
       
       <!-- مؤشر التصنيف النشط -->
-      <div class="text-center mt-8">
+      <div class="text-center mt-12">
         <div class="inline-flex items-center gap-4 bg-gray-100 rounded-full px-6 py-3">
           <span class="text-gray-700 font-medium">التصنيف المحدد:</span>
           <span class="bg-primary-green text-white px-4 py-1 rounded-full font-semibold flex items-center gap-2">
