@@ -1,7 +1,7 @@
 <!-- ArticlesSection.vue -->
 <template>
   <!-- قسم المقالات التوعوية -->
-  <section class="relative py-20 bg-white font-almarai overflow-hidden" dir="rtl">
+  <section class="relative py-20 bg-white font-almarai overflow-hidden" >
     <!-- أشكال زخرفية في الخلفية -->
     <div class="absolute top-10 left-10 w-32 h-32 bg-[#D6A29A] opacity-5 rounded-full blur-2xl"></div>
     <div class="absolute bottom-10 right-10 w-40 h-40 bg-[#9EBF3B] opacity-5 rounded-full blur-2xl"></div>

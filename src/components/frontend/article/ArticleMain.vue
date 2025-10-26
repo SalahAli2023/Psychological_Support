@@ -1,10 +1,6 @@
 <template>
   <div class="bg-white">
-    <!-- الهيدر -->
-    <Header />
-    
-    <!-- الهيرو -->
-    <!-- <Hero /> -->
+  
     
     <!-- محتوى المقالات -->
     <MentalHealthArticles />

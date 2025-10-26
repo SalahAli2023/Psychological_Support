@@ -1,6 +1,6 @@
 <template>
   <section
-    dir="rtl"
+   
     class="relative py-12 md:py-20 overflow-hidden bg-gradient-to-br from-gray-50 to-white font-almarai"
   >
     <!-- العنوان -->

@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen text-white overflow-hidden font-almarai" dir="rtl">
+  <section class="relative h-screen text-white overflow-hidden font-almarai" >
     <!-- خلفية الفيديو -->
     <video
       autoplay
