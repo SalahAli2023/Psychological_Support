@@ -301,7 +301,8 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 1.25rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   border-top: 1px solid #f1f5f9;
 }
 
@@ -309,7 +310,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #9EBF3B;
+  color: #ffffff;
   background: none;
   border: none;
   cursor: pointer;
@@ -318,13 +319,13 @@
   transition: all 0.3s ease;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
-  background-color: rgba(158, 191, 59, 0.08);
+  background-color: #9EBF3B;
 }
 
 .read-more-btn:hover {
   gap: 0.75rem;
-  color: #8aaa2f;
-  background-color: rgba(158, 191, 59, 0.15);
+  color: #ffffff;
+  background-color: #D6A29A ;
   transform: translateX(-5px);
 }
 
