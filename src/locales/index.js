@@ -19,6 +19,7 @@ export const translations = {
       measures: 'المقاييس',
       testimonials: 'شهادات المستفيدين',
       articles: 'المقالات والتوعية',
+      library: ' المكتبة',
       faq: 'الأسئلة الشائعة',
       contact: 'اتصل بنا'
     }
@@ -41,6 +42,7 @@ export const translations = {
       measures: 'Measurements',
       testimonials: 'Testimonials',
       articles: 'Articles & Awareness',
+      library: 'library',
       faq: 'FAQ',
       contact: 'Contact Us'
     }
