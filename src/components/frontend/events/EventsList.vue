@@ -1,5 +1,3 @@
-[file name]: EventsList.vue
-[file content begin]
 <!-- EventsList.vue -->
 <template>
   <div>
