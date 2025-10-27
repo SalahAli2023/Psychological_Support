@@ -5,6 +5,8 @@ import MeasuresPage from '../components/frontend/MeasuresPage.vue'
 
 import ArticleMain from '../components/frontend/article/ArticleMain.vue'
 import ArticleDetail from '../components/frontend/article/ArticleDetail.vue'
+import Specialists from '../components/frontend/Specialists/TherapistList.vue'
+import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
 
 const routes = [
   {
@@ -32,13 +34,36 @@ const routes = [
     name: 'ArticleDetail',
     component: ArticleDetail,
     props: true
+  },
+  {
+    path: '/Specialists',
+    name: 'Specialists',
+    component: Specialists,
+    props: true
+  },
+  {
+    path: '/therapist/:id',
+    name: 'therapisteDetail',
+    component: therapisteDetail,
+    props: true
   }
-
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// إضافة حارس تنقل للتعامل مع اتجاه اللغة
+router.beforeEach((to, from, next) => {
+  // الحصول على اللغة المحفوظة أو استخدام العربية كلغة افتراضية
+  const savedLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+  
+  // تحديث اتجاه الصفحة بناءً على اللغة
+  document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr'
+  document.documentElement.lang = savedLanguage
+  
+  next()
 })
 
 export default router

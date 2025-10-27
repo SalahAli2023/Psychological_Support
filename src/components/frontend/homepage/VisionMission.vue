@@ -1,5 +1,5 @@
 <template>
-  <section class="relative py-16 bg-white font-almarai" dir="rtl">
+  <section class="relative py-16 bg-white font-almarai" >
     <div class="max-w-6xl mx-auto px-6 text-gray-700">
    <div class="inline-block relative text-center w-full">
   <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
