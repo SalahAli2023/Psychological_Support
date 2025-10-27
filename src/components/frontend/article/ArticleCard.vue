@@ -8,7 +8,7 @@
       />
     </div>
      <div class="badge">
-        <i class="fas fa-tag"></i>
+        <!-- <i class="fas fa-tag"></i> -->
         {{ article.badge }}
       </div>
 
@@ -44,7 +44,7 @@
         </div>
         <button class="read-more-btn" @click="$emit('read-more', article.id)">
           <span>اقرأ المزيد</span>
-          <i class="fas fa-arrow-left"></i>
+          <!-- <i class="fas fa-arrow-left"></i> -->
         </button>
       </div>
     </div>
