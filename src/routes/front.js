@@ -7,7 +7,7 @@ import ArticleMain from '../components/frontend/article/ArticleMain.vue'
 import ArticleDetail from '../components/frontend/article/ArticleDetail.vue'
 import Specialists from '../components/frontend/Specialists/TherapistList.vue'
 import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
-
+import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
 const routes = [
   {
     path: '/',
@@ -46,7 +46,14 @@ const routes = [
     name: 'therapisteDetail',
     component: therapisteDetail,
     props: true
-  }
+  },
+   {
+    path: '/library',
+    name: 'library',
+    component: LibraryMain,
+    props: true
+  },
+
 ]
 
 const router = createRouter({

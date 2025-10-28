@@ -23,7 +23,11 @@
     <!-- قسم الفعاليات والورش -->
     <section id="events-section" class="py-20 bg-white">
       <div class="max-w-7xl mx-auto px-6">
-        <EventsFilter @filter-change="handleFilterChange" />
+        <!-- إظهار البحث والفلترة فقط عند عرض قائمة الفعاليات -->
+        <EventsFilter 
+          v-if="!selectedEvent"
+          @filter-change="handleFilterChange" 
+        />
         
         <EventsList 
           v-if="!selectedEvent"

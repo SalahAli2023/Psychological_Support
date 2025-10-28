@@ -196,6 +196,13 @@ const menuItems = [
   },
   { 
     name: { 
+      ar: translations.ar.menuItems.library, 
+      en: translations.en.menuItems.library
+    }, 
+    path: '/library' 
+  },
+  { 
+    name: { 
       ar: translations.ar.menuItems.articles, 
       en: translations.en.menuItems.articles
     }, 

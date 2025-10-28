@@ -1,59 +1,39 @@
+<!-- RelatedEvents.vue -->
 <template>
   <div>
-    <!-- شبكة الفعاليات ذات الصلة -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <article 
-        v-for="event in filteredEvents" 
-        :key="event.id"
-        class="group bg-gray-50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
-        @click="handleEventClick(event)"
-      >
-        <!-- صورة الفعالية -->
-        <div class="relative overflow-hidden h-40">
-          <img 
-            :src="event.media" 
-            :alt="event.title" 
-            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-          />
-          
-          <!-- شارة النوع -->
-          <div class="absolute top-3 left-3">
-            <span 
-              :class="`inline-block text-xs font-semibold px-2 py-1 rounded-full ${getCategoryStyle(event.type)}`"
-            >
-              {{ event.type }}
-            </span>
-          </div>
-          
-          <!-- تراكب لوني عند التمرير -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </div>
-
-        <!-- محتوى الفعالية -->
-        <div class="p-4">
-          <!-- العنوان -->
-          <h3 class="font-bold text-gray-900 mb-2 group-hover:text-[#D6A29A] transition-colors duration-300 line-clamp-2">
-            {{ event.title }}
-          </h3>
-
-          <!-- الوصف -->
-          <p class="text-gray-600 text-sm mb-3 line-clamp-2">
-            {{ event.description }}
-          </p>
-
-          <!-- معلومات إضافية -->
-          <div class="flex items-center justify-between text-xs text-gray-500">
-            <div class="flex items-center gap-1">
-              <i class="fas fa-calendar text-[#9EBF3B]"></i>
-              <span>{{ event.date }}</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <i class="fas fa-clock text-[#D6A29A]"></i>
-              <span>{{ event.duration }}</span>
+    <!-- فعاليات ذات صلة - تصميم عمودي -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
+        فعاليات ذات صلة
+      </h3>
+      <div class="space-y-4">
+        <article 
+          v-for="event in filteredEvents" 
+          :key="event.id"
+          class="group bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-200"
+          @click="handleEventClick(event)"
+        >
+          <div class="flex gap-4">
+            <img 
+              :src="event.media" 
+              :alt="event.title" 
+              class="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+            />
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-900 group-hover:text-[#D6A29A] transition-colors duration-300 line-clamp-2 text-sm mb-1">
+                {{ event.title }}
+              </h4>
+              <p class="text-gray-500 text-xs mb-2">
+                <i class="fas fa-calendar text-[#9EBF3B] ml-1"></i>
+                {{ event.date }}
+              </p>
+              <span :class="`inline-block text-xs px-2 py-1 rounded-full ${getCategoryStyle(event.type)}`">
+                {{ event.type }}
+              </span>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
+      </div>
     </div>
 
     <!-- رسالة عدم وجود فعاليات ذات صلة -->
