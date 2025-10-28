@@ -1,229 +1,172 @@
 <template>
   <div v-cloak>
-    <!-- Hero Section with Title - Reduced Height -->
-    <section class="hero-section">
-      <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-      </div>
-      
-      <div class="container mx-auto px-4 text-center relative z-10">
-        <!-- Back Button -->
-        <button class="back-btn" @click="goBack">
-          <i class="fas fa-arrow-right"></i>
-          <span>العودة للمقالات</span>
-        </button>
+    <!-- Hero Section -->
+     <Hero
+      title="تفاصيل "
+      highlight="المقال"
+      subtitle="استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة"
+      :buttons="heroButtons"
+      @cta="handleHeroCta"
+    />
 
-        <h1 class="hero-title">
-          <span class="text-primary">مقالات</span>
-          <span class="text-secondary"> الدعم النفسي</span>
-        </h1>
-        <p class="hero-subtitle">
-          اكتشف مقالات متنوعة في مجال الصحة النفسية والدعم النفسي والتنمية الذاتية
-        </p>
-      </div>
-    </section>
-
-    <!-- Article Header Card - Moved below hero -->
-    <div class="article-header-container">
-      <div class="article-hero-card">
-        <h1 class="article-title">{{ article.title }}</h1>
-        
-        <div class="article-meta-row">
-          <div class="meta-item">
-            <div class="meta-icon date">
-              <i class="fas fa-calendar-alt"></i>
-            </div>
-            <div>
-              <div class="meta-label">تاريخ النشر</div>
-              <div class="meta-value">{{ article.date }}</div>
-            </div>
-          </div>
-          
-          <div class="meta-item">
-            <div class="meta-icon category">
-              <i class="fas fa-folder"></i>
-            </div>
-            <div>
-              <div class="meta-label">الفئة</div>
-              <div class="meta-value">{{ article.category }}</div>
-            </div>
-          </div>
-          
-          <div class="meta-item">
-            <div class="meta-icon reading-time">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div>
-              <div class="meta-label">وقت القراءة</div>
-              <div class="meta-value">{{ article.readingTime || '8 دقائق' }}</div>
-            </div>
-          </div>
-          
-          <div class="meta-item">
-            <div class="meta-icon views">
-              <i class="fas fa-eye"></i>
-            </div>
-            <div>
-              <div class="meta-label">المشاهدات</div>
-              <div class="meta-value">{{ article.views || '1,245' }}</div>
-            </div>
+    <!-- Main Content Layout -->
+    <div class="main-layout">
+      <!-- Main Content - Article Details -->
+      <main class="article-main">
+        <!-- Article Header -->
+        <div class="article-header">
+          <div class="article-breadcrumb">
+            <span class="breadcrumb-item" @click="goBack">المقالات</span>
+            <i class="fas fa-chevron-left"></i>
+            <span class="breadcrumb-item current">{{ article.category }}</span>
+            <i class="fas fa-chevron-left"></i>
+            <span class="article-main-title" :id="`article-${article.id}`">{{ article.title }}</span>
           </div>
         </div>
 
-        <div class="article-tags">
-          <span v-for="tag in article.tags" :key="tag" class="tag">
-            <i class="fas fa-tag"></i>
-            {{ tag }}
-          </span>
-        </div>
-
-        <div class="share-buttons">
-          <button class="share-btn facebook" @click="shareOnFacebook">
-            <i class="fab fa-facebook-f"></i>
-            <span>شارك</span>
-          </button>
-          <button class="share-btn twitter" @click="shareOnTwitter">
-            <i class="fab fa-twitter"></i>
-            <span>غرد</span>
-          </button>
-          <button class="share-btn linkedin" @click="shareOnLinkedIn">
-            <i class="fab fa-linkedin-in"></i>
-            <span>شارك</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Article Content -->
-      <div class="section-card">
-        <h2 class="section-title">
-          <i class="fas fa-align-left"></i>
-          مقدمة
-        </h2>
-        
-        <div class="article-content">
-          <p>{{ article.fullContent?.introduction || article.excerpt }}</p>
-          
-          <img :src="article.image" :alt="article.title" class="content-image">
-          
-          <div class="highlight-box" v-if="article.fullContent?.highlight">
-            <p>
-              <strong>الفكرة الأساسية:</strong> {{ article.fullContent.highlight }}
-            </p>
+        <!-- Featured Image -->
+        <div class="featured-image">
+          <img :src="article.image" :alt="article.title" class="article-featured-img">
+          <div class="image-overlay">
+            <div class="category-badge">{{ article.category }}</div>
           </div>
-
-          <p v-if="article.fullContent?.introParagraph">
-            {{ article.fullContent.introParagraph }}
-          </p>
         </div>
-      </div>
 
-      <!-- Key Points Section -->
-      <div class="section-card" v-if="article.fullContent?.keyPoints">
-        <h2 class="section-title">
-          <i class="fas fa-lightbulb"></i>
-          النقاط الأساسية
-        </h2>
-        
-        <ul class="content-list">
-          <li v-for="point in article.fullContent.keyPoints" :key="point">{{ point }}</li>
-        </ul>
-      </div>
-
-      <!-- Practical Tips Section -->
-      <div class="section-card" v-if="article.fullContent?.tips">
-        <h2 class="section-title">
-          <i class="fas fa-star"></i>
-          نصائح عملية
-        </h2>
-        
-        <div class="tips-grid">
-          <div 
-            v-for="(tip, index) in article.fullContent.tips" 
-            :key="index" 
-            :class="['tip-card', `tip-card-${(index % 4) + 1}`]"
-          >
-            <div class="tip-header">
-              <i class="fas fa-check-circle tip-icon"></i>
-              {{ tip.title }}
+        <!-- Article Content -->
+        <div class="article-content-main">
+          <!-- Author Info -->
+          <div class="author-section">
+            <div class="author-avatar">
+              <img :src="article.author.avatar" :alt="article.author.name">
             </div>
-            <p class="tip-description">{{ tip.description }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats Section -->
-      <div class="section-card" v-if="article.fullContent?.stats">
-        <h2 class="section-title">
-          <i class="fas fa-chart-bar"></i>
-          أهمية الموضوع
-        </h2>
-
-        <div class="stats-grid">
-          <div v-for="(stat, index) in article.fullContent.stats" :key="index" class="stats-card">
-            <div :class="['stats-value', index % 2 === 0 ? 'stats-value-primary' : 'stats-value-secondary']">
-              {{ stat.value }}
+            <div class="author-details">
+              <h3 class="author-name">{{ article.author.name }}</h3>
+              <p class="author-title">{{ article.author.title }}</p>
             </div>
-            <div class="stats-label">{{ stat.label }}</div>
+            <button class="like-btn" @click="toggleLike">
+              <i class="fas fa-heart" :class="{ liked: isLiked }"></i>
+              <span>{{ likeCount }}</span>
+            </button>
           </div>
-        </div>
-      </div>
 
-      <!-- Author Section -->
-      <div class="section-card">
-        <h2 class="section-title">
-          <i class="fas fa-user-circle"></i>
-          عن الكاتب
-        </h2>
+          <!-- Article Text Content -->
+          <div class="article-text-content">
+            <!-- Introduction -->
+            <section class="content-section" v-if="article.fullContent?.introduction">
+              <div class="content-text">
+                <p class="introduction-text">{{ article.fullContent.introduction }}</p>
+              </div>
+            </section>
 
-        <div class="author-card">
-          <img :src="article.author.avatar" :alt="article.author.name" class="author-avatar">
-          <div class="author-name">{{ article.author.name }}</div>
-          <div class="author-title">{{ article.author.title || 'متخصص في الصحة النفسية' }}</div>
-          <div class="author-bio">
-            {{ article.author.bio || 'خبير في مجال الصحة النفسية والعلاقات الإنسانية، يهدف إلى تقديم محتوى عملي يساعد الأفراد على تحسين جودة حياتهم وبناء علاقات صحية.' }}
+            <!-- Main Content -->
+            <section class="content-section" v-if="article.fullContent?.content">
+              <div class="article-full-content" v-html="article.fullContent.content"></div>
+            </section>
+
+            <!-- Article Attachments -->
+            <section class="content-section" v-if="article.fullContent?.attachments && article.fullContent.attachments.length > 0">
+              <h2 class="section-title-main">
+                <i class="fas fa-paperclip"></i>
+                المرفقات
+              </h2>
+              <div class="attachments-grid">
+                <div 
+                  v-for="attachment in article.fullContent.attachments" 
+                  :key="attachment.id"
+                  class="attachment-item"
+                  @click="openAttachment(attachment)"
+                >
+                  <div class="attachment-icon">
+                    <i :class="getAttachmentIcon(attachment.type)"></i>
+                  </div>
+                  <div class="attachment-info">
+                    <h4 class="attachment-title">{{ attachment.title }}</h4>
+                    <span class="attachment-type">{{ getAttachmentTypeText(attachment.type) }}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
-        </div>
-      </div>
 
-      <!-- Related Articles Section -->
-      <div class="section-card" v-if="relatedArticles.length > 0">
-        <h2 class="section-title">
-          <i class="fas fa-link"></i>
-          مقالات ذات صلة
-        </h2>
-
-        <div class="related-articles">
-          <div v-for="relatedArticle in relatedArticles" :key="relatedArticle.id" class="related-card">
-            <img :src="relatedArticle.image" :alt="relatedArticle.title" class="related-image">
-            <div class="related-content">
-              <div class="related-title">{{ relatedArticle.title }}</div>
-              <div class="related-excerpt">{{ relatedArticle.excerpt }}</div>
-              <button class="read-btn" @click="goToArticle(relatedArticle.id)">
-                <span>اقرأ المزيد</span>
+          <!-- Test Button Section -->
+          <section class="content-section test-section">
+            <div class="test-container">
+              <div class="test-content">
+                <div class="test-icon">
+                  <i class="fas fa-brain"></i>
+                </div>
+                <div class="test-text">
+                  <h3 class="test-title">اختبر معلوماتك</h3>
+                  <p class="test-description">
+                    قم باختبار فهمك للموضوع من خلال أسئلة تفاعلية مصممة خصيصاً لهذا المقال
+                  </p>
+                </div>
+              </div>
+              <button class="test-btn" @click="startTest">
+                <span>ابدأ الاختبار</span>
                 <i class="fas fa-arrow-left"></i>
               </button>
             </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- Right Sidebar - Related Articles -->
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">
+            <i class="fas fa-link"></i>
+            مقالات ذات صلة
+          </h3>
+          
+          <div class="related-articles-list">
+            <div 
+              v-for="relatedArticle in relatedArticles" 
+              :key="relatedArticle.id" 
+              class="related-article-item"
+              @click="goToArticle(relatedArticle.id)"
+            >
+              <div class="related-article-image">
+                <img :src="relatedArticle.image" :alt="relatedArticle.title">
+                <div class="article-badge">{{ relatedArticle.badge }}</div>
+              </div>
+              <div class="related-article-content">
+                <h4 class="related-article-title">{{ relatedArticle.title }}</h4>
+                <p class="related-article-excerpt">{{ relatedArticle.excerpt }}</p>
+                <div class="related-article-meta">
+                  <span class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    {{ relatedArticle.date }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </aside>
+    </div>
   </div>
 </template>
 
 <script>
 import { articles } from './articles-data.js'
+import Hero from '@/components/frontend/layouts/hero.vue'
 
 export default {
   name: 'ArticleDetailContent',
+  components: {
+    Hero
+  },
   props: {
     articleId: {
       type: [String, Number],
       required: true
+    }
+  },
+  data() {
+    return {
+      isLiked: false,
+      likeCount: 0
     }
   },
   computed: {
@@ -232,11 +175,38 @@ export default {
     },
     relatedArticles() {
       return articles
-        .filter(a => a.id !== this.article.id && a.category === this.article.category)
-        .slice(0, 3)
+        .filter(a => a.id !== this.article.id)
+        .slice(0, 4)
+    },
+    heroButtons() {
+      return [
+        {
+          text: 'ابدأ القراءة',
+          icon: 'fas fa-book-open',
+          primary: true
+        },
+        {
+          text: 'مقالات ذات صلة',
+          icon: 'fas fa-link'
+        }
+      ]
     }
   },
+  
   methods: {
+    handleHeroCta(btn) {
+      if (btn.text === 'ابدأ القراءة') {
+        const articleElement = document.getElementById(`article-${this.article.id}`)
+        if (articleElement) {
+          articleElement.scrollIntoView({ behavior: 'smooth' })
+        }
+      } else if (btn.text === 'مقالات ذات صلة') {
+        const sidebarElement = document.querySelector('.sidebar')
+        if (sidebarElement) {
+          sidebarElement.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+    },
     findArticleById(id) {
       return articles.find(article => article.id == id)
     },
@@ -250,689 +220,675 @@ export default {
         date: 'غير معروف',
         author: {
           name: 'غير معروف',
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
+          title: 'غير معروف',
+          bio: 'غير معروف'
         },
-        tags: ['غير مصنف']
+        fullContent: {
+          introduction: 'المقال غير موجود.',
+          content: '<p>عذراً، المقال الذي تبحث عنه غير موجود أو قد تم حذفه.</p>'
+        }
       }
+    },
+    toggleLike() {
+      this.isLiked = !this.isLiked
+      this.likeCount += this.isLiked ? 1 : -1
+    },
+    getAttachmentIcon(type) {
+      const icons = {
+        image: 'fas fa-image',
+        video: 'fas fa-video',
+        pdf: 'fas fa-file-pdf',
+        document: 'fas fa-file-alt'
+      }
+      return icons[type] || 'fas fa-paperclip'
+    },
+    getAttachmentTypeText(type) {
+      const types = {
+        image: 'صورة',
+        video: 'فيديو',
+        pdf: 'ملف PDF',
+        document: 'مستند'
+      }
+      return types[type] || 'ملف'
+    },
+    openAttachment(attachment) {
+      if (attachment.type === 'image' || attachment.type === 'video') {
+        window.open(attachment.url, '_blank')
+      } else {
+        window.open(attachment.url, '_blank')
+      }
+    },
+    startTest() {
+      alert(`سيبدأ اختبار في موضوع: ${this.article.category}`)
     },
     goBack() {
       this.$router.push('/article')
     },
     goToArticle(id) {
       this.$router.push(`/article/${id}`)
-    },
-    shareOnFacebook() {
-      const url = encodeURIComponent(window.location.href)
-      const title = encodeURIComponent(this.article.title)
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${title}`, '_blank')
-    },
-    shareOnTwitter() {
-      const url = encodeURIComponent(window.location.href)
-      const text = encodeURIComponent(this.article.title)
-      window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank')
-    },
-    shareOnLinkedIn() {
-      const url = encodeURIComponent(window.location.href)
-      const title = encodeURIComponent(this.article.title)
-      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank')
     }
   }
 }
 </script>
 
 <style scoped>
-/* إضافة الأنماط الجديدة هنا */
-
-/* Tips Grid */
-.tips-grid {
+/* Main Layout */
+.main-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.tip-card {
-  padding: 1.5rem;
+/* Sidebar Styles */
+.sidebar {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.sidebar-card {
+  background: white;
   border-radius: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
 }
 
-.tip-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.tip-header {
-  font-weight: 700;
+.sidebar-title {
   font-size: 1.1rem;
-  margin-bottom: 0.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.tip-icon {
-  font-size: 1.1rem;
-}
-
-.tip-description {
-  color: #4b5563;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Tip Card Colors */
-.tip-card-1 {
-  background: linear-gradient(135deg, #f0f9f0 0%, #e8f5e8 100%);
-  border-right: 4px solid #10b981;
-}
-
-.tip-card-1 .tip-header {
-  color: #065f46;
-}
-
-.tip-card-1 .tip-icon {
-  color: #10b981;
-}
-
-.tip-card-2 {
-  background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
-  border-right: 4px solid #3b82f6;
-}
-
-.tip-card-2 .tip-header {
-  color: #1e40af;
-}
-
-.tip-card-2 .tip-icon {
-  color: #3b82f6;
-}
-
-.tip-card-3 {
-  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-  border-right: 4px solid #8b5cf6;
-}
-
-.tip-card-3 .tip-header {
-  color: #6b21a8;
-}
-
-.tip-card-3 .tip-icon {
-  color: #8b5cf6;
-}
-
-.tip-card-4 {
-  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-  border-right: 4px solid #ec4899;
-}
-
-.tip-card-4 .tip-header {
-  color: #9d174d;
-}
-
-.tip-card-4 .tip-icon {
-  color: #ec4899;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1.5rem;
-}
-
-.stats-value {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.stats-value-primary {
+.sidebar-title i {
   color: #9EBF3B;
 }
 
-.stats-value-secondary {
-  color: #D6A29A;
-}
-
-.stats-label {
-  color: #6b7280;
-}
-
-/* باقي الأنماط الموجودة سابقاً تبقى كما هي */
-.hero-section {
-  background: linear-gradient(135deg, rgba(214, 162, 154, 0.15) 0%, rgba(158, 191, 59, 0.15) 100%);
-  position: relative;
-  overflow: hidden;
-  padding: 40px 0 60px 0;
-  min-height: 280px;
+/* Related Articles */
+.related-articles-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 30% 70%, rgba(158, 191, 59, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 70% 30%, rgba(214, 162, 154, 0.1) 0%, transparent 50%);
+.related-article-item {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
 }
 
-.floating-shapes {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.shape {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.1;
-  animation: float 20s infinite linear;
-}
-
-.shape-1 {
-  width: 80px;
-  height: 80px;
-  background: #9EBF3B;
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.shape-2 {
-  width: 60px;
-  height: 60px;
-  background: #D6A29A;
-  top: 60%;
-  left: 85%;
-  animation-delay: -5s;
-}
-
-.shape-3 {
-  width: 100px;
-  height: 100px;
-  background: #9EBF3B;
-  top: 40%;
-  left: 75%;
-  animation-delay: -10s;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-15px) rotate(180deg);
-  }
-  100% {
-    transform: translateY(0) rotate(360deg);
-  }
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #1f2937;
-  margin-bottom: 0.75rem;
-  line-height: 1.2;
-}
-
-.hero-subtitle {
-  font-size: 1.1rem;
-  color: #6b7280;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.5;
-}
-
-/* Article Header Container */
-.article-header-container {
-  display: flex;
-  justify-content: center;
-  margin-top: -50px;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 20;
-}
-
-.article-hero-card {
+.related-article-item:hover {
+  transform: translateX(5px);
   background: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
-  width: 90%;
-  margin: 0 auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #9EBF3B;
 }
 
-.article-title {
-  font-size: 2rem;
-  font-weight: 800;
+.related-article-image {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.related-article-image img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.related-article-item:hover .related-article-image img {
+  transform: scale(1.05);
+}
+
+.article-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #9EBF3B;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.related-article-title {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #1f2937;
-  margin-bottom: 1.5rem;
-  line-height: 1.3;
-  text-align: center;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
 
-.article-meta-row {
+.related-article-excerpt {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.related-article-meta {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.25rem;
 }
 
-.meta-label {
-  font-size: 0.8rem;
+/* Main Article Content */
+.article-main {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.article-header {
+  margin-bottom: 2rem;
+}
+
+.article-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
   color: #6b7280;
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-item:hover {
+  color: #9EBF3B;
+}
+
+.breadcrumb-item.current {
+  color: #9EBF3B;
   font-weight: 600;
 }
 
-.meta-value {
-  font-size: 0.9rem;
-  color: #1f2937;
+.article-main-title {
+  font-size: 1.3rem;
   font-weight: 700;
+  color: #1f2937;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  scroll-margin-top: 100px;
 }
 
-.meta-icon {
+/* Featured Image */
+.featured-image {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.article-featured-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.category-badge {
+  background: #9EBF3B;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Article Content Main */
+.article-content-main {
+  margin-top: 2rem;
+}
+
+/* Author Section */
+.author-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.author-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #9EBF3B;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-details {
+  flex: 1;
+}
+
+.author-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.author-title {
+  font-size: 0.8rem;
+  color: #9EBF3B;
+  margin: 0;
+}
+
+.like-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+}
+
+.like-btn:hover {
+  background: #f1f5f9;
+  border-color: #D6A29A;
+}
+
+.like-btn .fa-heart {
+  transition: color 0.3s ease;
+}
+
+.like-btn .fa-heart.liked {
+  color: #ef4444;
+}
+
+/* Article Text Content */
+.article-text-content {
+  margin-bottom: 2rem;
+}
+
+.content-section {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.content-section:last-child {
+  border-bottom: none;
+}
+
+.section-title-main {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title-main i {
+  color: #9EBF3B;
+}
+
+.content-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.introduction-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+/* Article Full Content Styles */
+.article-full-content {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+.article-full-content h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #9EBF3B;
+}
+
+.article-full-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 1.5rem 0 0.8rem 0;
+}
+
+.article-full-content p {
+  margin-bottom: 1.2rem;
+  text-align: justify;
+}
+
+.article-full-content ul {
+  margin: 1rem 0;
+  padding-right: 1.5rem;
+}
+
+.article-full-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.article-full-content strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Attachments Grid */
+.attachments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.attachment-item {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.attachment-item:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #9EBF3B;
+}
+
+.attachment-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  background: #9EBF3B;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
+  flex-shrink: 0;
 }
 
-.meta-icon.date {
-  background-color: rgba(158, 191, 59, 0.15);
-  color: #9EBF3B;
+.attachment-info {
+  flex: 1;
 }
 
-.meta-icon.category {
-  background-color: rgba(214, 162, 154, 0.15);
-  color: #D6A29A;
-}
-
-.meta-icon.reading-time {
-  background-color: rgba(158, 191, 59, 0.15);
-  color: #9EBF3B;
-}
-
-.meta-icon.views {
-  background-color: rgba(214, 162, 154, 0.15);
-  color: #D6A29A;
-}
-
-.article-tags {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: rgba(158, 191, 59, 0.1);
-  color: #9EBF3B;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.8rem;
+.attachment-title {
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
 }
 
-.tag:hover {
-  background-color: rgba(158, 191, 59, 0.2);
-  transform: translateY(-2px);
+.attachment-type {
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 
-/* Main Content with Consistent Spacing */
-.main-content {
-  padding: 1rem 0 3rem 0;
+/* Test Button Section */
+.test-section {
+  background: linear-gradient(135deg, #D6A29A 0%, #9EBF3B 100%);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.test-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.test-container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.test-content {
+  display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex: 1;
 }
 
-.section-card {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 2rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  max-width: 1000px;
-  width: 90%;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1f2937;
-  margin-bottom: 1.25rem;
+.test-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.section-title i {
-  color: #9EBF3B;
-  font-size: 1.25rem;
+.test-text {
+  flex: 1;
 }
 
-.article-content {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #4b5563;
-}
-
-.article-content p {
-  margin-bottom: 1.25rem;
-}
-
-.content-list {
-  list-style: none;
-  padding: 0;
-}
-
-.content-list li {
-  padding: 0.75rem 0;
-  padding-right: 2rem;
-  position: relative;
-  color: #4b5563;
-  line-height: 1.7;
-  font-size: 1.05rem;
-}
-
-.content-list li:before {
-  content: '✓';
-  position: absolute;
-  right: 0;
-  color: #9EBF3B;
-  font-weight: bold;
-  font-size: 1.25rem;
-}
-
-.author-card {
-  background: linear-gradient(135deg, rgba(158, 191, 59, 0.05) 0%, rgba(214, 162, 154, 0.05) 100%);
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.author-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-}
-
-.author-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  margin: 0 auto 1.25rem;
-  border: 3px solid white;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  object-fit: cover;
-}
-
-.author-name {
-  font-size: 1.35rem;
+.test-title {
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: white;
   margin-bottom: 0.5rem;
 }
 
-.author-title {
+.test-description {
   font-size: 0.95rem;
-  color: #6b7280;
-  margin-bottom: 1rem;
-}
-
-.author-bio {
-  font-size: 0.95rem;
-  color: #4b5563;
-  line-height: 1.6;
-  margin-bottom: 1.25rem;
-}
-
-.related-articles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.related-card {
-  background: white;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  position: relative;
-}
-
-.related-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-}
-
-.related-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.related-card:hover .related-image {
-  transform: scale(1.03);
-}
-
-.related-content {
-  padding: 1.5rem;
-}
-
-.related-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-}
-
-.related-excerpt {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.5;
-}
-
-.read-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #9EBF3B;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  padding: 0.6rem 1.25rem;
-  border-radius: 50px;
-  background-color: rgba(158, 191, 59, 0.1);
-}
-
-.read-btn:hover {
-  gap: 0.75rem;
-  background-color: rgba(158, 191, 59, 0.2);
-  transform: translateX(-3px);
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #9EBF3B;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
-  padding: 0.6rem 1.25rem;
-  border-radius: 50px;
-  background-color: rgba(158, 191, 59, 0.1);
-}
-
-.back-btn:hover {
-  gap: 0.75rem;
-  background-color: rgba(158, 191, 59, 0.2);
-}
-
-.highlight-box {
-  background: linear-gradient(135deg, rgba(158, 191, 59, 0.1) 0%, rgba(214, 162, 154, 0.1) 100%);
-  border-right: 4px solid #9EBF3B;
-  padding: 1.5rem;
-  border-radius: 0.875rem;
-  margin: 1.5rem 0;
-}
-
-.highlight-box p {
   margin: 0;
-  color: #4b5563;
-  line-height: 1.7;
-  font-size: 1.05rem;
 }
 
-.stats-card {
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 0.875rem;
-  padding: 1.25rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.stats-card:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-.text-primary {
+.test-btn {
+  background: white;
   color: #9EBF3B;
-}
-
-.text-secondary {
-  color: #D6A29A;
-}
-
-.content-image {
-  width: 100%;
-  border-radius: 0.875rem;
-  margin: 1.5rem 0;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-.share-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.share-btn {
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.25rem;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+  gap: 0.75rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
-.share-btn.facebook {
-  background-color: rgba(59, 89, 152, 0.1);
-  color: #3b5998;
+.test-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  gap: 1rem;
 }
 
-.share-btn.twitter {
-  background-color: rgba(29, 161, 242, 0.1);
-  color: #1da1f2;
+.test-btn:active {
+  transform: translateY(-1px);
 }
 
-.share-btn.linkedin {
-  background-color: rgba(0, 119, 181, 0.1);
-  color: #0077b5;
-}
-
-.share-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 30px 0 40px 0;
-    min-height: 220px;
-  }
-  
-  .hero-title {
-    font-size: 2rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-  
-  .article-hero-card {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     padding: 1.5rem;
-    margin-top: -30px;
   }
   
-  .article-title {
-    font-size: 1.75rem;
+  .sidebar {
+    order: 2;
+    position: static;
   }
   
-  .article-meta-row {
-    gap: 1rem;
+  .article-main {
+    order: 1;
   }
   
-  .meta-item {
+  .test-container {
     flex-direction: column;
     text-align: center;
-    gap: 0.25rem;
+    gap: 1.5rem;
   }
   
-  .section-card {
+  .test-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .article-main {
     padding: 1.5rem;
   }
   
-  .main-content {
+  .article-main-title {
+    font-size: 1.1rem;
+  }
+  
+  .article-featured-img {
+    height: 200px;
+  }
+  
+  .attachments-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .test-section {
+    padding: 2rem 1.5rem;
+  }
+  
+  .test-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .test-title {
+    font-size: 1.3rem;
+  }
+  
+  .test-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .author-section {
+    flex-direction: column;
+    text-align: center;
     gap: 1rem;
-    padding: 0.5rem 0 2rem 0;
+  }
+  
+  .article-main {
+    padding: 1rem;
+  }
+  
+  .test-section {
+    padding: 1.5rem 1rem;
+  }
+  
+  .test-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+  
+  .test-title {
+    font-size: 1.1rem;
+  }
+  
+  .test-description {
+    font-size: 0.85rem;
+  }
+  
+  .article-full-content {
+    font-size: 0.9rem;
+  }
+  
+  .article-full-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .article-full-content h4 {
+    font-size: 1rem;
   }
 }
 </style>

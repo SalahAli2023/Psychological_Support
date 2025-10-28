@@ -159,6 +159,95 @@ provide('languageState', {
   toggleLanguage,
   t: translate
 })
+<<<<<<< HEAD
+=======
+
+// Menu items with translations
+const menuItems = [
+  { 
+    name: { 
+      ar: translations.ar.menuItems.about, 
+      en: translations.en.menuItems.about
+    }, 
+    path: '/about' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.services, 
+      en: translations.en.menuItems.services
+    }, 
+    path: '/services' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.specialists, 
+      en: translations.en.menuItems.specialists
+    }, 
+    path: '/Specialists' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.sessions, 
+      en: translations.en.menuItems.sessions
+    }, 
+    path: '/sessions' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.events, 
+      en: translations.en.menuItems.events
+    }, 
+    path: '/events' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.measures, 
+      en: translations.en.menuItems.measures
+    }, 
+    path: '/measures' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.testimonials, 
+      en: translations.en.menuItems.testimonials
+    }, 
+    path: '/testimonials' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.library, 
+      en: translations.en.menuItems.library
+    }, 
+    path: '/library' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.articles, 
+      en: translations.en.menuItems.articles
+    }, 
+    path: '/article' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.faq, 
+      en: translations.en.menuItems.faq
+    }, 
+    path: '/faq' 
+  },
+  { 
+    name: { 
+      ar: translations.ar.menuItems.contact, 
+      en: translations.en.menuItems.contact
+    }, 
+    path: '/contact' 
+  }
+]
+
+const scrolled = ref(false)
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 50
+}
+>>>>>>> origin/main
 </script>
 
 <style scoped>
