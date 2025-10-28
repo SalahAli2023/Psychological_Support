@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../components/frontend/home.vue'
+import AboutPage  from '../components/frontend/AboutPage.vue' 
+
 import EventsPage from '../components/frontend/EventsPage.vue'
 import MeasuresPage from '../components/frontend/MeasuresPage.vue'
 
@@ -18,6 +20,11 @@ const routes = [
     path: '/events',
     name: 'Events',
     component: EventsPage
+  },
+   { 
+    path: '/about', 
+    name: 'About', 
+    component: AboutPage 
   },
   {
     path: '/measures',
