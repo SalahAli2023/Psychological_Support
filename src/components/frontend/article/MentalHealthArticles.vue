@@ -1,48 +1,36 @@
 <template>
-  <div v-cloak>
+  <div class="font-almarai" >
+    <!-- Header -->
+    <Header />
+
     <!-- Hero Section -->
-    <section class="py-20 hero-gradient">
-      <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-      </div>
-      <div class="container mx-auto px-4 text-center relative z-10">
-        <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-4">
-          <span class="text-primary">مقالات</span>
-          <span class="text-secondary"> الدعم النفسي</span>
-        </h1>
-        <p class="text-gray-600 text-xl max-w-2xl mx-auto mb-8">
-          اكتشف مقالات متنوعة في مجال الصحة النفسية والدعم النفسي والتنمية الذاتية
-        </p>
-        <div class="flex justify-center gap-4">
-          <button class="btn-primary px-8 py-3 rounded-lg font-medium flex items-center gap-2">
-            <i class="fas fa-play-circle"></i>
-            ابدأ الرحلة
-          </button>
-          <button class="px-8 py-3 rounded-lg font-medium flex items-center gap-2 border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors">
-            <i class="fas fa-info-circle"></i>
-            المزيد عنا
-          </button>
-        </div>
-      </div>
-    </section>
+    <Hero 
+      title="مقالات الدعم النفسي"
+      highlight=""
+      subtitle="اكتشف مقالات متنوعة في مجال الصحة النفسية والدعم النفسي والتنمية الذاتية"
+      :buttons="[
+        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
+        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
+      ]"
+    />
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-16">
+    <div class="max-w-7xl mx-auto px-4 py-8">
       <!-- Category Filter -->
-       <div class="w-full flex justify-center">
-        <CategoryFilter 
-          :categories="categories"
-          :activeCategory="activeCategory"
-          @category-change="handleCategoryChange"
-          @search-change="handleSearchChange"
-        />
-       </div>
+      <div class="w-full flex justify-center mb-8">
+        <div class="w-full max-w-4xl">
+          <CategoryFilter 
+            :categories="categories"
+            :activeCategory="activeCategory"
+            @category-change="handleCategoryChange"
+            @search-change="handleSearchChange"
+          />
+        </div>
+      </div>
 
       <!-- Articles Grid -->
-      <div class="articles-container">
-        <div class="articles-grid">
+      <div class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ArticleCard
             v-for="article in paginatedArticles"
             :key="article.id"
@@ -53,14 +41,14 @@
       </div>
 
       <!-- No Results -->
-      <div v-if="filteredArticles.length === 0" class="no-results">
-        <i class="fas fa-search"></i>
-        <h3 class="text-xl font-bold text-gray-600 mb-2">لا توجد مقالات</h3>
-        <p class="text-gray-500">جرب بحثاً آخر أو فئة مختلفة</p>
+      <div v-if="filteredArticles.length === 0" class="text-center py-12 bg-white rounded-xl shadow-md">
+        <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+        <h3 class="text-xl font-bold text-[#065f46] mb-2">لا توجد مقالات</h3>
+        <p class="text-gray-600">جرب بحثاً آخر أو فئة مختلفة</p>
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="text-center mt-16">
+      <div v-if="totalPages > 1" class="flex justify-center mt-8">
         <Pagination 
           :current-page="currentPage"
           :total-pages="totalPages"
@@ -68,18 +56,27 @@
           @page-change="handlePageChange"
         />
       </div>
-    </main>
+    </div>
+
+   
   </div>
 </template>
 
 <script>
+import Header from '@/components/frontend/layouts/header.vue'
+import Footer from '@/components/frontend/layouts/footer.vue'
+import Hero from '@/components/frontend/layouts/hero.vue'
 import ArticleCard from './ArticleCard.vue'
 import CategoryFilter from './CategoryFilter.vue'
 import Pagination from './Pagination.vue'
 import { articles } from './articles-data.js'
+
 export default {
   name: 'MentalHealthArticles',
   components: {
+    Header,
+    Footer,
+    Hero,
     ArticleCard,
     CategoryFilter,
     Pagination
@@ -98,8 +95,7 @@ export default {
         { id: 'تنمية الذات', name: 'تنمية الذات', icon: 'fa-rocket' },
         { id: 'العلاقات', name: 'العلاقات', icon: 'fa-handshake' },
       ],
-       articles: articles
-      
+      articles: articles
     };
   },
   computed: {
@@ -140,3 +136,20 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* تحسينات إضافية للغة العربية */
+.font-almarai {
+  font-family: 'Almarai', sans-serif;
+}
+
+/* تحسين المسافات للعربية */
+.grid > * {
+  margin-bottom: 1.5rem;
+}
+
+/* تحسين الظلال */
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+</style>

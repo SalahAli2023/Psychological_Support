@@ -10,7 +10,7 @@
       <div class="border-b border-gray-700/50">
         <div class="max-w-7xl mx-auto px-6 py-16">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div class="text-center lg:text-right">
+            <div class="">
               <h2 class="text-3xl font-bold mb-4">
                 <span class="text-white">ابقَ على </span>
                 <span class="text-[#9EBF3B]">اتصال</span>
@@ -24,7 +24,7 @@
               <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 shadow-2xl w-full max-w-md">
                 <form class="space-y-4">
                   <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2 text-right">البريد الإلكتروني</label>
+                    <label class="block text-gray-300 text-sm font-medium mb-2 ">البريد الإلكتروني</label>
                     <input 
                       type="email" 
                       placeholder="example@email.com"

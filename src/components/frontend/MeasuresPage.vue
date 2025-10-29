@@ -31,7 +31,7 @@
       <GuidelinesSection />
       
       <!-- الموارد -->
-      <ResourcesSection :resources="resources" />
+      <!-- <ResourcesSection :resources="resources" /> -->
     </main>
     
     <Footer />
