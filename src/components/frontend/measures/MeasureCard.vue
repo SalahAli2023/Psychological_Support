@@ -60,6 +60,7 @@
 <script>
 export default {
   name: 'MeasureCard',
+  
   props: {
     measure: {
       type: Object,
