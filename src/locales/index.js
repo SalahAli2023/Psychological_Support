@@ -1,5 +1,7 @@
 // src/locales/index.js
 
+import Home from "../components/frontend/home.vue"
+
 export const translations = {
   ar: {
     header: {
@@ -11,8 +13,10 @@ export const translations = {
       closeMenu: 'إغلاق القائمة'
     },
     menuItems: {
+      Home: 'الرئيسية ',
       about: 'من نحن',
       services: 'خدماتنا',
+      library: 'المكتبة',
       specialists: 'الأخصائيون',
       sessions: 'جلسات الدعم',
       events: 'الفعاليات والورش',
@@ -34,9 +38,11 @@ export const translations = {
       closeMenu: 'Close Menu'
     },
     menuItems: {
+       Home: 'Home',
       about: 'About Us',
       services: 'Our Services',
       specialists: 'Specialists',
+      library: 'library',
       sessions: 'Support Sessions',
       events: 'Events & Workshops',
       measures: 'Measurements',

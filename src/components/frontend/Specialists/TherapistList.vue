@@ -20,7 +20,7 @@
       <div class="lg:hidden mb-4">
         <button 
           @click="showMobileFilter = !showMobileFilter"
-          class="w-full flex items-center justify-between p-3 bg-[#D6A29A] text-white rounded-xl shadow-lg hover:shadow-xl transition-all"
+          class="w-full flex items-center justify-between p-3 bg-[#D6A29A] text-white rounded-xl shadow hover:shadow-md transition-all"
         >
           <span class="flex items-center gap-2 font-bold text-base sm:text-lg">
             <i class="fas fa-sliders-h"></i>
@@ -41,7 +41,7 @@
             v-if="showMobileFilter && windowWidth < 1024" 
             class="lg:hidden mb-4 relative z-40"
           >
-            <div class="bg-white rounded-2xl shadow-2xl border border-[#9EBF3B] p-4 max-h-96 overflow-y-auto">
+            <div class="bg-white rounded-2xl shadow-lg border border-[#9EBF3B] p-4 max-h-96 overflow-y-auto">
               <!-- Mobile Header -->
               <div class="flex items-center justify-between mb-4 pb-4 border-b border-[#9EBF3B] sticky top-0 bg-white">
                 <h2 class="text-xl font-bold text-[#065f46]">تصفية النتائج</h2>
@@ -52,7 +52,7 @@
 
               <!-- Selected chips -->
               <div v-if="filters.specializations.length" class="flex flex-wrap gap-2 mb-4 p-3 bg-[#D6A29A]/10 rounded-xl">
-                <span v-for="spec in filters.specializations" :key="`chip-${spec}`" class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-white text-[#065f46] border border-[#D6A29A] shadow-sm">
+                <span v-for="spec in filters.specializations" :key="`chip-${spec}`" class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-white text-[#065f46] border border-[#D6A29A]">
                   {{ spec }}
                   <button @click="removeSpecialization(spec)" class="hover:text-red-600 transition-colors pr-1">
                     <i class="fas fa-times text-xs"></i>
@@ -119,10 +119,10 @@
 
               <!-- Action Buttons -->
               <div class="space-y-2 sticky bottom-0 bg-white pt-2">
-                <button @click="resetFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all text-sm">
+                <button @click="resetFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
                   إعادة ضبط
                 </button>
-                <button @click="applyFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all text-sm">
+                <button @click="applyFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
                   بحث
                 </button>
               </div>
@@ -130,7 +130,7 @@
           </div>
 
           <!-- Results Count -->
-          <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm mb-4">
+          <div class="bg-white p-3 sm:p-4 rounded-xl shadow mb-4">
             <p class="text-sm sm:text-base text-gray-600">
               عرض <span class="font-bold text-[#D6A29A]">{{ filteredTherapists.length }}</span> أخصائي
             </p>
@@ -138,10 +138,10 @@
 
           <!-- Therapists List -->
           <div class="space-y-4 sm:space-y-6">
-            <div v-for="(therapist, index) in filteredTherapists" :key="therapist.id" class="p-4 sm:p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow">
+            <div v-for="(therapist, index) in filteredTherapists" :key="therapist.id" class="p-4 sm:p-6 bg-white rounded-xl shadow hover:shadow-lg transition-shadow">
               <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
                 <!-- Profile Image -->
-                <div class="flex justify-center sm:justify-start">
+                <div class="flex  sm:justify-start">
                   <div class="relative">
                     <img :src="therapist.image" :alt="therapist.name" 
                          class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4"
@@ -172,9 +172,9 @@
                     </div>
 
                     <!-- Book Button -->
-                    <div class="flex justify-center sm:justify-end">
+                    <div class="flex justify-end sm:justify-end">
                       <router-link :to="`/therapist/${therapist.id}`" 
-                                   class="text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all text-sm sm:text-base bg-[#D6A29A] hover:bg-[#c9928a]">
+                                   class="text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all text-sm sm:text-base bg-[#D6A29A] hover:bg-[#c9928a]">
                         احجز
                       </router-link>
                     </div>
@@ -184,13 +184,13 @@
             </div>
 
             <!-- No Results Message -->
-            <div v-if="filteredTherapists.length === 0" class="text-center py-8 sm:py-12 bg-white rounded-xl shadow-sm">
+            <div v-if="filteredTherapists.length === 0" class="text-center py-8 sm:py-12 bg-white rounded-xl shadow">
               <i class="fas fa-search text-4xl sm:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
               <h3 class="text-xl sm:text-2xl font-bold text-gray-600 mb-2">لا توجد نتائج</h3>
               <p class="text-gray-500 text-sm sm:text-base mb-4">لم نتمكن من العثور على أخصائيين مطابقين لمعايير البحث</p>
               <button 
                 @click="resetFilters" 
-                class="bg-[#D6A29A] hover:bg-[#c9928a] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-sm sm:text-base"
+                class="bg-[#D6A29A] hover:bg-[#c9928a] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition-all text-sm sm:text-base"
               >
                 عرض جميع الأخصائيين
               </button>
@@ -200,7 +200,7 @@
 
         <!-- Filter Sidebar - Desktop -->
         <div class="hidden lg:block w-80">
-          <div class="p-6 bg-white rounded-2xl shadow-xl border border-[#9EBF3B] sticky top-8">
+          <div class="p-6 bg-white rounded-2xl shadow-lg border border-[#9EBF3B] sticky top-8">
             <!-- Desktop Header -->
             <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#9EBF3B]">
               <div class="flex items-center gap-3">
@@ -214,7 +214,7 @@
 
             <!-- Selected chips -->
             <div v-if="filters.specializations.length" class="flex flex-wrap gap-2 mb-6 p-4 bg-[#D6A29A]/10 rounded-xl">
-              <span v-for="spec in filters.specializations" :key="`chip-${spec}`" class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-full bg-white text-[#065f46] border border-[#D6A29A] shadow-sm">
+              <span v-for="spec in filters.specializations" :key="`chip-${spec}`" class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-full bg-white text-[#065f46] border border-[#D6A29A]">
                 {{ spec }}
                 <button @click="removeSpecialization(spec)" class="hover:text-red-600 transition-colors pr-1">
                   <i class="fas fa-times text-xs"></i>
@@ -281,10 +281,10 @@
 
             <!-- Action Buttons -->
             <div class="space-y-3">
-              <button @click="resetFilters" class="w-full bg-[#ef4444] hover:bg-[#dc2626] text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+              <button @click="resetFilters" class="w-full bg-[#ef4444] hover:bg-[#dc2626] text-white py-4 rounded-xl font-bold shadow hover:shadow-md transition-all">
                  إعادة ضبط
               </button>
-              <button @click="applyFilters" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+              <button @click="applyFilters" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold shadow hover:shadow-md transition-all">
                  بحث
               </button>
             </div>

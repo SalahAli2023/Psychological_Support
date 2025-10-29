@@ -18,8 +18,8 @@
 
 <script setup>
 import articles from '@/components/frontend/homepage/articles.vue'
-import Header from '@/components/frontend/homepage/hero.vue'
-import Hero from '@/components/frontend/layouts/header.vue'
+import Header from '@/components/frontend/layouts/header.vue'
+import Hero from '@/components/frontend/homepage/hero.vue'
 import HeadingComponent from '@/components/frontend/homepage/HeadingComponent.vue'
 import Feilds from '@/components/frontend/homepage/Feilds.vue'
 import Doctors from '@/components/frontend/homepage/doctors.vue'

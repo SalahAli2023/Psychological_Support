@@ -81,7 +81,7 @@
                     </div>
 
                     <!-- المعلومات -->
-                    <div class="text-center lg:text-right transition-all duration-700 delay-400 order-1 lg:order-2"
+                    <div class=" transition-all duration-700 delay-400 order-1 lg:order-2"
                          :class="expertInfoClass">
                       <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">{{ expert.name }}</h3>
                       <p class="text-lg sm:text-xl text-[#D6A29A] font-semibold mb-4 md:mb-6">{{ expert.specialty }}</p>
