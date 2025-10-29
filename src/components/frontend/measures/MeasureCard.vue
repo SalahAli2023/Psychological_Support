@@ -1,5 +1,5 @@
 <template>
-  <div class="test-card bg-white rounded-xl shadow-lg p-6 cursor-pointer" @click="$emit('click')">
+  <div class="test-card bg-white rounded-xl shadow-lg p-6 cursor-pointer" @click="$emit('measure-click', measure)">
     <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
       <i :class="measure.icon" class="text-primary-pink"></i>
       {{ measure.title }}
@@ -32,7 +32,7 @@ export default {
       required: true
     }
   },
-  emits: ['click']
+  emits: ['measure-click']
 }
 </script>
 
