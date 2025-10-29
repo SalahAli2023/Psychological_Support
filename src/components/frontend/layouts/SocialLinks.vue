@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap justify-center gap-3 mt-10 text-3xl">
+  <div class="flex flex-wrap justify-center gap-3 mt-3 text-3xl">
     <a
       v-for="icon in socialIcons"
       :key="icon.icon"

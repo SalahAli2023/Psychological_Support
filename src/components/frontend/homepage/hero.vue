@@ -16,7 +16,7 @@
 
     <!-- المحتوى الرئيسي -->
     <div
-      class="absolute inset-0 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-start px-4 gap-6 items-center justify-center text-center sm:text-right sm:bottom-20 sm:right-20 sm:inset-auto"
+      class="absolute inset-0 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-start px-4 gap-6 items-center justify-center text-center  sm:bottom-20 sm:ps-20 sm:inset-auto"
     >
       <!-- زر الفأرة -->
       <div class="pt-2 hidden md:block animate-fadeUp delay-[1200ms]">

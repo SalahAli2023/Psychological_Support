@@ -1,687 +1,421 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="font-almarai" dir="rtl">
+    <!-- Header -->
     <Header />
-    
-    <!-- Hero Section للمكتبة -->
-    <Hero
-      title="مكتبة "
-      highlight="الموارد النفسية"
-      subtitle="استكشف مجموعة واسعة من الكتب، المقالات، والأدلة العلمية في مجال الصحة النفسية والدعم الذاتي"
-      :buttons="heroButtons"
-      :floatingShapes="true"
+
+    <!-- Hero Section -->
+    <Hero 
+      title="مكتبتنا الإلكترونية"
+      highlight="اكتشف عالماً من المعرفة"
+      subtitle="تصفح مجموعتنا الواسعة من الكتب والمراجع في مختلف المجالات واستمتع بتجربة قراءة فريدة"
+      :buttons="[
+        { text: 'ابدأ التصفح', icon: 'fas fa-book-open', primary: true },
+        { text: 'تعرف علينا أكثر', icon: 'fas fa-info-circle', primary: false }
+      ]"
     />
-
+   <!-- قسم الفعاليات والورش -->
+    <!-- <section id="events-section" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-6"> -->
     <!-- محتوى المكتبة -->
-    <main class="py-16">
-      <div class="container mx-auto px-4">
-        
-        <!-- شريط البحث والتصفية -->
-        <div class="search-filter-container mb-12">
-          <div class="search-filter-bar">
-            <!-- محرك البحث -->
-            <div class="search-box">
-              <i class="fas fa-search search-icon"></i>
-              <input
-                type="text"
-                v-model="searchQuery"
-                @input="handleSearch"
-                placeholder="ابحث في المكتبة..."
-                class="search-input"
-              />
-            </div>
+    <section class="max-w-7xl mx-auto px-6 py-10">
+      <!-- محتوى الصفحة -->
+      <div class="flex flex-col md:flex-row gap-6">
+        <!-- الفلترة -->
+        <!-- زر فتح الفلتر للجوال -->
+        <button 
+          @click="toggleMobileFilter"
+          class="md:hidden w-full bg-white border border-gray-300 px-4 py-3 rounded-lg flex items-center justify-between font-semibold text-gray-700 mb-4 shadow-sm"
+        >
+          <span>فلاتر البحث</span>
+          <i :class="showMobileFilter ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-[#9EBF3B]"></i>
+        </button>
 
-            <!-- القائمة المنسدلة للتصنيفات -->
-            <div class="dropdown-container">
-              <div class="dropdown-trigger" @click="toggleDropdown">
-                <span>
-                  <i :class="['fas', activeCategoryIcon]"></i>
-                  {{ activeCategoryName }}
-                </span>
-                <i class="fas fa-chevron-down dropdown-arrow" :class="{ rotated: isDropdownOpen }"></i>
+        <!-- الفلتر للجوال (منسدل) -->
+        <div v-if="showMobileFilter" class="md:hidden bg-white p-4 rounded-lg shadow-lg mb-6 border border-gray-200">
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+            <h3 class="font-bold text-lg text-gray-800">فلاتر البحث</h3>
+            <button @click="toggleMobileFilter" class="text-gray-500 hover:text-red-500 transition">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <!-- === بداية التصميم الجديد للفلاتر المنسدلة بدون سكرول === -->
+            <div v-for="(items, title) in filters" :key="title" class="filter-dropdown">
+              <button 
+                @click="toggleDropdown(title)"
+                class="w-full flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition border border-gray-200"
+              >
+                <span class="font-medium text-gray-700">{{ title }}</span>
+                <i :class="openDropdowns[title] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-[#9EBF3B] transition-transform duration-300"></i>
+              </button>
+              
+              <transition
+                enter-active-class="transition-all duration-300 ease-out"
+                leave-active-class="transition-all duration-200 ease-in"
+                enter-from-class="opacity-0 max-h-0"
+                enter-to-class="opacity-100 max-h-96"
+                leave-from-class="opacity-100 max-h-96"
+                leave-to-class="opacity-0 max-h-0"
+              >
+                <div v-if="openDropdowns[title]" class="mt-2 space-y-2 overflow-hidden">
+                  <div 
+                    v-for="item in items" 
+                    :key="item"
+                    class="flex items-center p-2 rounded hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+                    @click="toggleFilterItem(title, item)"
+                  >
+                    <div class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded mr-2 transition-all duration-200"
+                         :class="isFilterSelected(title, item) ? 'bg-[#9EBF3B] border-[#9EBF3B]' : 'bg-white'">
+                      <i v-if="isFilterSelected(title, item)" class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <span :class="isFilterSelected(title, item) ? 'text-[#9EBF3B] font-medium' : 'text-gray-700'">
+                      {{ item }}
+                    </span>
+                  </div>
+                </div>
+              </transition>
+            </div>
+            <!-- === نهاية التصميم الجديد === -->
+          </div>
+          
+          <div class="flex gap-3 mt-6 pt-4 border-t border-gray-100">
+            <button
+              @click="clearFilters"
+              class="flex-1 border border-red-500 text-red-500 px-4 py-3 rounded-lg hover:bg-red-50 transition font-semibold flex items-center justify-center gap-2"
+            >
+              <i class="fas fa-times"></i>
+              مسح الكل
+            </button>
+            <button
+              @click="toggleMobileFilter"
+              class="flex-1 bg-[#9EBF3B] text-white px-4 py-3 rounded-lg hover:bg-[#8cad35] transition font-semibold flex items-center justify-center gap-2"
+            >
+              <i class="fas fa-check"></i>
+              تطبيق
+            </button>
+          </div>
+        </div>
+
+        <!-- === بداية التصميم الجديد للفلاتر المنسدلة على الشاشات الكبيرة === -->
+        <div class="hidden md:block w-full md:w-1/4 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
+          <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+            <h3 class="font-bold text-xl text-gray-800">تصفية النتائج</h3>
+            <button 
+              @click="clearFilters" 
+              class="text-sm text-red-500 hover:text-red-700 transition flex items-center gap-1 font-medium"
+            >
+              <i class="fas fa-redo-alt text-xs"></i>
+              إعادة تعيين
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div v-for="(items, title) in filters" :key="title" class="filter-dropdown">
+              <button 
+                @click="toggleDropdown(title)"
+                class="w-full flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition border border-gray-200"
+              >
+                <span class="font-medium text-gray-700">{{ title }}</span>
+                <i :class="openDropdowns[title] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-[#9EBF3B] transition-transform duration-300"></i>
+              </button>
+              
+              <transition
+                enter-active-class="transition-all duration-300 ease-out"
+                leave-active-class="transition-all duration-200 ease-in"
+                enter-from-class="opacity-0 max-h-0"
+                enter-to-class="opacity-100 max-h-96"
+                leave-from-class="opacity-100 max-h-96"
+                leave-to-class="opacity-0 max-h-0"
+              >
+                <div v-if="openDropdowns[title]" class="mt-2 space-y-2 overflow-hidden">
+                  <div 
+                    v-for="item in items" 
+                    :key="item"
+                    class="flex items-center p-2 rounded hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+                    @click="toggleFilterItem(title, item)"
+                  >
+                    <div class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded mr-2 transition-all duration-200"
+                         :class="isFilterSelected(title, item) ? 'bg-[#9EBF3B] border-[#9EBF3B]' : 'bg-white'">
+                      <i v-if="isFilterSelected(title, item)" class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <span :class="isFilterSelected(title, item) ? 'text-[#9EBF3B] font-medium' : 'text-gray-700'">
+                      {{ item }}
+                    </span>
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </div>
+        </div>
+        <!-- === نهاية التصميم الجديد === -->
+
+        <!-- عرض الكتب -->
+        <div class="flex-1">
+          <!-- إخفاء البحث على الجوال -->
+          <div class="hidden md:flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+            <div class="flex gap-2 w-full">
+              <input
+                v-model="search"
+                type="text"
+                placeholder="البحث عن كتاب، مؤلف، أو كلمة مفتاحية..."
+                class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#9EBF3B] focus:border-transparent text-gray-700"
+              />
+              <button
+                @click="searchBooks"
+                class="bg-[#9EBF3B] text-white px-6 py-3 rounded-lg hover:bg-[#8cad35] transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
+              >
+                <i class="fas fa-search"></i>
+                <span class="hidden sm:inline">بحث</span>
+              </button>
+            </div>
+          </div>
+          <!-- عرض النتائج -->
+          <div class="mb-4 text-gray-600">
+            {{ filteredBooks.length }} كتاب متوفر
+          </div>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div
+              v-for="book in filteredBooks"
+              :key="book.id"
+              class="bg-white rounded-lg shadow hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+              @click="viewBook(book.id)"
+            >
+              <!-- صورة الكتاب -->
+              <div class="relative h-48 overflow-hidden">
+                <img 
+                  :src="book.cover" 
+                  :alt="book.title" 
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                />
+                
+                <!-- زر المفضلة -->
+                <button
+                  @click.stop="toggleFavorite(book.id)"
+                  class="absolute top-2 left-2 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-300 shadow-md"
+                >
+                  <i :class="book.isFavorite ? 'fas text-red-500' : 'far text-gray-600'" class="fa-heart"></i>
+                </button>
               </div>
               
-              <div class="dropdown-menu" :class="{ open: isDropdownOpen }">
-                <div
-                  v-for="category in libraryCategories"
-                  :key="category.id"
-                  @click="handleCategoryChange(category.id)"
-                  :class="['dropdown-item', { active: selectedCategory === category.id }]"
-                >
-                  <i :class="['fas', category.icon]"></i>
-                  {{ category.name }}
+              <!-- معلومات الكتاب -->
+              <div class="p-3">
+                <h3 class="text-sm font-semibold text-gray-800 mb-1 line-clamp-2 text-center">{{ book.title }}</h3>
+                <p class="text-xs text-gray-600 text-center">{{ book.author }}</p>
+                <div class="flex justify-center items-center mt-2">
+                  <div class="flex text-yellow-400">
+                    <i v-for="star in 5" :key="star" 
+                       :class="star <= Math.floor(book.rating) ? 'fas' : star - 0.5 <= book.rating ? 'fas fa-star-half-alt' : 'far'" 
+                       class="fa-star text-xs">
+                    </i>
+                  </div>
+                  <span class="text-xs text-gray-500 mr-1">({{ book.rating }})</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- إحصائيات سريعة -->
-        <div class="stats-section mb-16">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- بطاقة الإحصائيات 1 -->
-            <div class="stats-card-professional group" data-color="green">
-              <div class="stats-icon-wrapper">
-                <i class="fas fa-book stats-icon-clean"></i>
-                <div class="stats-pulse-effect-clean"></div>
-              </div>
-              <div class="stats-content">
-                <h3 class="stats-number">{{ libraryStats.totalItems }}</h3>
-                <p class="stats-label">مورد متاح</p>
-                <div class="stats-tag">
-                  <span>الأكثر طلباً</span>
-                </div>
-              </div>
-              <div class="stats-decoration">
-                <div class="stats-dot stats-dot-1"></div>
-                <div class="stats-dot stats-dot-2"></div>
-                <div class="stats-dot stats-dot-3"></div>
-              </div>
-            </div>
-
-            <!-- بطاقة الإحصائيات 2 -->
-            <div class="stats-card-professional group" data-color="pink">
-              <div class="stats-icon-wrapper">
-                <i class="fas fa-book-open stats-icon-clean"></i>
-                <div class="stats-pulse-effect-clean"></div>
-              </div>
-              <div class="stats-content">
-                <h3 class="stats-number">{{ libraryStats.books }}</h3>
-                <p class="stats-label">كتاب</p>
-                <div class="stats-tag">
-                  <span>متنوع</span>
-                </div>
-              </div>
-              <div class="stats-decoration">
-                <div class="stats-dot stats-dot-1"></div>
-                <div class="stats-dot stats-dot-2"></div>
-                <div class="stats-dot stats-dot-3"></div>
-              </div>
-            </div>
-
-            <!-- بطاقة الإحصائيات 3 -->
-            <div class="stats-card-professional group" data-color="green">
-              <div class="stats-icon-wrapper">
-                <i class="fas fa-file-alt stats-icon-clean"></i>
-                <div class="stats-pulse-effect-clean"></div>
-              </div>
-              <div class="stats-content">
-                <h3 class="stats-number">{{ libraryStats.articles }}</h3>
-                <p class="stats-label">مقال علمي</p>
-                <div class="stats-tag">
-                  <span>أكاديمي</span>
-                </div>
-              </div>
-              <div class="stats-decoration">
-                <div class="stats-dot stats-dot-1"></div>
-                <div class="stats-dot stats-dot-2"></div>
-                <div class="stats-dot stats-dot-3"></div>
-              </div>
-            </div>
-
-            <!-- بطاقة الإحصائيات 4 -->
-            <div class="stats-card-professional group" data-color="pink">
-              <div class="stats-icon-wrapper">
-                <i class="fas fa-download stats-icon-clean"></i>
-                <div class="stats-pulse-effect-clean"></div>
-              </div>
-              <div class="stats-content">
-                <h3 class="stats-number">{{ libraryStats.downloads }}+</h3>
-                <p class="stats-label">تحميل</p>
-                <div class="stats-tag">
-                  <span>متصاعد</span>
-                </div>
-              </div>
-              <div class="stats-decoration">
-                <div class="stats-dot stats-dot-1"></div>
-                <div class="stats-dot stats-dot-2"></div>
-                <div class="stats-dot stats-dot-3"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- عرض الموارد -->
-        <div class="articles-container">
-          <div v-if="filteredItems.length > 0" class="articles-grid">
-            <LibraryCard
-              v-for="item in paginatedItems"
-              :key="item.id"
-              :item="item"
-              @download="handleDownload"
-              @preview="handlePreview"
-            />
-          </div>
-
+          
           <!-- لا توجد نتائج -->
-          <div v-else class="no-results">
-            <i class="fas fa-search"></i>
-            <h3 class="text-2xl font-bold text-gray-700 mb-4">لم نعثر على نتائج</h3>
-            <p class="text-gray-600 text-lg">جرب استخدام كلمات بحث مختلفة أو تغيير الفلاتر</p>
+          <div v-if="filteredBooks.length === 0" class="text-center py-12">
+            <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</h3>
+            <p class="text-gray-500">جرب تغيير كلمات البحث أو الفلاتر</p>
           </div>
-        </div>
-
-        <!-- الترقيم -->
-        <div v-if="filteredItems.length > 0" class="pagination-container">
-          <Pagination
-            :current-page="currentPage"
-            :total-pages="totalPages"
-            :total-items="filteredItems.length"
-            :items-per-page="itemsPerPage"
-            @page-change="handlePageChange"
-          />
         </div>
       </div>
-    </main>
+    </section>
 
+    <!-- Footer -->
     <Footer />
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import Header from '@/components/frontend/layouts/Header.vue'
-import Footer from '@/components/frontend/layouts/Footer.vue'
+<script>
+import Header from '@/components/frontend/layouts/header.vue'
+import Footer from '@/components/frontend/layouts/footer.vue'
 import Hero from '@/components/frontend/layouts/hero.vue'
-import LibraryCard from './LibraryCard.vue'
-import Pagination from '../article/Pagination.vue'
-import { libraryData, categories, libraryStats } from './libraryData.js'
 
-const searchQuery = ref('')
-const selectedCategory = ref('')
-const selectedType = ref('')
-const currentPage = ref(1)
-const itemsPerPage = 6
-const isDropdownOpen = ref(false)
-
-const heroButtons = [
-  {
-    text: 'استكشاف المكتبة',
-    icon: 'fas fa-search',
-    primary: true
+export default {
+  name: 'BooksPage',
+  components: {
+    Header,
+    Footer,
+    Hero
   },
-  {
-    text: 'كيفية الاستخدام',
-    icon: 'fas fa-question-circle',
-    primary: false
-  }
-]
-
-const libraryCategories = [
-  { id: '', name: 'جميع الموارد', icon: 'fa-list' },
-  { id: 'anxiety', name: 'القلق والتوتر', icon: 'fa-brain' },
-  { id: 'depression', name: 'الاكتئاب', icon: 'fa-cloud' },
-  { id: 'relationships', name: 'العلاقات', icon: 'fa-heart' },
-  { id: 'self-development', name: 'التنمية الذاتية', icon: 'fa-user-graduate' },
-  { id: 'parenting', name: 'تربية الأطفال', icon: 'fa-baby' },
-  { id: 'trauma', name: 'الصدمات', icon: 'fa-first-aid' },
-  { id: 'addiction', name: 'الإدمان', icon: 'fa-ban' },
-  { id: 'work-stress', name: 'ضغوط العمل', icon: 'fa-briefcase' }
-]
-
-// العناصر المصفاة
-const filteredItems = computed(() => {
-  let filtered = libraryData
-
-  // تصفية حسب البحث
-  if (searchQuery.value) {
-    filtered = filtered.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      item.author.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  }
-
-  // تصفية حسب الفئة
-  if (selectedCategory.value) {
-    filtered = filtered.filter(item => item.category === selectedCategory.value)
-  }
-
-  return filtered
-})
-
-// العناصر المعروضة في الصفحة الحالية
-const paginatedItems = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  return filteredItems.value.slice(startIndex, endIndex)
-})
-
-// إجمالي عدد الصفحات
-const totalPages = computed(() => {
-  return Math.ceil(filteredItems.value.length / itemsPerPage)
-})
-
-// معلومات الفئة النشطة
-const activeCategoryName = computed(() => {
-  const category = libraryCategories.find(cat => cat.id === selectedCategory.value)
-  return category ? category.name : 'جميع الموارد'
-})
-
-const activeCategoryIcon = computed(() => {
-  const category = libraryCategories.find(cat => cat.id === selectedCategory.value)
-  return category ? category.icon : 'fa-list'
-})
-
-const handleCategoryChange = (categoryId) => {
-  selectedCategory.value = categoryId
-  currentPage.value = 1
-  isDropdownOpen.value = false
-}
-
-const handleSearch = () => {
-  currentPage.value = 1
-}
-
-const handlePageChange = (page) => {
-  currentPage.value = page
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
-}
-
-const handleDownload = (item) => {
-  console.log('تحميل:', item.title)
-  // هنا يمكن إضافة منطق التحميل الفعلي
-}
-
-const handlePreview = (item) => {
-  console.log('معاينة:', item.title)
-  // هنا يمكن إضافة منطق المعاينة
-}
-
-onMounted(() => {
-  // إغلاق القائمة المنسدلة عند النقر خارجها
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.dropdown-container')) {
-      isDropdownOpen.value = false
+  data() {
+    return {
+      search: "",
+      showMobileFilter: false,
+      openDropdowns: {
+        التصنيفات: true,
+        "اسم المؤلف": false,
+        اللغة: false,
+        "سنة النشر": false,
+        التقييم: false
+      },
+      selectedFilters: {
+        التصنيفات: [],
+        "اسم المؤلف": [],
+        اللغة: [],
+        "سنة النشر": [],
+        التقييم: []
+      },
+      filters: {
+        التصنيفات: ["علم النفس", "التنمية الذاتية", "الأطفال", "العلاج الأسري", "القلق والتوتر", "العلاقات", "الإدمان"],
+        "اسم المؤلف": ["د.محمد طه", "جينى بيب", "د.شارون مارتين", "جوناثان هايدت", "د.برين براون", "د.سارة أحمد", "د.أحمد خالد", "د.نورة السعيد", "د.ياسمين علي"],
+        اللغة: ["عربي", "إنجليزي"],
+        "سنة النشر": ["2024", "2023", "2022", "2021", "2020", "2019"],
+        التقييم: ["5 نجوم", "4 نجوم", "3 نجوم", "نجمتان", "نجمة"]
+      },
+      books: [
+        { id: 1, title: "لا بطعم الفلامنكو", author: "د.محمد طه", category: "علم النفس", year: "2024", rating: 4.5, cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop", description: "كتاب يقدم رؤية جديدة في فهم وتحليل السلوك البشري.", isFavorite: false },
+        { id: 2, title: "مرحبا طفلي ووداعا أفكاري المتطفلة", author: "جينى بيب", category: "الأطفال", year: "2023", rating: 4.8, cover: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop", description: "دليل عملي للآباء للتعامل مع الأفكار السلبية.", isFavorite: false },
+        { id: 3, title: "الدليل العملي للعلاج المعرفي السلوكي", author: "د.شارون مارتين", category: "علم النفس", year: "2023", rating: 4.6, cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop", description: "استراتيجيات فعالة للتغلب على السلوك الكمالي.", isFavorite: false },
+        { id: 4, title: "الجيل المضطرب", author: "جوناثان هايدت", category: "علم النفس", year: "2024", rating: 4.7, cover: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=600&fit=crop", description: "تحليل عميق لتأثير شبكات التواصل الاجتماعي.", isFavorite: false },
+        { id: 5, title: "الضعف الذي يجعلنا أقوياء", author: "د.برين براون", category: "التنمية الذاتية", year: "2022", rating: 4.9, cover: "https://images.unsplash.com/photo-1589998059171-988d887df646?w=400&h=600&fit=crop", description: "كيف يمكن للضعف أن يكون مصدراً للقوة.", isFavorite: false },
+        { id: 6, title: "العلاج الأسري في القرن الحادي والعشرين", author: "د.سارة أحمد", category: "العلاج الأسري", year: "2023", rating: 4.4, cover: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=600&fit=crop", description: "تطورات وتقنيات حديثة في العلاج الأسري.", isFavorite: false },
+        { id: 7, title: "القلق وكيفية التغلب عليه", author: "د.أحمد خالد", category: "القلق والتوتر", year: "2024", rating: 4.3, cover: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3f?w=400&h=600&fit=crop", description: "استراتيجيات عملية للتعامل مع اضطرابات القلق.", isFavorite: false },
+        { id: 8, title: "تنمية الذكاء العاطفي لدى الأطفال", author: "د.نورة السعيد", category: "الأطفال", year: "2023", rating: 4.6, cover: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=600&fit=crop", description: "دليل شامل لتنمية الذكاء العاطفي لدى الأطفال.", isFavorite: false },
+        { id: 9, title: "فن التواصل في العلاقات", author: "د.ياسمين علي", category: "العلاقات", year: "2024", rating: 4.5, cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop", description: "أساليب فعالة لتحسين التواصل في العلاقات الشخصية.", isFavorite: false },
+        { id: 10, title: "التعافي من الإدمان", author: "د.خالد السعدي", category: "الإدمان", year: "2023", rating: 4.7, cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop", description: "رحلة التعافي من الإدمان بأساليب علمية.", isFavorite: false },
+        { id: 11, title: "المرونة النفسية", author: "د.سمر القحطاني", category: "التنمية الذاتية", year: "2022", rating: 4.8, cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop", description: "كيفية بناء المرونة النفسية في مواجهة التحديات.", isFavorite: false },
+        { id: 12, title: "العلاج باللعب للأطفال", author: "د.فاطمة الزهراء", category: "الأطفال", year: "2024", rating: 4.6, cover: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=600&fit=crop", description: "استخدام اللعب كأداة علاجية للأطفال.", isFavorite: false }
+      ]
+    };
+  },
+  computed: {
+    filteredBooks() {
+      let result = this.books;
+      
+      if (this.search) {
+        const searchLower = this.search.toLowerCase();
+        result = result.filter(book => 
+          book.title.toLowerCase().includes(searchLower) || 
+          book.author.toLowerCase().includes(searchLower) ||
+          book.description.toLowerCase().includes(searchLower) ||
+          book.category.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      Object.keys(this.selectedFilters).forEach(filterType => {
+        if (this.selectedFilters[filterType] && this.selectedFilters[filterType].length > 0) {
+          if (filterType === "اسم المؤلف") {
+            result = result.filter(book => 
+              this.selectedFilters[filterType].some(author => book.author.includes(author))
+            );
+          } else if (filterType === "التصنيفات") {
+            result = result.filter(book => 
+              this.selectedFilters[filterType].includes(book.category)
+            );
+          } else if (filterType === "اللغة") {
+            // يمكن إضافة حقل اللغة لكل كتاب
+          } else if (filterType === "سنة النشر") {
+            result = result.filter(book => 
+              this.selectedFilters[filterType].includes(book.year)
+            );
+          } else if (filterType === "التقييم") {
+            result = result.filter(book => {
+              const rating = book.rating;
+              return this.selectedFilters[filterType].some(ratingFilter => {
+                if (ratingFilter === "5 نجوم") return rating >= 4.5;
+                if (ratingFilter === "4 نجوم") return rating >= 3.5 && rating < 4.5;
+                if (ratingFilter === "3 نجوم") return rating >= 2.5 && rating < 3.5;
+                if (ratingFilter === "نجمتان") return rating >= 1.5 && rating < 2.5;
+                if (ratingFilter === "نجمة") return rating < 1.5;
+                return false;
+              });
+            });
+          }
+        }
+      });
+      
+      return result;
     }
-  })
-})
+  },
+  methods: {
+    toggleMobileFilter() {
+        this.showMobileFilter = !this.showMobileFilter;
+    },
+    toggleDropdown(title) {
+      this.openDropdowns[title] = !this.openDropdowns[title];
+    },
+    clearFilters() {
+      // إعادة تعيين جميع الفلاتر إلى مصفوفات فارغة
+      Object.keys(this.selectedFilters).forEach(key => {
+        this.selectedFilters[key] = [];
+      });
+    },
+    searchBooks() {
+      // البحث يتم التعامل معه في computed
+    },
+    toggleFavorite(bookId) {
+      const book = this.books.find(b => b.id === bookId);
+      if (book) {
+        book.isFavorite = !book.isFavorite;
+      }
+    },
+    viewBook(bookId) {
+      console.log('View book:', bookId);
+      this.$router.push(`/books/${bookId}`);
+    },
+    toggleFilterItem(category, item) {
+      const index = this.selectedFilters[category].indexOf(item);
+      if (index > -1) {
+        // إذا كان الفلتر محددًا، قم بإزالته
+        this.selectedFilters[category].splice(index, 1);
+      } else {
+        // إذا لم يكن محددًا، قم بإضافته
+        this.selectedFilters[category].push(item);
+      }
+    },
+    isFilterSelected(category, item) {
+      return this.selectedFilters[category].includes(item);
+    }
+  }
+};
 </script>
 
-<style scoped>
-.container {
-  max-width: 1200px;
+<style>
+.font-almarai {
+  font-family: 'Almarai', sans-serif;
 }
-
-/* تصميم الإحصائيات المحترف */
-.stats-section {
-  position: relative;
-}
-
-.stats-card-professional {
-  position: relative;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-/* الخط العلوي حسب اللون */
-.stats-card-professional[data-color="green"]::before {
-  background: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"]::before {
-  background: #D6A29A;
-}
-
-.stats-card-professional::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.stats-card-professional:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.stats-card-professional[data-color="green"]:hover {
-  border-color: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"]:hover {
-  border-color: #D6A29A;
-}
-
-.stats-card-professional:hover::before {
-  transform: scaleX(1);
-}
-
-.stats-icon-wrapper {
-  position: relative;
-  display: inline-flex;
-  margin-bottom: 1.5rem;
-  justify-content: center;
-  align-items: center;
-}
-
-/* الأيقونة - لون أساسي حسب data-color */
-.stats-card-professional[data-color="green"] .stats-icon-clean {
-  color: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"] .stats-icon-clean {
-  color: #D6A29A;
-}
-
-.stats-icon-clean {
-  font-size: 3.5rem;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  z-index: 2;
-}
-
-.stats-card-professional[data-color="green"] .stats-icon-clean {
-  filter: drop-shadow(0 4px 12px rgba(158, 191, 59, 0.3));
-}
-
-.stats-card-professional[data-color="pink"] .stats-icon-clean {
-  filter: drop-shadow(0 4px 12px rgba(214, 162, 154, 0.3));
-}
-
-/* تغيير اللون عند التمرير */
-.stats-card-professional[data-color="green"]:hover .stats-icon-clean {
-  color: #D6A29A;
-  filter: drop-shadow(0 8px 20px rgba(214, 162, 154, 0.4));
-}
-
-.stats-card-professional[data-color="pink"]:hover .stats-icon-clean {
-  color: #9EBF3B;
-  filter: drop-shadow(0 8px 20px rgba(158, 191, 59, 0.4));
-}
-
-.stats-card-professional:hover .stats-icon-clean {
-  transform: scale(1.3) rotate(5deg);
-}
-
-/* تأثير النبض - لون أساسي */
-.stats-card-professional[data-color="green"] .stats-pulse-effect-clean {
-  background: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"] .stats-pulse-effect-clean {
-  background: #D6A29A;
-}
-
-.stats-pulse-effect-clean {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  opacity: 0.08;
-  animation: pulse-clean 2s infinite;
-  z-index: 1;
-}
-
-@keyframes pulse-clean {
-  0% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.08;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.03;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.08;
-  }
-}
-
-.stats-content {
-  position: relative;
-  z-index: 2;
-}
-
-/* الأرقام - لون أساسي */
-.stats-card-professional[data-color="green"] .stats-number {
-  color: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"] .stats-number {
-  color: #D6A29A;
-}
-
-.stats-number {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  line-height: 1;
-  transition: color 0.3s ease;
-}
-
-/* تغيير لون الأرقام عند التمرير */
-.stats-card-professional[data-color="green"]:hover .stats-number {
-  color: #D6A29A;
-}
-
-.stats-card-professional[data-color="pink"]:hover .stats-number {
-  color: #9EBF3B;
-}
-
-.stats-label {
-  font-size: 1.1rem;
-  color: #64748b;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-/* التاغ - لون أساسي */
-.stats-card-professional[data-color="green"] .stats-tag span {
-  color: #9EBF3B;
-}
-
-.stats-card-professional[data-color="pink"] .stats-tag span {
-  color: #D6A29A;
-}
-
-.stats-tag {
-  display: inline-flex;
-  align-items: center;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.stats-tag span {
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-/* تغيير لون التاغ عند التمرير */
-.stats-card-professional[data-color="green"]:hover .stats-tag span {
-  color: #D6A29A;
-}
-
-.stats-card-professional[data-color="pink"]:hover .stats-tag span {
-  color: #9EBF3B;
-}
-
-.stats-card-professional:hover .stats-tag {
-  border-color: currentColor;
-}
-
-.stats-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* النقاط - لون أساسي */
-.stats-card-professional[data-color="green"] .stats-dot {
-  background: #9EBF3B;
+/* === أنماط الفلاتر الجديدة === */
+.filter-dropdown {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
 }
 
-.stats-card-professional[data-color="pink"] .stats-dot {
-  background: #D6A29A;
+.filter-dropdown:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.stats-dot {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  opacity: 0;
-  transition: background 0.3s ease;
+/* تحسينات للحركات والانتقالات */
+.transition-all {
+  transition-property: all;
 }
 
-/* تغيير لون النقاط عند التمرير */
-.stats-card-professional[data-color="green"]:hover .stats-dot {
-  background: #D6A29A;
+.duration-300 {
+  transition-duration: 300ms;
 }
 
-.stats-card-professional[data-color="pink"]:hover .stats-dot {
-  background: #9EBF3B;
+.duration-200 {
+  transition-duration: 200ms;
 }
 
-.stats-dot-1 {
-  top: 20%;
-  left: 15%;
-  animation: float 3s ease-in-out infinite;
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
-.stats-dot-2 {
-  top: 60%;
-  right: 20%;
-  animation: float 3s ease-in-out 1s infinite;
-}
-
-.stats-dot-3 {
-  bottom: 30%;
-  left: 25%;
-  animation: float 3s ease-in-out 2s infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: translateY(-10px) scale(1);
-    opacity: 0.3;
-  }
-}
-
-.stats-card-professional:hover .stats-dot {
-  animation-duration: 2s;
-}
-
-/* تأثيرات إضافية للتفاعل */
-.stats-card-professional::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.stats-card-professional[data-color="green"]::after {
-  background: radial-gradient(circle, rgba(158, 191, 59, 0.1) 0%, transparent 70%);
-}
-
-.stats-card-professional[data-color="pink"]::after {
-  background: radial-gradient(circle, rgba(214, 162, 154, 0.1) 0%, transparent 70%);
-}
-
-.stats-card-professional:hover::after {
-  opacity: 1;
-}
-
-/* تأثير ظل للأيقونة عند التمرير */
-.stats-icon-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 0;
-}
-
-.stats-card-professional[data-color="green"] .stats-icon-wrapper::before {
-  background: radial-gradient(circle, rgba(158, 191, 59, 0.2) 0%, transparent 70%);
-}
-
-.stats-card-professional[data-color="pink"] .stats-icon-wrapper::before {
-  background: radial-gradient(circle, rgba(214, 162, 154, 0.2) 0%, transparent 70%);
-}
-
-.stats-card-professional:hover .stats-icon-wrapper::before {
-  opacity: 1;
-  width: 80px;
-  height: 80px;
-}
-
-/* تصميم متجاوب */
-@media (max-width: 768px) {
-  .stats-card-professional {
-    padding: 1.5rem;
-  }
-  
-  .stats-icon-clean {
-    font-size: 2.8rem;
-  }
-  
-  .stats-number {
-    font-size: 2.5rem;
-  }
-  
-  .stats-pulse-effect-clean {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-@media (max-width: 480px) {
-  .stats-card-professional {
-    padding: 1.2rem;
-  }
-  
-  .stats-icon-clean {
-    font-size: 2.5rem;
-  }
-  
-  .stats-number {
-    font-size: 2.2rem;
-  }
-  
-  .stats-tag {
-    padding: 0.375rem 0.75rem;
-  }
-  
-  .stats-tag span {
-    font-size: 0.8rem;
-  }
+.ease-in {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 </style>

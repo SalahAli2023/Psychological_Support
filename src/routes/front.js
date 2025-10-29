@@ -10,6 +10,7 @@ import ArticleDetail from '../components/frontend/article/ArticleDetail.vue'
 import Specialists from '../components/frontend/Specialists/TherapistList.vue'
 import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
 import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
+import contact from '../components/frontend/contact.vue'
 const routes = [
   {
     path: '/',
@@ -58,6 +59,12 @@ const routes = [
     path: '/library',
     name: 'library',
     component: LibraryMain,
+    props: true
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: contact,
     props: true
   },
 
