@@ -1,192 +1,197 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
-      <!-- رأس المودال -->
-      <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-        <h2 class="text-xl font-bold text-gray-800">مرحبا بك في {{ measure.title }}</h2>
-        <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-      
-      <!-- محتوى المودال -->
-      <div class="p-6">
-        <!-- معلومات الاختبار -->
-        <div v-if="testStep === 'info'" class="space-y-4">
-          <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <i class="fas fa-info-circle text-blue-500"></i>
-              </div>
-              <div class="mr-3">
-                <h3 class="text-sm font-medium text-blue-800">معلومات مهمة</h3>
-                <div class="mt-2 text-sm text-blue-700">
-                  <ul class="list-disc list-inside space-y-1">
-                    <li>النتائج لأغراض التوعية وليست تشخيصاً نهائياً</li>
-                    <li>جميع إجاباتك سرية وآمنة</li>
-                    <li>يمكنك إيقاف الاختبار في أي وقت</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+  <div class="registration-modal">
+    <div class="modal-overlay" @click="$emit('close')">
+      <div class="modal-content" @click.stop>
+        <!-- رأس المودال -->
+        <div class="modal-header">
+          <div class="header-content">
+            <h2>مرحبا بك في {{ measure.title }}</h2>
           </div>
-          
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <h3 class="font-semibold mb-2 text-gray-800">عن هذا الاختبار</h3>
-            <p class="text-gray-600 mb-3">{{ measure.description }}</p>
-            
-            <div class="grid grid-cols-2 gap-4 text-sm">
-              <div class="flex items-center">
-                <i class="fas fa-question-circle ml-2 text-primary-green"></i>
-                <span>{{ measure.questions.length }} أسئلة</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-clock ml-2 text-primary-green"></i>
-                <span>{{ measure.time }} دقائق</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="flex justify-end">
-            <button @click="$emit('start-test')" class="px-6 py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors">
-              ابدأ الاختبار
-            </button>
-          </div>
+          <button @click="$emit('close')" class="close-button">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        
-        <!-- أسئلة الاختبار -->
-        <div v-else-if="testStep === 'questions'" class="space-y-6">
-          <!-- شريط التقدم -->
-          <div class="mb-4">
-            <div class="flex justify-between text-sm text-gray-600 mb-1">
-              <span>التقدم: {{ currentQuestionIndex + 1 }} / {{ measure.questions.length }}</span>
-              <span>{{ Math.round((currentQuestionIndex + 1) / measure.questions.length * 100) }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="progress-bar bg-primary-green h-2 rounded-full" :style="`width: ${(currentQuestionIndex + 1) / measure.questions.length * 100}%`"></div>
-            </div>
-          </div>
-          
-          <!-- السؤال الحالي -->
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-800">
-              السؤال {{ currentQuestionIndex + 1 }} من {{ measure.questions.length }}
-            </h3>
-            <p class="text-gray-700 mb-6">{{ measure.questions[currentQuestionIndex] }}</p>
-            
-            <!-- الخيارات -->
-            <div class="space-y-3">
-              <label v-for="(option, index) in measure.options" :key="index" class="flex items-center p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                <input 
-                  type="radio" 
-                  :name="`question-${currentQuestionIndex}`" 
-                  :value="index" 
-                  v-model="answers[currentQuestionIndex]"
-                  class="custom-radio ml-3"
-                >
-                <span class="text-gray-700">{{ option }}</span>
-              </label>
-            </div>
-          </div>
-          
-          <!-- أزرار التنقل -->
-          <div class="flex justify-between">
-            <button 
-              @click="$emit('previous-question')" 
-              :disabled="currentQuestionIndex === 0"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <i class="fas fa-arrow-right ml-2"></i>
-              السابق
-            </button>
-            
-            <button 
-              v-if="currentQuestionIndex < measure.questions.length - 1"
-              @click="$emit('next-question')" 
-              :disabled="answers[currentQuestionIndex] === undefined"
-              class="px-4 py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              التالي
-              <i class="fas fa-arrow-left ml-2"></i>
-            </button>
-            
-            <button 
-              v-else
-              @click="$emit('submit-test')" 
-              :disabled="answers.some(a => a === undefined)"
-              class="submit-btn px-6 py-3 text-white rounded-xl transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <span>إرسال الاختبار</span>
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-        </div>
-        
-        <!-- شاشة التحميل -->
-        <div v-else-if="testStep === 'loading'" class="flex flex-col items-center justify-center py-12">
-          <div class="loader mb-4"></div>
-          <p class="text-gray-600">جاري حساب النتائج...</p>
-        </div>
-        
-        <!-- نتائج الاختبار -->
-        <div v-else-if="testStep === 'results'" class="space-y-6">
-          <div class="result-card p-6 rounded-lg text-center">
-            <h3 class="text-2xl font-bold mb-4 text-gray-800">نتيجة التقييم</h3>
-            
-            <div class="mb-6">
-              <div class="text-5xl font-bold text-primary-green mb-2">{{ testResult.score }}</div>
-              <p class="text-gray-600">بناءً على إجاباتك، حصلت على {{ testResult.maxScore }} نقطة</p>
-            </div>
-            
-            <div class="bg-white p-4 rounded-lg text-right">
-              <h4 class="text-lg font-semibold mb-2 text-gray-800">{{ testResult.interpretation.level }}</h4>
-              <p class="text-gray-600">{{ testResult.interpretation.desc }}</p>
-            </div>
-          </div>
-          
-          <!-- التوصيات -->
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold mb-4 text-gray-800">التوصيات المخصصة لك</h3>
-            
-            <div class="space-y-4">
-              <div class="flex items-start">
-                <div class="w-10 h-10 rounded-full bg-primary-green/20 flex items-center justify-center ml-3 flex-shrink-0">
-                  <i class="fas fa-user-md text-primary-green"></i>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-800">جلسة استشارة نفسية</h4>
-                  <p class="text-gray-600 text-sm mt-1">جلسة مع أخصائي نفسي لمناقشة نتائجك واستراتيجيات التعامل</p>
-                  <button class="mt-2 px-4 py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors text-sm">
-                    حجز جلسة
-                  </button>
+
+        <!-- محتوى المودال -->
+        <div class="modal-body">
+          <!-- معلومات الاختبار -->
+          <div v-if="testStep === 'info'" class="step-content">
+            <div class="info-section">
+              <div class="notice-card">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-primary-green"></i>
+                  </div>
+                  <div class="mr-3">
+                    <h3 class="text-sm font-medium text-primary-green">معلومات مهمة</h3>
+                    <div class="mt-2 text-sm text-gray-700">
+                      <ul class="list-disc list-inside space-y-1">
+                        <li>النتائج لأغراض التوعية وليست تشخيصاً نهائياً</li>
+                        <li>جميع إجاباتك سرية وآمنة</li>
+                        <li>يمكنك إيقاف الاختبار في أي وقت</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div class="flex items-start">
-                <div class="w-10 h-10 rounded-full bg-primary-green/20 flex items-center justify-center ml-3 flex-shrink-0">
-                  <i class="fas fa-book text-primary-green"></i>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-800">موارد مساعدة</h4>
-                  <p class="text-gray-600 text-sm mt-1">مجموعة من المقالات والتمارين للتعامل مع {{ measure.title }}</p>
-                  <button class="mt-2 px-4 py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors text-sm">
-                    عرض الموارد
-                  </button>
+              <div class="measure-info">
+                <h3 class="info-title">عن هذا الاختبار</h3>
+                <p class="info-description">{{ measure.description }}</p>
+                
+                <div class="info-grid">
+                  <div class="info-item">
+                    <i class="fas fa-question-circle text-primary-green"></i>
+                    <span>{{ measure.questions.length }} أسئلة</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-clock text-primary-green"></i>
+                    <span>{{ measure.time }} دقائق</span>
+                  </div>
                 </div>
               </div>
+
+              <button @click="$emit('start-test')" class="submit-button bg-primary-green hover:bg-opacity-90">
+                ابدأ الاختبار
+              </button>
             </div>
           </div>
           
-          <!-- أزرار الإجراءات -->
-          <div class="flex flex-col sm:flex-row gap-3">
-            <button @click="$emit('retake-test')" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-              <i class="fas fa-redo ml-2"></i>
-              إعادة الاختبار
-            </button>
-            <button @click="$emit('show-other-measures')" class="flex-1 px-4 py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors">
-              <i class="fas fa-list ml-2"></i>
-              مقاييس أخرى
-            </button>
+          <!-- أسئلة الاختبار -->
+          <div v-else-if="testStep === 'questions'" class="step-content">
+            <!-- شريط التقدم -->
+            <div class="progress-section">
+              <div class="progress-info">
+                <span>التقدم: {{ currentQuestionIndex + 1 }} / {{ measure.questions.length }}</span>
+                <span>{{ Math.round((currentQuestionIndex + 1) / measure.questions.length * 100) }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill bg-primary-green" :style="`width: ${(currentQuestionIndex + 1) / measure.questions.length * 100}%`"></div>
+              </div>
+            </div>
+            
+            <!-- السؤال الحالي -->
+            <div class="question-card">
+              <h3 class="question-title">
+                السؤال {{ currentQuestionIndex + 1 }} من {{ measure.questions.length }}
+              </h3>
+              <p class="question-text">{{ measure.questions[currentQuestionIndex] }}</p>
+              
+              <!-- الخيارات -->
+              <div class="options-grid">
+                <label v-for="(option, index) in measure.options" :key="index" 
+                       class="option-item" :class="{ 'selected': answers[currentQuestionIndex] === index }">
+                  <input 
+                    type="radio" 
+                    :name="`question-${currentQuestionIndex}`" 
+                    :value="index" 
+                    v-model="answers[currentQuestionIndex]"
+                    class="option-radio"
+                  >
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- أزرار التنقل -->
+            <div class="navigation-buttons">
+              <button 
+                @click="$emit('previous-question')" 
+                :disabled="currentQuestionIndex === 0"
+                class="nav-button prev-button"
+              >
+                <i class="fas fa-arrow-right ml-2"></i>
+                السابق
+              </button>
+              
+              <button 
+                v-if="currentQuestionIndex < measure.questions.length - 1"
+                @click="$emit('next-question')" 
+                :disabled="answers[currentQuestionIndex] === undefined"
+                class="nav-button next-button bg-primary-green hover:bg-opacity-90"
+              >
+                التالي
+                <i class="fas fa-arrow-left ml-2"></i>
+              </button>
+              
+              <button 
+                v-else
+                @click="$emit('submit-test')" 
+                :disabled="answers.some(a => a === undefined)"
+                class="submit-btn bg-primary-green hover:bg-opacity-90"
+              >
+                <span>إرسال الاختبار</span>
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- شاشة التحميل -->
+          <div v-else-if="testStep === 'loading'" class="step-content loading-section">
+            <div class="loader"></div>
+            <p class="loading-text">جاري حساب النتائج...</p>
+          </div>
+          
+          <!-- نتائج الاختبار -->
+          <div v-else-if="testStep === 'results'" class="step-content">
+            <div class="result-section">
+              <h3 class="result-title">نتيجة التقييم</h3>
+              
+              <div class="score-display">
+                <div class="score-number">{{ testResult.score }}</div>
+                <p class="score-info">بناءً على إجاباتك، حصلت على {{ testResult.maxScore }} نقطة</p>
+              </div>
+              
+              <div class="interpretation-card">
+                <h4 class="interpretation-level">{{ testResult.interpretation.level }}</h4>
+                <p class="interpretation-desc">{{ testResult.interpretation.desc }}</p>
+              </div>
+            </div>
+            
+            <!-- التوصيات -->
+            <div class="recommendations-section">
+              <h3 class="recommendations-title">التوصيات المخصصة لك</h3>
+              
+              <div class="recommendations-grid">
+                <div class="recommendation-item">
+                  <div class="recommendation-icon">
+                    <i class="fas fa-user-md text-primary-green"></i>
+                  </div>
+                  <div class="recommendation-content">
+                    <h4 class="recommendation-title">جلسة استشارة نفسية</h4>
+                    <p class="recommendation-desc">جلسة مع أخصائي نفسي لمناقشة نتائجك واستراتيجيات التعامل</p>
+                    <button class="recommendation-button bg-primary-green hover:bg-opacity-90">
+                      حجز جلسة
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="recommendation-item">
+                  <div class="recommendation-icon">
+                    <i class="fas fa-book text-primary-green"></i>
+                  </div>
+                  <div class="recommendation-content">
+                    <h4 class="recommendation-title">موارد مساعدة</h4>
+                    <p class="recommendation-desc">مجموعة من المقالات والتمارين للتعامل مع {{ measure.title }}</p>
+                    <button class="recommendation-button bg-primary-green hover:bg-opacity-90">
+                      عرض الموارد
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- أزرار الإجراءات -->
+            <div class="action-buttons">
+              <button @click="$emit('retake-test')" class="action-button secondary">
+                <i class="fas fa-redo ml-2"></i>
+                إعادة الاختبار
+              </button>
+              <button @click="$emit('show-other-measures')" class="action-button primary bg-primary-green hover:bg-opacity-90">
+                <i class="fas fa-list ml-2"></i>
+                مقاييس أخرى
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -232,39 +237,227 @@ export default {
 </script>
 
 <style scoped>
-.animate-slide-up {
-  animation: slideUp 0.3s ease-out;
+.registration-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
-@keyframes slideUp {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 32rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slide-up 0.3s ease-out;
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: between;
+  align-items: flex-start;
+  z-index: 10;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.close-button {
+  border: 1px solid transparent;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  color: #6b7280;
+  border-radius: 8px;
+}
+
+.close-button:hover {
+  border-color: #9EBF3B;
+  color: #1f2937;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.step-content {
+  min-height: 400px;
+}
+
+/* معلومات الاختبار */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.notice-card {
+  background-color: #f0f9ff;
+  border-right: 4px solid #9EBF3B;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.measure-info {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.info-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.info-description {
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+/* شريط التقدم */
+.progress-section {
+  margin-bottom: 1.5rem;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
 }
 
 .progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 0.25rem;
   transition: width 0.5s ease;
 }
 
-.custom-radio {
+/* السؤال والخيارات */
+.question-card {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.question-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.question-text {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-item:hover {
+  border-color: #9EBF3B;
+  background-color: #f9fafb;
+}
+
+.option-item.selected {
+  border-color: #9EBF3B;
+  background-color: #f0f9ff;
+}
+
+.option-radio {
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #9EBF3B;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
   border-radius: 50%;
+  margin-left: 0.75rem;
   position: relative;
   cursor: pointer;
 }
 
-.custom-radio:checked::after {
+.option-radio:checked {
+  border-color: #9EBF3B;
+}
+
+.option-radio:checked::after {
   content: '';
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   background-color: #9EBF3B;
   position: absolute;
@@ -273,13 +466,267 @@ export default {
   transform: translate(-50%, -50%);
 }
 
+.option-text {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+/* أزرار التنقل */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prev-button {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.prev-button:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.next-button {
+  color: white;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* شاشة التحميل */
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
 .loader {
   border: 3px solid rgba(158, 191, 59, 0.2);
   border-radius: 50%;
   border-top: 3px solid #9EBF3B;
-  width: 30px;
-  height: 30px;
+  width: 3rem;
+  height: 3rem;
   animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* النتائج */
+.result-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.result-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.score-display {
+  margin-bottom: 1.5rem;
+}
+
+.score-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #9EBF3B;
+  margin-bottom: 0.5rem;
+}
+
+.score-info {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.interpretation-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.interpretation-level {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.interpretation-desc {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* التوصيات */
+.recommendations-section {
+  margin-bottom: 2rem;
+}
+
+.recommendations-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  text-align: right;
+}
+
+.recommendations-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.recommendation-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: rgba(158, 191, 59, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recommendation-content {
+  flex: 1;
+  text-align: right;
+}
+
+.recommendation-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.recommendation-desc {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.recommendation-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* أزرار الإجراءات */
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button.secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.action-button.secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.action-button.primary {
+  color: white;
+}
+
+/* زر الإرسال الرئيسي */
+.submit-button {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes spin {
@@ -287,45 +734,38 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-.result-card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-/* تنسيق نجوم التقييم */
-.stars-container {
-  display: flex;
-  gap: 2px;
-}
-
-.star {
-  background: linear-gradient(135deg, #9EBF3B, #D6A29A);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.star.empty {
-  background: #E5E7EB;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* تنسيق زر إرسال الاختبار */
-.submit-btn {
-  background: linear-gradient(135deg, #9EBF3B, #D6A29A);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(158, 191, 59, 0.3);
-}
-
-.submit-btn:disabled {
-  background: #9CA3AF;
-  transform: none;
-  box-shadow: none;
+@media (max-width: 640px) {
+  .modal-content {
+    max-width: 100%;
+    margin: 1rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .nav-button,
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .recommendation-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .recommendation-content {
+    text-align: center;
+  }
 }
 </style>
