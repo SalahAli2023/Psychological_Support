@@ -6,7 +6,7 @@
         <p class="text-gray-600 max-w-2xl mx-auto">مجموعة مختارة من المقاييس الأكثر شيوعاً بين المستخدمين</p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2  gap-6">
         <div 
           v-for="measure in measures" 
           :key="measure.id"
