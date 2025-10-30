@@ -11,6 +11,7 @@ import Specialists from '../components/frontend/Specialists/TherapistList.vue'
 import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
 import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
 import contact from '../components/frontend/contact.vue'
+import register from '../components/frontend/RegistrationPage.vue'
 const routes = [
   {
     path: '/',
@@ -22,7 +23,7 @@ const routes = [
     name: 'Events',
     component: EventsPage
   },
-   { 
+  { 
     path: '/about', 
     name: 'About', 
     component: AboutPage 
@@ -55,7 +56,7 @@ const routes = [
     component: therapisteDetail,
     props: true
   },
-   {
+  {
     path: '/library',
     name: 'library',
     component: LibraryMain,
@@ -65,6 +66,12 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: contact,
+    props: true
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: register,
     props: true
   },
 
