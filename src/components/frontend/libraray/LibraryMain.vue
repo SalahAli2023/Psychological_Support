@@ -13,15 +13,11 @@
         { text: 'تعرف علينا أكثر', icon: 'fas fa-info-circle', primary: false }
       ]"
     />
-   <!-- قسم الفعاليات والورش -->
-    <!-- <section id="events-section" class="py-20 bg-white">
-      <div class="max-w-7xl mx-auto px-6"> -->
+
     <!-- محتوى المكتبة -->
     <section class="max-w-7xl mx-auto px-6 py-10">
-      <!-- محتوى الصفحة -->
       <div class="flex flex-col md:flex-row gap-6">
-        <!-- الفلترة -->
-        <!-- زر فتح الفلتر للجوال -->
+        <!-- الفلترة للجوال -->
         <button 
           @click="toggleMobileFilter"
           class="md:hidden w-full bg-white border border-gray-300 px-4 py-3 rounded-lg flex items-center justify-between font-semibold text-gray-700 mb-4 shadow-sm"
@@ -30,7 +26,7 @@
           <i :class="showMobileFilter ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-[#9EBF3B]"></i>
         </button>
 
-        <!-- الفلتر للجوال (منسدل) -->
+        <!-- الفلتر للجوال -->
         <div v-if="showMobileFilter" class="md:hidden bg-white p-4 rounded-lg shadow-lg mb-6 border border-gray-200">
           <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
             <h3 class="font-bold text-lg text-gray-800">فلاتر البحث</h3>
@@ -40,7 +36,6 @@
           </div>
           
           <div class="space-y-4">
-            <!-- === بداية التصميم الجديد للفلاتر المنسدلة بدون سكرول === -->
             <div v-for="(items, title) in filters" :key="title" class="filter-dropdown">
               <button 
                 @click="toggleDropdown(title)"
@@ -76,7 +71,6 @@
                 </div>
               </transition>
             </div>
-            <!-- === نهاية التصميم الجديد === -->
           </div>
           
           <div class="flex gap-3 mt-6 pt-4 border-t border-gray-100">
@@ -97,7 +91,7 @@
           </div>
         </div>
 
-        <!-- === بداية التصميم الجديد للفلاتر المنسدلة على الشاشات الكبيرة === -->
+        <!-- الفلتر للشاشات الكبيرة -->
         <div class="hidden md:block w-full md:w-1/4 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
           <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
             <h3 class="font-bold text-xl text-gray-800">تصفية النتائج</h3>
@@ -148,11 +142,10 @@
             </div>
           </div>
         </div>
-        <!-- === نهاية التصميم الجديد === -->
 
         <!-- عرض الكتب -->
         <div class="flex-1">
-          <!-- إخفاء البحث على الجوال -->
+          <!-- شريط البحث -->
           <div class="hidden md:flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <div class="flex gap-2 w-full">
               <input
@@ -160,6 +153,7 @@
                 type="text"
                 placeholder="البحث عن كتاب، مؤلف، أو كلمة مفتاحية..."
                 class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#9EBF3B] focus:border-transparent text-gray-700"
+                @keyup.enter="searchBooks"
               />
               <button
                 @click="searchBooks"
@@ -170,17 +164,19 @@
               </button>
             </div>
           </div>
+
           <!-- عرض النتائج -->
           <div class="mb-4 text-gray-600">
             {{ filteredBooks.length }} كتاب متوفر
           </div>
           
+          <!-- شبكة الكتب -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             <div
               v-for="book in filteredBooks"
               :key="book.id"
-              class="bg-white rounded-lg shadow hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
-              @click="viewBook(book.id)"
+              class="bg-white rounded-lg shadow hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1"
+              @click="openBookModal(book)"
             >
               <!-- صورة الكتاب -->
               <div class="relative h-48 overflow-hidden">
@@ -226,6 +222,170 @@
       </div>
     </section>
 
+    <!-- المودال -->
+    <transition name="modal">
+      <div v-if="selectedBook" class="fixed inset-0 mt-18 z-50 overflow-y-auto">
+        <!-- الخلفية الشفافة -->
+        <div class="fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity" @click="closeModal"></div>
+        
+        <!-- محتوى المودال -->
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class="relative bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 modal-content border border-white/30">
+            
+            <!-- زر الإغلاق -->
+            <button 
+              @click="closeModal"
+              class="absolute top-4 left-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all duration-300 shadow-lg border border-gray-200"
+            >
+              <i class="fas fa-times text-lg"></i>
+            </button>
+
+            <!-- زر المفضلة -->
+            <button
+              @click="toggleFavoriteModal(selectedBook.id)"
+              class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-pink-50 transition-all duration-300 shadow-lg border border-gray-200"
+            >
+              <i :class="selectedBook.isFavorite ? 'fas text-red-500' : 'far text-gray-600'" class="fa-heart"></i>
+            </button>
+
+            <div class="flex flex-col md:flex-row h-full">
+              <!-- الجانب الأيسر - صورة الكتاب -->
+              <div class="md:w-2/5  bg-gradient-to-br from-[#9EBF3B] to-[#7CA52D] p-8 flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
+                <!-- تأثيرات زخرفية شفافة -->
+                <div class="absolute top-0 left-0 w-32 h-32 bg-[#9EBF3B]/10 rounded-full -translate-x-16 -translate-y-16"></div>
+                <div class="absolute bottom-0 right-0 w-48 h-48 bg-[#7CA52D]/5 rounded-full translate-x-24 translate-y-24"></div>
+                
+                <div class="relative z-10 w-48 h-64 mx-auto">
+                  <img 
+                    :src="selectedBook.cover" 
+                    :alt="selectedBook.title" 
+                    class="w-full h-full object-cover rounded-xl shadow-2xl border-8 border-white/30"
+                  />
+                  <!-- شارة التقييم -->
+                  <div class="absolute -bottom-3 -left-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-1">
+                    <i class="fas fa-star text-sm"></i>
+                    <span class="font-bold text-sm">{{ selectedBook.rating }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- الجانب الأيمن - محتوى الكتاب -->
+              <div class="md:w-3/5 p-8 flex flex-col h-full overflow-y-auto">
+                <!-- العنوان والمؤلف -->
+                <div class="mb-6">
+                  <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3 leading-tight">
+                    {{ selectedBook.title }}
+                  </h2>
+                  <div class="flex items-center gap-2 text-gray-600 mb-4">
+                    <i class="fas fa-user-edit text-[#9EBF3B]"></i>
+                    <span class="text-lg font-medium">{{ selectedBook.author }}</span>
+                  </div>
+                  
+                  <!-- التصنيف والسنة -->
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="bg-blue-100/80 text-blue-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 backdrop-blur-sm">
+                      <i class="fas fa-tag text-xs"></i>
+                      {{ selectedBook.category }}
+                    </span>
+                    <span class="bg-purple-100/80 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 backdrop-blur-sm">
+                      <i class="fas fa-calendar text-xs"></i>
+                      {{ selectedBook.year }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- التقييم -->
+                <div class="mb-6">
+                  <div class="flex items-center gap-3 mb-2">
+                    <div class="flex text-yellow-400 text-lg">
+                      <i v-for="star in 5" :key="star" 
+                         :class="star <= Math.floor(selectedBook.rating) ? 'fas' : star - 0.5 <= selectedBook.rating ? 'fas fa-star-half-alt' : 'far'" 
+                         class="fa-star">
+                      </i>
+                    </div>
+                    <span class="text-gray-600 font-semibold">({{ selectedBook.rating }})</span>
+                  </div>
+                  <p class="text-gray-500 text-sm">بناءً على 124 تقييم</p>
+                </div>
+
+                <!-- الوصف -->
+                <div class="mb-8">
+                  <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <i class="fas fa-file-alt text-[#9EBF3B]"></i>
+                    نبذة عن الكتاب
+                  </h3>
+                  <p class="text-gray-600 leading-relaxed text-justify">
+                    {{ selectedBook.description }}
+                  </p>
+                </div>
+
+                <!-- الإحصائيات -->
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                  <div class="text-center p-3 bg-gray-50/80 rounded-xl backdrop-blur-sm">
+                    <div class="text-2xl font-bold text-[#9EBF3B] mb-1">328</div>
+                    <div class="text-xs text-gray-500">صفحة</div>
+                  </div>
+                  <div class="text-center p-3 bg-gray-50/80 rounded-xl backdrop-blur-sm">
+                    <div class="text-2xl font-bold text-[#9EBF3B] mb-1">4.2</div>
+                    <div class="text-xs text-gray-500">ساعات قراءة</div>
+                  </div>
+                  <div class="text-center p-3 bg-gray-50/80 rounded-xl backdrop-blur-sm">
+                    <div class="text-2xl font-bold text-[#9EBF3B] mb-1">15K</div>
+                    <div class="text-xs text-gray-500">قارئ</div>
+                  </div>
+                </div>
+
+                <!-- أزرار الإجراءات -->
+                <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                  <button 
+                    @click="downloadBook(selectedBook.id)"
+                    class="flex-1 bg-gradient-to-r from-[#9EBF3B] to-[#8cad35] text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 font-semibold text-lg backdrop-blur-sm"
+                  >
+                    <i class="fas fa-download text-xl"></i>
+                    تحميل الكتاب
+                  </button>
+                  
+                  <button 
+                    @click="previewBook(selectedBook.id)"
+                    class="flex-1 border-2 border-[#9EBF3B] text-[#9EBF3B] px-6 py-4 rounded-xl hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 font-semibold text-lg backdrop-blur-sm"
+                  >
+                    <i class="fas fa-eye text-xl"></i>
+                    معاينة
+                  </button>
+                  
+                  <button 
+                    @click="rateBook(selectedBook.id)"
+                    class="flex-1 border-2 border-yellow-500 text-yellow-500 px-6 py-4 rounded-xl hover:bg-yellow-500 hover:text-white transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 font-semibold text-lg backdrop-blur-sm"
+                  >
+                    <i class="fas fa-star text-xl"></i>
+                    تقييم
+                  </button>
+                </div>
+
+                <!-- معلومات إضافية -->
+                <div class="mt-6 pt-6 border-t border-gray-200/50">
+                  <div class="flex justify-between text-sm text-gray-500">
+                    <span class="flex items-center gap-1">
+                      <i class="fas fa-language"></i>
+                      اللغة: العربية
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <i class="fas fa-file-pdf"></i>
+                      PDF - 5.2 MB
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <i class="fas fa-shield-alt"></i>
+                      مرخصة
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <!-- Footer -->
     <Footer />
   </div>
@@ -247,6 +407,7 @@ export default {
     return {
       search: "",
       showMobileFilter: false,
+      selectedBook: null,
       openDropdowns: {
         التصنيفات: true,
         "اسم المؤلف": false,
@@ -280,7 +441,9 @@ export default {
         { id: 9, title: "فن التواصل في العلاقات", author: "د.ياسمين علي", category: "العلاقات", year: "2024", rating: 4.5, cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop", description: "أساليب فعالة لتحسين التواصل في العلاقات الشخصية.", isFavorite: false },
         { id: 10, title: "التعافي من الإدمان", author: "د.خالد السعدي", category: "الإدمان", year: "2023", rating: 4.7, cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop", description: "رحلة التعافي من الإدمان بأساليب علمية.", isFavorite: false },
         { id: 11, title: "المرونة النفسية", author: "د.سمر القحطاني", category: "التنمية الذاتية", year: "2022", rating: 4.8, cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop", description: "كيفية بناء المرونة النفسية في مواجهة التحديات.", isFavorite: false },
-        { id: 12, title: "العلاج باللعب للأطفال", author: "د.فاطمة الزهراء", category: "الأطفال", year: "2024", rating: 4.6, cover: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=600&fit=crop", description: "استخدام اللعب كأداة علاجية للأطفال.", isFavorite: false }
+        { id: 12, title: "العلاج باللعب للأطفال", author: "د.فاطمة الزهراء", category: "الأطفال", year: "2024", rating: 4.6, cover: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=600&fit=crop", description: "استخدام اللعب كأداة علاجية للأطفال.", isFavorite: false },
+        { id: 13, title: "أتصال وتواصل", author: "د.ياسمين  القاضي", category: " العلاقات", year: "2024", rating: 4.3, cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop", description: "استراتيجيات عملية للتعامل مع اضطرابات القلق.", isFavorite: false },
+
       ]
     };
   },
@@ -308,8 +471,6 @@ export default {
             result = result.filter(book => 
               this.selectedFilters[filterType].includes(book.category)
             );
-          } else if (filterType === "اللغة") {
-            // يمكن إضافة حقل اللغة لكل كتاب
           } else if (filterType === "سنة النشر") {
             result = result.filter(book => 
               this.selectedFilters[filterType].includes(book.year)
@@ -335,13 +496,12 @@ export default {
   },
   methods: {
     toggleMobileFilter() {
-        this.showMobileFilter = !this.showMobileFilter;
+      this.showMobileFilter = !this.showMobileFilter;
     },
     toggleDropdown(title) {
       this.openDropdowns[title] = !this.openDropdowns[title];
     },
     clearFilters() {
-      // إعادة تعيين جميع الفلاتر إلى مصفوفات فارغة
       Object.keys(this.selectedFilters).forEach(key => {
         this.selectedFilters[key] = [];
       });
@@ -353,41 +513,142 @@ export default {
       const book = this.books.find(b => b.id === bookId);
       if (book) {
         book.isFavorite = !book.isFavorite;
+        if (book.isFavorite) {
+          this.$toast.success('تمت الإضافة إلى المفضلة', { position: 'top-left', duration: 2000 });
+        } else {
+          this.$toast.info('تمت الإزالة من المفضلة', { position: 'top-left', duration: 2000 });
+        }
       }
     },
-    viewBook(bookId) {
-      console.log('View book:', bookId);
-      this.$router.push(`/books/${bookId}`);
+    toggleFavoriteModal(bookId) {
+      this.toggleFavorite(bookId);
+      // تحديث selectedBook إذا كان مفتوحاً في المودال
+      if (this.selectedBook && this.selectedBook.id === bookId) {
+        this.selectedBook.isFavorite = !this.selectedBook.isFavorite;
+      }
     },
     toggleFilterItem(category, item) {
       const index = this.selectedFilters[category].indexOf(item);
       if (index > -1) {
-        // إذا كان الفلتر محددًا، قم بإزالته
         this.selectedFilters[category].splice(index, 1);
       } else {
-        // إذا لم يكن محددًا، قم بإضافته
         this.selectedFilters[category].push(item);
       }
     },
     isFilterSelected(category, item) {
       return this.selectedFilters[category].includes(item);
+    },
+    openBookModal(book) {
+      this.selectedBook = { ...book };
+      // لا نمنع التمرير - نسمح بالـ scroll في المتصفح
+    },
+    closeModal() {
+      this.selectedBook = null;
+    },
+    downloadBook(bookId) {
+      this.$toast.success('جاري تحميل الكتاب...', { position: 'top-left', duration: 3000 });
+    },
+    previewBook(bookId) {
+      this.$toast.info('جاري فتح المعاينة...', { position: 'top-left', duration: 2000 });
+    },
+    rateBook(bookId) {
+      this.$toast.warning('فتح صفحة التقييم...', { position: 'top-left', duration: 2000 });
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .font-almarai {
   font-family: 'Almarai', sans-serif;
 }
+
 .line-clamp-2 {
   display: -webkit-box;
-  -webkit-line-clamp:2;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* === أنماط الفلاتر الجديدة === */
+/* أنيميشن المودال */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .modal-content,
+.modal-leave-active .modal-content {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.modal-enter-from .modal-content {
+  opacity: 0;
+  transform: scale(0.8) translateY(-50px);
+}
+
+.modal-leave-to .modal-content {
+  opacity: 0;
+  transform: scale(0.8) translateY(50px);
+}
+
+/* تخصيص شريط التمرير */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9EBF3B;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8cad35;
+}
+
+/* تأثيرات إضافية */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(8px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+}
+
+/* تحسينات للاستجابة */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 1rem;
+    max-height: 95vh;
+  }
+  
+  .flex-col.md\:flex-row {
+    flex-direction: column;
+  }
+  
+  .md\:w-2\/5, .md\:w-3\/5 {
+    width: 100%;
+  }
+}
+
+/* أنماط الفلاتر */
 .filter-dropdown {
   border-bottom: 1px solid #f3f4f6;
   padding-bottom: 1rem;
@@ -398,24 +659,8 @@ export default {
   padding-bottom: 0;
 }
 
-/* تحسينات للحركات والانتقالات */
-.transition-all {
-  transition-property: all;
-}
-
-.duration-300 {
-  transition-duration: 300ms;
-}
-
-.duration-200 {
-  transition-duration: 200ms;
-}
-
-.ease-out {
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
-
-.ease-in {
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+/* السماح بالتمرير دائمًا */
+body {
+  overflow-y: auto !important;
 }
 </style>
