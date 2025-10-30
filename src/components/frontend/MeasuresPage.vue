@@ -1,8 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-almarai transition-colors duration-300">
     <Header /> 
-    <!-- قسم الهيرو المبسط -->
-      <HeroSection />
+    <!-- قسم الهيرو  -->
+    <HeroSection />
+
     <main class=" max-w-7xl mx-auto px-6">
       <!-- المقاييس الأكثر استخداماً -->
       <PopularMeasures 
@@ -31,7 +32,7 @@
       <GuidelinesSection />
       
       <!-- الموارد -->
-      <!-- <ResourcesSection :resources="resources" /> -->
+      <ResourcesSection :resources="resources" />
     </main>
     
     <Footer />
@@ -73,7 +74,7 @@ import AllMeasures from '@/components/frontend/measures/AllMeasures.vue'
 import GuidelinesSection from '@/components/frontend/measures/GuidelinesSection.vue'
 import ResourcesSection from '@/components/frontend/measures/ResourcesSection.vue'
 import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
-import RegistrationModal from '@/components/frontend/measures/RegistrationModal.vue'
+import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import { measuresData, resourcesData } from '@/data/measures'
 
