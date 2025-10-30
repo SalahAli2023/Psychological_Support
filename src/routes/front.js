@@ -12,6 +12,8 @@ import therapisteDetail from '../components/frontend/Specialists/TherapistProfil
 import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
 import contact from '../components/frontend/contact.vue'
 import register from '../components/frontend/RegistrationPage.vue'
+import LegalSocialResources from '../components/frontend/LegalSocialResources.vue'
+
 const routes = [
   {
     path: '/',
@@ -72,6 +74,12 @@ const routes = [
     path: '/register',
     name: 'register',
     component: register,
+    props: true
+  },
+  {
+    path: '/legal',
+    name: 'legal',
+    component: LegalSocialResources,
     props: true
   },
 
