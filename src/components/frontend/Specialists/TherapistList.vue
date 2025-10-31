@@ -5,8 +5,10 @@
 
     <!-- Hero Section -->
     <Hero 
-      title="الأخصائيون النفسيون"
-      highlight=""
+
+      title="الأخصائيون "
+      highlight="النفسيون"
+
       subtitle="تعرف على أفضل الأخصائيين في مجال الصحة النفسية واحجز جلسات الدعم النفسي بسهولة"
       :buttons="[
         { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
@@ -119,10 +121,12 @@
 
               <!-- Action Buttons -->
               <div class="space-y-2 sticky bottom-0 bg-white pt-2">
-                <button @click="resetFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
+
+                <button @click="resetFilters" class="w-full bg-[#dc2626] hover:bg-[#dc2626] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
                   إعادة ضبط
                 </button>
-                <button @click="applyFilters" class="w-full bg-[#D6A29A] hover:bg-[#c9928a] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
+                <button @click="applyFilters" class="w-full bg-[#9EBF3B] hover:bg-[#9EBF3B] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm">
+
                   بحث
                 </button>
               </div>
@@ -174,7 +178,9 @@
                     <!-- Book Button -->
                     <div class="flex justify-end sm:justify-end">
                       <router-link :to="`/therapist/${therapist.id}`" 
-                                   class="text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all text-sm sm:text-base bg-[#D6A29A] hover:bg-[#c9928a]">
+
+                                   class="text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all text-sm sm:text-base bg-[#9EBF3B] hover:bg-[#c9928a]">
+
                         احجز
                       </router-link>
                     </div>
@@ -284,7 +290,9 @@
               <button @click="resetFilters" class="w-full bg-[#ef4444] hover:bg-[#dc2626] text-white py-4 rounded-xl font-bold shadow hover:shadow-md transition-all">
                  إعادة ضبط
               </button>
-              <button @click="applyFilters" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold shadow hover:shadow-md transition-all">
+
+              <button @click="applyFilters" class="w-full bg-[#9EBF3B] hover:bg-[#9EBF3B] text-white py-4 rounded-xl font-bold shadow hover:shadow-md transition-all">
+
                  بحث
               </button>
             </div>

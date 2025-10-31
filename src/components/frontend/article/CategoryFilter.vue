@@ -1,3 +1,4 @@
+
 <template>
   <div class="search-filter-container">
     <!-- شريط البحث والتصفية -->
@@ -94,4 +95,5 @@ export default {
     });
   }
 }
+
 </script>

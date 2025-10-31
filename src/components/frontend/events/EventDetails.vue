@@ -23,14 +23,18 @@
     </div>
 
     <!-- محتوى الصفحة الرئيسي -->
-    <div class="max-w-7xl mx-auto px-6 py-8">
+
+    <div class="max-w-7xl mx-auto py-8">
+
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- العمود الأيسر - محتوى الفعالية -->
         <div class="lg:col-span-2">
           
           <!-- الصورة الرئيسية أولاً -->
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+
+          <div class="bg-white rounded-2xl shadow-1xl overflow-hidden mb-8">
+
             <img 
               :src="event.media" 
               :alt="event.title" 
@@ -39,7 +43,9 @@
           </div>
 
           <!-- رأس الفعالية -->
-          <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+
+          <div class="bg-white rounded-2xl shadow-1xl p-6 mb-8">
+
             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
               <div class="flex-1">
                 <!-- العنوان -->
@@ -91,7 +97,9 @@
           </div>
 
           <!-- محتوى الفعالية -->
-          <div class="bg-white rounded-2xl shadow-lg p-6">
+
+          <div class="bg-white rounded-2xl shadow-1xl p-6">
+
             <!-- النبذة العامة -->
             <div class="mb-8">
               <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">

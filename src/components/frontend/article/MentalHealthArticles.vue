@@ -1,3 +1,4 @@
+
 <template>
   <div class="font-almarai" >
     <!-- Header -->
@@ -5,10 +6,10 @@
 
     <!-- Hero Section -->
     <Hero 
-      title="مقالات الدعم النفسي"
-      highlight=""
+      title="مقالات الدعم "
+      highlight="النفسي"
       subtitle="اكتشف مقالات متنوعة في مجال الصحة النفسية والدعم النفسي والتنمية الذاتية"
-      :buttons="[
+         :buttons="[
         { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
         { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
       ]"
@@ -152,4 +153,5 @@ export default {
 .shadow-md {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
+
 </style>

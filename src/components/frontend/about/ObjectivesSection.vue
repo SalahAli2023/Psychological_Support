@@ -1,5 +1,4 @@
-[file name]: ObjectivesSection.vue
-[file content begin]
+
 <template>
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
@@ -7,7 +6,9 @@
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
           أهدافنا <span class="text-[#9EBF3B]">وغاياتنا</span>
         </h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in-delay">
+
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-delay">
+
           نسعى لتحقيق أهداف طموحة تساهم في دعم وحماية المرأة والطفل والفئات المهمشة في اليمن
         </p>
       </div>
@@ -22,11 +23,13 @@
         >
           <!-- الرقم الدائري -->
           <div class="w-12 h-12 bg-[#D6A29A] rounded-xl flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-110">
-            <span class="text-white font-bold text-lg">{{ index + 1 }}</span>
+
+            <span class="text-white font-bold text-base">{{ index + 1 }}</span>
           </div>
           
           <!-- النص -->
-          <p class="text-gray-700 text-lg leading-relaxed flex-1">
+          <p class="text-gray-700 text-base leading-relaxed flex-1">
+
             {{ objective }}
           </p>
         </div>
@@ -84,5 +87,5 @@ const objectives = [
   animation: slideUp 0.6s ease-out forwards;
   opacity: 0;
 }
+
 </style>
-[file content end]
