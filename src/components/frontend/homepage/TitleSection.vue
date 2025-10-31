@@ -1,7 +1,7 @@
 <template>
   <div class="inline-block relative text-center w-full mb-10">
     <h2
- design-colors-files-2025-10-31
+      class="text-3xl md:text-4xl font-bold mb-4 transition-all duration-700 transform opacity-0 translate-y-6"
       :class="[textColor, titleClass]"
       ref="title"
     >
@@ -45,7 +45,7 @@ onMounted(() => {
   // حركة العنوان
   setTimeout(() => {
     if(title.value) {
-
+      title.value.classList.remove('opacity-0', 'translate-y-6')
       title.value.classList.add('opacity-100', 'translate-y-0')
     }
   }, 200)
@@ -59,6 +59,7 @@ onMounted(() => {
   }, 400)
 })
 </script>
+
 <style scoped>
 /* تحسين الحركات */
 .opacity-0 {
@@ -67,10 +68,10 @@ onMounted(() => {
 .opacity-100 {
   opacity: 1;
 }
- design-colors-files-2025-10-31
-
+.translate-y-6 {
+  transform: translateY(1.5rem); /* Tailwind's 6 */
+}
 .translate-y-0 {
   transform: translateY(0);
 }
- design-colors-files-2025-10-31
 </style>
