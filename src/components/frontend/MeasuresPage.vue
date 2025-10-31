@@ -1,13 +1,14 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-almarai transition-colors duration-300">
     <Header /> 
-    <!-- قسم الهيرو المبسط -->
-      <HeroSection />
+    <!-- قسم الهيرو  -->
+    <HeroSection />
+
     <main class=" max-w-7xl mx-auto px-6">
       <!-- المقاييس الأكثر استخداماً -->
       <PopularMeasures 
         :measures="popularMeasures"
-        @measure-click="openMeasureModal"
+        @measure-click="openRegistrationModal"
       />
       
       <!-- قسم التصنيفات المدمج مع البحث والفلتر -->
@@ -24,7 +25,7 @@
       <AllMeasures 
         :measures="filteredMeasures"
         :activeFilter="activeFilter"
-        @measure-click="openMeasureModal"
+        @measure-click="openRegistrationModal"
       />
 
       <!-- الإرشادات -->
@@ -36,15 +37,23 @@
     
     <Footer />
 
-    <!-- المودالات -->
+    <!-- مودال التسجيل -->
+    <RegistrationModal
+      :show-registration="showRegistrationModal"
+      @close="closeRegistrationModal"
+      @switch-to-login="switchToLogin"
+      @registration-success="handleRegistrationSuccess"
+    />
+
+    <!-- مودال الاختبار (يظهر بعد التسجيل) -->
     <MeasureModal
-      v-if="showModal"
+      v-if="showMeasureModal"
       :measure="currentMeasure"
       :testStep="testStep"
       :currentQuestionIndex="currentQuestionIndex"
       :answers="answers"
       :testResult="testResult"
-      @close="closeModal"
+      @close="closeMeasureModal"
       @start-test="startTest"
       @next-question="nextQuestion"
       @previous-question="previousQuestion"
@@ -65,6 +74,7 @@ import AllMeasures from '@/components/frontend/measures/AllMeasures.vue'
 import GuidelinesSection from '@/components/frontend/measures/GuidelinesSection.vue'
 import ResourcesSection from '@/components/frontend/measures/ResourcesSection.vue'
 import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
+import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import { measuresData, resourcesData } from '@/data/measures'
 
@@ -80,13 +90,14 @@ export default {
     GuidelinesSection,
     ResourcesSection,
     MeasureModal,
+    RegistrationModal
   },
   setup() {
     // الحالة
     const searchQuery = ref('')
     const activeFilter = ref('allMeasures')
-    const showModal = ref(false)
-    const showProfile = ref(false)
+    const showRegistrationModal = ref(false)
+    const showMeasureModal = ref(false)
     const currentMeasure = ref(null)
     const testStep = ref('info')
     const currentQuestionIndex = ref(0)
@@ -132,17 +143,30 @@ export default {
     })
 
     // الدوال
-    const openMeasureModal = (measure) => {
+    const openRegistrationModal = (measure) => {
       currentMeasure.value = measure
-      showModal.value = true
+      showRegistrationModal.value = true
+    }
+
+    const closeRegistrationModal = () => {
+      showRegistrationModal.value = false
+    }
+
+    const handleRegistrationSuccess = () => {
+      closeRegistrationModal()
+      openMeasureModal()
+    }
+
+    const openMeasureModal = () => {
+      showMeasureModal.value = true
       testStep.value = 'info'
       currentQuestionIndex.value = 0
-      answers.value = new Array(measure.questions.length).fill(undefined)
+      answers.value = new Array(currentMeasure.value.questions.length).fill(undefined)
       testResult.value = null
     }
     
-    const closeModal = () => {
-      showModal.value = false
+    const closeMeasureModal = () => {
+      showMeasureModal.value = false
       currentMeasure.value = null
     }
     
@@ -212,14 +236,19 @@ export default {
     }
     
     const showOtherMeasures = () => {
-      closeModal()
+      closeMeasureModal()
+    }
+
+    const switchToLogin = () => {
+      // هنا يمكنك فتح مودال تسجيل الدخول إذا كان لديك
+      console.log('Switch to login')
     }
 
     return {
       searchQuery,
       activeFilter,
-      showModal,
-      showProfile,
+      showRegistrationModal,
+      showMeasureModal,
       currentMeasure,
       testStep,
       currentQuestionIndex,
@@ -229,14 +258,18 @@ export default {
       resources,
       filteredMeasures,
       popularMeasures,
+      openRegistrationModal,
+      closeRegistrationModal,
+      handleRegistrationSuccess,
       openMeasureModal,
-      closeModal,
+      closeMeasureModal,
       startTest,
       nextQuestion,
       previousQuestion,
       submitTest,
       retakeTest,
-      showOtherMeasures
+      showOtherMeasures,
+      switchToLogin
     }
   }
 }

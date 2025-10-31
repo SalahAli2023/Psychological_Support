@@ -1,26 +1,48 @@
 <template>
   <div v-cloak>
     <!-- Hero Section -->
-     <Hero
-      title="تفاصيل "
-      highlight="المقال"
-      subtitle="استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة"
+ <Hero
+      :title="heroTitle"
+      :highlight="heroHighlight"
+      :subtitle="heroSubtitle"
       :buttons="heroButtons"
+      background="solid"
+      align="center"
+      size="medium"
       @cta="handleHeroCta"
     />
+
+    <!-- Breadcrumb Outside Main Layout -->
+    <div class="breadcrumb-container">
+      <div class="breadcrumb-wrapper">
+        <div class="article-breadcrumb">
+          <span class="breadcrumb-item" @click="goBack">المقالات</span>
+          <i class="fas fa-chevron-left"></i>
+          <span class="breadcrumb-item current">{{ article.category }}</span>
+          <i class="fas fa-chevron-left"></i>
+          <span class="breadcrumb-item" :id="`article-${article.id}`">{{ article.title }}</span>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content Layout -->
     <div class="main-layout">
       <!-- Main Content - Article Details -->
       <main class="article-main">
-        <!-- Article Header -->
+        <!-- Article Header with Title Above Image -->
         <div class="article-header">
-          <div class="article-breadcrumb">
-            <span class="breadcrumb-item" @click="goBack">المقالات</span>
-            <i class="fas fa-chevron-left"></i>
-            <span class="breadcrumb-item current">{{ article.category }}</span>
-            <i class="fas fa-chevron-left"></i>
-            <span class="article-main-title" :id="`article-${article.id}`">{{ article.title }}</span>
+          <div class="article-title-section">
+            <h1 class="article-main-title">{{ article.title }}</h1>
+            <div class="article-meta">
+              <span class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                {{ article.date }}
+              </span>
+              <span class="meta-item mr-2 ">
+                <i class="fas fa-clock"></i>
+                وقت القراءة: {{ article.readingTime || '5 دقائق' }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -190,6 +212,22 @@ export default {
           icon: 'fas fa-link'
         }
       ]
+    },
+    // نصوص الهيرو المتجاوبة
+    heroTitle() {
+      return ' تفاصيل '
+    },
+    heroHighlight() {
+      return 'المقال '
+    },
+    heroSubtitle() {
+      if (window.innerWidth < 640) {
+        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات المتعلقة بهذا الموضوع'
+      } else if (window.innerWidth < 1024) {
+        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة بالموضوع'
+      } else {
+        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة التي تثري معرفتك وتوسع آفاقك'
+      }
     }
   },
   
@@ -207,6 +245,7 @@ export default {
         }
       }
     },
+    // باقي الدوال كما هي...
     findArticleById(id) {
       return articles.find(article => article.id == id)
     },
@@ -218,6 +257,7 @@ export default {
         excerpt: 'عذراً، المقال الذي تبحث عنه غير موجود.',
         image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
         date: 'غير معروف',
+        readingTime: 'غير معروف',
         author: {
           name: 'غير معروف',
           avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
@@ -273,6 +313,52 @@ export default {
 </script>
 
 <style scoped>
+/* Breadcrumb Container */
+.breadcrumb-container {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+ 
+}
+
+.breadcrumb-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.article-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-right: 2rem;
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-item:hover {
+  color: #9EBF3B;
+}
+
+.breadcrumb-item.current {
+  color: #9EBF3B;
+  font-weight: 600;
+}
+
+.article-main-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.4;
+  scroll-margin-top: 100px;
+}
+
 /* Main Layout */
 .main-layout {
   display: grid;
@@ -280,7 +366,7 @@ export default {
   gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem 2rem;
 }
 
 /* Sidebar Styles */
@@ -409,36 +495,33 @@ export default {
   margin-bottom: 2rem;
 }
 
-.article-breadcrumb {
+.article-title-section {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.article-main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+.article-meta {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  gap: 1.5rem;
   font-size: 0.85rem;
   color: #6b7280;
 }
 
-.breadcrumb-item {
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.breadcrumb-item:hover {
-  color: #9EBF3B;
-}
-
-.breadcrumb-item.current {
-  color: #9EBF3B;
-  font-weight: 600;
-}
-
-.article-main-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1.4;
-  margin-bottom: 1rem;
-  scroll-margin-top: 100px;
+.article-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Featured Image */
@@ -452,7 +535,7 @@ export default {
 
 .article-featured-img {
   width: 100%;
-  height: 300px;
+  height: 400px;
   object-fit: cover;
 }
 
@@ -784,7 +867,7 @@ export default {
   .main-layout {
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    padding: 1.5rem;
+    padding: 0 1.5rem 1.5rem;
   }
   
   .sidebar {
@@ -809,8 +892,12 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .breadcrumb-wrapper {
+    padding: 0 1.5rem;
+  }
+  
   .main-layout {
-    padding: 1rem;
+    padding: 0 1rem 1rem;
     gap: 1rem;
   }
   
@@ -819,11 +906,16 @@ export default {
   }
   
   .article-main-title {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+  }
+  
+  .article-meta {
+    flex-direction: column;
+    gap: 0.5rem;
   }
   
   .article-featured-img {
-    height: 200px;
+    height: 250px;
   }
   
   .attachments-grid {
@@ -851,6 +943,10 @@ export default {
 }
 
 @media (max-width: 480px) {
+  .breadcrumb-wrapper {
+    padding: 0 1rem;
+  }
+  
   .author-section {
     flex-direction: column;
     text-align: center;
@@ -859,6 +955,10 @@ export default {
   
   .article-main {
     padding: 1rem;
+  }
+  
+  .article-main-title {
+    font-size: 1.3rem;
   }
   
   .test-section {

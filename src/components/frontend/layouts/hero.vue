@@ -1,13 +1,13 @@
 <template>
-  <section class="relative py-20 hero-gradient" dir="rtl">
+  <section class="relative pt-30 pb-10 hero-gradient" >
     <!-- أشكال عائمة للتزيين -->
-    <div v-if="floatingShapes" class="floating-shapes">
+    <!-- <div v-if="floatingShapes" class="floating-shapes">
       <div v-for="(shape, index) in 3" :key="index" :class="`shape shape-${index+1}`"></div>
-    </div>
+    </div> -->
 
     <div class="container mx-auto px-4 text-center relative z-10">
       <!-- العنوان الرئيسي -->
-      <h1 class="text-5xl md:text-6xl font-bold mb-4">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">
         <span :class="titleClass">{{ title }}</span>
         <span v-if="highlight" :class="highlightClass">{{ highlight }}</span>
       </h1>
