@@ -19,16 +19,10 @@
       <!-- العنوان الرئيسي -->
       <div class="text-center mb-12 md:mb-16">
         <div class="inline-block relative">
-          <h2 
-            class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 transition-all duration-700 delay-200"
-            :class="titleClass"
-          >
-            فريق <span class="text-[#9EBF3B]">خبرائنا</span>
-          </h2>
-          <div 
-            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 md:w-24 h-1 bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] rounded-full transition-all duration-700 delay-400"
-            :class="lineClass"
-          ></div>
+          <TitleSection
+            mainText="فريق"
+            highlightText="الأخصائيين"
+          />
         </div>
         <p 
           class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700 delay-300"
@@ -134,10 +128,14 @@
 
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
+import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
 
 export default {
   name: "ExpertsSection",
   mixins: [useScrollAnimation],
+   components: {
+    TitleSection
+  },
   data() {
     return {
       currentIndex: 0,

@@ -51,7 +51,7 @@
           </div>
           
           <!-- زر "اقرأ المزيد" -->
-          <button class="bg-[#D6A29A] text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-[#9EBF3B] hover:shadow-lg transition-all duration-300 whitespace-nowrap">
+          <button class="bg-[#9EBF3B] text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-[#9EBF3B] hover:shadow-lg transition-all duration-300 whitespace-nowrap">
             اقرأ المزيد
           </button>
         </div>
