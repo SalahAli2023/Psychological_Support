@@ -1,0 +1,96 @@
+<!-- RelatedEvents.vue -->
+<template>
+  <div>
+    <!-- فعاليات ذات صلة - تصميم عمودي -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
+        فعاليات ذات صلة
+      </h3>
+      <div class="space-y-4">
+        <article 
+          v-for="event in filteredEvents" 
+          :key="event.id"
+          class="group bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-200"
+          @click="handleEventClick(event)"
+        >
+          <div class="flex gap-4">
+            <img 
+              :src="event.media" 
+              :alt="event.title" 
+              class="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+            />
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-900 group-hover:text-[#D6A29A] transition-colors duration-300 line-clamp-2 text-sm mb-1">
+                {{ event.title }}
+              </h4>
+              <p class="text-gray-500 text-xs mb-2">
+                <i class="fas fa-calendar text-[#9EBF3B] ml-1"></i>
+                {{ event.date }}
+              </p>
+              <span :class="`inline-block text-xs px-2 py-1 rounded-full ${getCategoryStyle(event.type)}`">
+                {{ event.type }}
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- رسالة عدم وجود فعاليات ذات صلة -->
+    <div v-if="filteredEvents.length === 0" class="text-center py-8">
+      <i class="fas fa-link text-4xl text-gray-300 mb-3"></i>
+      <h3 class="text-lg font-bold text-gray-700 mb-1">لا توجد فعاليات ذات صلة</h3>
+      <p class="text-gray-500 text-sm">لم نتمكن من العثور على فعاليات مشابهة</p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+// بيانات الفعاليات
+const props = defineProps({
+  events: {
+    type: Array,
+    default: () => []
+  },
+  currentEvent: {
+    type: Object,
+    default: null
+  }
+})
+
+// إرسال الأحداث للوالد
+const emit = defineEmits(['event-click'])
+
+// الفعاليات المصفاة (استبعاد الفعالية الحالية)
+const filteredEvents = computed(() => {
+  return props.events.filter(event => 
+    event.id !== props.currentEvent?.id
+  ).slice(0, 3) // عرض 3 فعاليات كحد أقصى
+})
+
+// دالة للحصول على نمط التصنيف
+const getCategoryStyle = (type) => {
+  const styles = {
+    'أمسيات': 'bg-blue-100 text-blue-700',
+    'فعاليات': 'bg-green-100 text-green-700',
+    'ورش عمل': 'bg-pink-100 text-pink-700'
+  }
+  return styles[type] || 'bg-gray-100 text-gray-700'
+}
+
+// النقر على فعالية
+const handleEventClick = (event) => {
+  emit('event-click', event)
+}
+</script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
