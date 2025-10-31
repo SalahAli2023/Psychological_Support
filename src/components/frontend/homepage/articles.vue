@@ -18,19 +18,11 @@
     <div class="relative z-10 max-w-7xl mx-auto px-6">
       <!-- العنوان الرئيسي -->
       <div class="text-center mb-16">
-        <div class="inline-block relative">
-          <h2 
-            class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 transition-all duration-700"
-            :class="titleClass"
-          >
-            مقالات <span class="text-[#9EBF3B]">توعوية</span>
-          </h2>
-          <!-- الخط الزخرفي تحت العنوان -->
-          <div 
-            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] rounded-full transition-all duration-700"
-            :class="lineClass"
-          ></div>
-        </div>
+          <TitleSection
+          mainText="مقالات"
+          highlightText="توعوية"
+        />
+      
         <p 
           class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mt-4 transition-all duration-700"
           :class="contentItemClass"
@@ -79,11 +71,13 @@
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
 import ArticleCard from '../layouts/ArticleCard.vue'
+import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
 
 export default {
   name: "ArticlesSection",
   components: {
-    ArticleCard
+    ArticleCard,
+    TitleSection
   },
   mixins: [useScrollAnimation],
   data() {

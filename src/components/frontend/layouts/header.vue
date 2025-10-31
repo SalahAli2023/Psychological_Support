@@ -55,9 +55,10 @@
   <!-- القائمة المنبثقة -->
   <transition name="fade">
     <div
-      v-if="menuVisible"
-      class="fixed inset-0 bg-[#000000]/80 backdrop-blur-md z-[999] flex flex-col justify-center items-center text-white text-2xl space-y-6"
-    >
+  v-if="menuVisible"
+  class="hidden lg:flex inset-0 bg-[#000000]/80 backdrop-blur-md z-[999] flex-col justify-center items-center text-white text-2xl space-y-6 h-screen"
+>
+
    <button
   @click="toggleMenu"
   class="absolute md:top-8 top-6 md:left-8 left-4 w-12 h-12 border-2 border-[#9EBF3B] text-[#9EBF3B] text-2xl font-bold rounded-2xl flex items-center justify-center shadow-md hover:bg-[#9EBF3B] hover:text-white transition-all duration-300"

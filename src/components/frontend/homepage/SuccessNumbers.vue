@@ -10,15 +10,10 @@
     <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
       <!-- العنوان -->
       <div class="inline-block relative text-center w-full mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 pt-8 transition-all duration-700 delay-300"
-            :class="titleClass">
-          انجازتنا <span class="text-[#9EBF3B]">في ارقام</span>
-        </h2>
-        <!-- الخط المعدل -->
-        <div
-          class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-[2px] bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] transition-all duration-700 delay-500 line-under-title"
-          :class="lineClass"
-        ></div>
+        <TitleSection
+          mainText="أرقام"
+          highlightText="النجاح"
+        />
       </div>
 
       <!-- الأرقام -->
@@ -77,10 +72,14 @@
 
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
+import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
 
 export default {
   name: "StatsSection",
   mixins: [useScrollAnimation],
+   components: {
+    TitleSection
+  },
   data() {
     return {
       animatedCounters: [0, 0, 0, 0],

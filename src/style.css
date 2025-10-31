@@ -7,3 +7,33 @@
 body {
   font-family: "Almarai", sans-serif;
 }
+
+/* تحسين الانتقالات */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تحسين التجاوب */
+@media (max-width: 768px) {
+  .text-3xl {
+    font-size: 1.75rem;
+  }
+  
+  .text-xl {
+    font-size: 1.1rem;
+  }
+  
+  .gap-8 {
+    gap: 1.5rem;
+  }
+  
+  /* تصغير الصورة في الجوال */
+  .w-60 { width: 15rem; }
+  .h-60 { height: 15rem; }
+}
+
+/* تحسين الأداء للحركات المتكررة */
+section, h2, div {
+  will-change: transform, opacity;
+}

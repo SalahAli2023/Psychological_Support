@@ -1,17 +1,21 @@
 <template>
   <section
     ref="sectionRef"
-    class="relative py-12 md:py-20 overflow-hidden bg-gradient-to-br from-gray-50 to-white font-almarai"
+    class="relative py-12 md:py-20 overflow-hidden bg-gradient-to-br from-gray-50 to-white font-almarai transition-all duration-1000"
+    :class="sectionClass"
   >
     <!-- العنوان -->
     <div class="text-center mb-10 md:mb-16 px-4">
       <div class="inline-block relative">
-        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          كيف <span class="text-[#9EBF3B]">تعمل</span> منصتنا؟
-        </h2>
-        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 md:w-24 h-1 bg-gradient-to-r from-[#9EBF3B] to-[#D6A29A] rounded-full"></div>
+        <TitleSection
+          mainText="كيف تعمل"
+          highlightText=" المنصة؟"
+        />
       </div>
-      <p class="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+      <p 
+        class="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700 delay-400"
+        :class="contentItemClass"
+      >
         رحلة بسيطة ومباشرة نحو صحة نفسية أفضل في 4 خطوات فقط
       </p>
     </div>
@@ -36,7 +40,8 @@
           stroke-width="1" 
           stroke-opacity="0.8" 
           fill="transparent" 
-          class="path-animate"
+          class="path-animate transition-all duration-1000 delay-200"
+          :class="svgPathClass"
           marker-end="url(#arrowhead-green)" 
         />
 
@@ -47,7 +52,8 @@
           stroke-width="1" 
           stroke-opacity="0.8" 
           fill="transparent" 
-          class="path-animate delay"
+          class="path-animate delay transition-all duration-1000 delay-400"
+          :class="svgPathClass"
           marker-end="url(#arrowhead-pink)" 
         />
 
@@ -58,13 +64,17 @@
           stroke-width="1" 
           stroke-opacity="0.8" 
           fill="transparent" 
-          class="path-animate delay2"
+          class="path-animate delay2 transition-all duration-1000 delay-600"
+          :class="svgPathClass"
           marker-end="url(#arrowhead-green)" 
         />
       </svg>
 
       <!-- Steps Desktop -->
-      <div class="flex flex-col items-center text-center relative z-10">
+      <div 
+        class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-200"
+        :class="contentItemClass"
+      >
         <div class="bg-gradient-to-br from-[#9EBF3B] to-[#8aab34] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           01
         </div>
@@ -74,7 +84,10 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center text-center relative z-10">
+      <div 
+        class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-300"
+        :class="contentItemClass"
+      >
         <div class="mb-4">
           <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">اجتمع بأخصائنا</h3>
           <p class="text-gray-600 w-56">قابل أخصائيك عبر الجلسات الافتراضية أو احجز موعداً في العيادة</p>
@@ -84,7 +97,10 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center text-center relative z-10">
+      <div 
+        class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-400"
+        :class="contentItemClass"
+      >
         <div class="bg-gradient-to-br from-[#9EBF3B] to-[#8aab34] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           03
         </div>
@@ -94,7 +110,10 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center text-center relative z-10">
+      <div 
+        class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-500"
+        :class="contentItemClass"
+      >
         <div class="mb-4">
           <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">تابع تقدمك</h3>
           <p class="text-gray-600 w-56">تابع تحسن صحتك النفسية مع تقارير دورية ونصائح مخصصة</p>
@@ -110,7 +129,9 @@
       <div
         v-for="(step, index) in steps"
         :key="index"
-        class="flex items-center justify-between mb-6"
+        class="flex items-center justify-between mb-6 transition-all duration-700"
+        :class="mobileStepClass"
+        :style="{ transitionDelay: `${index * 100 + 200}ms` }"
       >
         <div
           :class="[
@@ -137,8 +158,13 @@
 </template>
 
 <script>
+import { useScrollAnimation } from '@/assets/js/animations.js'
+import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
+
 export default {
-  name: "HowItWorksAr",
+  name: "HowItWorks",
+  mixins: [useScrollAnimation],
+  components: { TitleSection },
   data() {
     return {
       isMobile: false,
@@ -148,6 +174,20 @@ export default {
         { number: "03", title: "احصل على الدعم", text: "تلقى العلاج والدعم المناسب مع متابعة مستمرة لتطور حالتك" },
         { number: "04", title: "تابع تقدمك", text: "تابع تحسن صحتك النفسية مع تقارير دورية ونصائح مخصصة" },
       ]
+    }
+  },
+  computed: {
+    svgPathClass() {
+      return {
+        'opacity-0': !this.isVisible,
+        'opacity-100': this.isVisible
+      }
+    },
+    mobileStepClass() {
+      return {
+        'opacity-0 translate-x-8': !this.isVisible,
+        'opacity-100 translate-x-0': this.isVisible
+      }
     }
   },
   mounted() {
@@ -185,6 +225,23 @@ export default {
 
 div.bg-gradient-to-br { 
   box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+
+/* تحسين الانتقالات */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تحسين التجاوب */
+@media (max-width: 768px) {
+  .text-2xl {
+    font-size: 1.75rem;
+  }
+  
+  .text-lg {
+    font-size: 1.1rem;
+  }
 }
 
 /* تأثيرات hover محسنة */

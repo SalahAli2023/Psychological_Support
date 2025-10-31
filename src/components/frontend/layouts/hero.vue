@@ -1,5 +1,5 @@
 <template>
-  <section class="relative py-30 hero-gradient" >
+  <section class="relative pt-30 pb-10 hero-gradient" >
     <!-- أشكال عائمة للتزيين -->
     <!-- <div v-if="floatingShapes" class="floating-shapes">
       <div v-for="(shape, index) in 3" :key="index" :class="`shape shape-${index+1}`"></div>

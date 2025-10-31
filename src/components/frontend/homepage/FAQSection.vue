@@ -23,19 +23,10 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6">
       <!-- العنوان الرئيسي -->
       <header class="text-center mb-16">
-        <div class="inline-block relative">
-          <h2 
-            class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 transition-all duration-700"
-            :class="titleClass"
-          >
-            الأسئلة <span class="text-[#D6A29A]">الشائعة</span>
-          </h2>
-          <!-- الخط الزخرفي تحت العنوان -->
-          <div 
-            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-[#D6A29A] rounded-full transition-all duration-700"
-            :class="lineClass"
-          ></div>
-        </div>
+         <TitleSection
+          mainText="الاسئلة "
+          highlightText="الشائعة"
+        />
         <p 
           class="text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700"
           :class="contentItemClass"
@@ -213,10 +204,15 @@
 
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
+import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
 
 export default {
   name: "FAQSection",
   mixins: [useScrollAnimation],
+  components: {
+
+    TitleSection
+  },
   data() {
     return {
       // بيانات الأسئلة الشائعة
@@ -299,7 +295,7 @@ export default {
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
+}como
 
 /* تأثير انتقالي سلس للإجابات */
 .overflow-hidden {
