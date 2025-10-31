@@ -8,8 +8,11 @@
       title="تواصــل معنا"
       highlight="وسنسعد بخدمتك"
       subtitle="نحن هنا للإجابة عن استفساراتك ومساعدتك في أي وقت"
-      :buttons="[
-        { text: 'ابدأ الآن', icon: 'fas fa-paper-plane', primary: true }
+
+           :buttons="[
+        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
+        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
+
       ]"
     />
 

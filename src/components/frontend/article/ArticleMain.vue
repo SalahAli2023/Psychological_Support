@@ -1,3 +1,4 @@
+
 <template>
   <div class="bg-white">
   
@@ -25,4 +26,5 @@ export default {
     Footer
   }
 }
+
 </script>

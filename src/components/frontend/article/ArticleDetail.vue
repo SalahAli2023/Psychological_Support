@@ -1,3 +1,4 @@
+
 <template>
   <div class="bg-white">
     <!-- الهيدر -->
@@ -29,4 +30,5 @@ export default {
     }
   }
 }
+
 </script>

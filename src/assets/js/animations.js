@@ -94,7 +94,9 @@ export const useScrollAnimation = {
           })
         },
         {
-          threshold: 0.1,
+
+          threshold: 0.3,
+
           rootMargin: '0px 0px -10% 0px'
         }
       )

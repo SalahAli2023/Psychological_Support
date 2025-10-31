@@ -1,3 +1,4 @@
+
 <template>
   <div class="flex flex-col items-center space-y-6">
     <!-- معلومات الصفحة -->

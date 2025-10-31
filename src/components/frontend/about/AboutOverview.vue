@@ -1,5 +1,4 @@
-[file name]: AboutOverview.vue
-[file content begin]
+
 <template>
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
@@ -10,7 +9,7 @@
             <img 
               src="/images/جلسات.png" 
               alt="مركز الدراسات الاستراتيجية لدعم المرأة والطفل"
-              class="w-full h-83 lg:h-90 object-cover transition-transform duration-700 hover:scale-105"
+
             />
             <!-- تراكب متدرج -->
             <div class="absolute inset-0 bg-gradient-to-br from-[#9EBF3B]/10 to-[#D6A29A]/10 transition-opacity duration-500 hover:opacity-0"></div>
@@ -23,7 +22,7 @@
             <span class="text-[#9EBF3B]">مركز الدراسات الاستراتيجية</span> لدعم المرأة والطفل
           </h2>
           
-          <div class="space-y-4 text-lg text-gray-600 leading-relaxed">
+
             <p class="animate-fade-in-up" style="animation-delay: 0.1s">
               مركز الدراسات الاستراتيجية لدعم المرأة والطفل - اليمن هو مؤسسة مدنية مستقلة غير ربحية 
               يتمتع بشخصية قانونية مستقلة. تأسس وفق قانون الجمعيات والمؤسسات الأهلية رقم (1) لسنة 2001م 
@@ -52,20 +51,23 @@
           <div class="mt-8 flex flex-wrap gap-4">
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.5s">
               <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
-              <span class="text-gray-700 font-medium">مؤسسة مستقلة</span>
+
+              <span class="text-gray-700 font-medium text-sm">مؤسسة مستقلة</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.6s">
               <div class="w-3 h-3 bg-[#D6A29A] rounded-full"></div>
-              <span class="text-gray-700 font-medium">غير ربحي</span>
+              <span class="text-gray-700 font-medium text-sm">غير ربحي</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.7s">
               <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
-              <span class="text-gray-700 font-medium">مرخص رسمياً</span>
+              <span class="text-gray-700 font-medium text-sm">مرخص رسمياً</span>
+
             </div>
           </div>
         </div>
       </div>
-    </div>
+ 
+    
   </section>
 </template>
 
@@ -136,5 +138,4 @@
   animation: bounceIn 0.6s ease-out forwards;
   opacity: 0;
 }
-</style>
-[file content end]
+ </style>

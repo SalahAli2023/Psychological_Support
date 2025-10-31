@@ -1,3 +1,4 @@
+
 <template>
   <div class="article-card">
     <!-- Image -->
@@ -62,4 +63,5 @@ export default {
   },
   emits: ['read-more']
 }
+
 </script>

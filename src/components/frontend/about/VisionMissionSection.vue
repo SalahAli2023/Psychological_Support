@@ -1,5 +1,4 @@
-[file name]: VisionMissionSection.vue
-[file content begin]
+
 <template>
   <section class="py-20 bg-gradient-to-br from-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-6">
@@ -7,7 +6,9 @@
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
           رؤيتنا ورسالتنا
         </h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
+
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
+
           نسعى لتحقيق التميز في دعم المرأة والطفل والفئات الضعيفة في اليمن
         </p>
       </div>
@@ -18,8 +19,10 @@
           <div class="w-16 h-16 bg-[#9EBF3B] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-eye text-white text-2xl"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رؤيتنا</h3>
-          <p class="text-gray-600 text-lg leading-relaxed text-center animate-fade-in-delay">
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رؤيتنا</h3>
+          <p class="text-gray-600 leading-relaxed text-center animate-fade-in-delay">
+
             أن نكون في طليعة المجتمع المدني المتخصص في صناعة مستقبل أفضل للنساء 
             والأطفال والفئات الضعيفة في اليمن
           </p>
@@ -30,8 +33,10 @@
           <div class="w-16 h-16 bg-[#D6A29A] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-bullseye text-white text-2xl"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رسالتنا</h3>
-          <p class="text-gray-600 text-lg leading-relaxed text-center animate-fade-in-delay">
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رسالتنا</h3>
+          <p class="text-gray-600 leading-relaxed text-center animate-fade-in-delay">
+
             نسعى الى دعم ومساندة المرأة والطفل والفئات الضعيفة والمهمشة من خلال تعزيز قيم 
             المشاركة والحماية والأمن والسلم المجتمعي، وفق رؤى واستراتيجيات ممنهجة من خلال 
             الخبرات والكفاءات المتخصصة للوقاية والحد من آثار العنف والانتهاكات وصولا الى 
@@ -44,7 +49,9 @@
           <div class="w-16 h-16 bg-[#9EBF3B] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-heart text-white text-2xl"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center animate-fade-in">قيمنا</h3>
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">قيمنا</h3>
+
           <div class="space-y-3 text-right">
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.4s">
               <i class="fas fa-check text-[#9EBF3B]"></i>
@@ -145,5 +152,6 @@
   animation: fadeInList 0.5s ease-out forwards;
   opacity: 0;
 }
+
 </style>
-[file content end]
+

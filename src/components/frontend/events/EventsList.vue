@@ -38,7 +38,9 @@
           @click="goToPage(page)"
           class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
           :class="page === currentPage 
-            ? 'bg-[#9EBF3B] text-white shadow-lg' 
+
+            ? 'bg-[#9EBF3B] text-white shadow-1xl' 
+
             : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'"
         >
           {{ page }}

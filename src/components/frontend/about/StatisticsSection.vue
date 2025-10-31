@@ -1,5 +1,4 @@
-[file name]: StatisticsSection.vue
-[file content begin]
+
 <template>
   <section class="py-20 bg-gradient-to-br from-[#9EBF3B]/5 to-[#D6A29A]/5">
     <div class="max-w-7xl mx-auto px-6">
@@ -7,23 +6,28 @@
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
           إنجازاتنا <span class="text-[#9EBF3B]">وأرقامنا</span>
         </h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
+
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
+
           نحن نفخر بما حققناه من إنجازات ونعمل دائمًا على التطوير والتحسين
         </p>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         <div 
           v-for="stat in statistics" 
           :key="stat.id"
-          class="text-center bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 animate-count-up"
+          class="text-center bg-white rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 animate-count-up"
           :style="`animation-delay: ${stat.id * 0.2}s`"
           @mouseenter="startCounter(stat)"
         >
-          <div class="text-4xl md:text-5xl font-bold text-[#9EBF3B] mb-2" :id="`counter-${stat.id}`">
+          <div class="text-3xl md:text-4xl font-bold text-[#9EBF3B] mb-2" :id="`counter-${stat.id}`">
             {{ stat.initialValue }}
           </div>
-          <div class="text-gray-600 text-lg">{{ stat.label }}</div>
+          <div class="text-gray-600 text-base">{{ stat.label }}</div>
+
         </div>
       </div>
     </div>
@@ -119,5 +123,6 @@ onMounted(() => {
   animation: countUp 0.6s ease-out forwards;
   opacity: 0;
 }
+
 </style>
-[file content end]
+

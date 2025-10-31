@@ -10,11 +10,11 @@
       title="فعاليات الصحة"
       highlight="النفسية"
       subtitle="انضم إلى رحلتنا التفاعلية لاكتساب المعرفة وتبادل الخبرات في مجال الصحة النفسية"
-      :buttons="[
-        {
-          text: 'استكشف الفعاليات',
-          class: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg'
-        }
+
+          :buttons="[
+        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
+        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
+
       ]"
       scroll-indicator
       @cta="handleCta"

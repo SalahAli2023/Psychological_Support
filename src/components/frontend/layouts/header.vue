@@ -30,7 +30,10 @@
             :alt="t('header.arrowAlt')"
             class="w-5 sm:w-7"
           />
-          <span>{{ t('header.joinUs') }}</span>
+
+       <span class="text-white">{{ t('header.joinUs') }}</span>
+
+
         </router-link>
 
         <button
@@ -55,9 +58,10 @@
   <!-- القائمة المنبثقة -->
   <transition name="fade">
     <div
-  v-if="menuVisible"
-  class="hidden lg:flex inset-0 bg-[#000000]/80 backdrop-blur-md z-[999] flex-col justify-center items-center text-white text-2xl space-y-6 h-screen"
->
+
+      v-if="menuVisible"
+      class="fixed inset-0 bg-[#000000]/80 backdrop-blur-md z-[999] flex flex-col justify-center items-center text-white text-2xl space-y-6"
+    >
 
    <button
   @click="toggleMenu"
