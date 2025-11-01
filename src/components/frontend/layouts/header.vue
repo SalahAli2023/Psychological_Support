@@ -93,7 +93,9 @@ import { ref, onMounted, onUnmounted, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { translations, t } from '@/locales'
 import SocialLinks from '../layouts/SocialLinks.vue'
+import { useTranslations } from '@/composables/useTranslations'
 
+const { toggleLanguage, translate } = useTranslations()
 const router = useRouter()
 const menuVisible = ref(false)
 const currentLanguage = ref('ar')
@@ -103,15 +105,9 @@ const isMobile = ref(window.innerWidth <= 768)
 
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
-const toggleLanguage = () => {
-  currentLanguage.value = currentLanguage.value === 'ar' ? 'en' : 'ar'
-  localStorage.setItem('preferredLanguage', currentLanguage.value)
-  document.documentElement.dir = currentLanguage.value === 'ar' ? 'rtl' : 'ltr'
-  document.documentElement.lang = currentLanguage.value
-  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: currentLanguage.value } }))
-}
 
-const translate = (key) => t(key, currentLanguage.value)
+
+
 
 const menuItems = [
    { name: { ar: translations.ar.menuItems.Home, en: translations.en.menuItems.Home }, path: '/' },

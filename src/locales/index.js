@@ -1,72 +1,20 @@
-// src/locales/index.js
+import { ar } from './ar';
+import { en } from './en';
 
-import Home from "../components/frontend/home.vue"
-
-export const translations = {
-  ar: {
-    header: {
-      logoAlt: 'شعار منصة الدعم النفسي',
-      arrowAlt: 'سهم',
-      joinUs: 'انضم إلينا',
-      languageToggle: 'تبديل اللغة',
-      openMenu: 'فتح القائمة',
-      closeMenu: 'إغلاق القائمة'
-    },
-    menuItems: {
-      Home: 'الرئيسية ',
-      about: 'من نحن',
-      services: 'خدماتنا',
-      library: 'المكتبة',
-      specialists: 'الأخصائيون',
-      sessions: 'جلسات الدعم',
-      events: 'الفعاليات والورش',
-      measures: 'المقاييس',
-      testimonials: 'شهادات المستفيدين',
-      articles: 'المقالات والتوعية',
-      library: ' المكتبة',
-      faq: 'الأسئلة الشائعة',
-      contact: 'اتصل بنا'
-    }
-  },
-  en: {
-    header: {
-      logoAlt: 'Mental Health Support Platform Logo',
-      arrowAlt: 'Arrow',
-      joinUs: 'Join Us',
-      languageToggle: 'Toggle Language',
-      openMenu: 'Open Menu',
-      closeMenu: 'Close Menu'
-    },
-    menuItems: {
-       Home: 'Home',
-      about: 'About Us',
-      services: 'Our Services',
-      specialists: 'Specialists',
-      library: 'library',
-      sessions: 'Support Sessions',
-      events: 'Events & Workshops',
-      measures: 'Measurements',
-      testimonials: 'Testimonials',
-      articles: 'Articles & Awareness',
-      library: 'library',
-      faq: 'FAQ',
-      contact: 'Contact Us'
-    }
-  }
-}
+export const translations = { ar, en };
 
 // Helper function to get translation
 export function t(key, language = 'ar') {
-  const keys = key.split('.')
-  let value = translations[language]
+  const keys = key.split('.');
+  let value = translations[language];
   
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
-      value = value[k]
+      value = value[k];
     } else {
-      return key // Return key if translation not found
+      return key; // Return key if translation not found
     }
   }
   
-  return value || key
+  return value || key;
 }
