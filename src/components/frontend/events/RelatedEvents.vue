@@ -2,7 +2,7 @@
 <template>
   <div>
     <!-- فعاليات ذات صلة - تصميم عمودي -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
+    <div class="bg-white rounded-2xl shadow p-6">
       <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
         فعاليات ذات صلة
       </h3>
@@ -10,7 +10,7 @@
         <article 
           v-for="event in filteredEvents" 
           :key="event.id"
-          class="group bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-200"
+          class="group bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow transition-all duration-300 cursor-pointer border border-gray-200"
           @click="handleEventClick(event)"
         >
           <div class="flex gap-4">
@@ -73,9 +73,9 @@ const filteredEvents = computed(() => {
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {
   const styles = {
-    'أمسيات': 'bg-blue-100 text-blue-700',
+    'أمسيات': 'bg-green-100 text-green-700',
     'فعاليات': 'bg-green-100 text-green-700',
-    'ورش عمل': 'bg-pink-100 text-pink-700'
+    'ورش عمل': 'bg-green-100 text-green-700'
   }
   return styles[type] || 'bg-gray-100 text-gray-700'
 }

@@ -209,9 +209,9 @@ const allEvents = ref([
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {
   const styles = {
-    'أمسيات': 'bg-blue-100 text-blue-700',
+    'أمسيات': 'bg-green-100 text-green-700',
     'فعاليات': 'bg-green-100 text-green-700',
-    'ورش عمل': 'bg-pink-100 text-pink-700'
+    'ورش عمل': 'bg-green-100 text-green-700'
   }
   return styles[type] || 'bg-gray-100 text-gray-700'
 }

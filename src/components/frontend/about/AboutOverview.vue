@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <!-- الصورة -->
-        <div class="order-2 lg:order-1">
+        <div class="order-2 lg:order-2">
           <div class="relative rounded-2xl overflow-hidden animate-float">
             <img 
               src="/images/جلسات.png" 
@@ -16,7 +16,7 @@
         </div>
         
         <!-- المحتوى -->
-        <div class="order-1 lg:order-2 text-right">
+        <div class="order-1 lg:order-1 text-right">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 animate-fade-in-right">
             <span class="text-[#9EBF3B]">مركز الدراسات الاستراتيجية</span> لدعم المرأة والطفل
           </h2>
