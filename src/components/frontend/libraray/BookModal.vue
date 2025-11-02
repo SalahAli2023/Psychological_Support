@@ -81,14 +81,14 @@
                   </div>
                   <span class="text-gray-600 font-semibold text-xs sm:text-sm">({{ selectedBook.rating }})</span>
                 </div>
-                <p class="text-gray-500 text-xs">بناءً على 124 تقييم</p>
+                 <p class="text-gray-500 text-xs">{{ translate('modal.basedOnRatings', { count: 124 }) }}</p>
               </div>
 
               <!-- الوصف -->
               <div class="mb-4 sm:mb-6">
                 <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-2 flex items-center gap-2">
                   <i class="fas fa-file-alt text-[#9EBF3B] text-sm"></i>
-                  نبذة عن الكتاب
+                  {{ translate('modal.bookSummary') }}
                 </h3>
                 <p class="text-gray-600 leading-relaxed text-justify text-xs sm:text-sm">
                   {{ selectedBook.description }}
@@ -99,61 +99,64 @@
               <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
                   <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">328</div>
-                  <div class="text-xs text-gray-500">صفحة</div>
+                  <div class="text-xs text-gray-500">{{ translate('modal.pages') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
                   <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">4.2</div>
-                  <div class="text-xs text-gray-500">ساعات قراءة</div>
+                  <div class="text-xs text-gray-500">{{ translate('modal.readingTime') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
                   <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">15K</div>
-                  <div class="text-xs text-gray-500">قارئ</div>
+                  <div class="text-xs text-gray-500">{{ translate('modal.readers') }}</div>
                 </div>
               </div>
 
               <!-- أزرار الإجراءات -->
               <div class="flex flex-col gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4">
-                <div class="flex flex-col sm:flex-row gap-2">
+                <div class="flex flex-col sm:flex-row gap-2" :class="isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'">
                   <button 
                     @click="downloadBook"
                     class="flex-1 bg-gradient-to-r from-[#9EBF3B] to-[#8cad35] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                    :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                   >
                     <i class="fas fa-download text-xs sm:text-sm"></i>
-                    تحميل الكتاب
+                    {{ translate('buttons.download') }}
                   </button>
                   
                   <button 
                     @click="previewBook"
                     class="flex-1 border-2 border-[#9EBF3B] text-[#9EBF3B] px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                    :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                   >
                     <i class="fas fa-eye text-xs sm:text-sm"></i>
-                    معاينة
+                    {{ translate('buttons.preview') }}
                   </button>
                 </div>
                 
                 <button 
                   @click="rateBook"
                   class="w-full border-2 border-[#d6a29a] text-[#d6a29a] px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-[#d6a29a] hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                  :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                 >
                   <i class="fas fa-star text-xs sm:text-sm"></i>
-                  تقييم الكتاب
+                  {{ translate('buttons.rateBook') }}
                 </button>
               </div>
 
               <!-- معلومات إضافية -->
               <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200/50">
-                <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500">
-                  <span class="flex items-center gap-1 justify-center sm:justify-start">
+                <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500" :class="isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'">
+                  <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-language text-xs"></i>
-                    اللغة: العربية
+                    {{ translate('modal.language') }}: {{ translate('modal.arabic') }}
                   </span>
-                  <span class="flex items-center gap-1 justify-center sm:justify-start">
+                  <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-file-pdf text-xs"></i>
                     PDF - 5.2 MB
                   </span>
-                  <span class="flex items-center gap-1 justify-center sm:justify-start">
+                  <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-shield-alt text-xs"></i>
-                    مرخصة
+                    {{ translate('modal.licensed') }}
                   </span>
                 </div>
               </div>
@@ -166,12 +169,24 @@
 </template>
 
 <script>
+import { useTranslations } from '@/composables/useTranslations'
+
 export default {
   name: 'BookModal',
   props: {
     selectedBook: {
       type: Object,
       default: null
+    }
+  },
+  setup() {
+    const { translate, currentLanguage } = useTranslations()
+    
+    const isRTL = currentLanguage.value === 'ar'
+    
+    return {
+      translate,
+      isRTL
     }
   },
   emits: ['close', 'toggle-favorite', 'download', 'preview', 'rate'],
@@ -194,7 +209,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {

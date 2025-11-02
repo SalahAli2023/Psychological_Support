@@ -1,23 +1,21 @@
-
 <template>
-  <div class="font-almarai" dir="rtl">
+  <div class="font-almarai" :dir="isRTL ? 'rtl' : 'ltr'">
     <!-- Header -->
     <Header />
 
-  
-<Hero 
-  title="مكتبتنا "
-  highlight="  الإلكترونية "
-  subtitle="تصفح مجموعتنا الواسعة من الكتب والمراجع في مختلف المجالات واستمتع بتجربة قراءة فريدة"
-  :buttons="[
-    { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-    { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-  ]"
-/>
+    <!-- Hero Section -->
+    <Hero 
+      :titleKey="'libraryHero.title'"
+      :highlightKey="'libraryHero.highlight'"
+      :subtitleKey="'libraryHero.subtitle'"
+      :buttons="heroButtons"
+    />
+
     <!-- محتوى المكتبة -->
     <section class="max-w-7xl mx-auto px-6 py-10">
-      <div class="flex flex-col md:flex-row gap-6">
-        <!-- الفلترة -->
+      <div class="flex flex-col md:flex-row gap-6" :class="isRTL ? 'md:flex-row-reverse' : 'md:flex-row'">
+        
+        <!-- الفلترة - في العربية تكون على اليمين، في الإنجليزية على اليسار -->
         <BookFilters
           :filters="filters"
           :selectedFilters="selectedFilters"
@@ -30,28 +28,46 @@
         <!-- عرض الكتب -->
         <div class="flex-1">
           <!-- شريط البحث -->
-          <div class="hidden md:flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <div class="flex gap-2 w-full">
+          <div class="hidden md:flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4" 
+               :class="isRTL ? 'md:flex-row-reverse' : 'md:flex-row'">
+            <div class="flex gap-2 w-full" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
+              
+              <!-- في العربية: زر البحث أولاً ثم حقل الإدخال -->
+              <button
+                v-if="isRTL"
+                @click="searchBooks"
+                class="bg-[#9EBF3B] text-white px-6 py-3 rounded-lg hover:bg-[#8cad35] transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
+                :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
+              >
+                <i class="fas fa-search" :class="isRTL ? 'ml-2' : 'mr-2'"></i>
+                <span>{{ translate('buttons.search') }}</span>
+              </button>
+              
               <input
                 v-model="search"
                 type="text"
-                placeholder="البحث عن كتاب، مؤلف، أو كلمة مفتاحية..."
+                :placeholder="searchPlaceholder"
                 class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#9EBF3B] focus:border-transparent text-gray-700"
+                :class="isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'"
                 @keyup.enter="searchBooks"
               />
+              
+              <!-- في الإنجليزية: حقل الإدخال أولاً ثم زر البحث -->
               <button
+                v-if="!isRTL"
                 @click="searchBooks"
                 class="bg-[#9EBF3B] text-white px-6 py-3 rounded-lg hover:bg-[#8cad35] transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
+                :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
               >
-                <i class="fas fa-search"></i>
-                <span class="hidden sm:inline">بحث</span>
+                <span>{{ translate('buttons.search') }}</span>
+                <i class="fas fa-search" :class="isRTL ? 'ml-2' : 'mr-2'"></i>
               </button>
             </div>
           </div>
 
           <!-- عرض النتائج -->
-          <div class="mb-4 text-gray-600">
-            عرض {{ startIndex + 1 }}-{{ endIndex }} من {{ filteredBooks.length }} كتاب
+          <div class="mb-4 text-gray-600 text-center md:text-start" :class="isRTL ? 'text-right' : 'text-left'">
+            {{ showingResultsText }}
           </div>
           
           <!-- شبكة الكتب -->
@@ -68,21 +84,24 @@
           <!-- لا توجد نتائج -->
           <div v-if="filteredBooks.length === 0" class="text-center py-12">
             <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</h3>
-            <p class="text-gray-500">جرب تغيير كلمات البحث أو الفلاتر</p>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">{{ translate('library.noResults') }}</h3>
+            <p class="text-gray-500">{{ translate('library.tryDifferentSearch') }}</p>
           </div>
 
-          <!-- التصفح بين الصفحات -->
           <div v-if="totalPages > 1" class="flex justify-center mt-8">
-            <nav class="flex items-center gap-2">
+            <nav class="flex items-center gap-2" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
               <!-- زر الصفحة السابقة -->
               <button
                 @click="previousPage"
                 :disabled="currentPage === 1"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-                :class="{ 'bg-[#9EBF3B] text-white border-[#9EBF3B]': currentPage === 1 }"
+                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
+                :class="[
+                  isRTL ? 'flex-row-reverse' : 'flex-row'
+                ]"
               >
-                <i class="fas fa-chevron-right"></i>
+                <!-- تغيير اتجاه الأيقونة حسب اللغة -->
+                <i class="fas" :class="isRTL ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+                <span class="hidden sm:inline">{{ translate('pagination.previous') }}</span>
               </button>
 
               <!-- أرقام الصفحات -->
@@ -103,10 +122,14 @@
               <button
                 @click="nextPage"
                 :disabled="currentPage === totalPages"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-                :class="{ 'bg-[#9EBF3B] text-white border-[#9EBF3B]': currentPage === totalPages }"
+                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
+                :class="[
+                  isRTL ? 'flex-row-reverse' : 'flex-row'
+                ]"
               >
-                <i class="fas fa-chevron-left"></i>
+                <span class="hidden sm:inline">{{ translate('pagination.next') }}</span>
+                <!-- تغيير اتجاه الأيقونة حسب اللغة -->
+                <i class="fas" :class="isRTL ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
               </button>
             </nav>
           </div>
@@ -136,7 +159,8 @@ import Hero from '@/components/frontend/layouts/hero.vue'
 import BookModal from '@/components/frontend/libraray/BookModal.vue'
 import BookFilters from '@/components/frontend/libraray/BookFilters.vue'
 import BookCard from '@/components/frontend/libraray/LibraryCard.vue'
-
+import { useTranslations } from '@/composables/useTranslations'
+import { inject } from 'vue'
 export default {
   name: 'BooksPage',
   components: {
@@ -147,32 +171,72 @@ export default {
     BookFilters,
     BookCard
   },
+  setup() {
+    const { translate } = useTranslations()
+    const { currentLanguage } = inject('languageState') // استخدم inject للحصول على currentLanguage
+    
+    const isRTL = currentLanguage.value === 'ar'
+    
+    const heroButtons = [
+      { 
+        text: translate('buttons.startJourney'), 
+        icon: 'fas fa-play-circle', 
+        primary: true 
+      },
+      { 
+        text: translate('buttons.learnMore'), 
+        icon: 'fas fa-info-circle', 
+        primary: false 
+      }
+    ]
+
+    const searchPlaceholder = isRTL ? 
+      'البحث عن كتاب، مؤلف، أو كلمة مفتاحية...' : 
+      'Search for a book, author, or keyword...'
+
+    return {
+      translate,
+      isRTL,
+      heroButtons,
+      searchPlaceholder
+    }
+  },
   data() {
+    // استخدام مفاتيح ثابتة بدلاً من النصوص المترجمة
+    const filterKeys = {
+      categories: 'categories',
+      authors: 'authors', 
+      languages: 'languages',
+      years: 'years',
+      ratings: 'ratings'
+    }
+    
     return {
       search: "",
       selectedBook: null,
       currentPage: 1,
       booksPerPage: 12,
+      filterKeys, // إضافة مفاتيح الفلاتر الثابتة
       openDropdowns: {
-        التصنيفات: true,
-        "اسم المؤلف": false,
-        اللغة: false,
-        "سنة النشر": false,
-        التقييم: false
+        [filterKeys.categories]: true,
+        [filterKeys.authors]: false,
+        [filterKeys.languages]: false,
+        [filterKeys.years]: false,
+        [filterKeys.ratings]: false
       },
       selectedFilters: {
-        التصنيفات: [],
-        "اسم المؤلف": [],
-        اللغة: [],
-        "سنة النشر": [],
-        التقييم: []
+        [filterKeys.categories]: [],
+        [filterKeys.authors]: [],
+        [filterKeys.languages]: [],
+        [filterKeys.years]: [],
+        [filterKeys.ratings]: []
       },
       filters: {
-        التصنيفات: ["علم النفس", "التنمية الذاتية", "الأطفال", "العلاج الأسري", "القلق والتوتر", "العلاقات", "الإدمان", "التربية", "العلاج المعرفي السلوكي", "العلاج بالفن"],
-        "اسم المؤلف": ["د.محمد طه", "جينى بيب", "د.شارون مارتين", "جوناثان هايدت", "د.برين براون", "د.سارة أحمد", "د.أحمد خالد", "د.نورة السعيد", "د.ياسمين علي", "د.طارق الحبيب", "د.نيفين عبدالهادي", "د.إبراهيم الفقي"],
-        اللغة: ["عربي", "إنجليزي"],
-        "سنة النشر": ["2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017"],
-        التقييم: ["5 نجوم", "4 نجوم", "3 نجوم", "نجمتان", "نجمة"]
+        [this.translate('filters.categories')]: ["علم النفس", "التنمية الذاتية", "الأطفال", "العلاج الأسري", "القلق والتوتر", "العلاقات", "الإدمان", "التربية", "العلاج المعرفي السلوكي", "العلاج بالفن"],
+        [this.translate('filters.authors')]: ["د.محمد طه", "جينى بيب", "د.شارون مارتين", "جوناثان هايدت", "د.برين براون", "د.سارة أحمد", "د.أحمد خالد", "د.نورة السعيد", "د.ياسمين علي", "د.طارق الحبيب", "د.نيفين عبدالهادي", "د.إبراهيم الفقي"],
+        [this.translate('filters.languages')]: ["عربي", "إنجليزي"],
+        [this.translate('filters.years')]: ["2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017"],
+        [this.translate('filters.ratings')]: ["5 نجوم", "4 نجوم", "3 نجوم", "نجمتان", "نجمة"]
       },
 
       /* 🟢 أربعة وعشرون كتابًا */
@@ -446,6 +510,17 @@ export default {
   },
 
   computed: {
+    showingResultsText() {
+      const start = this.startIndex + 1
+      const end = this.endIndex
+      const total = this.filteredBooks.length
+      
+      if (this.isRTL) {
+        return `عرض ${start}-${end} من ${total} كتاب`
+      } else {
+        return `Showing ${start}-${end} of ${total} books`
+      }
+    },
     filteredBooks() {
       let result = this.books;
       
@@ -459,24 +534,25 @@ export default {
         );
       }
       
-      Object.keys(this.selectedFilters).forEach(filterType => {
-        if (this.selectedFilters[filterType] && this.selectedFilters[filterType].length > 0) {
-          if (filterType === "اسم المؤلف") {
+      // استخدام المفاتيح الثابتة بدلاً من النصوص المترجمة
+      Object.keys(this.selectedFilters).forEach(filterKey => {
+        if (this.selectedFilters[filterKey] && this.selectedFilters[filterKey].length > 0) {
+          if (filterKey === this.filterKeys.authors) {
             result = result.filter(book => 
-              this.selectedFilters[filterType].some(author => book.author.includes(author))
+              this.selectedFilters[filterKey].some(author => book.author.includes(author))
             );
-          } else if (filterType === "التصنيفات") {
+          } else if (filterKey === this.filterKeys.categories) {
             result = result.filter(book => 
-              this.selectedFilters[filterType].includes(book.category)
+              this.selectedFilters[filterKey].includes(book.category)
             );
-          } else if (filterType === "سنة النشر") {
+          } else if (filterKey === this.filterKeys.years) {
             result = result.filter(book => 
-              this.selectedFilters[filterType].includes(book.year)
+              this.selectedFilters[filterKey].includes(book.year)
             );
-          } else if (filterType === "التقييم") {
+          } else if (filterKey === this.filterKeys.ratings) {
             result = result.filter(book => {
               const rating = book.rating;
-              return this.selectedFilters[filterType].some(ratingFilter => {
+              return this.selectedFilters[filterKey].some(ratingFilter => {
                 if (ratingFilter === "5 نجوم") return rating >= 4.5;
                 if (ratingFilter === "4 نجوم") return rating >= 3.5 && rating < 4.5;
                 if (ratingFilter === "3 نجوم") return rating >= 2.5 && rating < 3.5;
@@ -491,35 +567,28 @@ export default {
       
       return result;
     },
-
     totalPages() {
       return Math.ceil(this.filteredBooks.length / this.booksPerPage);
     },
-
     paginatedBooks() {
       const startIndex = (this.currentPage - 1) * this.booksPerPage;
       const endIndex = startIndex + this.booksPerPage;
       return this.filteredBooks.slice(startIndex, endIndex);
     },
-
     startIndex() {
       return (this.currentPage - 1) * this.booksPerPage;
     },
-
     endIndex() {
       return Math.min(this.startIndex + this.booksPerPage, this.filteredBooks.length);
     },
-
     visiblePages() {
       const pages = [];
       const total = this.totalPages;
       const current = this.currentPage;
       
-      // إظهار 5 صفحات كحد أقصى
       let start = Math.max(1, current - 2);
       let end = Math.min(total, start + 4);
       
-      // تعديل البداية إذا كنا في النهاية
       if (end - start < 4) {
         start = Math.max(1, end - 4);
       }
@@ -531,7 +600,6 @@ export default {
       return pages;
     }
   },
-
   watch: {
     search() {
       this.currentPage = 1;
@@ -543,7 +611,6 @@ export default {
       deep: true
     }
   },
-
   methods: {
     toggleDropdown(title) {
       this.openDropdowns[title] = !this.openDropdowns[title];
@@ -555,7 +622,6 @@ export default {
       this.currentPage = 1;
     },
     searchBooks() {
-      // البحث يتم التعامل معه في computed
       this.currentPage = 1;
     },
     toggleFavorite(bookId) {
@@ -563,9 +629,15 @@ export default {
       if (book) {
         book.isFavorite = !book.isFavorite;
         if (book.isFavorite) {
-          this.$toast.success('تمت الإضافة إلى المفضلة', { position: 'top-left', duration: 2000 });
+          this.$toast.success(this.translate('messages.addedToFavorites'), { 
+            position: this.isRTL ? 'top-right' : 'top-left', 
+            duration: 2000 
+          });
         } else {
-          this.$toast.info('تمت الإزالة من المفضلة', { position: 'top-left', duration: 2000 });
+          this.$toast.info(this.translate('messages.removedFromFavorites'), { 
+            position: this.isRTL ? 'top-right' : 'top-left', 
+            duration: 2000 
+          });
         }
       }
     },
@@ -590,28 +662,33 @@ export default {
       this.selectedBook = null;
     },
     downloadBook(bookId) {
-      this.$toast.success('جاري تحميل الكتاب...', { position: 'top-left', duration: 3000 });
+      this.$toast.success(this.translate('messages.downloading'), { 
+        position: this.isRTL ? 'top-right' : 'top-left', 
+        duration: 3000 
+      });
     },
     previewBook(bookId) {
-      this.$toast.info('جاري فتح المعاينة...', { position: 'top-left', duration: 2000 });
+      this.$toast.info(this.translate('messages.previewing'), { 
+        position: this.isRTL ? 'top-right' : 'top-left', 
+        duration: 2000 
+      });
     },
     rateBook(bookId) {
-      this.$toast.warning('فتح صفحة التقييم...', { position: 'top-left', duration: 2000 });
+      this.$toast.warning(this.translate('messages.openingRating'), { 
+        position: this.isRTL ? 'top-right' : 'top-left', 
+        duration: 2000 
+      });
     },
-
-    // طرق التصفح بين الصفحات
     goToPage(page) {
       this.currentPage = page;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
-
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
