@@ -1,26 +1,23 @@
-
 <template>
   <div v-cloak>
     <!-- Hero Section -->
- <Hero
-      :title="heroTitle"
-      :highlight="heroHighlight"
-      :subtitle="heroSubtitle"
+    <Hero
+      :titleKey="'articleDetailHero.title'"
+      :highlightKey="'articleDetailHero.highlight'"
+      :subtitleKey="'articleDetailHero.subtitle'"
       :buttons="heroButtons"
-      background="solid"
-      align="center"
-      size="medium"
       @cta="handleHeroCta"
     />
 
     <!-- Breadcrumb Outside Main Layout -->
-    <div class="breadcrumb-container">
+<div class="breadcrumb-container">
       <div class="breadcrumb-wrapper">
         <div class="article-breadcrumb">
-          <span class="breadcrumb-item" @click="goBack">المقالات</span>
-          <i class="fas fa-chevron-left"></i>
+          <span class="breadcrumb-item" @click="goBack">{{ translate('breadcrumb.articles') }}</span>
+          <!-- تغيير اتجاه الأيقونة حسب اللغة -->
+          <i class="fas" :class="isRTL ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
           <span class="breadcrumb-item current">{{ article.category }}</span>
-          <i class="fas fa-chevron-left"></i>
+          <i class="fas" :class="isRTL ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
           <span class="breadcrumb-item" :id="`article-${article.id}`">{{ article.title }}</span>
         </div>
       </div>
@@ -39,9 +36,9 @@
                 <i class="fas fa-calendar-alt"></i>
                 {{ article.date }}
               </span>
-              <span class="meta-item mr-2 ">
+              <span class="meta-item mr-2">
                 <i class="fas fa-clock"></i>
-                وقت القراءة: {{ article.readingTime || '5 دقائق' }}
+                {{ translate('article.readingTime') }}: {{ article.readingTime || '5 دقائق' }}
               </span>
             </div>
           </div>
@@ -90,7 +87,7 @@
             <section class="content-section" v-if="article.fullContent?.attachments && article.fullContent.attachments.length > 0">
               <h2 class="section-title-main">
                 <i class="fas fa-paperclip"></i>
-                المرفقات
+                {{ translate('attachments.title') }}
               </h2>
               <div class="attachments-grid">
                 <div 
@@ -112,25 +109,26 @@
           </div>
 
           <!-- Test Button Section -->
-          <section class="content-section test-section">
-            <div class="test-container">
-              <div class="test-content">
-                <div class="test-icon">
-                  <i class="fas fa-brain"></i>
-                </div>
-                <div class="test-text">
-                  <h3 class="test-title">اختبر معلوماتك</h3>
-                  <p class="test-description">
-                    قم باختبار فهمك للموضوع من خلال أسئلة تفاعلية مصممة خصيصاً لهذا المقال
-                  </p>
-                </div>
+           <section class="content-section test-section">
+          <div class="test-container">
+            <div class="test-content">
+              <div class="test-icon">
+                <i class="fas fa-brain"></i>
               </div>
-              <button class="test-btn" @click="startTest">
-                <span>ابدأ الاختبار</span>
-                <i class="fas fa-arrow-left"></i>
-              </button>
+              <div class="test-text">
+                <h3 class="test-title">{{ translate('testSection.title') }}</h3>
+                <p class="test-description">
+                  {{ translate('testSection.description') }}
+                </p>
+              </div>
             </div>
-          </section>
+            <button class="test-btn" @click="startTest">
+              <span>{{ translate('testSection.startButton') }}</span>
+              <!-- تغيير اتجاه الأيقونة حسب اللغة -->
+              <i class="fas" :class="isRTL ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+            </button>
+          </div>
+        </section>
         </div>
       </main>
 
@@ -139,7 +137,7 @@
         <div class="sidebar-card">
           <h3 class="sidebar-title">
             <i class="fas fa-link"></i>
-            مقالات ذات صلة
+            {{ translate('sidebar.relatedArticles') }}
           </h3>
           
           <div class="related-articles-list">
@@ -174,6 +172,8 @@
 <script>
 import { articles } from './articles-data.js'
 import Hero from '@/components/frontend/layouts/hero.vue'
+import { useTranslations } from '@/composables/useTranslations'
+import { inject } from 'vue'
 
 export default {
   name: 'ArticleDetailContent',
@@ -186,10 +186,15 @@ export default {
       required: true
     }
   },
-  data() {
+  setup() {
+    const { translate } = useTranslations()
+    const { currentLanguage } = inject('languageState')
+    
+    const isRTL = currentLanguage.value === 'ar'
+    
     return {
-      isLiked: false,
-      likeCount: 0
+      translate,
+      isRTL
     }
   },
   computed: {
@@ -204,49 +209,39 @@ export default {
     heroButtons() {
       return [
         {
-          text: 'ابدأ القراءة',
+          text: this.translate('buttons.startReading'),
           icon: 'fas fa-book-open',
           primary: true
         },
         {
-          text: 'مقالات ذات صلة',
+          text: this.translate('buttons.relatedArticles'),
           icon: 'fas fa-link'
         }
       ]
-    },
-    // نصوص الهيرو المتجاوبة
-    heroTitle() {
-      return ' تفاصيل '
-    },
-    heroHighlight() {
-      return 'المقال '
-    },
-    heroSubtitle() {
-      if (window.innerWidth < 640) {
-        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات المتعلقة بهذا الموضوع'
-      } else if (window.innerWidth < 1024) {
-        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة بالموضوع'
-      } else {
-        return 'استفد من المحتوى القيم وتعرف على المزيد من المقالات ذات الصلة التي تثري معرفتك وتوسع آفاقك'
-      }
     }
   },
-  
   methods: {
     handleHeroCta(btn) {
-      if (btn.text === 'ابدأ القراءة') {
+      if (btn.text === this.translate('buttons.startReading')) {
         const articleElement = document.getElementById(`article-${this.article.id}`)
         if (articleElement) {
           articleElement.scrollIntoView({ behavior: 'smooth' })
         }
-      } else if (btn.text === 'مقالات ذات صلة') {
+      } else if (btn.text === this.translate('buttons.relatedArticles')) {
         const sidebarElement = document.querySelector('.sidebar')
         if (sidebarElement) {
           sidebarElement.scrollIntoView({ behavior: 'smooth' })
         }
       }
     },
-    // باقي الدوال كما هي...
+    getAttachmentTypeText(type) {
+      // استخدام الترجمة بدلاً من النصوص الثابتة
+      return this.translate(`attachments.types.${type}`) || this.translate('attachments.types.document')
+    },
+    startTest() {
+      alert(`${this.translate('testSection.startButton')}: ${this.article.category}`)
+    },
+    // ... باقي الدوال تبقى كما هي
     findArticleById(id) {
       return articles.find(article => article.id == id)
     },
@@ -284,24 +279,12 @@ export default {
       }
       return icons[type] || 'fas fa-paperclip'
     },
-    getAttachmentTypeText(type) {
-      const types = {
-        image: 'صورة',
-        video: 'فيديو',
-        pdf: 'ملف PDF',
-        document: 'مستند'
-      }
-      return types[type] || 'ملف'
-    },
     openAttachment(attachment) {
       if (attachment.type === 'image' || attachment.type === 'video') {
         window.open(attachment.url, '_blank')
       } else {
         window.open(attachment.url, '_blank')
       }
-    },
-    startTest() {
-      alert(`سيبدأ اختبار في موضوع: ${this.article.category}`)
     },
     goBack() {
       this.$router.push('/article')
@@ -312,5 +295,3 @@ export default {
   }
 }
 </script>
-
-

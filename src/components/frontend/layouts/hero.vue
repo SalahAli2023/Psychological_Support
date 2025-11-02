@@ -1,31 +1,29 @@
 <template>
-
   <section class="relative pt-30 pb-10 hero-gradient">
     <div class="container mx-auto px-4 text-center relative z-10">
       <!-- العنوان الرئيسي مع الكلمة الأخيرة خضراء -->
-      <h1 class="hero-title">
+      <h1 class="hero-title text-center">
         <span class="text-black">{{ displayTitle }}</span>
         <span v-if="displayHighlight" class="text-[#9EBF3B]"> {{ displayHighlight }}</span>
-
       </h1>
 
       <!-- الوصف -->
-      <p v-if="subtitle" class="text-gray-600 text-xl max-w-2xl mx-auto mb-8">
-        {{ subtitle }}
+      <p v-if="resolvedSubtitle" class="text-gray-600 text-xl max-w-2xl mx-auto mb-8 text-center">
+        {{ resolvedSubtitle }}
       </p>
 
-      <!-- الأزرار -->
-
-      <div class="flex justify-center gap-4 text-white">
-
+      <!-- الأزرار مع تغيير الاتجاه بناءً على اللغة -->
+      <div class="flex justify-center gap-4" :class="[isRTL ? 'flex-row-reverse' : 'flex-row']">
         <button
           v-for="(btn, index) in buttons"
           :key="index"
           @click="$emit('cta', btn)"
           :class="buttonClasses(btn)"
         >
-          <i v-if="btn.icon" :class="btn.icon"></i>
+          <!-- تغيير ترتيب الأيقونة بناءً على اللغة -->
+          <i v-if="btn.icon && isRTL" :class="[btn.icon, 'mx-2']"></i>
           {{ btn.text }}
+          <i v-if="btn.icon && !isRTL" :class="[btn.icon, 'mx-2']"></i>
         </button>
       </div>
     </div>
@@ -33,22 +31,47 @@
 </template>
 
 <script setup>
+import { computed, inject } from 'vue'
 
-import { computed } from 'vue'
-
+const { currentLanguage, translate } = inject('languageState')
 
 const props = defineProps({
-  title: { type: String, required: true },
+  // دعم للنصوص المباشرة أو مفاتيح الترجمة
+  title: { type: String, default: '' },
+  titleKey: { type: String, default: '' },
   highlight: { type: String, default: '' },
+  highlightKey: { type: String, default: '' },
   subtitle: { type: String, default: '' },
-
+  subtitleKey: { type: String, default: '' },
   buttons: { type: Array, default: () => [] },
   floatingShapes: { type: Boolean, default: true },
-  autoSplit: { type: Boolean, default: true } // إضافة خاصية للتحكم في التقسيم التلقائي
+  autoSplit: { type: Boolean, default: true }
+})
+
+// تحديد اتجاه النص
+const isRTL = computed(() => currentLanguage.value === 'ar')
+
+// استخدام النص المباشر أو الترجمة
+const resolvedTitle = computed(() => {
+  if (props.title) return props.title
+  if (props.titleKey) return translate(props.titleKey)
+  return ''
+})
+
+const resolvedHighlight = computed(() => {
+  if (props.highlight) return props.highlight
+  if (props.highlightKey) return translate(props.highlightKey)
+  return ''
+})
+
+const resolvedSubtitle = computed(() => {
+  if (props.subtitle) return props.subtitle
+  if (props.subtitleKey) return translate(props.subtitleKey)
+  return ''
 })
 
 // تقسيم العنوان تلقائياً إذا لم يتم提供 highlight
-const titleWords = computed(() => props.title.split(' '))
+const titleWords = computed(() => resolvedTitle.value.split(' '))
 const lastWord = computed(() => titleWords.value[titleWords.value.length - 1])
 const titleWithoutLastWord = computed(() => {
   const words = [...titleWords.value]
@@ -59,16 +82,16 @@ const titleWithoutLastWord = computed(() => {
 // تحديد ما سيتم عرضه
 const displayTitle = computed(() => {
   // إذا كان هناك highlight محدد، استخدم العنوان كاملاً
-  if (props.highlight) return props.title
+  if (resolvedHighlight.value) return resolvedTitle.value
   // إذا كان التقسيم التلقائي مفعلاً، استخدم العنوان بدون الكلمة الأخيرة
   if (props.autoSplit) return titleWithoutLastWord.value
   // إذا لم يكن هناك تقسيم، استخدم العنوان كاملاً
-  return props.title
+  return resolvedTitle.value
 })
 
 const displayHighlight = computed(() => {
   // إذا كان هناك highlight محدد، استخدمه
-  if (props.highlight) return props.highlight
+  if (resolvedHighlight.value) return resolvedHighlight.value
   // إذا كان التقسيم التلقائي مفعلاً، استخدم الكلمة الأخيرة
   if (props.autoSplit) return lastWord.value
   // إذا لم يكن هناك تقسيم، لا تعرض anything
@@ -76,13 +99,12 @@ const displayHighlight = computed(() => {
 })
 
 const buttonClasses = (btn) => {
-  const base = 'px-8 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-300';
-  if (btn.primary) return `${base} btn-primary text-white hover:shadow-lg transform hover:scale-105`;
-  return `${base} border-2 border-gray-300 text-gray-700 hover:border-[#9EBF3B] hover:text-[#9EBF3B] hover:shadow-md`;
-
+  const base = 'px-8 py-3 rounded-lg font-medium flex items-center transition-colors duration-300'
+  if (btn.primary) return `${base} btn-primary text-white hover:shadow-lg transform hover:scale-105`
+  return `${base} border-2 border-gray-300 text-gray-700 hover:border-[#9EBF3B] hover:text-[#9EBF3B] hover:shadow-md`
 }
 
-defineEmits(['cta']);
+defineEmits(['cta'])
 </script>
 
 <style scoped>
@@ -91,13 +113,12 @@ defineEmits(['cta']);
   position: relative;
 }
 
-
 .hero-title {
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
-  line-height: 1.2;
-  direction: rtl;
+  line-height: 1.3;
+  text-align: center;
 }
 
 .btn-primary {
@@ -110,39 +131,6 @@ defineEmits(['cta']);
   box-shadow: 0 6px 20px rgba(158, 191, 59, 0.4);
 }
 
-
-/* الأشكال العائمة */
-.floating-shapes .shape {
-  position: absolute;
-  border-radius: 50%;
-
-  opacity: 0.1;
-  background: #9EBF3B;
-  animation: float 6s ease-in-out infinite;
-}
-
-.shape-1 { 
-  width: 120px; 
-  height: 120px; 
-  top: 10%; 
-  left: 5%; 
-  animation-delay: 0s;
-}
-.shape-2 { 
-  width: 200px; 
-  height: 200px; 
-  top: 30%; 
-  right: 10%; 
-  animation-delay: 2s;
-}
-.shape-3 { 
-  width: 100px; 
-  height: 100px; 
-  bottom: 10%; 
-  left: 20%; 
-  animation-delay: 4s;
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-20px) rotate(180deg); }
@@ -153,24 +141,35 @@ defineEmits(['cta']);
     font-size: 2rem;
   }
   
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
   .flex.justify-center.gap-4 {
-    flex-direction: row; /* الأزرار جنب بعض */
-    flex-wrap: wrap; /* تسمح بالنزول لسطر جديد إذا المساحة ضاقت */
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   button {
-    width: auto;
-    max-width: none;
+    width: 100%;
+    max-width: 280px;
     justify-content: center;
   }
 }
 
+/* تحسينات إضافية للتنسيق */
+.container {
+  direction: ltr; /* نسيطر على الاتجاه من الكلاسات */
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+/* تأكد من أن كل العناصر في المركز */
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* تحسين المسافات بين الكلمات في العنوان */
+.hero-title span {
+  display: inline;
 }
 </style>
-

@@ -1,18 +1,14 @@
-
 <template>
   <div class="font-almarai" >
     <!-- Header -->
     <Header />
 
     <!-- Hero Section -->
-    <Hero 
-      title="مقالات الدعم "
-      highlight="النفسي"
-      subtitle="اكتشف مقالات متنوعة في مجال الصحة النفسية والدعم النفسي والتنمية الذاتية"
-         :buttons="[
-        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-      ]"
+      <Hero 
+      :titleKey="'articlesHero.title'"
+      :highlightKey="'articlesHero.highlight'"
+      :subtitleKey="'articlesHero.subtitle'"
+      :buttons="heroButtons"
     />
 
     <!-- Main Content -->
@@ -71,6 +67,7 @@ import ArticleCard from './ArticleCard.vue'
 import CategoryFilter from './CategoryFilter.vue'
 import Pagination from './Pagination.vue'
 import { articles } from './articles-data.js'
+import { useTranslations } from '@/composables/useTranslations'
 
 export default {
   name: 'MentalHealthArticles',
@@ -81,6 +78,26 @@ export default {
     ArticleCard,
     CategoryFilter,
     Pagination
+  },
+  setup() {
+    const { translate } = useTranslations()
+    
+    const heroButtons = [
+      { 
+        text: translate('buttons.startJourney'), 
+        icon: 'fas fa-play-circle', 
+        primary: true 
+      },
+      { 
+        text: translate('buttons.learnMore'), 
+        icon: 'fas fa-info-circle', 
+        primary: false 
+      }
+    ]
+
+    return {
+      heroButtons
+    }
   },
   data() {
     return {
@@ -126,18 +143,15 @@ export default {
       this.currentPage = 1;
     },
     handleReadMore(articleId) {
-      // الانتقال إلى صفحة تفاصيل المقالة
       this.$router.push(`/article/${articleId}`);
     },
     handlePageChange(page) {
       this.currentPage = page;
-      // التمرير لأعلى الصفحة عند تغيير الصفحة
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 }
 </script>
-
 <style scoped>
 /* تحسينات إضافية للغة العربية */
 .font-almarai {
