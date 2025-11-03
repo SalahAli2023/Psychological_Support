@@ -1,4 +1,3 @@
-<!-- EventsList.vue -->
 <template>
   <div>
     <!-- شبكة الفعاليات -->
@@ -14,8 +13,8 @@
     <!-- رسالة عدم وجود نتائج -->
     <div v-if="filteredEvents.length === 0" class="text-center py-12">
       <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
-      <h3 class="text-xl font-bold text-gray-700 mb-2">لا توجد نتائج</h3>
-      <p class="text-gray-500">لم نتمكن من العثور على فعاليات تطابق بحثك</p>
+      <h3 class="text-xl font-bold text-gray-700 mb-2">{{ translate('events.list.noResults') }}</h3>
+      <p class="text-gray-500">{{ translate('events.list.noResultsMessage') }}</p>
     </div>
 
     <!-- Pagination -->
@@ -25,9 +24,10 @@
         @click="previousPage"
         :disabled="currentPage === 1"
         class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+        :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
         <i class="fas fa-chevron-right"></i>
-        <span>السابق</span>
+        <span>{{ translate('events.list.previous') }}</span>
       </button>
 
       <!-- أرقام الصفحات -->
@@ -38,22 +38,11 @@
           @click="goToPage(page)"
           class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
           :class="page === currentPage 
-
             ? 'bg-[#9EBF3B] text-white shadow-1xl' 
-
             : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'"
         >
           {{ page }}
         </button>
-
-        <!-- نقاط ... عندما تكون هناك صفحات مخفية -->
-        <span v-if="showStartEllipsis" class="flex items-center justify-center text-gray-500">
-          ...
-        </span>
-        
-        <span v-if="showEndEllipsis" class="flex items-center justify-center text-gray-500">
-          ...
-        </span>
       </div>
 
       <!-- زر الصفحة التالية -->
@@ -61,15 +50,16 @@
         @click="nextPage"
         :disabled="currentPage === totalPages"
         class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+        :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
-        <span>التالي</span>
+        <span>{{ translate('events.list.next') }}</span>
         <i class="fas fa-chevron-left"></i>
       </button>
     </div>
 
     <!-- معلومات الصفحة -->
     <div v-if="filteredEvents.length > 0" class="text-center text-gray-600 text-sm">
-      عرض {{ startIndex + 1 }} - {{ endIndex }} من أصل {{ filteredEvents.length }} فعالية
+      {{ translate('events.list.showing').replace('{start}', startIndex + 1).replace('{end}', endIndex).replace('{total}', filteredEvents.length) }}
     </div>
   </div>
 </template>
@@ -77,6 +67,10 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import ArticleCard from '@/components/frontend/layouts/ArticleCard.vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, translate } = useTranslations()
 
 // تعريف الأحداث
 const emit = defineEmits(['event-selected'])
@@ -85,7 +79,7 @@ const emit = defineEmits(['event-selected'])
 const events = ref([])
 
 // إعدادات التقسيم
-const itemsPerPage = ref(6) // عدد الفعاليات في كل صفحة
+const itemsPerPage = ref(6)
 const currentPage = ref(1)
 
 // فلترة الفعاليات
@@ -105,7 +99,7 @@ const props = defineProps({
 // مراقبة تغييرات الفلترة
 watch(() => props.filter, (newFilter) => {
   filterCriteria.value = newFilter
-  currentPage.value = 1 // العودة للصفحة الأولى عند التصفية
+  currentPage.value = 1
 }, { deep: true })
 
 // الفعاليات المصفاة
@@ -146,7 +140,7 @@ const visiblePages = computed(() => {
   const pages = []
   const total = totalPages.value
   const current = currentPage.value
-  const delta = 2 // عدد الصفحات المرئية على كل جانب
+  const delta = 2
 
   for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
     pages.push(i)
@@ -154,10 +148,6 @@ const visiblePages = computed(() => {
 
   return pages
 })
-
-// التحكم في عرض نقاط ...
-const showStartEllipsis = computed(() => visiblePages.value[0] > 1)
-const showEndEllipsis = computed(() => visiblePages.value[visiblePages.value.length - 1] < totalPages.value)
 
 // دوال التنقل بين الصفحات
 const goToPage = (page) => {

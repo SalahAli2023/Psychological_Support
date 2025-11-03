@@ -1,17 +1,18 @@
-
 <template>
   <Hero 
-    title="من "
-    highlight="نحن"
-    subtitle="نحن نعمل على تمكين المجتمع وتقديم برامج دعم نفسي واجتماعي ذات تأثير حقيقي."
-      :buttons="[
-        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-      ]"
-
+    :title="translate('about.hero.title')"
+    :highlight="translate('about.hero.highlight')"
+    :subtitle="translate('about.hero.subtitle')"
+    :buttons="[
+      { text: translate('buttons.startJourney'), icon: 'fas fa-play-circle', primary: true },
+      { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
+    ]"
   />
 </template>
 
 <script setup>
 import Hero from '@/components/frontend/layouts/hero.vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+const { translate } = useTranslations()
 </script>
