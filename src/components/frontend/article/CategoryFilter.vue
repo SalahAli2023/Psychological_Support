@@ -1,4 +1,3 @@
-
 <template>
   <div class="search-filter-container">
     <!-- شريط البحث والتصفية -->
@@ -10,7 +9,7 @@
           type="text"
           v-model="searchQuery"
           @input="handleSearch"
-          placeholder="ابحث في المقالات..."
+          :placeholder="searchPlaceholder"
           class="search-input"
         />
       </div>
@@ -33,7 +32,7 @@
             :class="['dropdown-item', { active: activeCategory === category.id }]"
           >
             <i :class="['fas', category.icon]"></i>
-            {{ category.name }}
+            {{ getTranslatedCategoryName(category) }}
           </div>
         </div>
       </div>
@@ -42,6 +41,9 @@
 </template>
 
 <script>
+import { useTranslations } from '@/composables/useTranslations'
+import { computed } from 'vue'
+
 export default {
   name: 'SearchAndFilter',
   props: {
@@ -55,20 +57,49 @@ export default {
     }
   },
   emits: ['category-change', 'search-change'],
+  setup(props) {
+    const { translate, currentLanguage } = useTranslations()
+    
+    // استخدام computed لجعل searchPlaceholder تفاعلية
+    const searchPlaceholder = computed(() => {
+      return translate('filter.searchPlaceholder')
+    })
+
+    // دالة لترجمة أسماء التصنيفات
+    const getTranslatedCategoryName = (category) => {
+      if (category.id === 'all') {
+        return translate('filter.allCategories')
+      }
+      // يمكنك إضافة ترجمات إضافية للتصنيفات الأخرى هنا
+      return category.name
+    }
+
+    // دالة لترجمة التصنيف النشط
+    const activeCategoryName = computed(() => {
+      if (props.activeCategory === 'all') {
+        return translate('filter.allCategories')
+      }
+      const category = props.categories.find(cat => cat.id === props.activeCategory)
+      return category ? category.name : translate('filter.allCategories')
+    })
+
+    const activeCategoryIcon = computed(() => {
+      const category = props.categories.find(cat => cat.id === props.activeCategory)
+      return category ? category.icon : 'fa-list'
+    })
+
+    return {
+      searchPlaceholder,
+      getTranslatedCategoryName,
+      activeCategoryName,
+      activeCategoryIcon,
+      currentLanguage
+    }
+  },
   data() {
     return {
       searchQuery: '',
       isDropdownOpen: false
-    }
-  },
-  computed: {
-    activeCategoryName() {
-      const category = this.categories.find(cat => cat.id === this.activeCategory);
-      return category ? category.name : 'جميع المقالات';
-    },
-    activeCategoryIcon() {
-      const category = this.categories.find(cat => cat.id === this.activeCategory);
-      return category ? category.icon : 'fa-list';
     }
   },
   methods: {
@@ -87,7 +118,6 @@ export default {
     }
   },
   mounted() {
-    // إغلاق القائمة المنسدلة عند النقر خارجها
     document.addEventListener('click', (e) => {
       if (!this.$el.contains(e.target)) {
         this.closeDropdown();
@@ -95,5 +125,4 @@ export default {
     });
   }
 }
-
 </script>

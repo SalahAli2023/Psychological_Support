@@ -109,4 +109,30 @@ export const en = {
     arabic: 'Arabic',
     licensed: 'Licensed'
   },
+  // ترجمات الفلترة
+  filter: {
+    searchPlaceholder: 'Search in articles...',
+    allCategories: 'All Articles',
+    category: 'Category'
+  },
+
+  // ترجمات الترقيم
+  pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    showing: 'Showing',
+    to: 'to',
+    ofResults: 'of',
+    results: 'results'
+  },
+
+ 
+
+  // ترجمات حالات عدم العثور على نتائج
+  noResults: {
+    title: 'No Articles Found',
+    message: 'Try a different search or category'
+  }
 };

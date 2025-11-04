@@ -110,4 +110,29 @@ filters: {
     arabic: 'العربية',
     licensed: 'مرخصة'
   },
+   // ترجمات الفلترة
+  filter: {
+    searchPlaceholder: 'ابحث في المقالات...',
+    allCategories: 'جميع المقالات',
+    category: 'الفئة'
+  },
+
+  // ترجمات الترقيم
+  pagination: {
+    previous: 'السابق',
+    next: 'التالي',
+    page: 'صفحة',
+    of: 'من',
+    showing: 'عرض',
+    to: 'إلى',
+    ofResults: 'من أصل',
+    results: 'نتيجة'
+  },
+
+
+  // ترجمات حالات عدم العثور على نتائج
+  noResults: {
+    title: 'لا توجد مقالات',
+    message: 'جرب بحثاً آخر أو فئة مختلفة'
+  }
 };
