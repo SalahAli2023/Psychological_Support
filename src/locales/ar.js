@@ -112,7 +112,8 @@ filters: {
   },
    // ترجمات الفلترة
   filter: {
-    searchPlaceholder: 'ابحث في المقالات...',
+    
+    searchPlaceholderArticle: 'ابحث في المقالات...',
     allCategories: 'جميع المقالات',
     category: 'الفئة'
   },

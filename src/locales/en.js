@@ -111,7 +111,7 @@ export const en = {
   },
   // ترجمات الفلترة
   filter: {
-    searchPlaceholder: 'Search in articles...',
+    searchPlaceholderArticle: 'Search in articles...',
     allCategories: 'All Articles',
     category: 'Category'
   },

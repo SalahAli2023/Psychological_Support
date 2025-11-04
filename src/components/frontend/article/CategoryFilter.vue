@@ -9,7 +9,7 @@
           type="text"
           v-model="searchQuery"
           @input="handleSearch"
-          :placeholder="searchPlaceholder"
+          :placeholder="searchPlaceholderArticle"
           class="search-input"
         />
       </div>
@@ -60,9 +60,9 @@ export default {
   setup(props) {
     const { translate, currentLanguage } = useTranslations()
     
-    // استخدام computed لجعل searchPlaceholder تفاعلية
-    const searchPlaceholder = computed(() => {
-      return translate('filter.searchPlaceholder')
+    // استخدام computed لجعل searchPlaceholderArticle تفاعلية
+    const searchPlaceholderArticle = computed(() => {
+      return translate('filter.searchPlaceholderArticle')
     })
 
     // دالة لترجمة أسماء التصنيفات
@@ -89,7 +89,7 @@ export default {
     })
 
     return {
-      searchPlaceholder,
+      searchPlaceholderArticle,
       getTranslatedCategoryName,
       activeCategoryName,
       activeCategoryIcon,
