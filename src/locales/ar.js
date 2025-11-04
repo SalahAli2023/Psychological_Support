@@ -120,7 +120,10 @@ export const ar = {
       allEvents: 'جميع الفعاليات',
       evenings: 'الأمسيات',
       events: 'الفعاليات',
-      workshops: 'ورش العمل'
+      workshops: 'ورش العمل',
+    searchPlaceholderArticle: 'ابحث في المقالات...',
+    allCategories: 'جميع المقالات',
+    category: 'الفئة'
     },
     details: {
       dateTime: 'التاريخ والوقت',
