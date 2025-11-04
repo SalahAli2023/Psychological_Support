@@ -30,7 +30,7 @@
       </div>
 
       <!-- النصوص -->
-      <div class="mt-20 flex flex-col gap-6 items-center sm:items-start">
+      <div class="mt-20 flex flex-col gap-6 items-start sm:items-start">
         <h1 class="text-xl sm:text-3xl md:text-4xl font-bold leading-snug max-w-2xl animate-fadeUp">
   {{ translate('hero.title') }}
 </h1>

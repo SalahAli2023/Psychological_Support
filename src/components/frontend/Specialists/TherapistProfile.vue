@@ -29,7 +29,7 @@
         <!-- Main Content -->
         <div class="flex-1">
           <!-- Therapist Profile -->
-          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-md mb-6 sm:mb-8">
+          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm mb-6 sm:mb-8">
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
               <!-- Profile Image -->
               <div class="flex justify-center sm:justify-start">
@@ -78,7 +78,7 @@
           </div>
 
           <!-- About the Expert -->
-          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-md mb-6 sm:mb-8">
+          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm mb-6 sm:mb-8">
             <div class="flex items-center gap-3 mb-4">
               <i class="fas fa-info-circle text-[#9EBF3B] text-xl"></i>
               <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">عن الخبير</h2>
@@ -107,7 +107,7 @@
           </div>
 
           <!-- Testimonials with Responsive Scroll -->
-          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-md">
+          <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm">
             <div class="flex items-center justify-between mb-4 sm:mb-6">
               <div class="flex items-center gap-3">
                 <i class="fas fa-star text-[#D6A29A] text-xl"></i>
@@ -116,6 +116,10 @@
               <div class="flex items-center gap-2 text-sm text-gray-500 sm:hidden">
                 <i class="fas fa-arrows-left-right text-xs"></i>
                 <span>اسحب للتجول</span>
+              </div>
+              <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                <i class="fas fa-mouse text-xs"></i>
+                <span>استخدم عجلة الماوس للتمرير</span>
               </div>
             </div>
 
@@ -127,7 +131,7 @@
                   <div 
                     v-for="testimonial in therapist.testimonials" 
                     :key="testimonial.id" 
-                    class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow w-80 flex-shrink-0 bg-white"
+                    class="rounded-lg p-4 hover:shadow-sm transition-shadow w-80 flex-shrink-0 bg-gray-50"
                   >
                     <div class="flex items-center gap-2 mb-3">
                       <div class="w-8 h-8 bg-[#9EBF3B] rounded-full flex items-center justify-center">
@@ -158,37 +162,39 @@
                 </div>
               </div>
 
-              <!-- Desktop: Grid Layout -->
-              <div class="hidden sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div 
-                  v-for="testimonial in therapist.testimonials" 
-                  :key="testimonial.id" 
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
-                >
-                  <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 bg-[#9EBF3B] rounded-full flex items-center justify-center">
-                      <i class="fas fa-user text-white text-xs"></i>
+              <!-- Desktop: Vertical Scroll Layout -->
+              <div class="hidden sm:block max-h-96 overflow-y-auto pr-2 scrollbar-custom">
+                <div class="space-y-4">
+                  <div 
+                    v-for="testimonial in therapist.testimonials" 
+                    :key="testimonial.id" 
+                    class="rounded-lg p-4 hover:shadow-sm transition-shadow bg-gray-50"
+                  >
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-8 h-8 bg-[#9EBF3B] rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-xs"></i>
+                      </div>
+                      <div>
+                        <span class="text-[#065f46] font-semibold text-sm block">{{ testimonial.user }}</span>
+                        <span class="text-gray-500 text-xs">{{ testimonial.location }}</span>
+                      </div>
                     </div>
-                    <div>
-                      <span class="text-[#065f46] font-semibold text-sm block">{{ testimonial.user }}</span>
-                      <span class="text-gray-500 text-xs">{{ testimonial.location }}</span>
+                    
+                    <div class="flex mb-3">
+                      <i v-for="i in 5" :key="i" class="fas fa-star text-[#D6A29A] text-xs"></i>
                     </div>
-                  </div>
-                  
-                  <div class="flex mb-3">
-                    <i v-for="i in 5" :key="i" class="fas fa-star text-[#D6A29A] text-xs"></i>
-                  </div>
 
-                  <p class="text-gray-700 mb-3 text-sm leading-relaxed">
-                    "{{ testimonial.comment }}"
-                  </p>
+                    <p class="text-gray-700 mb-3 text-sm leading-relaxed">
+                      "{{ testimonial.comment }}"
+                    </p>
 
-                  <div class="flex justify-between items-center">
-                    <div class="flex gap-1">
-                      <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
-                      <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
+                    <div class="flex justify-between items-center">
+                      <div class="flex gap-1">
+                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
+                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
+                      </div>
+                      <span class="text-xs text-gray-400">{{ testimonial.date }}</span>
                     </div>
-                    <span class="text-xs text-gray-400">{{ testimonial.date }}</span>
                   </div>
                 </div>
               </div>
@@ -208,15 +214,15 @@
 
         <!-- Booking Sidebar - Mobile Optimized -->
         <div class="w-full lg:w-80">
-          <div class="sticky top-4 lg:top-8 p-4 sm:p-6 bg-white rounded-xl shadow-xl border border-[#9EBF3B]">
+          <div class="sticky top-4 lg:top-8 p-4 sm:p-6 bg-white rounded-xl shadow-sm">
             <div class="mb-4">
-              <h2 class="text-xl sm:text-2xl font-bold text-[#065f46] bg-[#9EBF3B] text-white p-3 rounded-lg">احجز جلستك</h2>
+              <h2 class="text-xl text-center sm:text-2xl font-bold text-[#065f46] bg-[#9EBF3B] text-white p-3 rounded-lg">احجز جلستك</h2>
               <p class="text-xs sm:text-sm text-[#047857] mt-2 bg-gray-50 p-2 rounded-lg">اختر التاريخ والوقت المناسبين لك</p>
             </div>
 
-            <!-- Calendar - Mobile Optimized -->
-            <div class="mb-6 bg-gray-50 rounded-lg p-3 border border-[#9EBF3B]">
-              <div class="flex items-center justify-between mb-4">
+            <!-- Calendar - بدون حدود -->
+            <div class="mb-6 bg-gray-50 rounded-lg p-3">
+              <div class="flex   items-center justify-between mb-4">
                 <button @click="previousMonth" class="p-2 rounded-lg hover:bg-[#9EBF3B] hover:text-white text-[#065f46] transition-colors">
                   <i class="fas fa-chevron-right"></i>
                 </button>
@@ -243,10 +249,10 @@
                   :key="day.date"
                   @click="selectDate(day.date)"
                   :class="[
-                    'p-1 sm:p-2 text-xs sm:text-sm rounded-lg transition-all font-medium',
+                    'p-1 sm:p-2 text-xs sm:text-sm rounded-lg   transition-all font-medium',
                     day.isCurrentMonth 
                       ? day.isSelected 
-                        ? 'bg-[#9EBF3B] text-white shadow-lg' 
+                        ? 'bg-[#9EBF3B] text-white shadow-sm' 
                         : day.isToday
                           ? 'bg-gray-300 text-gray-800'
                           : 'text-gray-700 hover:bg-gray-200'
@@ -259,8 +265,8 @@
               </div>
             </div>
 
-            <!-- Time Slots - Mobile Optimized -->
-            <div v-if="selectedDate" class="bg-gray-50 rounded-lg p-3 border border-[#9EBF3B]">
+            <!-- Time Slots - بدون حدود -->
+            <div v-if="selectedDate" class="bg-gray-50 rounded-lg p-3 transition-all duration-300">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold text-[#065f46]">اختر الموعد</h3>
                 <span class="text-xs sm:text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">45 دقيقة</span>
@@ -271,10 +277,10 @@
                   :key="slot.time"
                   @click="selectTimeSlot(slot)"
                   :class="[
-                    'p-2 sm:p-3 border rounded-lg transition-all flex items-center justify-between',
+                    'p-2 sm:p-3 rounded-lg transition-all flex items-center justify-between',
                     slot === selectedTimeSlot 
-                      ? 'border-[#9EBF3B] bg-[#9EBF3B] text-white shadow-md' 
-                      : 'border-gray-200 hover:border-[#9EBF3B] hover:bg-white'
+                      ? 'bg-[#9EBF3B] text-white shadow-sm' 
+                      : 'bg-white hover:bg-gray-100'
                   ]"
                 >
                   <div class="flex items-center gap-2">
@@ -289,7 +295,7 @@
               <button 
                 v-if="selectedTimeSlot"
                 @click="bookAppointment"
-                class="w-full mt-4 bg-[#9EBF3B] hover:bg-[#8cad35] text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
+                class="w-full mt-4 bg-[#9EBF3B] hover:bg-[#8cad35] text-white py-3 rounded-xl font-bold shadow-sm hover:shadow transition-all"
               >
                 <div class="flex items-center justify-center gap-2">
                   <i class="fas fa-calendar-check"></i>
@@ -300,7 +306,7 @@
             </div>
 
             <!-- No Selection Message -->
-            <div v-if="!selectedDate" class="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div v-if="!selectedDate" class="text-center p-4 bg-gray-50 rounded-lg">
               <i class="fas fa-calendar-day text-2xl text-gray-400 mb-2"></i>
               <p class="text-gray-600 text-sm">اختر تاريخاً لرؤية الأوقات المتاحة</p>
             </div>
@@ -516,10 +522,6 @@ export default {
     }
   },
   mounted() {
-    // Auto-select today's date on page load
-    const today = new Date().toISOString().split('T')[0];
-    this.selectDate(today);
-
     // Add scroll event listener for testimonials (mobile only)
     const scrollContainer = this.$el.querySelector('.overflow-x-auto');
     if (scrollContainer) {
@@ -544,6 +546,30 @@ export default {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #9EBF3B #f1f1f1;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #9EBF3B;
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #8cad35;
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
