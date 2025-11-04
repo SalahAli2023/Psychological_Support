@@ -16,7 +16,7 @@
         </div>
         
         <!-- المحتوى -->
-        <div class="order-1 lg:order-1 text-right" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
+        <div class="order-1 lg:order-1 text-start" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 animate-fade-in-right">
             <span class="text-[#9EBF3B]">{{ translate('about.overview.title') }}</span>
           </h2>
