@@ -83,10 +83,7 @@ export const en = {
     noResults: 'No results found',
     tryDifferentSearch: 'Try changing your search terms or filters'
   },
-  pagination: {
-    previous: 'Previous',
-    next: 'Next'
-  },
+
   filters: {
     title: 'Filter Results',
     subtitle: 'Choose appropriate filters',
@@ -96,7 +93,9 @@ export const en = {
     authors: 'Author Name',
     languages: 'Language',
     years: 'Publication Year',
-    ratings: 'Rating'
+    ratings: 'Rating',
+    searchPlaceholderArticle: 'Search in articles...',
+    allCategories: 'All Articles',
   },
   modal: {
     basedOnRatings: 'Based on {count} ratings',
@@ -121,10 +120,23 @@ export const en = {
       evenings: 'Evenings',
       events: 'Events',
       workshops: 'Workshops',
-         searchPlaceholderArticle: 'Search in articles...',
-    allCategories: 'All Articles',
-    category: 'Category'
+  
     },
+    pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    showing: 'Showing',
+    to: 'to',
+    ofResults: 'of',
+    results: 'results'
+  },
+
+  noResults: {
+    title: 'No Articles Found',
+    message: 'Try a different search or category'
+  },
     details: {
       dateTime: 'Date & Time',
       location: 'Location',
@@ -218,9 +230,53 @@ export const en = {
       student: 'University Student'
     }
   },
+
+  therapists: {
+    hero: {
+      title: 'Psychological',
+      highlight: ' Specialists ',
+      subtitle: 'Meet the best specialists in the field of mental health and easily book psychological support sessions'
+    },
+    filters: {
+      title: 'Filter Results',
+      searchPlaceholder: 'Search for therapist...',
+      gender: 'Gender',
+      all: 'Both',
+      male: 'Male',
+      female: 'Female',
+      specializations: 'Specializations',
+      reset: 'Reset',
+      search: 'Search',
+      clearAll: 'Clear All'
+    },
+    results: {
+      showing: 'Showing {count} specialists',
+      noResults: 'No results found',
+      noResultsMessage: 'We couldn\'t find any specialists matching your search criteria',
+      showAll: 'Show all specialists'
+    },
+    therapist: {
+      sessionDuration: 'Session Duration',
+      minutes: 'minutes',
+      sessions: 'sessions',
+      book: 'Book'
+    },
+    specializations: {
+      anxiety: 'Anxiety & Stress',
+      depression: 'Depression',
+      ocd: 'OCD',
+      addiction: 'Addiction',
+      psychosomatic: 'Psychosomatic Disorders',
+      confidence: 'Low Self-Confidence',
+      teenagers: 'Teenage Problems',
+      specialEducation: 'Special Education',
+      therapeutic: 'Therapeutic',
+      various: 'Various Issues'
+    }
+  },
   footer: {
     stayInTouch: 'Stay in',
-    contact: 'Touch',
+    contact: ' Touch ',
     newsletterDescription: 'Join our community and get the latest updates and exclusive articles about mental health',
     emailLabel: 'Email Address',
     emailPlaceholder: 'example@email.com',
@@ -349,6 +405,262 @@ export const en = {
       }
     }
   }
-}
+},
+
+measuresHero: {
+      title: 'Psychological Tests and Assessments',
+      subtitle: 'Discover yourself better through trusted psychological scales',
+      description: 'Choose from a wide range of validated psychological assessments designed to meet your needs'
+    },
+
+    popularMeasures: {
+      title: "Most Popular Measures",
+      desc: "A curated selection of the most commonly used measures by users",
+      questions: "Questions",
+      minutes: "Minutes",
+      start: "Start Assessment"
+    },
+
+    categorySection: {
+      title: "Discover Suitable Measures",
+      subtitle: "Choose the category that fits your needs to find accredited psychological measures",
+      searchPlaceholder: "Search for a specific measure...",
+      activeCategory: "Selected Category:",
+      measuresCount: "measure",
+      averageTime: "min",
+      browseButton: "Browse Measures",
+      resultsCount: "result",
+      searchHint: "You can search for suitable measures to meet your needs"
+    },
+
+    categories: {
+      all: {
+        title: "All Measures",
+        description: "Browse all available psychological measures on the platform"
+      },
+      women: {
+        title: "For Women",
+        description: "Specialized measures for women's mental and educational health"
+      },
+      children: {
+        title: "For Children",
+        description: "Measures specifically designed for children and adolescents to assess development and skills"
+      }
+    },
+
+    // translations.en
+    allMeasures: {
+      title: "All Available Measures",
+      questions: "Questions",
+      minutes: "Minutes",
+      start: "Start Assessment",
+      noResults: {
+        title: "No results found",
+        desc: "Try different search terms or browse all categories"
+      },
+      pagination: {
+        prev: "Previous",
+        next: "Next",
+        page: "Page",
+        of: "of"
+      }
+    },
+
+    measureModal: {
+      welcome: 'Welcome to',
+      importantInfo: 'Important Information',
+      infoList: {
+        awareness: 'Results are for awareness purposes only and not a final diagnosis',
+        confidentiality: 'All your answers are confidential and secure',
+        stopAnytime: 'You can stop the test at any time'
+      },
+      aboutTest: 'About this test',
+      questionsCount: 'Questions',
+      time: 'Minutes',
+      startTest: 'Start Test',
+      progress: 'Progress',
+      questionNumber: 'Question',
+      of: 'of',
+      previous: 'Previous',
+      next: 'Next',
+      submit: 'Submit Test',
+      calculating: 'Calculating results...',
+      resultTitle: 'Assessment Result',
+      yourScore: 'Based on your answers, you scored',
+      points: 'points',
+      recommendations: 'Personalized Recommendations for You',
+      consult: {
+        title: 'Psychological Consultation Session',
+        desc: 'A session with a psychologist to discuss your results and coping strategies',
+        button: 'Book a Session'
+      },
+      resources: {
+        title: 'Helpful Resources',
+        desc: 'A collection of articles and exercises to help with',
+        button: 'View Resources'
+      },
+      retake: 'Retake Test',
+      otherMeasures: 'Other Measures'
+    },
+
+    guidelines: {
+      title: "Important Guidelines Before Starting",
+      subtitle: "To ensure accurate and reliable results",
+      list: [
+        "Choose a time when you feel relaxed and focused",
+        "Answer honestly and without hesitation — there are no right or wrong answers",
+        "Read each question carefully before responding",
+        "Don’t spend too much time thinking about each question",
+        "Make sure you're in a quiet and suitable environment",
+        "These results are for guidance only and do not replace professional consultation"
+      ]
+    },
+
+    registrationModal: {
+      title: 'Registration',
+      description: 'You must first register in the Nafsani app to start using the measures and join us on the journey of mental health awareness.',
+
+      steps: {
+        phone: 'Phone Number',
+        otp: 'Verification Code',
+        info: 'Personal Information'
+      },
+
+      phoneStep: {
+        enterPhone: 'Enter your phone number',
+        countryLabel: 'Country/Region',
+        selectCountry: 'Select Country',
+        phoneLabel: 'Phone Number',
+        phonePlaceholder: '7xxxxxxxx',
+        phoneError: 'The phone number must start with 7 and contain 9 digits',
+        continue: 'Continue',
+        sending: 'Sending...'
+      },
+
+      otpStep: {
+        title: 'Verify Phone Number',
+        sentTo: 'Enter the verification code sent to',
+        resendIn: 'Resend in',
+        resend: 'Resend Code',
+        editNumber: 'Edit Number',
+        confirm: 'Confirm',
+        verifying: 'Verifying...'
+      },
+
+      infoStep: {
+        title: 'Personal Information',
+        nameLabel: 'Full Name',
+        namePlaceholder: 'Enter your name',
+        emailLabel: 'Email (optional)',
+        emailPlaceholder: 'Enter your email',
+        confirm: 'Confirm',
+        creating: 'Creating account...',
+        nameRequired: 'Name is required'
+      },
+
+      successStep: {
+        title: 'Thank You',
+        message: 'You have successfully registered in Nafsani app. You can now download the app and enjoy our mental health services.',
+        start: 'Start',
+        appStore: 'App Store',
+        googlePlay: 'Google Play',
+        availableOn: 'Available on'
+      },
+
+      errors: {
+        sendCode: 'An error occurred while sending the verification code',
+        verifyCode: 'Invalid verification code',
+        resendCode: 'An error occurred while resending the code',
+        createAccount: 'An error occurred while creating the account'
+      },
+
+      success: {
+        codeSent: 'Verification code sent successfully',
+        verified: 'Phone number verified successfully',
+        codeResent: 'Verification code resent',
+        accountCreated: 'Account created successfully!'
+      }
+    },
+
+    registrationPage: {
+      title: 'Create Your Account',
+      description: 'Join Nafsiyati community and start your journey in understanding mental health',
+      steps: {
+        phone: 'Phone Number',
+        otp: 'Verification Code',
+        info: 'Personal Information'
+      },
+      phoneStep: {
+        title: 'Enter Phone Number',
+        countryLabel: 'Country/Region',
+        selectCountry: 'Select Country',
+        phoneLabel: 'Phone Number',
+        phonePlaceholder: '7xxxxxxxx',
+        phoneError: 'Phone number must start with 7 and contain 9 digits',
+        continue: 'Continue',
+        sending: 'Sending',
+        haveAccount: 'Already have an account?',
+        login: 'Login'
+      },
+      otpStep: {
+        title: 'Verify Phone Number',
+        sentTo: 'Enter verification code sent to',
+        via: 'via',
+        sms: 'SMS',
+        whatsapp: 'WhatsApp',
+        resendIn: 'Resend in',
+        resend: 'Resend Verification Code',
+        changeMethod: 'Change Method',
+        editNumber: 'Edit Phone Number',
+        confirm: 'Confirm',
+        verifying: 'Verifying'
+      },
+      infoStep: {
+        title: 'Personal Information',
+        nameLabel: 'Full Name',
+        namePlaceholder: 'Enter your full name',
+        nameRequired: 'Name is required',
+        emailLabel: 'Email (Optional)',
+        emailPlaceholder: 'Enter your email',
+        confirm: 'Create Account',
+        creating: 'Creating Account'
+      },
+      successStep: {
+        title: 'Your Account Created Successfully! 🎉',
+        message: 'Welcome to Nafsiyati community. You can now download the app and enjoy our mental health services',
+        downloadOn: 'Download on the',
+        getItOn: 'Get it on',
+        appStore: 'App Store',
+        googlePlay: 'Google Play',
+        start: 'Start Your Journey'
+      },
+      success: {
+        codeSent: 'Verification code sent successfully',
+        verified: 'Phone number verified successfully',
+        accountCreated: 'Account created successfully!',
+        codeResent: 'Verification code resent successfully'
+      },
+      errors: {
+        verifyNumber: 'Error verifying phone number',
+        sendCode: 'Error sending verification code',
+        invalidCode: 'Invalid verification code',
+        createAccount: 'Error creating account',
+        resendCode: 'Error resending code'
+      }
+    },
+    
+    verify: {
+      title: "Verification Method",
+      sms: {
+        title: "Via SMS",
+        description: "Check your text messages"
+      },
+      whatsapp: {
+        title: "Via WhatsApp",
+        description: "Check your WhatsApp messages"
+      },
+      cancel: "Cancel",
+      continue: "Continue"
+    }
 };
   

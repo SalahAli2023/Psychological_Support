@@ -89,49 +89,67 @@
           </div>
 
           <div v-if="totalPages > 1" class="flex justify-center mt-8">
-            <nav class="flex items-center gap-2" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
-              <!-- زر الصفحة السابقة -->
-              <button
-                @click="previousPage"
-                :disabled="currentPage === 1"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
-                :class="[
-                  isRTL ? 'flex-row-reverse' : 'flex-row'
-                ]"
-              >
-                <!-- تغيير اتجاه الأيقونة حسب اللغة -->
-                <i class="fas" :class="isRTL ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
-                <span class="hidden sm:inline">{{ translate('pagination.previous') }}</span>
-              </button>
+            <div class="flex flex-col items-center space-y-6" :dir="isRTL ? 'rtl' : 'ltr'">
+              <!-- أزرار الصفحات -->
+              <div class="flex items-center" :class="isRTL ? 'space-x-2 space-x-reverse' : 'space-x-2'">
+                <!-- زر الصفحة السابقة -->
+                <button
+                  @click="previousPage"
+                  :disabled="currentPage === 1"
+                  :class="[
+                    'pagination-btn',
+                    'prev-next-btn',
+                    currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
+                  ]"
+                >
+                  <i :class="isRTL ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
+                </button>
 
-              <!-- أرقام الصفحات -->
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200 min-w-[44px]"
-                :class="{
-                  'bg-[#9EBF3B] text-white border-[#9EBF3B]': currentPage === page,
-                  'font-semibold': currentPage === page
-                }"
-              >
-                {{ page }}
-              </button>
+                <!-- أرقام الصفحات -->
+                <button
+                  v-for="page in visiblePages"
+                  :key="page"
+                  @click="goToPage(page)"
+                  :class="[
+                    'pagination-btn',
+                    'page-number',
+                    page === currentPage 
+                      ? 'active-page' 
+                      : 'inactive-page hover:bg-gray-100'
+                  ]"
+                >
+                  {{ page }}
+                </button>
 
-              <!-- زر الصفحة التالية -->
-              <button
-                @click="nextPage"
-                :disabled="currentPage === totalPages"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
-                :class="[
-                  isRTL ? 'flex-row-reverse' : 'flex-row'
-                ]"
-              >
-                <span class="hidden sm:inline">{{ translate('pagination.next') }}</span>
-                <!-- تغيير اتجاه الأيقونة حسب اللغة -->
-                <i class="fas" :class="isRTL ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
-              </button>
-            </nav>
+                <!-- زر الصفحة التالية -->
+                <button
+                  @click="nextPage"
+                  :disabled="currentPage === totalPages"
+                  :class="[
+                    'pagination-btn',
+                    'prev-next-btn',
+                    currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
+                  ]"
+                >
+                  <i :class="isRTL ? 'fas fa-chevron-left' : 'fas fa-chevron-right'"></i>
+                </button>
+              </div>
+
+              <!-- نقاط التقدم -->
+              <div class="flex" :class="isRTL ? 'space-x-1 space-x-reverse' : 'space-x-1'">
+                <div
+                  v-for="page in totalPages"
+                  :key="page"
+                  :class="[
+                    'h-1 rounded-full transition-all duration-300 cursor-pointer',
+                    page === currentPage 
+                      ? 'bg-primary w-6' 
+                      : 'bg-gray-300 w-2 hover:bg-gray-400'
+                  ]"
+                  @click="goToPage(page)"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

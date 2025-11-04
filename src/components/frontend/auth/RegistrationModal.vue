@@ -106,6 +106,8 @@
             <VerificationMethodModal
               :show="showMethodModal"
               :initial-method="selectedMethod"
+              :language="currentLanguage"
+
               @close="showMethodModal = false"
               @confirm="handleMethodConfirm"
             />
