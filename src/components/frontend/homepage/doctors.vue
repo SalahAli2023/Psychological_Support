@@ -20,15 +20,15 @@
       <div class="text-center mb-12 md:mb-16">
         <div class="inline-block relative">
           <TitleSection
-            mainText="فريق"
-            highlightText="الأخصائيين"
+            :mainText="translate('home.experts.title')"
+            :highlightText="translate('home.experts.highlight')"
           />
         </div>
         <p 
           class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700 delay-300"
           :class="contentItemClass"
         >
-          نخبة من الأخصائيين المعتمدين ذوي الخبرة الواسعة في مجالات متعددة
+          {{ translate('home.experts.subtitle') }}
         </p>
       </div>
 
@@ -90,13 +90,13 @@
                            :class="buttonClass">
                         <button class="bg-[#9EBF3B] text-white font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl hover:bg-[#8aa835] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm md:text-base">
                           <span class="flex items-center gap-2 justify-center">
-                            احجز استشارة
+                            {{ translate('home.experts.book') }}
                             <i class="fas fa-calendar-check text-xs md:text-sm"></i>
                           </span>
                         </button>
                         <button class="bg-transparent text-[#9EBF3B] font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl border-2 border-[#9EBF3B] hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 transform hover:scale-105 text-sm md:text-base">
                           <span class="flex items-center gap-2 justify-center">
-                            الملف الشخصي
+                            {{ translate('home.experts.profile') }}
                             <i class="fas fa-user text-xs md:text-sm"></i>
                           </span>
                         </button>
@@ -136,6 +136,7 @@ export default {
    components: {
     TitleSection
   },
+  inject: ['languageState'],
   data() {
     return {
       currentIndex: 0,
@@ -180,6 +181,9 @@ export default {
     }
   },
   computed: {
+    translate() {
+      return this.languageState?.translate || ((key) => key)
+    },
     decorativeClass() {
       return {
         'opacity-5 scale-100': this.isVisible,

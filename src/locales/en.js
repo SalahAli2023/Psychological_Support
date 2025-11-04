@@ -240,5 +240,112 @@ export const en = {
     termsText: 'Terms of Use',
     privacyText: 'Privacy Policy',
     faqText: 'FAQ'
+  },
+  //home page
+   home: {
+    fields: {
+      title: "Our",
+      highlight: "Fields",
+      subtitle: "We provide specialized services in various mental health fields"
+    },
+     visionMission: {
+    title: "Why Choose",
+    highlight: " Our Platform?",
+    items: {
+      therapists: "Certified Therapists",
+      therapistsDesc: "An elite group of specialists and psychotherapists with advanced academic degrees and experience in multiple fields.",
+      confidentiality: "Complete Confidentiality",
+      confidentialityDesc: "We protect your privacy. All sessions and personal information are protected and cannot be accessed by any party.",
+      easeOfUse: "Ease of Use",
+      easeOfUseDesc: "Comfortable user experience through our app. Start with registration, booking individual and group sessions, and messaging feature.",
+      flexibility: "Schedule Flexibility",
+      flexibilityDesc: "Choose the time that suits you, book your session flexibly, and start treatment from anywhere that suits you without conflicting with your commitments."
+    },
+    createAccount: "Create Account",
+    imageAlt: "Doctor's Image"
+  },
+
+    howItWorks: {
+      title: "How Our",
+      highlight: " Platform Works",
+      subtitle: "A simple and direct journey towards better mental health in just 4 steps",
+      steps: {
+        step1: "Register & Book",
+        step1Desc: "Create your account and choose the appropriate appointment with the specialist that suits your needs",
+        step2: "Meet Our Specialists",
+        step2Desc: "Meet your specialists through virtual sessions or book an appointment at the clinic",
+        step3: "Get Support", 
+        step3Desc: "Receive appropriate treatment and support with continuous follow-up for your condition development",
+        step4: "Track Progress",
+        step4Desc: "Track the improvement of your mental health with periodic reports and customized advice"
+      }
+    },
+    stats: {
+      title: "Success",
+      highlight: "Numbers",
+      items: {
+        countries: "Countries we currently cover",
+        questions: "Questions answered by experts",
+        sessions: "Successful online therapy sessions", 
+        users: "Users trusted our platform"
+      }
+    },
+    articles: {
+      title: "Awareness",
+      highlight: "Articles",
+      subtitle: "Discover a selection of articles to help you understand yourself better and enhance your mental health",
+      viewAll: "View All Articles"
+    },
+    experts: {
+      title: "Our",
+      highlight: "Experts",
+      subtitle: "An elite group of certified specialists with extensive experience in multiple fields",
+      book: "Book Consultation",
+      profile: "View Profile"
+    },
+    faq: {
+    title: "Frequently",
+    highlight: "Asked Questions", 
+    subtitle: "Here are answers to the questions our clients frequently ask. If you don't find an answer to your question, feel free to contact us.",
+    contactTitle: "Didn't find your answer?",
+    contactSubtitle: "Our team is ready to answer all your inquiries",
+    contactUs: "Contact Us Now",
+    whatsapp: "Message us on WhatsApp",
+    questions: {
+      sessionDuration: {
+        question: "What is the duration of a therapy session?",
+        answer: "The typical therapy session duration is 50 minutes. We recommend regular attendance to achieve the best results, but we can discuss and adjust the frequency based on your personal needs and goals."
+      },
+      confidentiality: {
+        question: "Are therapy consultations completely confidential?",
+        answer: "Yes, absolutely. All information you share during sessions is protected by strict confidentiality laws. No information can be shared with any third party without your written consent, except in cases specified by law."
+      },
+      booking: {
+        question: "How can I book an appointment?",
+        answer: "You can easily book an appointment by filling out the contact form on our website, or by contacting us directly on the listed numbers. Our team will respond to you to confirm the appointment that suits you."
+      },
+      difference: {
+        question: "What is the difference between a psychiatrist and a psychotherapist?",
+        answer: "A psychiatrist is a doctor who can diagnose mental conditions and prescribe medications, while a psychotherapist focuses on providing talk therapy and coping strategies. In many cases, collaboration between the two may be most beneficial."
+      },
+      online: {
+        question: "Can I get an online consultation?",
+        answer: "Yes, we provide online consultation sessions through secure and encrypted platforms. You can choose the mode that suits you, whether face-to-face at the clinic or online, while maintaining the same level of quality and confidentiality."
+      },
+      cost: {
+        question: "How much does a therapy session cost?",
+        answer: "The cost of sessions varies depending on the type of service and specialist. We offer various pricing plans to suit different budgets, and you can view the prices through the services page."
+      },
+      changeSpecialist: {
+        question: "Can I change the specialist?",
+        answer: "Yes, you can change the specialist at any time if you feel there is incompatibility. Our team will help you find the specialist that suits your needs."
+      },
+      paymentMethods: {
+        question: "What payment methods are available?",
+        answer: "We accept various payment methods including credit cards, bank transfers, and online payments. All transactions are secure and encrypted."
+      }
+    }
   }
+}
 };
+  

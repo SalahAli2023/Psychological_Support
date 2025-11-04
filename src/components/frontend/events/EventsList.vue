@@ -26,7 +26,8 @@
         class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
-        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right" v-if="currentLanguage === 'ar'"></i>
+        <i class="fas fa-chevron-left" v-else></i>
         <span>{{ translate('events.list.previous') }}</span>
       </button>
 
@@ -53,13 +54,14 @@
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
         <span>{{ translate('events.list.next') }}</span>
-        <i class="fas fa-chevron-left"></i>
+        <i class="fas fa-chevron-left" v-if="currentLanguage === 'ar'"></i>
+        <i class="fas fa-chevron-right" v-else></i>
       </button>
     </div>
 
     <!-- معلومات الصفحة -->
     <div v-if="filteredEvents.length > 0" class="text-center text-gray-600 text-sm">
-      {{ translate('events.list.showing').replace('{start}', startIndex + 1).replace('{end}', endIndex).replace('{total}', filteredEvents.length) }}
+      {{ getShowingText() }}
     </div>
   </div>
 </template>
@@ -149,6 +151,19 @@ const visiblePages = computed(() => {
   return pages
 })
 
+// دالة للحصول على نص عرض النتائج
+const getShowingText = () => {
+  const start = startIndex.value + 1
+  const end = endIndex.value
+  const total = filteredEvents.value.length
+  
+  if (currentLanguage.value === 'ar') {
+    return `عرض ${start}-${end} من أصل ${total} فعالية`
+  } else {
+    return `Showing ${start}-${end} of ${total} events`
+  }
+}
+
 // دوال التنقل بين الصفحات
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -184,11 +199,12 @@ const formatEventForArticleCard = (event) => {
     description: event.description,
     image: event.media,
     category: event.type,
-    author: event.speakers && event.speakers.length > 0 ? event.speakers[0].name : 'فريق الدعم النفسي',
+    author: event.speakers && event.speakers.length > 0 ? event.speakers[0].name : translate('events.details.speakerDefault'),
     date: event.date,
     duration: event.duration,
     location: event.location,
-    speakers: event.speakers
+    speakers: event.speakers,
+    readMoreText: translate('buttons.readMore') // إضافة نص اقرأ المزيد
   }
 }
 
