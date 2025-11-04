@@ -1,14 +1,12 @@
 <template>
-
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-          ماذا يقول <span class="text-[#D6A29A]">عملاؤنا</span>
+          {{ translate('testimonials.title') }}<span class="text-[#D6A29A]">{{ translate('testimonials.highlight') }}</span>
         </h2>
         <p class="text-base text-gray-600 max-w-2xl mx-auto">
-
-          آراء وتقييمات من مستفيدين حقيقيين من خدماتنا
+          {{ translate('testimonials.subtitle') }}
         </p>
       </div>
 
@@ -44,17 +42,17 @@
                 
                 <!-- النص -->
                 <p class="text-gray-700 text-sm leading-relaxed mb-3 text-center line-clamp-3">
-                  "{{ testimonial.text }}"
+                  "{{ currentLanguage === 'ar' ? testimonial.text.ar : testimonial.text.en }}"
                 </p>
                 
                 <!-- المعلومات -->
-                <div class="flex items-center gap-2 justify-center">
+                <div class="flex items-center gap-2 justify-center" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
                   <div class="w-8 h-8 bg-gradient-to-br from-[#9EBF3B] to-emerald-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-bold text-xs">{{ testimonial.initials }}</span>
+                    <span class="text-white font-bold text-xs">{{ getInitials(testimonial) }}</span>
                   </div>
                   <div class="text-right">
-                    <div class="font-bold text-gray-900 text-xs">{{ testimonial.name }}</div>
-                    <div class="text-gray-500 text-xs">{{ testimonial.role }}</div>
+                    <div class="font-bold text-gray-900 text-xs">{{ currentLanguage === 'ar' ? testimonial.name.ar : testimonial.name.en }}</div>
+                    <div class="text-gray-500 text-xs">{{ getTranslatedRole(testimonial.role) }}</div>
                   </div>
                 </div>
               </div>
@@ -93,66 +91,138 @@
 </template>
 
 <script setup>
-
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+const { currentLanguage, translate } = useTranslations()
 
 const currentIndex = ref(0)
 const autoPlay = ref(true)
 const itemsPerGroup = ref(3)
 let autoPlayInterval
 
-
 const testimonials = [
   {
     id: 1,
-    text: 'تجربة رائعة مع الفريق المتخصص، ساعدوني في تخطي أصعب المراحل بحرفية عالية واهتمام حقيقي.',
+    text: {
+      ar: 'تجربة رائعة مع الفريق المتخصص، ساعدوني في تخطي أصعب المراحل بحرفية عالية واهتمام حقيقي.',
+      en: 'Amazing experience with the specialized team, they helped me overcome the most difficult stages with high professionalism and genuine care.'
+    },
     rating: 5,
-    name: 'أحمد محمد',
-    role: 'مستفيد من الخدمات',
-    initials: 'أح'
+    name: {
+      ar: 'أحمد محمد',
+      en: 'Ahmed Mohammed'
+    },
+    role: 'beneficiary',
+    initials: {
+      ar: 'أح',
+      en: 'AM'
+    }
   },
   {
     id: 2,
-    text: 'الورش التدريبية ممتازة والمحتوى علمي وعملي، استفدت كثيرًا في مجال عملي كأخصائي نفسي.',
+    text: {
+      ar: 'الورش التدريبية ممتازة والمحتوى علمي وعملي، استفدت كثيرًا في مجال عملي كأخصائي نفسي.',
+      en: 'The training workshops are excellent and the content is scientific and practical, I benefited a lot in my work as a psychologist.'
+    },
     rating: 5,
-    name: 'د. فاطمة علي',
-    role: 'أخصائية نفسية',
-    initials: 'فط'
+    name: {
+      ar: 'د. فاطمة علي',
+      en: 'Dr. Fatima Ali'
+    },
+    role: 'psychologist',
+    initials: {
+      ar: 'فط',
+      en: 'FA'
+    }
   },
   {
     id: 3,
-    text: 'السرية والاحترافية كانتا على أعلى مستوى، أشعر بالأمان والثقة في التعامل مع المنصة.',
+    text: {
+      ar: 'السرية والاحترافية كانتا على أعلى مستوى، أشعر بالأمان والثقة في التعامل مع المنصة.',
+      en: 'Confidentiality and professionalism were at the highest level, I feel safe and confident in dealing with the platform.'
+    },
     rating: 4,
-    name: 'سارة عبدالله',
-    role: 'مستفيدة من الاستشارات',
-    initials: 'سر'
-
+    name: {
+      ar: 'سارة عبدالله',
+      en: 'Sara Abdullah'
+    },
+    role: 'consultation',
+    initials: {
+      ar: 'سر',
+      en: 'SA'
+    }
   },
   {
     id: 4,
-    text: 'خدمة مميزة وفريق محترف، ساعدني في تطوير مهاراتي وتحسين أدائي الوظيفي بشكل ملحوظ.',
+    text: {
+      ar: 'خدمة مميزة وفريق محترف، ساعدني في تطوير مهاراتي وتحسين أدائي الوظيفي بشكل ملحوظ.',
+      en: 'Distinctive service and professional team, helped me develop my skills and significantly improve my job performance.'
+    },
     rating: 5,
-    name: 'خالد الحربي',
-    role: 'مدير موارد بشرية',
-    initials: 'خل'
+    name: {
+      ar: 'خالد الحربي',
+      en: 'Khalid Al-Harbi'
+    },
+    role: 'manager',
+    initials: {
+      ar: 'خل',
+      en: 'KH'
+    }
   },
   {
     id: 5,
-    text: 'الدعم المستمر والمتابعة كانت ممتازة، أشكر الفريق على جهودهم المتميزة.',
+    text: {
+      ar: 'الدعم المستمر والمتابعة كانت ممتازة، أشكر الفريق على جهودهم المتميزة.',
+      en: 'Continuous support and follow-up were excellent, I thank the team for their outstanding efforts.'
+    },
     rating: 4,
-    name: 'نورة السعد',
-    role: 'معلمة',
-    initials: 'نو'
+    name: {
+      ar: 'نورة السعد',
+      en: 'Nora Al-Saad'
+    },
+    role: 'teacher',
+    initials: {
+      ar: 'نو',
+      en: 'NS'
+    }
   },
   {
     id: 6,
-    text: 'التجربة فاقت توقعاتي، الخدمة سريعة والمحتوى قيم ومفيد للغاية.',
+    text: {
+      ar: 'التجربة فاقت توقعاتي، الخدمة سريعة والمحتوى قيم ومفيد للغاية.',
+      en: 'The experience exceeded my expectations, the service is fast and the content is very valuable and useful.'
+    },
     rating: 5,
-    name: 'محمد الشمري',
-    role: 'طالب جامعي',
-    initials: 'مح'
+    name: {
+      ar: 'محمد الشمري',
+      en: 'Mohammed Al-Shammari'
+    },
+    role: 'student',
+    initials: {
+      ar: 'مح',
+      en: 'MS'
+    }
   }
 ]
+
+// دالة للحصول على الأحرف الأولى بناءً على اللغة
+const getInitials = (testimonial) => {
+  return currentLanguage.value === 'ar' ? testimonial.initials.ar : testimonial.initials.en
+}
+
+// دالة لترجمة الأدوار
+const getTranslatedRole = (roleKey) => {
+  const roles = {
+    beneficiary: translate('testimonials.roles.beneficiary'),
+    psychologist: translate('testimonials.roles.psychologist'),
+    consultation: translate('testimonials.roles.consultation'),
+    manager: translate('testimonials.roles.manager'),
+    teacher: translate('testimonials.roles.teacher'),
+    student: translate('testimonials.roles.student')
+  }
+  return roles[roleKey] || roleKey
+}
 
 // تحديث عدد العناصر حسب حجم الشاشة
 const updateItemsPerGroup = () => {
@@ -259,6 +329,11 @@ watch(totalGroups, (newVal, oldVal) => {
   }
 })
 
+// مراقبة تغيير اللغة لتحديث الأحرف الأولى
+watch(currentLanguage, () => {
+  // سيتم تحديث الأحرف الأولى تلقائياً عبر دالة getInitials
+})
+
 // دالة لإعادة الحساب عند تغيير حجم النافذة
 const handleResize = () => {
   updateItemsPerGroup()
@@ -298,4 +373,3 @@ onUnmounted(() => {
   transition: all 0.5s ease;
 }
 </style>
-

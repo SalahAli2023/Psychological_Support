@@ -1,15 +1,13 @@
-
 <template>
   <section class="py-20 bg-gradient-to-br from-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
-          رؤيتنا ورسالتنا
+          {{ translate('visionMission.title') }}
         </h2>
 
         <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
-
-          نسعى لتحقيق التميز في دعم المرأة والطفل والفئات الضعيفة في اليمن
+          {{ translate('visionMission.subtitle') }}
         </p>
       </div>
       
@@ -20,11 +18,11 @@
             <i class="fas fa-eye text-white text-2xl"></i>
           </div>
 
-          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رؤيتنا</h3>
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">
+            {{ translate('visionMission.vision.title') }}
+          </h3>
           <p class="text-gray-600 leading-relaxed text-center animate-fade-in-delay">
-
-            أن نكون في طليعة المجتمع المدني المتخصص في صناعة مستقبل أفضل للنساء 
-            والأطفال والفئات الضعيفة في اليمن
+            {{ translate('visionMission.vision.description') }}
           </p>
         </div>
         
@@ -34,13 +32,11 @@
             <i class="fas fa-bullseye text-white text-2xl"></i>
           </div>
 
-          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">رسالتنا</h3>
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">
+            {{ translate('visionMission.mission.title') }}
+          </h3>
           <p class="text-gray-600 leading-relaxed text-center animate-fade-in-delay">
-
-            نسعى الى دعم ومساندة المرأة والطفل والفئات الضعيفة والمهمشة من خلال تعزيز قيم 
-            المشاركة والحماية والأمن والسلم المجتمعي، وفق رؤى واستراتيجيات ممنهجة من خلال 
-            الخبرات والكفاءات المتخصصة للوقاية والحد من آثار العنف والانتهاكات وصولا الى 
-            إرساء قيم العدالة والانصاف وسيادة القانون.
+            {{ translate('visionMission.mission.description') }}
           </p>
         </div>
         
@@ -50,24 +46,26 @@
             <i class="fas fa-heart text-white text-2xl"></i>
           </div>
 
-          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">قيمنا</h3>
+          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center animate-fade-in">
+            {{ translate('visionMission.values.title') }}
+          </h3>
 
-          <div class="space-y-3 text-right">
+          <div class="space-y-3 text-right" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.4s">
               <i class="fas fa-check text-[#9EBF3B]"></i>
-              <span>العدالة والإنصاف</span>
+              <span>{{ translate('visionMission.values.items.justice') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.5s">
               <i class="fas fa-check text-[#9EBF3B]"></i>
-              <span>الحماية والأمن</span>
+              <span>{{ translate('visionMission.values.items.protection') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.6s">
               <i class="fas fa-check text-[#9EBF3B]"></i>
-              <span>المشاركة المجتمعية</span>
+              <span>{{ translate('visionMission.values.items.participation') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.7s">
               <i class="fas fa-check text-[#9EBF3B]"></i>
-              <span>الشفافية والنزاهة</span>
+              <span>{{ translate('visionMission.values.items.transparency') }}</span>
             </div>
           </div>
         </div>
@@ -77,6 +75,9 @@
 </template>
 
 <script setup>
+import { useTranslations } from '@/composables/useTranslations'
+
+const { currentLanguage, translate } = useTranslations()
 </script>
 
 <style scoped>
@@ -152,6 +153,4 @@
   animation: fadeInList 0.5s ease-out forwards;
   opacity: 0;
 }
-
 </style>
-

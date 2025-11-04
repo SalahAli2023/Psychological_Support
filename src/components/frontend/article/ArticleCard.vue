@@ -1,4 +1,3 @@
-
 <template>
   <div class="article-card">
     <!-- Image -->
@@ -15,13 +14,7 @@
 
     <!-- Content -->
     <div class="article-content">
-      <!-- Header with Category and Date -->
-      <!-- <div class="article-header">
-        <span class="category-tag">
-          <i class="fas fa-folder"></i>
-          {{ article.category }}
-        </span>
-      </div> -->
+
 
       <!-- Title -->
       <h3 class="article-title mb-3">{{ article.title }}</h3>
@@ -44,7 +37,7 @@
           </div>
         </div>
         <button class="read-more-btn" @click="$emit('read-more', article.id)">
-          <span>اقرأ المزيد</span>
+          <span>{{ readMoreText }}</span>
           <!-- <i class="fas fa-arrow-left"></i> -->
         </button>
       </div>
@@ -53,6 +46,8 @@
 </template>
 
 <script>
+import { useTranslations } from '@/composables/useTranslations'
+
 export default {
   name: 'ArticleCard',
   props: {
@@ -61,7 +56,15 @@ export default {
       required: true
     }
   },
-  emits: ['read-more']
+  emits: ['read-more'],
+  setup() {
+    const { translate } = useTranslations()
+    
+    const readMoreText = translate('buttons.readMore')
+    
+    return {
+      readMoreText
+    }
+  }
 }
-
 </script>

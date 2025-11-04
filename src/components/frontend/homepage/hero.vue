@@ -32,10 +32,9 @@
       <!-- النصوص -->
       <div class="mt-20 flex flex-col gap-6 items-center sm:items-start">
         <h1 class="text-xl sm:text-3xl md:text-4xl font-bold leading-snug max-w-2xl animate-fadeUp">
-          <span class="text-white">دعم صحتك النفسية</span>
-          <span class="text-[#9EBF3B]"> وتعزيز الوعي العقلي</span>
-          <span class="text-white"> في منطقة الشرق الأوسط وشمال أفريقيا</span>
-        </h1>
+  {{ translate('hero.title') }}
+</h1>
+
 
         <a
           href="#"
@@ -57,6 +56,13 @@
 
 <script setup>
 // لا حاجة لتعديلات هنا
+import { inject } from 'vue'
+
+import { useTranslations } from '@/composables/useTranslations'
+
+// const { toggleLanguage, translate } = useTranslations()
+const { currentLanguage, toggleLanguage, translate } = inject('languageState')
+
 </script>
 
 <style scoped>

@@ -2,20 +2,15 @@
   <div>
     <Header />
     
-    <!-- الهيرو المعدل -->
+    <!-- الهيرو -->
     <ArticleHero
       type="video"
       src="hipno-video.mp4" 
       height="60vh"
-      title="فعاليات الصحة"
-      highlight="النفسية"
-      subtitle="انضم إلى رحلتنا التفاعلية لاكتساب المعرفة وتبادل الخبرات في مجال الصحة النفسية"
-
-          :buttons="[
-        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-
-      ]"
+      :title="translate('events.hero.title')"
+      :highlight="translate('events.hero.highlight')"
+      :subtitle="translate('events.hero.subtitle')"
+      :buttons="heroButtons"
       scroll-indicator
       @cta="handleCta"
     />
@@ -49,13 +44,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import EventsFilter from '@/components/frontend/events/EventsFilter.vue'
 import EventsList from '@/components/frontend/events/EventsList.vue'
 import EventDetails from '@/components/frontend/events/EventDetails.vue'
 import ArticleHero from './layouts/ArticleHero.vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, toggleLanguage, translate } = useTranslations()
 
 // معايير الفلترة
 const filterCriteria = ref({
@@ -66,14 +65,20 @@ const filterCriteria = ref({
 // الفعالية المحددة
 const selectedEvent = ref(null)
 
+// أزرار الهيرو
+const heroButtons = computed(() => [
+  { text: translate('buttons.startJourney'), icon: 'fas fa-play-circle', primary: true },
+  { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
+])
+
 // معالجة أزرار الهيرو
 const handleCta = (button) => {
-  if (button.text === 'استكشف الفعاليات') {
+  if (button.text === translate('buttons.startJourney')) {
     // التمرير لقسم الفعاليات
     document.getElementById('events-section').scrollIntoView({ 
       behavior: 'smooth' 
     })
-  } else if (button.text === 'انضم إلينا') {
+  } else if (button.text === translate('buttons.learnMore')) {
     // التنقل لصفحة الانضمام
     window.location.href = '/join'
   }

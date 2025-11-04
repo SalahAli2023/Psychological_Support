@@ -30,4 +30,5 @@ import FAQSection from '@/components/frontend/homepage/FAQSection.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 
 
+
 </script>

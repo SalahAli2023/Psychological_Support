@@ -1,19 +1,15 @@
-
 <template>
   <section class="py-20 bg-gradient-to-br from-[#9EBF3B]/5 to-[#D6A29A]/5">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
-          إنجازاتنا <span class="text-[#9EBF3B]">وأرقامنا</span>
+          {{ translate('about.statistics.title') }} <span class="text-[#9EBF3B]">{{ translate('about.statistics.highlight') }}</span>
         </h2>
 
         <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
-
-          نحن نفخر بما حققناه من إنجازات ونعمل دائمًا على التطوير والتحسين
+          {{ translate('about.statistics.subtitle') }}
         </p>
       </div>
-      
-
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         <div 
@@ -27,7 +23,6 @@
             {{ stat.initialValue }}
           </div>
           <div class="text-gray-600 text-base">{{ stat.label }}</div>
-
         </div>
       </div>
     </div>
@@ -35,14 +30,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useTranslations } from '@/composables/useTranslations'
 
-const statistics = ref([
-  { id: 1, value: '5000+', label: 'جلسة استشارية', initialValue: '0', targetValue: '5000' },
-  { id: 2, value: '200+', label: 'ورشة تدريبية', initialValue: '0', targetValue: '200' },
-  { id: 3, value: '98%', label: 'رضا العملاء', initialValue: '0%', targetValue: '98%' },
-  { id: 4, value: '50+', label: 'أخصائي معتمد', initialValue: '0', targetValue: '50' }
+const { currentLanguage, translate } = useTranslations()
+
+const statisticsData = ref([
+  { id: 1, value: '5000+', targetValue: '5000', ar: 'جلسة استشارية', en: 'Counseling Sessions' },
+  { id: 2, value: '200+', targetValue: '200', ar: 'ورشة تدريبية', en: 'Training Workshops' },
+  { id: 3, value: '98%', targetValue: '98', ar: 'رضا العملاء', en: 'Customer Satisfaction' },
+  { id: 4, value: '50+', targetValue: '50', ar: 'أخصائي معتمد', en: 'Certified Specialists' }
 ])
+
+const statistics = computed(() => {
+  return statisticsData.value.map(stat => ({
+    ...stat,
+    label: currentLanguage.value === 'ar' ? stat.ar : stat.en,
+    initialValue: '0' + (stat.value.includes('%') ? '%' : '+')
+  }))
+})
 
 const startCounter = (stat) => {
   const element = document.getElementById(`counter-${stat.id}`)
@@ -67,7 +73,6 @@ const startCounter = (stat) => {
 }
 
 onMounted(() => {
-  // بدء العدادات بعد تحميل الصفحة
   setTimeout(() => {
     statistics.value.forEach(stat => {
       startCounter(stat)
@@ -77,6 +82,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* نفس الأنيميشنز السابقة */
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -123,6 +129,4 @@ onMounted(() => {
   animation: countUp 0.6s ease-out forwards;
   opacity: 0;
 }
-
 </style>
-
