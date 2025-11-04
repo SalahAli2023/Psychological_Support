@@ -1,140 +1,264 @@
 <template>
-  <section class="py-16 bg-gradient-to-br from-pink-50 to-green-50">
+  <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
-      <!-- العنوان -->
       <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold mb-3 text-gray-800">مقاييس متخصصة لصحة المرأة</h2>
-        <p class="text-lg text-gray-600">النفسية والتربوية المعتمدة</p>
+        <h2 class="text-4xl font-bold mb-4 text-gray-800">{{ translate('categorySection.title') }}</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">{{ translate('categorySection.subtitle') }}</p>
       </div>
       
-      <!-- التصنيفات الرئيسية -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- شبكة التصنيفات -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
-          v-for="(category, index) in categories" 
-          :key="index"
-          class="bg-white rounded-2xl shadow-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100"
-          @click="$emit('filter-change', category.filter)"
+          v-for="category in categories" 
+          :key="category.id"
+          class="category-card bg-white rounded-2xl shadow-xl p-6 cursor-pointer border-2 transition-all duration-300"
+          :class="activeCategory === category.id ? 'border-primary-green ring-4 ring-primary-green/20' : 'border-transparent'"
+          @click="$emit('filter-change', category.id)"
         >
-          <!-- الأيقونة بدون خلفية -->
-          <div class="w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto">
-            <i :class="category.icon" class="text-3xl" :style="`color: ${category.color1};`"></i>
+          <!-- أيقونة التصنيف -->
+          <div class="category-icon w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden" :class="category.color">
+            <i :class="category.icon" class="text-white text-3xl z-10"></i>
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
           </div>
-          <h3 class="text-lg font-bold text-center mb-2 text-gray-800">{{ category.title }}</h3>
-          <p class="text-sm text-gray-600 text-center mb-4 leading-relaxed">{{ category.description }}</p>
-          <div class="flex justify-center gap-6 text-sm">
-            <span class="flex items-center gap-2">
-              <i class="fas fa-clipboard-list text-gray-400"></i>
-              <span class="text-gray-700 font-medium">{{ category.count }}</span>
-            </span>
-            <span class="flex items-center gap-2">
-              <i class="fas fa-clock text-gray-400"></i>
-              <span class="text-gray-700 font-medium">{{ category.time }} د</span>
-            </span>
+          
+          <!-- عنوان التصنيف -->
+          <h3 class="text-xl font-bold text-center mb-4 text-gray-800">{{ getTranslatedCategoryTitle(category) }}</h3>
+          
+          <!-- وصف التصنيف -->
+          <p class="text-gray-600 text-center mb-6 text-sm leading-relaxed">{{ getTranslatedCategoryDescription(category) }}</p>
+          
+          <!-- إحصائيات التصنيف -->
+          <div class="flex justify-center gap-6 mb-6 text-sm">
+            <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+              <i class="fas fa-chart-bar text-primary-green"></i>
+              <span class="font-semibold text-gray-700">{{ getMeasuresCount(category.id) }} {{ translate('categorySection.measuresCount') }}</span>
+            </div>
+            <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+              <i class="fas fa-clock text-primary-green"></i>
+              <span class="font-semibold text-gray-700">{{ getAverageTime(category.id) }} {{ translate('categorySection.averageTime') }}</span>
+            </div>
           </div>
+          
+          <!-- زر التصفح -->
+          <button class="w-full py-3 bg-gradient-to-l from-primary-green to-secondary-green text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-2">
+            <span>{{ translate('categorySection.browseButton') }}</span>
+            <i class="fas fa-arrow-left text-sm"></i>
+          </button>
+
+          <!-- شريط التمييز السفلي -->
+          <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-primary-green to-transparent opacity-0 transition-opacity duration-300" :class="activeCategory === category.id ? 'opacity-100' : ''"></div>
         </div>
       </div>
+
       
-      <!-- شريط البحث -->
-      <div class="max-w-2xl mx-auto">
+      <!-- مؤشر التصنيف النشط -->
+      <div class="text-center mt-8">
+        <div class="inline-flex items-center gap-4 bg-gray-100 rounded-full px-6 py-3">
+          <span class="text-gray-700 font-medium">{{ translate('categorySection.activeCategory') }}</span>
+          <span class="bg-primary-green text-white px-4 py-1 rounded-full font-semibold flex items-center gap-2">
+            <i :class="getActiveCategoryIcon" class="text-sm"></i>
+            {{ getActiveCategoryTitle }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">{{ translate('categorySection.searchHint') }}</p>
+      </div>
+
+    <!-- شريط البحث في قسم التصنيفات -->
+      <div class="max-w-2xl mx-auto mt-4">
         <div class="relative">
           <input 
             type="text" 
             :value="searchQuery"
             @input="$emit('update:searchQuery', $event.target.value)"
-            placeholder="ابحث عن مقياس معين..."
-            class="w-full px-6 py-4 pr-32 rounded-2xl text-gray-800 focus:outline-none focus:ring-4 shadow-lg border-0 bg-white"
-            style="focus:ring-color: #D6A29A40;"
+            :placeholder="translate('categorySection.searchPlaceholder')"
+            class="w-full px-6 py-4 pr-16 rounded-2xl text-gray-800 focus:outline-none focus:ring-4 focus:ring-primary-green/30 shadow-lg border border-gray-200 text-lg"
           >
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
-            <button class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all duration-300 hover:shadow-lg"
-                    style="background: linear-gradient(135deg, #D6A29A, #9EBF3B);">
-              <i class="fas fa-search text-sm"></i>
-            </button>
-            <span class="text-sm font-semibold px-3 py-1.5 rounded-full text-white shadow-sm"
-                  style="background: linear-gradient(135deg, #D6A29A, #9EBF3B);">
-              {{ filteredMeasuresCount }} نتيجة
+          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+            <i class="fas fa-search text-xl"></i>
+          </div>
+          <div class="absolute left-10 top-1/2 transform -translate-y-1/2">
+            <span class="bg-primary-green text-white px-3 py-1 rounded-full text-sm">
+              {{ filteredMeasuresCount }} {{ translate('categorySection.resultsCount') }}
             </span>
           </div>
         </div>
       </div>
-    </div>
+
   </section>
 </template>
 
 <script>
+import { computed } from 'vue'
+import { categoriesData } from '@/data/measures'
+import { t } from '@/locales'
+
 export default {
-  name: 'WomenHealthSection',
+  name: 'CategorySection',
   props: {
+    activeCategory: {
+      type: String,
+      default: 'all'
+    },
     searchQuery: {
       type: String,
       default: ''
     },
+    measures: {
+      type: Array,
+      default: () => []
+    },
     filteredMeasuresCount: {
       type: Number,
       default: 0
+    },
+    language: {
+      type: String,
+      default: 'ar'
     }
   },
   emits: ['filter-change', 'update:searchQuery'],
-  setup() {
-    const categories = [
-      {
-        title: 'الصحة النفسية',
-        description: 'تقييم الحالة النفسية العامة والرفاهية العاطفية',
-        icon: 'fas fa-brain',
-        color1: '#D6A29A',
-        color2: '#E8B4B8',
-        count: 12,
-        time: '15-20',
-        filter: 'psychological'
-      },
-      {
-        title: 'الأمومة والطفولة',
-        description: 'تقييم العلاقة بين الأم والطفل والتكيف الأسري',
-        icon: 'fas fa-baby',
-        color1: '#9EBF3B',
-        color2: '#B8D06E',
-        count: 8,
-        time: '20-25',
-        filter: 'motherhood'
-      },
-      {
-        title: 'العلاقات الأسرية',
-        description: 'تحسين جودة العلاقات والتواصل الأسري',
-        icon: 'fas fa-home',
-        color1: '#D6A29A',
-        color2: '#9EBF3B',
-        count: 10,
-        time: '15-30',
-        filter: 'family'
-      },
-      {
-        title: 'التطوير الذاتي',
-        description: 'تطوير الثقة بالنفس والمهارات الشخصية',
-        icon: 'fas fa-rocket',
-        color1: '#9EBF3B',
-        color2: '#D6A29A',
-        count: 15,
-        time: '10-15',
-        filter: 'development'
+  setup(props) {
+    const categories = categoriesData
+
+    // دالة الترجمة
+    const translate = (key) => {
+      return t(key, props.language)
+    }
+
+    // ترجمة عنوان التصنيف
+    const getTranslatedCategoryTitle = (category) => {
+      return typeof category.title === 'object' ? category.title[props.language] : category.title
+    }
+
+    // ترجمة وصف التصنيف
+    const getTranslatedCategoryDescription = (category) => {
+      return typeof category.description === 'object' ? category.description[props.language] : category.description
+    }
+
+    // حساب عدد المقاييس في كل تصنيف
+    const getMeasuresCount = (categoryId) => {
+      if (categoryId === 'all') return props.measures.length
+      
+      return props.measures.filter(measure => 
+        measure.category === categoryId
+      ).length
+    }
+
+    // حساب متوسط الوقت في كل تصنيف
+    const getAverageTime = (categoryId) => {
+      if (categoryId === 'all') {
+        const times = props.measures.map(m => {
+          const [min] = m.time.split('-').map(Number)
+          return min
+        })
+        return Math.round(times.reduce((a, b) => a + b, 0) / times.length) || 0
       }
-    ]
+      
+      const categoryMeasures = props.measures.filter(measure => 
+        measure.category === categoryId
+      )
+      
+      if (categoryMeasures.length === 0) return 0
+      
+      const times = categoryMeasures.map(m => {
+        const [min] = m.time.split('-').map(Number)
+        return min
+      })
+      
+      return Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+    }
+
+    // الحصول على أيقونة التصنيف النشط
+    const getActiveCategoryIcon = computed(() => {
+      const category = categories.find(cat => cat.id === props.activeCategory)
+      return category?.icon || 'fas fa-layer-group'
+    })
+
+    // الحصول على عنوان التصنيف النشط
+    const getActiveCategoryTitle = computed(() => {
+      const category = categories.find(cat => cat.id === props.activeCategory)
+      return category ? getTranslatedCategoryTitle(category) : translate('categories.all.title')
+    })
 
     return {
-      categories
+      categories,
+      translate,
+      getTranslatedCategoryTitle,
+      getTranslatedCategoryDescription,
+      getMeasuresCount,
+      getAverageTime,
+      getActiveCategoryIcon,
+      getActiveCategoryTitle
     }
   }
 }
 </script>
 
 <style scoped>
-/* تأثيرات بسيطة */
-.transition-all {
-  transition: all 0.3s ease;
+.category-card {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
 }
 
-/* تحسين مظهر حقل البحث عند التركيز */
-input:focus {
-  box-shadow: 0 0 0 4px rgba(214, 162, 154, 0.1);
-  border: 1px solid rgba(214, 162, 154, 0.3);
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(158, 191, 59, 0.05) 0%, rgba(214, 162, 154, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 1rem;
+}
+
+.category-card:hover::before {
+  opacity: 1;
+}
+
+.category-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.category-icon {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.category-card:hover .category-icon::before {
+  opacity: 1;
+}
+
+/* تأثيرات للبحث */
+.search-highlight {
+  background: linear-gradient(120deg, #9EBF3B33, #D6A29A33);
+  background-repeat: no-repeat;
+  background-size: 100% 0.4em;
+  background-position: 0 88%;
 }
 </style>

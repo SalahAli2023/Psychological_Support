@@ -12,11 +12,11 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div class="">
               <h2 class="text-3xl font-bold mb-4">
-                <span class="text-white">ابقَ على </span>
-                <span class="text-[#9EBF3B]">اتصال</span>
+                <span class="text-white">{{ $t('footer.stayInTouch') }}</span>
+                <span class="text-[#9EBF3B]">{{ $t('footer.contact') }}</span>
               </h2>
               <p class="text-gray-300 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-                انضم إلى مجتمعنا واحصل على آخر التحديثات والمقالات الحصرية حول الصحة النفسية والعقلية
+                {{ $t('footer.newsletterDescription') }}
               </p>
             </div>
             
@@ -24,10 +24,10 @@
               <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 shadow-2xl w-full max-w-md">
                 <form class="space-y-4">
                   <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2 ">البريد الإلكتروني</label>
+                    <label class="block text-gray-300 text-sm font-medium mb-2 ">{{ $t('footer.emailLabel') }}</label>
                     <input 
                       type="email" 
-                      placeholder="example@email.com"
+                      :placeholder="$t('footer.emailPlaceholder')"
                       class="w-full px-4 py-3 bg-white/5 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#9EBF3B] focus:ring-2 focus:ring-[#9EBF3B] focus:ring-opacity-20 transition-all duration-300"
                       required
                     >
@@ -38,7 +38,7 @@
                   >
                     <span class="flex items-center justify-center gap-2">
                       <i class="fas fa-paper-plane"></i>
-                      اشترك في النشرة
+                      {{ $t('footer.subscribeButton') }}
                     </span>
                   </button>
                 </form>
@@ -59,12 +59,11 @@
               </div>
               <div>
                 <h3 class="text-2xl font-bold text-white">نفسي</h3>
-                <p class="text-[#9EBF3B] text-sm font-medium">منصة الدعم النفسي</p>
+                <p class="text-[#9EBF3B] text-sm font-medium">{{ $t('footer.platformText') }}</p>
               </div>
             </div>
             <p class="text-gray-300 mb-6 leading-relaxed text-lg">
-              منصة رائدة في تقديم خدمات الدعم النفسي والاستشارات المتخصصة. 
-              نؤمن بأن الصحة النفسية هي أساس الحياة المتوازنة والمستقرة.
+              {{ $t('footer.companyDescription') }}
             </p>
             <div class="flex gap-3">
               <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#9EBF3B] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
@@ -87,30 +86,30 @@
 
           <!-- روابط سريعة -->
           <div>
-            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#9EBF3B] inline-block">الروابط</h4>
+            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#9EBF3B] inline-block">{{ $t('footer.linksText') }}</h4>
             <ul class="space-y-3">
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#9EBF3B] transition-all duration-300 flex items-center gap-3 group">
-                  <i class="fas fa-chevron-left text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
-                  الرئيسية
+                  <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
+                  {{ $t('menuItems.Home') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#9EBF3B] transition-all duration-300 flex items-center gap-3 group">
-                  <i class="fas fa-chevron-left text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
-                  من نحن
+                  <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
+                  {{ $t('menuItems.about') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#9EBF3B] transition-all duration-300 flex items-center gap-3 group">
-                  <i class="fas fa-chevron-left text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
-                  خدماتنا
+                  <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
+                  {{ $t('menuItems.services') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#9EBF3B] transition-all duration-300 flex items-center gap-3 group">
-                  <i class="fas fa-chevron-left text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
-                  المدونة
+                  <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-[#9EBF3B] text-xs group-hover:translate-x-1 transition-transform"></i>
+                  {{ $t('menuItems.articles') }}
                 </a>
               </li>
             </ul>
@@ -118,30 +117,30 @@
 
           <!-- الخدمات -->
           <div>
-            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#D6A29A] inline-block">خدماتنا</h4>
+            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#D6A29A] inline-block">{{ $t('footer.servicesText') }}</h4>
             <ul class="space-y-3">
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
                   <i class="fas fa-comments text-[#D6A29A] text-sm"></i>
-                  جلسات الدعم
+                  {{ $t('footer.supportSessions') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
                   <i class="fas fa-user-md text-[#D6A29A] text-sm"></i>
-                  الاستشارات
+                  {{ $t('footer.consultations') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
                   <i class="fas fa-users text-[#D6A29A] text-sm"></i>
-                  الورش التدريبية
+                  {{ $t('footer.trainingWorkshops') }}
                 </a>
               </li>
               <li>
                 <a href="#" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
                   <i class="fas fa-book text-[#D6A29A] text-sm"></i>
-                  الموارد
+                  {{ $t('footer.resources') }}
                 </a>
               </li>
             </ul>
@@ -149,14 +148,14 @@
 
           <!-- اتصل بنا -->
           <div>
-            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#9EBF3B] inline-block">اتصل بنا</h4>
+            <h4 class="text-lg font-bold text-white mb-6 pb-3 border-b-2 border-[#9EBF3B] inline-block">{{ $t('footer.contactUsText') }}</h4>
             <div class="space-y-4">
               <div class="flex items-center gap-3 text-gray-300">
                 <div class="w-10 h-10 bg-[#9EBF3B] rounded-lg flex items-center justify-center">
                   <i class="fas fa-phone text-white text-sm"></i>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-400">الهاتف</p>
+                  <p class="text-sm text-gray-400">{{ $t('footer.phoneText') }}</p>
                   <p class="font-medium">+966 123 456 789</p>
                 </div>
               </div>
@@ -165,7 +164,7 @@
                   <i class="fas fa-envelope text-white text-sm"></i>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-400">البريد الإلكتروني</p>
+                  <p class="text-sm text-gray-400">{{ $t('footer.emailText') }}</p>
                   <p class="font-medium">info@nafsy.com</p>
                 </div>
               </div>
@@ -174,8 +173,8 @@
                   <i class="fas fa-map-marker-alt text-white text-sm"></i>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-400">العنوان</p>
-                  <p class="font-medium">الرياض، السعودية</p>
+                  <p class="text-sm text-gray-400">{{ $t('footer.addressText') }}</p>
+                  <p class="font-medium">{{ $t('footer.locationText') }}</p>
                 </div>
               </div>
             </div>
@@ -189,14 +188,14 @@
           <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-center md:text-right">
               <p class="text-gray-400">
-                &copy; 2024 <span class="text-[#9EBF3B]">منصة نفسي</span>. جميع الحقوق محفوظة.
+                &copy; 2024 <span class="text-[#9EBF3B]">{{ $t('footer.copyrightText') }}</span>. {{ $t('footer.allRightsText') }}
               </p>
             </div>
             <div class="flex flex-wrap justify-center gap-6 text-sm">
-              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">شروط الاستخدام</a>
-              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">سياسة الخصوصية</a>
-              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">الأسئلة الشائعة</a>
-              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">اتصل بنا</a>
+              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.termsText') }}</a>
+              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.privacyText') }}</a>
+              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.faqText') }}</a>
+              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.contactUsText') }}</a>
             </div>
           </div>
         </div>
@@ -206,5 +205,12 @@
 </template>
 
 <script setup>
-// يمكن إضافة دوال الاشتراك هنا
+import { inject } from 'vue'
+
+// الحصول على حالة اللغة من provide
+const languageState = inject('languageState')
+
+// استخدام دالة الترجمة واللغة الحالية
+const $t = languageState?.translate || ((key) => key)
+const currentLanguage = languageState?.currentLanguage || 'ar'
 </script>

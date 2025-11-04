@@ -7,14 +7,14 @@
       <div class="max-w-7xl mx-auto px-6 py-4">
         <nav class="flex items-center space-x-2 text-sm text-gray-600" dir="rtl">
           <router-link to="/" class="hover:text-[#9EBF3B] transition-colors duration-300">
-            الرئيسية
+            {{ currentLanguage === 'ar' ? 'الرئيسية' : 'Home' }}
           </router-link>
           <i class="fas fa-chevron-left text-xs text-gray-400"></i>
           <span 
             class="hover:text-[#9EBF3B] transition-colors duration-300 cursor-pointer"
             @click="handleBackToEvents"
           >
-            الفعاليات
+            {{ currentLanguage === 'ar' ? 'الفعاليات' : 'Events' }}
           </span>
           <i class="fas fa-chevron-left text-xs text-gray-400"></i>
           <span class="text-[#9EBF3B] font-medium">{{ event.title }}</span>
@@ -60,7 +60,7 @@
                       <i class="fas fa-calendar text-[#9EBF3B]"></i>
                     </div>
                     <div>
-                      <p class="text-sm text-gray-500">التاريخ والوقت</p>
+                      <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'التاريخ والوقت' : 'Date & Time' }}</p>
                       <p class="font-medium">{{ event.date }}</p>
                     </div>
                   </div>
@@ -70,7 +70,7 @@
                       <i class="fas fa-map-marker-alt text-[#D6A29A]"></i>
                     </div>
                     <div>
-                      <p class="text-sm text-gray-500">الموقع</p>
+                      <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'الموقع' : 'Location' }}</p>
                       <p class="font-medium">{{ event.location }}</p>
                     </div>
                   </div>
@@ -80,7 +80,7 @@
                       <i class="fas fa-clock text-[#9EBF3B]"></i>
                     </div>
                     <div>
-                      <p class="text-sm text-gray-500">المدة</p>
+                      <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'المدة' : 'Duration' }}</p>
                       <p class="font-medium">{{ event.duration }}</p>
                     </div>
                   </div>
@@ -90,7 +90,7 @@
               <!-- شارة النوع -->
               <div class="flex-shrink-0">
                 <span :class="`inline-block text-sm font-semibold px-4 py-2 rounded-full ${getCategoryStyle(event.type)}`">
-                  {{ event.type }}
+                  {{ getTranslatedCategory(event.type) }}
                 </span>
               </div>
             </div>
@@ -103,7 +103,7 @@
             <!-- النبذة العامة -->
             <div class="mb-8">
               <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
-                نبذة عن الفعالية
+                {{ currentLanguage === 'ar' ? 'نبذة عن الفعالية' : 'Event Overview' }}
               </h2>
               <p class="text-gray-700 leading-relaxed text-lg">
                 {{ event.fullDescription }}
@@ -113,7 +113,7 @@
             <!-- المواضيع المغطاة -->
             <div class="mb-8">
               <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#D6A29A] inline-block">
-                المواضيع المغطاة
+                {{ currentLanguage === 'ar' ? 'المواضيع المغطاة' : 'Covered Topics' }}
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div 
@@ -151,6 +151,10 @@
 import { ref, onMounted } from 'vue'
 import ArticleHero from '@/components/frontend/layouts/ArticleHero.vue'
 import RelatedEvents from '@/components/frontend/events/RelatedEvents.vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, translate } = useTranslations()
 
 // تعريف الـ props والأحداث
 const props = defineProps({
@@ -214,6 +218,16 @@ const getCategoryStyle = (type) => {
     'ورش عمل': 'bg-green-100 text-green-700'
   }
   return styles[type] || 'bg-gray-100 text-gray-700'
+}
+
+// دالة لترجمة التصنيف
+const getTranslatedCategory = (type) => {
+  const categories = {
+    'أمسيات': currentLanguage === 'ar' ? 'أمسيات' : 'Evenings',
+    'فعاليات': currentLanguage === 'ar' ? 'فعاليات' : 'Events',
+    'ورش عمل': currentLanguage === 'ar' ? 'ورش عمل' : 'Workshops'
+  }
+  return categories[type] || type
 }
 
 // معالجة النقر على فعالية ذات صلة

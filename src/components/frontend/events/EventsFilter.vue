@@ -6,8 +6,9 @@
       <input 
         v-model="searchQuery"
         type="text" 
-        placeholder="ابحث في الفعاليات والورش..."
+        :placeholder="translate('events.filter.searchPlaceholder')"
         class="w-full px-12 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#9EBF3B] focus:ring-4 focus:ring-[#9EBF3B]/20 transition-all duration-300 text-base shadow-sm hover:shadow-md"
+        :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       />
       <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
     </div>
@@ -17,19 +18,23 @@
       <select 
         v-model="selectedCategory"
         class="w-full md:w-48 px-4 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 focus:outline-none focus:border-[#9EBF3B] focus:ring-4 focus:ring-[#9EBF3B]/20 transition-all duration-300 appearance-none shadow-sm hover:shadow-md text-base"
+        :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
-        <option value="all">جميع الفعاليات</option>
-        <option value="أمسيات">الأمسيات</option>
-        <option value="فعاليات">الفعاليات</option>
-        <option value="ورش عمل">ورش العمل</option>
+        <option value="all">{{ translate('events.filter.allEvents') }}</option>
+        <option value="evenings">{{ translate('events.filter.evenings') }}</option>
+        <option value="events">{{ translate('events.filter.events') }}</option>
+        <option value="workshops">{{ translate('events.filter.workshops') }}</option>
       </select>
-      <!-- <i class="fas fa-chevron-down absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none text-sm"></i> -->
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, defineEmits, watch } from 'vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, translate } = useTranslations()
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
@@ -44,39 +49,3 @@ watch([searchQuery, selectedCategory], () => {
   })
 })
 </script>
-
-<style scoped>
-/* إزالة خلفية السهم الافتراضي */
-select {
-  background-image: none !important;
-  padding-left: 1rem !important;
-}
-
-/* إخفاء الأيقونة الافتراضية في بعض المتصفحات */
-select::-ms-expand {
-  display: none;
-}
-
-/* تحسين التركيز والظل */
-input:focus, select:focus {
-  box-shadow: 0 0 0 4px rgba(158, 191, 59, 0.1);
-}
-
-/* تحسين الظل عند التمرير */
-input:hover, select:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* إخفاء السهم في Firefox */
-select {
-  -moz-appearance: none;
-}
-
-/* إخفاء السهم في Webkit */
-select::-webkit-inner-spin-button,
-select::-webkit-outer-spin-button,
-select::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
-}
-</style>

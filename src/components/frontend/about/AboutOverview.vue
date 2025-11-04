@@ -7,7 +7,7 @@
           <div class="relative rounded-2xl overflow-hidden animate-float">
             <img 
               src="/images/جلسات.png" 
-              alt="مركز الدراسات الاستراتيجية لدعم المرأة والطفل"
+              :alt="translate('about.overview.title')"
               class="w-full h-auto"
             />
             <!-- تراكب متدرج -->
@@ -16,49 +16,41 @@
         </div>
         
         <!-- المحتوى -->
-        <div class="order-1 lg:order-1 text-right">
+        <div class="order-1 lg:order-1 text-start" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 animate-fade-in-right">
-            <span class="text-[#9EBF3B]">مركز الدراسات الاستراتيجية</span> لدعم المرأة والطفل
+            <span class="text-[#9EBF3B]">{{ translate('about.overview.title') }}</span>
           </h2>
           
           <div class="space-y-4 text-gray-600 leading-relaxed">
             <p class="animate-fade-in-up" style="animation-delay: 0.1s">
-              مركز الدراسات الاستراتيجية لدعم المرأة والطفل - اليمن هو مؤسسة مدنية مستقلة غير ربحية 
-              يتمتع بشخصية قانونية مستقلة. تأسس وفق قانون الجمعيات والمؤسسات الأهلية رقم (1) لسنة 2001م 
-              ولائحته التنفيذية في 20/12/2018 بموجب ترخيص مكتب وزارة الشئون الاجتماعية والعمل رقم (80/ م) 
-              ومقره الرئيسي محافظة تعز.
+              {{ translate('about.overview.description1') }}
             </p>
             
             <p class="animate-fade-in-up" style="animation-delay: 0.2s">
-              ويهدف إلى دعم المرأة والطفل بشكل خاص والفئات الضعيفة والمهمشة على وجه العموم من خلال 
-              الدراسات والأبحاث المتخصصة والمساهمة في تطوير الاستراتيجيات والسياسات والرؤى الخاصة 
-              بتمكين وتحسين أوضاع المرأة والطفل وكافة الفئات الضعيفة والمهمشة وحمايتهم من العنف والتمييز.
+              {{ translate('about.overview.description2') }}
             </p>
             
             <p class="animate-fade-in-up" style="animation-delay: 0.3s">
-              وكذلك يعمل من خلال المشاريع والبرامج والأنشطة الموجهة لحماية الحقوق والحريات وتعزيز 
-              الديمقراطية والحكم الرشيد وبناء السلام والأمن والتنمية، ودعم الهياكل الرسمية وغير الرسمية 
-              التي تعني بحماية ورعاية النساء المعنفات والأطفال الجانحين.
+              {{ translate('about.overview.description3') }}
             </p>
 
             <p class="animate-fade-in-up" style="animation-delay: 0.4s">
-              ويتفاعل المركز مع كافة الأطراف المدنية المحلية والإقليمية والدولية من خلال التنسيق 
-              والشراكات التي تساهم في تحقيق أهداف المركز.
+              {{ translate('about.overview.description4') }}
             </p>
           </div>
           
           <div class="mt-8 flex flex-wrap gap-4">
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.5s">
               <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
-              <span class="text-gray-700 font-medium text-sm">مؤسسة مستقلة</span>
+              <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.independent') }}</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.6s">
               <div class="w-3 h-3 bg-[#D6A29A] rounded-full"></div>
-              <span class="text-gray-700 font-medium text-sm">غير ربحي</span>
+              <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.nonprofit') }}</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.7s">
               <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
-              <span class="text-gray-700 font-medium text-sm">مرخص رسمياً</span>
+              <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.licensed') }}</span>
             </div>
           </div>
         </div>
@@ -68,9 +60,13 @@
 </template>
 
 <script setup>
+import { useTranslations } from '@/composables/useTranslations'
+
+const { currentLanguage, translate } = useTranslations()
 </script>
 
 <style scoped>
+/* نفس الأنيميشنز السابقة */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);

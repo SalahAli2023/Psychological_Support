@@ -21,7 +21,7 @@
     <TestimonialsSection />
     
     <!-- قسم الدعوة للإجراء -->
-    <CTASection />
+    <!-- <CTASection /> -->
     
     <Footer />
   </div>
@@ -38,4 +38,3 @@ import StatisticsSection from '@/components/frontend/about/StatisticsSection.vue
 import TestimonialsSection from '@/components/frontend/about/TestimonialsSection.vue'
 // import CTASection from '@/components/frontend/about/CTASection.vue'
 </script>
-

@@ -6,9 +6,9 @@
       <!-- Header -->
       <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-start z-10">
         <div class="flex-1">
-          <h2 class="text-2xl font-bold text-gray-800">التسجيل</h2>
+          <h2 class="text-2xl font-bold text-gray-800">{{ translate('registrationModal.title') }}</h2>
           <p class="text-gray-600 mt-2 text-sm leading-relaxed">
-            يجب عليك أولاً التسجيل في تطبيق نفساني لتتمكن من البدء بالمقاييس، ولنشاركك رحلة المعرفة حول الصحة النفسية
+            {{ translate('registrationModal.description') }}
           </p>
         </div>
         <button @click="closeRegistration" class="flex-shrink-0 text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-lg hover:bg-gray-100">
@@ -17,7 +17,7 @@
       </div>
 
       <div class="p-6">
-        <!-- خطوات التسجيل -->
+        <!-- Registration Steps -->
         <div class="flex justify-between items-center mb-8">
           <div 
             v-for="step in steps" 
@@ -40,23 +40,23 @@
           </div>
         </div>
 
-        <!-- محتوى الخطوات -->
+        <!-- Steps Content -->
         <div class="min-h-64">
-          <!-- الخطوة 1: رقم الجوال -->
+          <!-- Step 1: Phone Number -->
           <div v-if="currentStep === 1" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">أدخل رقم الجوال</h3>
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.phoneStep.enterPhone') }}</h3>
             
             <form @submit.prevent="handlePhoneSubmit" class="space-y-4">
-              <!-- الدولة -->
+              <!-- Country -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">الدولة/المنطقة</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.phoneStep.countryLabel') }}</label>
                 <div class="relative">
                   <select 
                     v-model="form.country"
                     @change="updateDialCode"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent appearance-none bg-white pr-3"
                   >
-                    <option value="">اختر الدولة</option>
+                    <option value="">{{ translate('registrationModal.phoneStep.selectCountry') }}</option>
                     <option 
                       v-for="country in countries" 
                       :key="country.code"
@@ -71,9 +71,9 @@
                 </div>
               </div>
 
-              <!-- رقم الجوال -->
+              <!-- Phone Number -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">رقم الجوال</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.phoneStep.phoneLabel') }}</label>
                 <div class="flex gap-2">
                   <div class="flex-shrink-0 w-24 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-center text-gray-700">
                     {{ form.dialCode }}
@@ -81,13 +81,13 @@
                   <input 
                     v-model="form.phone"
                     type="tel"
-                    placeholder="7xxxxxxxx"
+                    :placeholder="translate('registrationModal.phoneStep.phonePlaceholder')"
                     @input="validatePhone"
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
                     :class="errors.phone ? 'border-red-500' : ''"
                   >
                 </div>
-                <p v-if="errors.phone" class="text-red-500 text-xs mt-1 text-right">{{ errors.phone }}</p>
+                <p v-if="errors.phone" class="text-red-500 text-xs mt-1 text-right">{{ translate('registrationModal.phoneStep.phoneError') }}</p>
               </div>
               
               <button 
@@ -95,14 +95,14 @@
                 :disabled="!isPhoneValid || isSubmitting"
                 class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                <span v-if="!isSubmitting">متابعة</span>
+                <span v-if="!isSubmitting">{{ translate('registrationModal.phoneStep.continue') }}</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  جاري الإرسال
+                  {{ translate('registrationModal.phoneStep.sending') }}
                 </span>
               </button>
             </form>
-            <!-- استدعاء المودل -->
+            <!-- Verification Method Modal -->
             <VerificationMethodModal
               :show="showMethodModal"
               :initial-method="selectedMethod"
@@ -112,13 +112,13 @@
           </div>
 
 
-          <!-- الخطوة 2: رمز التحقق -->
+          <!-- Step 2: Verification Code -->
           <div v-if="currentStep === 2" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">تحقق من رقم الجوال</h3>
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.otpStep.title') }}</h3>
             
             <form @submit.prevent="handleOtpSubmit" class="space-y-4">
               <div class="text-center space-y-2">
-                <p class="text-gray-600">أدخل رمز التحقق المرسل إلى الرقم</p>
+                <p class="text-gray-600">{{ translate('registrationModal.otpStep.sentTo') }}</p>
                 <p class="font-semibold text-primary-green">{{ form.dialCode }} {{ form.phone }}</p>
               </div>
 
@@ -139,7 +139,7 @@
               <!-- OTP Actions -->
               <div class="text-center space-y-3">
                 <div v-if="resendCounter > 0" class="text-gray-600">
-                  <span>إعادة الإرسال خلال</span>
+                  <span>{{ translate('registrationModal.otpStep.resendIn') }}</span>
                   <span class="font-semibold mx-1">{{ formatTime(resendCounter) }}</span>
                 </div>
                 <button 
@@ -148,7 +148,7 @@
                   @click="resendOtp"
                   class="text-primary-green hover:text-opacity-80 font-medium transition-colors"
                 >
-                  إعادة إرسال رمز التحقق
+                  {{ translate('registrationModal.otpStep.resend') }}
                 </button>
                 
                 <button 
@@ -156,7 +156,7 @@
                   @click="currentStep = 1"
                   class="text-gray-600 hover:text-gray-800 block mx-auto transition-colors"
                 >
-                  تعديل رقم الجوال
+                  {{ translate('registrationModal.otpStep.editNumber') }}
                 </button>
               </div>
 
@@ -165,40 +165,40 @@
                 :disabled="!isOtpComplete || isSubmitting"
                 class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                <span v-if="!isSubmitting">تأكيد</span>
+                <span v-if="!isSubmitting">{{ translate('registrationModal.otpStep.confirm') }}</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  جاري التحقق
+                  {{ translate('registrationModal.otpStep.verifying') }}
                 </span>
               </button>
             </form>
           </div>
 
-          <!-- الخطوة 3: المعلومات الشخصية -->
+          <!-- Step 3: Personal Information -->
           <div v-if="currentStep === 3" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">المعلومات الشخصية</h3>
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.infoStep.title') }}</h3>
             
             <form @submit.prevent="handleInfoSubmit" class="space-y-4">
-              <!-- الاسم -->
+              <!-- Name -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">الاسم الكامل</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.infoStep.nameLabel') }}</label>
                 <input 
                   v-model="form.name"
                   type="text"
-                  placeholder="أدخل اسمك"
+                  :placeholder="translate('registrationModal.infoStep.namePlaceholder')"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
                   :class="errors.name ? 'border-red-500' : ''"
                 >
-                <p v-if="errors.name" class="text-red-500 text-xs mt-1 text-right">{{ errors.name }}</p>
+                <p v-if="errors.name" class="text-red-500 text-xs mt-1 text-right">{{ translate('registrationModal.infoStep.nameRequired') }}</p>
               </div>
 
-              <!-- البريد الإلكتروني -->
+              <!-- Email -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">البريد الإلكتروني (اختياري)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.infoStep.emailLabel') }}</label>
                 <input 
                   v-model="form.email"
                   type="email"
-                  placeholder="أدخل بريدك الإلكتروني"
+                  :placeholder="translate('registrationModal.infoStep.emailPlaceholder')"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
                   :class="errors.email ? 'border-red-500' : ''"
                 >
@@ -210,20 +210,20 @@
                 :disabled="!form.name || isSubmitting"
                 class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                <span v-if="!isSubmitting">تأكيد</span>
+                <span v-if="!isSubmitting">{{ translate('registrationModal.infoStep.confirm') }}</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  جاري إنشاء الحساب
+                  {{ translate('registrationModal.infoStep.creating') }}
                 </span>
               </button>
             </form>
           </div>
 
-          <!-- الخطوة 4: النجاح -->
+          <!-- Step 4: Success -->
           <div v-if="currentStep === 4" class="text-center space-y-6">
-            <h3 class="text-lg font-semibold text-gray-800">شكراً لك</h3>
+            <h3 class="text-lg font-semibold text-gray-800">{{ translate('registrationModal.successStep.title') }}</h3>
             <p class="text-gray-600 leading-relaxed">
-              لقد تم تسجيلك بنجاح في تطبيق نفساني. يمكنك الآن تحميل التطبيق والاستمتاع بخدمات الصحة النفسية التي يقدمها نفساني
+              {{ translate('registrationModal.successStep.message') }}
             </p>
 
             <!-- Download Buttons -->
@@ -232,8 +232,8 @@
                   class="flex items-center gap-3 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
                 <i class="fab fa-apple text-xl"></i>
                 <div class="text-right">
-                  <div class="text-xs opacity-80">Available on</div>
-                  <div class="font-semibold">App Store</div>
+                  <div class="text-xs opacity-80">{{ translate('registrationModal.successStep.availableOn') }}</div>
+                  <div class="font-semibold">{{ translate('registrationModal.successStep.appStore') }}</div>
                 </div>
               </a>
               
@@ -241,8 +241,8 @@
                   class="flex items-center gap-3 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
                 <i class="fab fa-google-play text-xl"></i>
                 <div class="text-right">
-                  <div class="text-xs opacity-80">Available on</div>
-                  <div class="font-semibold">Google Play</div>
+                  <div class="text-xs opacity-80">{{ translate('registrationModal.successStep.availableOn') }}</div>
+                  <div class="font-semibold">{{ translate('registrationModal.successStep.googlePlay') }}</div>
                 </div>
               </a>
             </div>
@@ -251,7 +251,7 @@
               @click="handleRegistrationSuccess"
               class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all font-medium"
             >
-              ابدأ
+              {{ translate('registrationModal.successStep.start') }}
             </button>
           </div>
         </div>
@@ -265,12 +265,17 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useNotifications } from '@/composables/useNotifications'
 import { useProfile } from '@/composables/useProfile'
 import { countries } from '@/data/countries'
+import { t } from '@/locales'
 import VerificationMethodModal from '@/components/frontend/auth/VerificationMethodModal.vue'
 
 const props = defineProps({
   showRegistration: {
     type: Boolean,
     default: false
+  },
+  language: {
+    type: String,
+    default: 'ar'
   }
 })
 
@@ -296,11 +301,16 @@ const errors = reactive({})
 const showMethodModal = ref(false)
 const selectedMethod = ref('sms')
 
-const steps = [
-  { number: 1, title: 'رقم الجوال' },
-  { number: 2, title: 'رمز التحقق' },
-  { number: 3, title: 'المعلومات الشخصية' }
-]
+// دالة الترجمة
+const translate = (key) => {
+  return t(key, props.language)
+}
+
+const steps = computed(() => [
+  { number: 1, title: translate('registrationModal.steps.phone') },
+  { number: 2, title: translate('registrationModal.steps.otp') },
+  { number: 3, title: translate('registrationModal.steps.info') }
+])
 
 const isPhoneValid = computed(() => {
   return form.phone.length >= 9 && /^7\d{8}$/.test(form.phone)
@@ -312,7 +322,7 @@ const isOtpComplete = computed(() => {
 
 const validatePhone = () => {
   if (form.phone && !/^7\d{8}$/.test(form.phone)) {
-    errors.phone = 'يجب أن يبدأ رقم الجوال بـ 7 ويحتوي على 9 أرقام'
+    errors.phone = translate('registrationModal.phoneStep.phoneError')
   } else {
     delete errors.phone
   }
@@ -333,7 +343,7 @@ const handlePhoneSubmit = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500))
     showMethodModal.value = true
   } catch (error) {
-    showError('حدث خطأ أثناء إرسال رمز التحقق')
+    showError(translate('registrationModal.errors.sendCode'))
   } finally {
     isSubmitting.value = false
   }
@@ -347,9 +357,9 @@ const handleMethodConfirm = async (method) => {
     await new Promise(resolve => setTimeout(resolve, 1000))
     currentStep.value = 2
     startResendCounter()
-    showSuccess(`تم إرسال رمز التحقق ${method === 'sms' ? 'عبر الرسالة النصية' : 'عبر الواتس آب'}`)
+    showSuccess(translate('registrationModal.success.codeSent'))
   } catch (error) {
-    showError('حدث خطأ أثناء إرسال رمز التحقق')
+    showError(translate('registrationModal.errors.sendCode'))
   } finally {
     isSubmitting.value = false
   }
@@ -381,9 +391,9 @@ const handleOtpSubmit = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 1500))
     currentStep.value = 3
-    showSuccess('تم التحقق من رقم الجوال بنجاح')
+    showSuccess(translate('registrationModal.success.verified'))
   } catch (error) {
-    showError('رمز التحقق غير صحيح')
+    showError(translate('registrationModal.errors.verifyCode'))
   } finally {
     isSubmitting.value = false
   }
@@ -391,7 +401,7 @@ const handleOtpSubmit = async () => {
 
 const handleInfoSubmit = async () => {
   if (!form.name.trim()) {
-    errors.name = 'الاسم مطلوب'
+    errors.name = translate('registrationModal.infoStep.nameRequired')
     return
   }
   
@@ -409,10 +419,10 @@ const handleInfoSubmit = async () => {
     
     login(userData)
     currentStep.value = 4
-    showSuccess('تم إنشاء الحساب بنجاح!')
+    showSuccess(translate('registrationModal.success.accountCreated'))
     
   } catch (error) {
-    showError('حدث خطأ أثناء إنشاء الحساب')
+    showError(translate('registrationModal.errors.createAccount'))
   } finally {
     isSubmitting.value = false
   }
@@ -438,9 +448,9 @@ const resendOtp = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 1000))
     startResendCounter()
-    showSuccess('تم إعادة إرسال رمز التحقق')
+    showSuccess(translate('registrationModal.success.codeResent'))
   } catch (error) {
-    showError('حدث خطأ أثناء إعادة الإرسال')
+    showError(translate('registrationModal.errors.resendCode'))
   } finally {
     isSubmitting.value = false
   }
@@ -474,7 +484,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* فقط الـ CSS الضروري للحركات */
+/* Only necessary CSS for animations */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;

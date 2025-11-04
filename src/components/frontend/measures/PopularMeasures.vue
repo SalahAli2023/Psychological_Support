@@ -2,10 +2,14 @@
   <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold mb-4 text-gray-800">المقاييس الأكثر استخداماً</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">مجموعة مختارة من المقاييس الأكثر شيوعاً بين المستخدمين</p>
+        <h2 class="text-3xl font-bold mb-4 text-gray-800">
+          {{ translate('popularMeasures.title') }}
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          {{ translate('popularMeasures.desc') }}
+        </p>
       </div>
-      
+
       <div class="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 gap-6">
         <div 
           v-for="measure in measures" 
@@ -15,7 +19,7 @@
         >
           <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
             <i :class="measure.icon" class="text-primary-pink"></i>
-            {{ measure.title }}
+            {{ translate(measure.title) }}
           </h3>
           <p class="text-gray-600 text-sm mb-4 flex-grow">
             {{ measure.description }}
@@ -23,15 +27,15 @@
           <div class="flex justify-between text-sm text-gray-500 mb-4">
             <div class="flex items-center gap-1">
               <i class="fas fa-question-circle"></i>
-              <span>{{ measure.questions.length }} أسئلة</span>
+              <span>{{ measure.questions.length }} {{ translate('popularMeasures.questions') }}</span>
             </div>
             <div class="flex items-center gap-1">
               <i class="fas fa-clock"></i>
-              <span>{{ measure.time }} دقائق</span>
+              <span>{{ measure.time }} {{ translate('popularMeasures.minutes') }}</span>
             </div>
           </div>
 
-          <!-- نجوم التقييم المعدلة -->
+          <!-- نجوم التقييم -->
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
               <div class="stars-container">
@@ -47,7 +51,7 @@
           </div>
 
           <button class="w-full py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors text-sm font-medium">
-            ابدأ التقييم
+            {{ translate('popularMeasures.start') }}
           </button>
         </div>
       </div>
@@ -56,15 +60,28 @@
 </template>
 
 <script>
+import { t } from "@/locales";
+
 export default {
   name: 'PopularMeasures',
   props: {
     measures: {
       type: Array,
       default: () => []
+    },
+    language: {
+      type: String,
+      default: "ar"
     }
   },
-  emits: ['measure-click']
+  emits: ['measure-click'],
+  setup(props) {
+    const translate = (key) => t(key, props.language);
+
+    return {
+      translate
+    };
+  }
 }
 </script>
 

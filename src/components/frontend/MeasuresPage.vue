@@ -1,13 +1,17 @@
-<template>
+<template> 
   <div class="min-h-screen bg-gray-50 font-almarai transition-colors duration-300">
     <Header /> 
-    <!-- قسم الهيرو  -->
-    <HeroSection />
 
-    <main class=" max-w-7xl mx-auto px-6">
+    <!-- قسم الهيرو  -->
+    <HeroSection
+    :language="currentLanguage"
+    />
+
+    <main class="max-w-7xl mx-auto px-6">
       <!-- المقاييس الأكثر استخداماً -->
       <PopularMeasures 
         :measures="popularMeasures"
+        :language="currentLanguage"
         @measure-click="openRegistrationModal"
       />
       
@@ -17,6 +21,7 @@
         :searchQuery="searchQuery"
         :measures="measures"
         :filteredMeasuresCount="filteredMeasures.length"
+        :language="currentLanguage"
         @filter-change="activeFilter = $event"
         @update:searchQuery="searchQuery = $event"
       />
@@ -25,11 +30,14 @@
       <AllMeasures 
         :measures="filteredMeasures"
         :activeFilter="activeFilter"
+        :language="currentLanguage"
         @measure-click="openRegistrationModal"
       />
 
       <!-- الإرشادات -->
-      <GuidelinesSection />
+      <GuidelinesSection 
+        :language="currentLanguage"
+      />
       
       <!-- الموارد -->
       <ResourcesSection :resources="resources" />
@@ -40,9 +48,11 @@
     <!-- مودال التسجيل -->
     <RegistrationModal
       :show-registration="showRegistrationModal"
+      :language="currentLanguage"
       @close="closeRegistrationModal"
       @switch-to-login="switchToLogin"
       @registration-success="handleRegistrationSuccess"
+      
     />
 
     <!-- مودال الاختبار (يظهر بعد التسجيل) -->
@@ -53,6 +63,7 @@
       :currentQuestionIndex="currentQuestionIndex"
       :answers="answers"
       :testResult="testResult"
+      :language="currentLanguage"
       @close="closeMeasureModal"
       @start-test="startTest"
       @next-question="nextQuestion"
@@ -65,7 +76,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
 import HeroSection from '@/components/frontend/measures/HeroSection.vue'
 import PopularMeasures from '@/components/frontend/measures/PopularMeasures.vue'
@@ -93,7 +104,7 @@ export default {
     RegistrationModal
   },
   setup() {
-    // الحالة
+    // الحالة العامة
     const searchQuery = ref('')
     const activeFilter = ref('allMeasures')
     const showRegistrationModal = ref(false)
@@ -103,6 +114,20 @@ export default {
     const currentQuestionIndex = ref(0)
     const answers = ref([])
     const testResult = ref(null)
+    const currentLanguage = ref(localStorage.getItem('preferredLanguage') || 'ar')
+
+    // تحديث اللغة تلقائيًا عند تغييرها من الهيدر
+    const handleLanguageChange = (event) => {
+      currentLanguage.value = event.detail.language
+    }
+
+    onMounted(() => {
+      window.addEventListener('languageChanged', handleLanguageChange)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('languageChanged', handleLanguageChange)
+    })
 
     // البيانات
     const measures = ref(measuresData)
@@ -188,10 +213,7 @@ export default {
     
     const submitTest = () => {
       testStep.value = 'loading'
-      
-      setTimeout(() => {
-        calculateResults()
-      }, 2000)
+      setTimeout(() => calculateResults(), 2000)
     }
     
     const calculateResults = () => {
@@ -219,12 +241,7 @@ export default {
       
       const interpretation = measure.interpretation(score)
       
-      testResult.value = {
-        score,
-        maxScore,
-        interpretation
-      }
-      
+      testResult.value = { score, maxScore, interpretation }
       testStep.value = 'results'
     }
     
@@ -240,7 +257,6 @@ export default {
     }
 
     const switchToLogin = () => {
-      // هنا يمكنك فتح مودال تسجيل الدخول إذا كان لديك
       console.log('Switch to login')
     }
 
@@ -258,6 +274,7 @@ export default {
       resources,
       filteredMeasures,
       popularMeasures,
+      currentLanguage,
       openRegistrationModal,
       closeRegistrationModal,
       handleRegistrationSuccess,

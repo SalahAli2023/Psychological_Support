@@ -1,10 +1,9 @@
-<!-- RelatedEvents.vue -->
 <template>
   <div>
     <!-- فعاليات ذات صلة - تصميم عمودي -->
     <div class="bg-white rounded-2xl shadow p-6">
       <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
-        فعاليات ذات صلة
+        {{ translate('events.details.relatedEvents') }}
       </h3>
       <div class="space-y-4">
         <article 
@@ -28,7 +27,7 @@
                 {{ event.date }}
               </p>
               <span :class="`inline-block text-xs px-2 py-1 rounded-full ${getCategoryStyle(event.type)}`">
-                {{ event.type }}
+                {{ getTranslatedCategory(event.type) }}
               </span>
             </div>
           </div>
@@ -38,15 +37,19 @@
 
     <!-- رسالة عدم وجود فعاليات ذات صلة -->
     <div v-if="filteredEvents.length === 0" class="text-center py-8">
-      <i class="fas fa-link text-4xl text-gray-300 mb-3"></i>
-      <h3 class="text-lg font-bold text-gray-700 mb-1">لا توجد فعاليات ذات صلة</h3>
-      <p class="text-gray-500 text-sm">لم نتمكن من العثور على فعاليات مشابهة</p>
+      <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+      <h3 class="text-lg font-bold text-gray-700 mb-1">{{ translate('events.details.noRelatedEvents') }}</h3>
+      <p class="text-gray-500 text-sm">{{ translate('events.details.noRelatedMessage') }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, translate } = useTranslations()
 
 // بيانات الفعاليات
 const props = defineProps({
@@ -73,11 +76,21 @@ const filteredEvents = computed(() => {
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {
   const styles = {
-    'أمسيات': 'bg-green-100 text-green-700',
-    'فعاليات': 'bg-green-100 text-green-700',
-    'ورش عمل': 'bg-green-100 text-green-700'
+    'evenings': 'bg-green-100 text-green-700',
+    'events': 'bg-blue-100 text-blue-700',
+    'workshops': 'bg-purple-100 text-purple-700'
   }
   return styles[type] || 'bg-gray-100 text-gray-700'
+}
+
+// دالة لترجمة التصنيف
+const getTranslatedCategory = (type) => {
+  const categories = {
+    'evenings': translate('events.categories.evenings'),
+    'events': translate('events.categories.events'),
+    'workshops': translate('events.categories.workshops')
+  }
+  return categories[type] || type
 }
 
 // النقر على فعالية
