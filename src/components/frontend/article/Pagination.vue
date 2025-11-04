@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { useTranslations } from '@/composables/useTranslations'
+
 export default {
   name: 'Pagination',
   props: {
@@ -89,6 +91,24 @@ export default {
       default: 6
     }
   },
+  setup() {
+    const { translate } = useTranslations()
+    
+    const paginationText = {
+      previous: translate('pagination.previous'),
+      next: translate('pagination.next'),
+      page: translate('pagination.page'),
+      of: translate('pagination.of'),
+      showing: translate('pagination.showing'),
+      to: translate('pagination.to'),
+      ofResults: translate('pagination.ofResults'),
+      results: translate('pagination.results')
+    }
+    
+    return {
+      paginationText
+    }
+  },
   computed: {
     startItem() {
       return (this.currentPage - 1) * this.itemsPerPage + 1;
@@ -104,7 +124,6 @@ export default {
       let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
       let end = Math.min(this.totalPages, start + maxVisible - 1);
       
-      // تعديل البداية إذا كنا في النهاية
       if (end - start + 1 < maxVisible) {
         start = Math.max(1, end - maxVisible + 1);
       }
@@ -126,7 +145,3 @@ export default {
   emits: ['page-change']
 }
 </script>
-
-<style scoped>
-
-</style>

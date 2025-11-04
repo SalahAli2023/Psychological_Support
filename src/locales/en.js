@@ -120,7 +120,10 @@ export const en = {
       allEvents: 'All Events',
       evenings: 'Evenings',
       events: 'Events',
-      workshops: 'Workshops'
+      workshops: 'Workshops',
+         searchPlaceholderArticle: 'Search in articles...',
+    allCategories: 'All Articles',
+    category: 'Category'
     },
     details: {
       dateTime: 'Date & Time',
