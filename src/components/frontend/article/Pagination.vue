@@ -1,13 +1,12 @@
-
 <template>
-  <div class="flex flex-col items-center space-y-6">
+  <div class="flex flex-col items-center space-y-6" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
     <!-- معلومات الصفحة -->
-    <!-- <div class="text-gray-600 text-sm">
-      عرض {{ startItem }}-{{ endItem }} من أصل {{ totalItems }} مقالة
-    </div> -->
+    <div class="text-gray-600 text-sm">
+      {{ showingText }}
+    </div>
 
     <!-- أزرار الصفحات -->
-    <div class="flex items-center space-x-2 space-x-reverse">
+    <div class="flex items-center" :class="currentLanguage === 'ar' ? 'space-x-2 space-x-reverse' : 'space-x-2'">
       <!-- زر الصفحة السابقة -->
       <button
         @click="goToPage(currentPage - 1)"
@@ -18,7 +17,7 @@
           currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
         ]"
       >
-        <i class="fas fa-chevron-right"></i>
+        <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
       </button>
 
       <!-- أرقام الصفحات -->
@@ -47,17 +46,17 @@
           currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
         ]"
       >
-        <i class="fas fa-chevron-left"></i>
+        <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'"></i>
       </button>
     </div>
 
     <!-- نقاط التقدم -->
-    <div class="flex space-x-1 space-x-reverse">
+    <div class="flex" :class="currentLanguage === 'ar' ? 'space-x-1 space-x-reverse' : 'space-x-1'">
       <div
         v-for="page in totalPages"
         :key="page"
         :class="[
-          'h-1 rounded-full transition-all duration-300',
+          'h-1 rounded-full transition-all duration-300 cursor-pointer',
           page === currentPage 
             ? 'bg-primary w-6' 
             : 'bg-gray-300 w-2 hover:bg-gray-400'
@@ -70,6 +69,7 @@
 
 <script>
 import { useTranslations } from '@/composables/useTranslations'
+import { computed } from 'vue'
 
 export default {
   name: 'Pagination',
@@ -91,9 +91,21 @@ export default {
       default: 6
     }
   },
-  setup() {
-    const { translate } = useTranslations()
+  setup(props) {
+    const { translate, currentLanguage } = useTranslations()
     
+    // نص عرض النتائج مع الترجمة
+    const showingText = computed(() => {
+      const start = (props.currentPage - 1) * props.itemsPerPage + 1
+      const end = Math.min(props.currentPage * props.itemsPerPage, props.totalItems)
+      
+      if (currentLanguage.value === 'ar') {
+        return `عرض ${start}-${end} من أصل ${props.totalItems} مقالة`
+      } else {
+        return `Showing ${start}-${end} of ${props.totalItems} articles`
+      }
+    })
+
     const paginationText = {
       previous: translate('pagination.previous'),
       next: translate('pagination.next'),
@@ -106,7 +118,9 @@ export default {
     }
     
     return {
-      paginationText
+      paginationText,
+      showingText,
+      currentLanguage
     }
   },
   computed: {
@@ -145,3 +159,7 @@ export default {
   emits: ['page-change']
 }
 </script>
+
+<style scoped>
+
+</style>
