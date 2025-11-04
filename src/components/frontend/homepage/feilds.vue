@@ -16,12 +16,12 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6">
       <div class="text-center mb-12">
         <TitleSection
-          mainText="مجالات"
-          highlightText="عملنا"
+          :mainText="translate('home.fields.title')"
+          :highlightText="translate('home.fields.highlight')"
         />
         <p class="text-gray-600 max-w-xl mx-auto transition-all duration-700"
            :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-6': !isVisible }">
-          نقدم خدمات متخصصة في مختلف مجالات الصحة النفسية
+          {{ translate('home.fields.subtitle') }}
         </p>
       </div>
 
@@ -56,9 +56,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, watch, computed } from 'vue'
 import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
 
+const { translate, currentLanguage } = inject('languageState')
 const sectionRef = ref(null)
 const isVisible = ref(false)
 
@@ -73,12 +74,46 @@ onMounted(() => {
   if(sectionRef.value) observer.observe(sectionRef.value)
 })
 
-const specialties = [
-  { icon: 'fas fa-sad-tear', title: 'القلق والاكتئاب', description: 'علاج اضطرابات القلق والاكتئاب بمختلف درجاتها باستخدام أحدث الأساليب العلاجية.' },
-  { icon: 'fas fa-family', title: 'الاستشارات الأسرية', description: 'تحسين العلاقات الأسرية وحل النزاعات وتعزيز التواصل الفعال بين أفراد الأسرة.' },
-  { icon: 'fas fa-user-graduate', title: 'صحة الأطفال والمراهقين', description: 'دعم الصحة النفسية للأطفال والمراهقين وعلاج المشكلات السلوكية والنفسية.' },
-  { icon: 'fas fa-briefcase', title: 'الإرشاد المهني', description: 'مساعدة الأفراد في التغلب على ضغوط العمل وتحقيق التوازن بين الحياة الشخصية والمهنية.' },
-  { icon: 'fas fa-heartbeat', title: 'الصدمات النفسية', description: 'علاج آثار الصدمات النفسية واضطراب ما بعد الصدمة باستخدام أساليب علاجية متخصصة.' },
-  { icon: 'fas fa-brain', title: 'تعزيز الصحة النفسية', description: 'برامج وقائية وتنموية لتعزيز الصحة النفسية والمرونة النفسية لدى الأفراد.' },
-]
+// البيانات الأساسية للمجالات
+const specialtiesData = {
+  anxiety: { 
+    icon: 'fas fa-sad-tear', 
+    ar: { title: 'القلق والاكتئاب', description: 'علاج اضطرابات القلق والاكتئاب بمختلف درجاتها باستخدام أحدث الأساليب العلاجية.' },
+    en: { title: 'Anxiety & Depression', description: 'Treatment of anxiety and depression disorders at various levels using the latest therapeutic methods.' }
+  },
+  family: { 
+    icon: 'fas fa-family', 
+    ar: { title: 'الاستشارات الأسرية', description: 'تحسين العلاقات الأسرية وحل النزاعات وتعزيز التواصل الفعال بين أفراد الأسرة.' },
+    en: { title: 'Family Counseling', description: 'Improving family relationships, resolving conflicts, and enhancing effective communication among family members.' }
+  },
+  children: { 
+    icon: 'fas fa-user-graduate', 
+    ar: { title: 'صحة الأطفال والمراهقين', description: 'دعم الصحة النفسية للأطفال والمراهقين وعلاج المشكلات السلوكية والنفسية.' },
+    en: { title: 'Children & Adolescents Health', description: 'Supporting the mental health of children and adolescents and treating behavioral and psychological problems.' }
+  },
+  career: { 
+    icon: 'fas fa-briefcase', 
+    ar: { title: 'الإرشاد المهني', description: 'مساعدة الأفراد في التغلب على ضغوط العمل وتحقيق التوازن بين الحياة الشخصية والمهنية.' },
+    en: { title: 'Career Guidance', description: 'Helping individuals overcome work pressures and achieve balance between personal and professional life.' }
+  },
+  trauma: { 
+    icon: 'fas fa-heartbeat', 
+    ar: { title: 'الصدمات النفسية', description: 'علاج آثار الصدمات النفسية واضطراب ما بعد الصدمة باستخدام أساليب علاجية متخصصة.' },
+    en: { title: 'Psychological Trauma', description: 'Treating the effects of psychological trauma and post-traumatic stress disorder using specialized therapeutic methods.' }
+  },
+  wellness: { 
+    icon: 'fas fa-brain', 
+    ar: { title: 'تعزيز الصحة النفسية', description: 'برامج وقائية وتنموية لتعزيز الصحة النفسية والمرونة النفسية لدى الأفراد.' },
+    en: { title: 'Mental Health Enhancement', description: 'Preventive and developmental programs to enhance mental health and psychological resilience in individuals.' }
+  }
+}
+
+// computed property لتحديث specialties بناءً على اللغة الحالية
+const specialties = computed(() => {
+  return Object.values(specialtiesData).map(item => ({
+    icon: item.icon,
+    title: item[currentLanguage.value]?.title || item.ar.title,
+    description: item[currentLanguage.value]?.description || item.ar.description
+  }))
+})
 </script>

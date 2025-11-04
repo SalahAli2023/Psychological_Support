@@ -11,8 +11,8 @@
     <div class="max-w-6xl mx-auto px-6 text-gray-700 relative z-10">
      
         <TitleSection
-          mainText="لماذا قد تختار"
-          highlightText=" منصتنا؟"
+          :mainText="translate('home.visionMission.title')"
+          :highlightText="translate('home.visionMission.highlight')"
         />
     
       <!-- التقسيم إلى قسمين -->
@@ -38,7 +38,7 @@
           <div class="relative">
             <img 
               src="http://localhost:5173/images/تنزيل.jpg" 
-              alt="صورة الدكتور" 
+              :alt="translate('home.visionMission.imageAlt')" 
               class="w-60 h-60 md:w-[400px] md:h-[500px] object-contain relative z-10" 
             />
           </div>
@@ -48,7 +48,7 @@
       <!-- زر إنشاء الحساب -->
       <div class="mt-16 md:mt-20 text-center transition-all duration-500 delay-250" :class="buttonClass">
         <button class="bg-[#9EBF3B] hover:bg-[#8CAF35] text-white font-semibold px-10 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base md:text-lg">
-          إنشاء حساب
+          {{ translate('home.visionMission.createAccount') }}
         </button>
       </div>
     </div>
@@ -63,15 +63,74 @@ export default {
   name: "WhyChooseUs",
   components: { TitleSection },
   mixins: [useScrollAnimation],
+  inject: ['languageState'],
   data() {
     return {
       contentItems: [
-        { title: 'معالجون معتمدون', img: 'http://localhost:5173/images/معالجون.svg', desc: 'نخبة من الأخصائيين والمعالجين النفسيين الحاصلين على درجات علمية متقدمة وخبرة في مجالات متعددة.' },
-        { title: 'سرية تامة', img: 'http://localhost:5173/images/سرية تامة.svg', desc: 'نحافظ على خصوصيتك. جميع الجلسات والمعلومات الشخصية محمية ولا يمكن لأي جهة الاطلاع عليها.' },
-        { title: 'سهولة الاستخدام', img: 'http://localhost:5173/images/سهولة الاستخدام.svg', desc: 'تجربة استخدام مريحة عبر تطبيقنا. ابدأ بالتسجيل وحجز الجلسات الفردية والجماعية وخاصية إرسال الرسائل.' },
-        { title: 'مرونة في المواعيد', img: 'http://localhost:5173/images/مرونة في المواعيد.svg', desc: 'اختر الوقت الذي يناسبك، واحجز جلستك بشكل مرن، وابدأ العلاج من أي مكان يناسبك دون تعارض مع التزاماتك.' },
+        { 
+          title: '', 
+          img: 'http://localhost:5173/images/معالجون.svg', 
+          desc: '' 
+        },
+        { 
+          title: '', 
+          img: 'http://localhost:5173/images/سرية تامة.svg', 
+          desc: '' 
+        },
+        { 
+          title: '', 
+          img: 'http://localhost:5173/images/سهولة الاستخدام.svg', 
+          desc: '' 
+        },
+        { 
+          title: '', 
+          img: 'http://localhost:5173/images/مرونة في المواعيد.svg', 
+          desc: '' 
+        },
       ]
     }
+  },
+  computed: {
+    translate() {
+      return this.languageState?.translate || ((key) => key)
+    }
+  },
+  watch: {
+    'languageState.currentLanguage': {
+      immediate: true,
+      handler() {
+        this.updateContentItems()
+      }
+    }
+  },
+  methods: {
+    updateContentItems() {
+      this.contentItems = [
+        { 
+          title: this.translate('home.visionMission.items.therapists'), 
+          img: 'http://localhost:5173/images/معالجون.svg', 
+          desc: this.translate('home.visionMission.items.therapistsDesc') 
+        },
+        { 
+          title: this.translate('home.visionMission.items.confidentiality'), 
+          img: 'http://localhost:5173/images/سرية تامة.svg', 
+          desc: this.translate('home.visionMission.items.confidentialityDesc') 
+        },
+        { 
+          title: this.translate('home.visionMission.items.easeOfUse'), 
+          img: 'http://localhost:5173/images/سهولة الاستخدام.svg', 
+          desc: this.translate('home.visionMission.items.easeOfUseDesc') 
+        },
+        { 
+          title: this.translate('home.visionMission.items.flexibility'), 
+          img: 'http://localhost:5173/images/مرونة في المواعيد.svg', 
+          desc: this.translate('home.visionMission.items.flexibilityDesc') 
+        },
+      ]
+    }
+  },
+  mounted() {
+    this.updateContentItems()
   }
 }
 </script>

@@ -8,15 +8,15 @@
     <div class="text-center mb-10 md:mb-16 px-4">
       <div class="inline-block relative">
         <TitleSection
-          mainText="كيف تعمل"
-          highlightText=" المنصة؟"
+          :mainText="translate('home.howItWorks.title')"
+          :highlightText="translate('home.howItWorks.highlight')"
         />
       </div>
       <p 
         class="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700 delay-400"
         :class="contentItemClass"
       >
-        رحلة بسيطة ومباشرة نحو صحة نفسية أفضل في 4 خطوات فقط
+        {{ translate('home.howItWorks.subtitle') }}
       </p>
     </div>
 
@@ -79,8 +79,8 @@
           01
         </div>
         <div class="mt-4">
-          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">سجل واحجز</h3>
-          <p class="text-gray-600 w-56">أنشئ حسابك واختر الموعد المناسب مع الأخصائي الذي يناسب احتياجاتك</p>
+          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">{{ translate('home.howItWorks.steps.step1') }}</h3>
+          <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step1Desc') }}</p>
         </div>
       </div>
 
@@ -89,8 +89,8 @@
         :class="contentItemClass"
       >
         <div class="mb-4">
-          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">اجتمع بأخصائنا</h3>
-          <p class="text-gray-600 w-56">قابل أخصائيك عبر الجلسات الافتراضية أو احجز موعداً في العيادة</p>
+          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">{{ translate('home.howItWorks.steps.step2') }}</h3>
+          <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step2Desc') }}</p>
         </div>
         <div class="bg-gradient-to-br from-[#D6A29A] to-[#c58f87] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           02
@@ -105,8 +105,8 @@
           03
         </div>
         <div class="mt-4">
-          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">احصل على الدعم</h3>
-          <p class="text-gray-600 w-56">تلقى العلاج والدعم المناسب مع متابعة مستمرة لتطور حالتك</p>
+          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">{{ translate('home.howItWorks.steps.step3') }}</h3>
+          <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step3Desc') }}</p>
         </div>
       </div>
 
@@ -115,8 +115,8 @@
         :class="contentItemClass"
       >
         <div class="mb-4">
-          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">تابع تقدمك</h3>
-          <p class="text-gray-600 w-56">تابع تحسن صحتك النفسية مع تقارير دورية ونصائح مخصصة</p>
+          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">{{ translate('home.howItWorks.steps.step4') }}</h3>
+          <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step4Desc') }}</p>
         </div>
         <div class="bg-gradient-to-br from-[#D6A29A] to-[#c58f87] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           04
@@ -165,18 +165,22 @@ export default {
   name: "HowItWorks",
   mixins: [useScrollAnimation],
   components: { TitleSection },
+  inject: ['languageState'],
   data() {
     return {
       isMobile: false,
       steps: [
-        { number: "01", title: "سجل واحجز", text: "أنشئ حسابك واختر الموعد المناسب مع الأخصائي الذي يناسب احتياجاتك" },
-        { number: "02", title: "اجتمع بأخصائنا", text: "قابل أخصائيك عبر الجلسات الافتراضية أو احجز موعداً في العيادة" },
-        { number: "03", title: "احصل على الدعم", text: "تلقى العلاج والدعم المناسب مع متابعة مستمرة لتطور حالتك" },
-        { number: "04", title: "تابع تقدمك", text: "تابع تحسن صحتك النفسية مع تقارير دورية ونصائح مخصصة" },
+        { number: "01", title: "", text: "" },
+        { number: "02", title: "", text: "" },
+        { number: "03", title: "", text: "" },
+        { number: "04", title: "", text: "" },
       ]
     }
   },
   computed: {
+    translate() {
+      return this.languageState?.translate || ((key) => key)
+    },
     svgPathClass() {
       return {
         'opacity-0': !this.isVisible,
@@ -190,17 +194,50 @@ export default {
       }
     }
   },
+  watch: {
+    'languageState.currentLanguage': {
+      immediate: true,
+      handler() {
+        this.updateSteps()
+      }
+    }
+  },
+  methods: {
+    updateSteps() {
+      this.steps = [
+        { 
+          number: "01", 
+          title: this.translate('home.howItWorks.steps.step1'), 
+          text: this.translate('home.howItWorks.steps.step1Desc') 
+        },
+        { 
+          number: "02", 
+          title: this.translate('home.howItWorks.steps.step2'), 
+          text: this.translate('home.howItWorks.steps.step2Desc') 
+        },
+        { 
+          number: "03", 
+          title: this.translate('home.howItWorks.steps.step3'), 
+          text: this.translate('home.howItWorks.steps.step3Desc') 
+        },
+        { 
+          number: "04", 
+          title: this.translate('home.howItWorks.steps.step4'), 
+          text: this.translate('home.howItWorks.steps.step4Desc') 
+        },
+      ]
+    },
+    checkMobile() {
+      this.isMobile = window.innerWidth < 768;
+    }
+  },
   mounted() {
+    this.updateSteps()
     this.checkMobile();
     window.addEventListener("resize", this.checkMobile);
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.checkMobile);
-  },
-  methods: {
-    checkMobile() {
-      this.isMobile = window.innerWidth < 768;
-    }
   }
 }
 </script>

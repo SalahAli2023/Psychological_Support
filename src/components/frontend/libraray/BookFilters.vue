@@ -87,7 +87,7 @@
         </div>
         <button 
           @click="clearFilters" 
-          class="w-10 h-10 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-500 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md"
+          class="w-10 h-10 bg-gray-100 ml-1 hover:bg-red-50 text-gray-500 hover:text-red-500 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md"
           :title="translate('buttons.resetFilters')"
         >
           <i class="fas fa-redo-alt text-sm"></i>

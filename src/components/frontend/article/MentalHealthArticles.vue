@@ -1,10 +1,10 @@
 <template>
-  <div class="font-almarai" >
+  <div class="font-almarai">
     <!-- Header -->
     <Header />
 
     <!-- Hero Section -->
-      <Hero 
+    <Hero 
       :titleKey="'articlesHero.title'"
       :highlightKey="'articlesHero.highlight'"
       :subtitleKey="'articlesHero.subtitle'"
@@ -15,9 +15,9 @@
     <div class="max-w-7xl mx-auto px-4 py-8">
       <!-- Category Filter -->
       <div class="w-full flex justify-center mb-8">
-        <div class="w-full max-w-4xl">
+        <div class="w-full" :class="filterContainerClass">
           <CategoryFilter 
-            :categories="categories"
+            :categories="translatedCategories"
             :activeCategory="activeCategory"
             @category-change="handleCategoryChange"
             @search-change="handleSearchChange"
@@ -27,7 +27,7 @@
 
       <!-- Articles Grid -->
       <div class="mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" :class="gridContainerClass">
           <ArticleCard
             v-for="article in paginatedArticles"
             :key="article.id"
@@ -40,22 +40,21 @@
       <!-- No Results -->
       <div v-if="filteredArticles.length === 0" class="text-center py-12 bg-white rounded-xl shadow-md">
         <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-        <h3 class="text-xl font-bold text-[#065f46] mb-2">لا توجد مقالات</h3>
-        <p class="text-gray-600">جرب بحثاً آخر أو فئة مختلفة</p>
+        <h3 class="text-xl font-bold text-[#065f46] mb-2">{{ noResultsText.title }}</h3>
+        <p class="text-gray-600">{{ noResultsText.message }}</p>
       </div>
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="flex justify-center mt-8">
-        <Pagination 
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          :total-items="filteredArticles.length"
-          @page-change="handlePageChange"
-        />
+          <Pagination 
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredArticles.length"
+            :items-per-page="itemsPerPage"
+            @page-change="handlePageChange"
+          />
       </div>
     </div>
-
-   
   </div>
 </template>
 
@@ -94,9 +93,14 @@ export default {
         primary: false 
       }
     ]
+    const noResultsText = {
+      title: translate('noResults.title'),
+      message: translate('noResults.message')
+    }
 
     return {
-      heroButtons
+      heroButtons,
+      noResultsText
     }
   },
   data() {
@@ -131,6 +135,26 @@ export default {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
       return this.filteredArticles.slice(start, end);
+    },
+    translatedCategories() {
+      const { translate } = useTranslations();
+      
+      return this.categories.map(category => {
+        if (category.id === 'all') {
+          return {
+            ...category,
+            name: translate('filters.allCategories')
+          };
+        }
+        return category;
+      });
+    },
+    // حساب عرض الحاوية بناءً على عدد الأعمدة
+    filterContainerClass() {
+      return 'max-w-[1200px]'; // نفس عرض الكاردات
+    },
+    gridContainerClass() {
+      return 'max-w-[1200px] mx-auto'; // تأكيد أن الكاردات بنفس العرض
     }
   },
   methods: {

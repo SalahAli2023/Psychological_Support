@@ -24,14 +24,14 @@
       <!-- العنوان الرئيسي -->
       <header class="text-center mb-16">
          <TitleSection
-          mainText="الاسئلة "
-          highlightText="الشائعة"
+          :mainText="translate('home.faq.title')"
+          :highlightText="translate('home.faq.highlight')"
         />
         <p 
           class="text-lg text-gray-600 max-w-2xl mx-auto mt-4 transition-all duration-700"
           :class="contentItemClass"
         >
-          إليك إجابات للأسئلة التي يطرحها عملاؤنا بشكل متكرر. إذا لم تجد إجابة لسؤالك، لا تتردد في التواصل معنا.
+          {{ translate('home.faq.subtitle') }}
         </p>
       </header>
 
@@ -170,9 +170,9 @@
         
         <!-- المحتوى -->
         <div class="relative z-10 text-center text-white p-12">
-          <h3 class="text-2xl md:text-3xl font-bold mb-4">لم تجد إجابة لسؤالك؟</h3>
+          <h3 class="text-2xl md:text-3xl font-bold mb-4">{{ translate('home.faq.contactTitle') }}</h3>
           <p class="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-            فريقنا مستعد للإجابة على جميع استفساراتك
+            {{ translate('home.faq.contactSubtitle') }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
@@ -181,7 +181,7 @@
               style="transition-delay: 1100ms"
             >
               <span class="flex items-center gap-2">
-                اتصل بنا الآن
+                {{ translate('home.faq.contactUs') }}
                 <i class="fas fa-phone"></i>
               </span>
             </button>
@@ -191,7 +191,7 @@
               style="transition-delay: 1200ms"
             >
               <span class="flex items-center gap-2">
-                راسلنا على الواتساب
+                {{ translate('home.faq.whatsapp') }}
                 <i class="fab fa-whatsapp"></i>
               </span>
             </button>
@@ -205,60 +205,26 @@
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
 import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
+import { useTranslations } from '@/composables/useTranslations.js'
 
 export default {
   name: "FAQSection",
   mixins: [useScrollAnimation],
   components: {
-
     TitleSection
+  },
+  setup() {
+    const { currentLanguage, translate } = useTranslations()
+    return {
+      currentLanguage,
+      translate
+    }
   },
   data() {
     return {
-      // بيانات الأسئلة الشائعة
-      faqs: [
-        {
-          id: 1,
-          question: "ما هي مدة الجلسة العلاجية؟",
-          answer: "مدة الجلسة العلاجية النموذجية هي 50 دقيقة. نوصي بالحضور بانتظام لتحقيق أفضل النتائج، ولكن يمكننا مناقشة وتعديل التكرار بناءً على احتياجاتك وأهدافك الشخصية."
-        },
-        {
-          id: 2,
-          question: "هل الاستشارات العلاجية سرية تمامًا؟",
-          answer: "نعم، تمامًا. جميع المعلومات التي تشاركها خلال الجلسات محمية بموجب قوانين السرية الصارمة. لا يمكن مشاركة أي معلومات مع أي طرف ثالث دون موافقتك الخطية، باستثناء الحالات التي ينص فيها القانون على خلاف ذلك."
-        },
-        {
-          id: 3,
-          question: "كيف يمكنني حجز موعد؟",
-          answer: "يمكنك حجز موعد بسهولة من خلال ملء نموذج الاتصال بموقعنا، أو الاتصال بنا مباشرة على الأرقام المدرجة. سيقوم فريقنا بالرد عليك لتأكيد الموعد والمناسب لك."
-        },
-        {
-          id: 4,
-          question: "ما هو الفرق بين الطبيب النفسي والمعالج النفسي؟",
-          answer: "الطبيب النفسي هو طبيب يمكنه تشخيص الحالات النفسية ووصف الأدوية، بينما يركز المعالج النفسي على تقديم العلاج بالكلام واستراتيجيات المواجهة. في كثير من الحالات، قد يكون التعاون بين الاثنين هو الأكثر فائدة."
-        },
-        {
-          id: 5,
-          question: "هل يمكنني الحصول على استشارة أونلاين؟",
-          answer: "نعم، نوفر جلسات استشارية أونلاين عبر منصات آمنة ومشفرة. يمكنك اختيار النمط الذي يناسبك سواء كان وجهاً لوجه في العيادة أو عبر الإنترنت مع الحفاظ على نفس مستوى الجودة والسرية."
-        },
-        {
-          id: 6,
-          question: "كم تكلفة الجلسة العلاجية؟",
-          answer: "تختلف تكلفة الجلسات حسب نوع الخدمة والأخصائي. نقدم خطط أسعار متنوعة تناسب مختلف الميزانيات، ويمكنك الاطلاع على الأسعار من خلال صفحة الخدمات."
-        },
-        {
-          id: 7,
-          question: "هل يمكنني تغيير الأخصائي؟",
-          answer: "نعم، يمكنك تغيير الأخصائي في أي وقت إذا شعرت أن هناك عدم توافق. فريقنا سيساعدك في العثور على الأخصائي المناسب لاحتياجاتك."
-        },
-        {
-          id: 8,
-          question: "ما هي طرق الدفع المتاحة؟",
-          answer: "نقبل多种 طرق الدفع including البطاقات الائتمانية, التحويل البنكي, ومدفوعات عبر الإنترنت. جميع المعاملات آمنة ومشفرة."
-        }
-      ],
-      // لتتبع السؤال المفتوح حاليًا
+      // بيانات الأسئلة الشائعة - سيتم تعبئتها ديناميكياً
+      faqs: [],
+      // لتتبع السؤال المفتوح حاليًا - null يعني لا يوجد سؤال مفتوح
       openQuestionId: null
     }
   },
@@ -277,14 +243,69 @@ export default {
       return this.faqs.slice(4, 8)
     }
   },
+  watch: {
+    // مراقبة تغيير اللغة وتحديث الأسئلة
+    currentLanguage: {
+      immediate: true,
+      handler() {
+        this.updateFaqsData()
+      }
+    }
+  },
   mounted() {
-    // فتح أول سؤال تلقائياً عند تحميل الصفحة
-    this.openQuestionId = 1
+    // تحديث البيانات أول مرة
+    this.updateFaqsData()
+    // تم إزالة السطر الذي كان يفتح أول سؤال تلقائياً
   },
   methods: {
     // دالة لفتح أو إغلاق الإجابة
     toggleQuestion(id) {
       this.openQuestionId = this.openQuestionId === id ? null : id
+    },
+    // تحديث بيانات الأسئلة بناءً على اللغة الحالية
+    updateFaqsData() {
+      this.faqs = [
+        {
+          id: 1,
+          question: this.translate('home.faq.questions.sessionDuration.question'),
+          answer: this.translate('home.faq.questions.sessionDuration.answer')
+        },
+        {
+          id: 2,
+          question: this.translate('home.faq.questions.confidentiality.question'),
+          answer: this.translate('home.faq.questions.confidentiality.answer')
+        },
+        {
+          id: 3,
+          question: this.translate('home.faq.questions.booking.question'),
+          answer: this.translate('home.faq.questions.booking.answer')
+        },
+        {
+          id: 4,
+          question: this.translate('home.faq.questions.difference.question'),
+          answer: this.translate('home.faq.questions.difference.answer')
+        },
+        {
+          id: 5,
+          question: this.translate('home.faq.questions.online.question'),
+          answer: this.translate('home.faq.questions.online.answer')
+        },
+        {
+          id: 6,
+          question: this.translate('home.faq.questions.cost.question'),
+          answer: this.translate('home.faq.questions.cost.answer')
+        },
+        {
+          id: 7,
+          question: this.translate('home.faq.questions.changeSpecialist.question'),
+          answer: this.translate('home.faq.questions.changeSpecialist.answer')
+        },
+        {
+          id: 8,
+          question: this.translate('home.faq.questions.paymentMethods.question'),
+          answer: this.translate('home.faq.questions.paymentMethods.answer')
+        }
+      ]
     }
   }
 }
@@ -295,7 +316,7 @@ export default {
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}como
+}
 
 /* تأثير انتقالي سلس للإجابات */
 .overflow-hidden {

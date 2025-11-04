@@ -22,7 +22,7 @@
       <div class="pt-2 hidden md:block animate-fadeUp delay-[1200ms]">
         <button class="relative w-12 h-12 md:mt-20 rounded-2xl bg-[#9EBF3B] flex items-center justify-center text-white hover:bg-[#8aab34] transition-all duration-300 shadow-md hover:shadow-lg">
           <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAYAAAAmaHdCAAABGklEQVQ4jdWUMU4CURRFz4AJWrmDKUApKOxoZgduwC24Dk0s2IAFCZ2VnVPQGFsLZQnWlAQKE4LBY+HTkEmGGShMvM3Lf+/e839+fj4AaqreqXPraR7+FCBRT4Fn4Bi4B96o1glwASyADDVXP9SsRvhXaha5HHWp5rsANkC5umwALWBWYmqrY7VdwpkBrUbFZmfAedRSVUFq6U8gn4W6F+QJuIxaqoNtwyRJ3oFhxUb/6GJrQ9Z8v9p91ALWDWAKdPeEdIEp6ij+iM4uabUTuRFqPxYPalITkIRftf/THEZjUAUKwCD8w83BkfoYg7HaKwH0Ym74D4uGpnqjrsI0UW/Vq6iT6K/C19x23FS9Vl/VRQQX6kv002LmC1STO77xU5VDAAAAAElFTkSuQmCC"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAYAAAAmaHdCAAABGklEQVQ4jdWUMU4CURRFz4AJWrmDKUApKOxoZgduwC24Dk0s2IAFCZ2VnVPQGFsLZQnWlAQKE4LBY+HTkEmGGShMvM3Lf+/e839+fj4AaqreqXPraR7+FCBRT4Fn4Bi4B96o1glwASyADDVXP9SsRvhXaha5HHWp5rsANkC5umwALWBWYmqrY7VdwpkBrUbFZmfAedRSVUFq6U8gn4W6F+QJuIxaqoNtwyRJ3oFhxUb/6GJrQ9Z8v9p91ALWDWAKdPeEdIEp6ij+iM4uabUTuRFqPxYPatITkIRftf/THEZjUAUKwCD8w83BkfoYg7HaKwH0Ym74D4uGpnqjrsI0UW/Vq6iT6K/C19x23FS9Vl/VRQQX6kv002LmC1STO77xU5VDAAAAAElFTkSuQmCC"
             alt="أيقونة الفأرة"
             class="w-4 h-8 object-contain"
           />
@@ -30,7 +30,7 @@
       </div>
 
       <!-- النصوص -->
-      <div class="mt-20 flex flex-col gap-6 items-center sm:items-start">
+      <div class="mt-20 flex flex-col gap-6 items-start sm:items-start">
         <h1 class="text-xl sm:text-3xl md:text-4xl font-bold leading-snug max-w-2xl animate-fadeUp">
   {{ translate('hero.title') }}
 </h1>
@@ -40,7 +40,7 @@
           href="#"
           class="bg-[#9EBF3B] hover:bg-[#8aab34] text-white font-semibold h-14 w-[200px] rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 text-lg animate-fadeUp delay-[600ms]"
         >
-          احجز جلستك &gt;
+          {{ translate('hero.button') }}
         </a>
       </div>
     </div>
@@ -55,13 +55,10 @@
 </template>
 
 <script setup>
-// لا حاجة لتعديلات هنا
 import { inject } from 'vue'
 
-import { useTranslations } from '@/composables/useTranslations'
-
-// const { toggleLanguage, translate } = useTranslations()
-const { currentLanguage, toggleLanguage, translate } = inject('languageState')
+// استخدام inject للحصول على دالة الترجمة
+const { translate } = inject('languageState')
 
 </script>
 
