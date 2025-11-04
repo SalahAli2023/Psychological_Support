@@ -62,13 +62,13 @@ export default {
     
     // استخدام computed لجعل searchPlaceholderArticle تفاعلية
     const searchPlaceholderArticle = computed(() => {
-      return translate('filter.searchPlaceholderArticle')
+      return translate('filters.searchPlaceholderArticle')
     })
 
     // دالة لترجمة أسماء التصنيفات
     const getTranslatedCategoryName = (category) => {
       if (category.id === 'all') {
-        return translate('filter.allCategories')
+        return translate('filters.allCategories')
       }
       // يمكنك إضافة ترجمات إضافية للتصنيفات الأخرى هنا
       return category.name
@@ -77,10 +77,10 @@ export default {
     // دالة لترجمة التصنيف النشط
     const activeCategoryName = computed(() => {
       if (props.activeCategory === 'all') {
-        return translate('filter.allCategories')
+        return translate('filters.allCategories')
       }
       const category = props.categories.find(cat => cat.id === props.activeCategory)
-      return category ? category.name : translate('filter.allCategories')
+      return category ? category.name : translate('filters.allCategories')
     })
 
     const activeCategoryIcon = computed(() => {

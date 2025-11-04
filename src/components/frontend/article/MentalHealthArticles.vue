@@ -46,12 +46,13 @@
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="flex justify-center mt-8">
-        <Pagination 
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          :total-items="filteredArticles.length"
-          @page-change="handlePageChange"
-        />
+          <Pagination 
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredArticles.length"
+            :items-per-page="itemsPerPage"
+            @page-change="handlePageChange"
+          />
       </div>
     </div>
   </div>
@@ -142,7 +143,7 @@ export default {
         if (category.id === 'all') {
           return {
             ...category,
-            name: translate('filter.allCategories')
+            name: translate('filters.allCategories')
           };
         }
         return category;

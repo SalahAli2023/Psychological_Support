@@ -83,10 +83,7 @@ export const en = {
     noResults: 'No results found',
     tryDifferentSearch: 'Try changing your search terms or filters'
   },
-  pagination: {
-    previous: 'Previous',
-    next: 'Next'
-  },
+
   filters: {
     title: 'Filter Results',
     subtitle: 'Choose appropriate filters',
@@ -96,7 +93,9 @@ export const en = {
     authors: 'Author Name',
     languages: 'Language',
     years: 'Publication Year',
-    ratings: 'Rating'
+    ratings: 'Rating',
+    searchPlaceholderArticle: 'Search in articles...',
+    allCategories: 'All Articles',
   },
   modal: {
     basedOnRatings: 'Based on {count} ratings',
@@ -121,10 +120,23 @@ export const en = {
       evenings: 'Evenings',
       events: 'Events',
       workshops: 'Workshops',
-         searchPlaceholderArticle: 'Search in articles...',
-    allCategories: 'All Articles',
-    category: 'Category'
+  
     },
+    pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    showing: 'Showing',
+    to: 'to',
+    ofResults: 'of',
+    results: 'results'
+  },
+
+  noResults: {
+    title: 'No Articles Found',
+    message: 'Try a different search or category'
+  },
     details: {
       dateTime: 'Date & Time',
       location: 'Location',
@@ -218,9 +230,53 @@ export const en = {
       student: 'University Student'
     }
   },
+
+  therapists: {
+    hero: {
+      title: 'Psychological',
+      highlight: ' Specialists ',
+      subtitle: 'Meet the best specialists in the field of mental health and easily book psychological support sessions'
+    },
+    filters: {
+      title: 'Filter Results',
+      searchPlaceholder: 'Search for therapist...',
+      gender: 'Gender',
+      all: 'Both',
+      male: 'Male',
+      female: 'Female',
+      specializations: 'Specializations',
+      reset: 'Reset',
+      search: 'Search',
+      clearAll: 'Clear All'
+    },
+    results: {
+      showing: 'Showing {count} specialists',
+      noResults: 'No results found',
+      noResultsMessage: 'We couldn\'t find any specialists matching your search criteria',
+      showAll: 'Show all specialists'
+    },
+    therapist: {
+      sessionDuration: 'Session Duration',
+      minutes: 'minutes',
+      sessions: 'sessions',
+      book: 'Book'
+    },
+    specializations: {
+      anxiety: 'Anxiety & Stress',
+      depression: 'Depression',
+      ocd: 'OCD',
+      addiction: 'Addiction',
+      psychosomatic: 'Psychosomatic Disorders',
+      confidence: 'Low Self-Confidence',
+      teenagers: 'Teenage Problems',
+      specialEducation: 'Special Education',
+      therapeutic: 'Therapeutic',
+      various: 'Various Issues'
+    }
+  },
   footer: {
     stayInTouch: 'Stay in',
-    contact: 'Touch',
+    contact: ' Touch ',
     newsletterDescription: 'Join our community and get the latest updates and exclusive articles about mental health',
     emailLabel: 'Email Address',
     emailPlaceholder: 'example@email.com',

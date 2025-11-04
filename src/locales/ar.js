@@ -83,10 +83,7 @@ export const ar = {
     noResults: 'لا توجد نتائج',
     tryDifferentSearch: 'جرب تغيير كلمات البحث أو الفلاتر'
   },
-  pagination: {
-    previous: 'السابق',
-    next: 'التالي'
-  },
+
   filters: {
     title: 'تصفية النتائج',
     subtitle: 'اختر الفلاتر المناسبة',
@@ -96,7 +93,9 @@ export const ar = {
     authors: 'اسم المؤلف',
     languages: 'اللغة',
     years: 'سنة النشر',
-    ratings: 'التقييم'
+    ratings: 'التقييم',
+    searchPlaceholderArticle: 'ابحث في المقالات...',
+    allCategories: 'جميع المقالات',
   },
   modal: {
     basedOnRatings: 'بناءً على {count} تقييم',
@@ -121,10 +120,24 @@ export const ar = {
       evenings: 'الأمسيات',
       events: 'الفعاليات',
       workshops: 'ورش العمل',
-    searchPlaceholderArticle: 'ابحث في المقالات...',
-    allCategories: 'جميع المقالات',
-    category: 'الفئة'
+   
     },
+    pagination: {
+    previous: 'السابق',
+    next: 'التالي',
+    page: 'صفحة',
+    of: 'من',
+    showing: 'عرض',
+    to: 'إلى',
+    ofResults: 'من أصل',
+    results: 'نتيجة'
+  },
+
+     noResults: {
+    title: 'لا توجد مقالات',
+    message: 'جرب بحثاً آخر أو فئة مختلفة'
+  },
+  
     details: {
       dateTime: 'التاريخ والوقت',
       location: 'الموقع',
@@ -217,10 +230,53 @@ export const ar = {
       teacher: 'معلمة',
       student: 'طالب جامعي'
     }
+    },
+  therapists: {
+    hero: {
+      title: 'الأخصائيون',
+      highlight: ' النفسيون ',
+      subtitle: 'تعرف على أفضل الأخصائيين في مجال الصحة النفسية واحجز جلسات الدعم النفسي بسهولة'
+    },
+    filters: {
+      title: 'تصفية النتائج',
+      searchPlaceholder: 'ابحث عن المعالج...',
+      gender: 'الجنس',
+      all: 'كلاهما',
+      male: 'ذكر',
+      female: 'أنثى',
+      specializations: 'التخصصات',
+      reset: 'إعادة ضبط',
+      search: 'بحث',
+      clearAll: 'مسح الكل'
+    },
+    results: {
+      showing: 'عرض {count} أخصائي',
+      noResults: 'لا توجد نتائج',
+      noResultsMessage: 'لم نتمكن من العثور على أخصائيين مطابقين لمعايير البحث',
+      showAll: 'عرض جميع الأخصائيين'
+    },
+    therapist: {
+      sessionDuration: 'مدة الجلسة',
+      minutes: 'دقيقة',
+      sessions: 'جلسة',
+      book: 'احجز'
+    },
+    specializations: {
+      anxiety: 'القلق والتوتر',
+      depression: 'الاكتئاب',
+      ocd: 'الوسواس القهري',
+      addiction: 'الإدمان',
+      psychosomatic: 'الأمراض النفسجسمانية',
+      confidence: 'ضعف الثقة بالنفس',
+      teenagers: 'مشكلات المراهقين',
+      specialEducation: 'التربية الخاصة',
+      therapeutic: 'العلاجية',
+      various: 'مشكلات منوعة'
+    }
   },
   footer: {
     stayInTouch: 'ابقَ على',
-    contact: 'اتصال',
+    contact: ' اتصال ',
     newsletterDescription: 'انضم إلى مجتمعنا واحصل على آخر التحديثات والمقالات الحصرية حول الصحة النفسية والعقلية',
     emailLabel: 'البريد الإلكتروني',
     emailPlaceholder: 'example@email.com',
