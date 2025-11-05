@@ -4,22 +4,19 @@
     <Header />
 
     <!-- Hero Section -->
-    <Hero 
+     <Hero 
       :title="therapist.name"
-      subtitle="احجز جلستك مع خبير الصحة النفسية المعتمد"
-      :buttons="[
-        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-      ]"
+      :subtitle="translate('therapistProfile.hero.subtitle')"
+      :buttons="heroButtons"
     />
 
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
       <!-- Breadcrumbs -->
       <nav class="mb-4 sm:mb-6">
         <ol class="flex items-center space-x-1 sm:space-x-2 space-x-reverse text-xs sm:text-sm">
-          <li><router-link to="/" class="text-[#065f46] hover:text-[#047857]">الرئيسية</router-link></li>
+          <li><router-link to="/" class="text-[#065f46] hover:text-[#047857]">{{ translate('therapistProfile.breadcrumb.home') }}</router-link></li>
           <li><i class="fas fa-chevron-left text-gray-400 text-xs"></i></li>
-          <li><router-link to="/therapists" class="text-[#065f46] hover:text-[#047857]">المعالجين</router-link></li>
+          <li><router-link to="/therapists" class="text-[#065f46] hover:text-[#047857]">{{ translate('therapistProfile.breadcrumb.therapists') }}</router-link></li>
           <li><i class="fas fa-chevron-left text-gray-400 text-xs"></i></li>
           <li class="text-gray-600">{{ therapist.name }}</li>
         </ol>
@@ -61,12 +58,13 @@
 
                 <!-- Affiliation -->
                 <p class="text-[#065f46] font-semibold mb-2 text-sm sm:text-base">
-                  معتمد من التحالف العربي لخبراء العلاج النفسي
+                  {{ translate('therapistProfile.profile.affiliation') }}
                 </p>
+
 
                 <!-- Session Duration -->
                 <p class="text-[#059669] font-medium mb-3 sm:mb-4 text-sm sm:text-base">
-                  مدة الجلسة : 45 دقيقة
+                  {{ translate('therapistProfile.profile.sessionDuration') }} : 45 {{ translate('therapistProfile.profile.minutes') }}
                 </p>
 
                 <!-- Biography -->
@@ -81,11 +79,11 @@
           <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm mb-6 sm:mb-8">
             <div class="flex items-center gap-3 mb-4">
               <i class="fas fa-info-circle text-[#9EBF3B] text-xl"></i>
-              <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">عن الخبير</h2>
+               <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">{{ translate('therapistProfile.profile.aboutExpert') }}</h2>
             </div>
 
             <div class="mb-6">
-              <h3 class="text-lg font-semibold text-[#047857] mb-3">المؤهلات العلمية</h3>
+              <h3 class="text-lg font-semibold text-[#047857] mb-3">{{ translate('therapistProfile.profile.qualifications') }}</h3>
               <ul class="space-y-2">
                 <li v-for="qualification in visibleQualifications" :key="qualification" class="flex items-start gap-3">
                   <i class="fas fa-check-circle text-[#9EBF3B] mt-1"></i>
@@ -95,14 +93,14 @@
             </div>
 
             <div v-if="therapist.qualifications.length > maxVisibleQualifications">
-              <a 
-                href="#" 
-                @click.prevent="toggleAboutMore"
-                class="inline-flex items-center gap-2 font-semibold text-[#047857] hover:text-[#065f46]"
-              >
-                {{ showMoreAbout ? 'إظهار أقل' : 'قراءة المزيد' }}
-                <i :class="['fas', showMoreAbout ? 'fa-chevron-up' : 'fa-chevron-left', 'text-sm']"></i>
-              </a>
+            <a 
+              href="#" 
+              @click.prevent="toggleAboutMore"
+              class="inline-flex items-center gap-2 font-semibold text-[#047857] hover:text-[#065f46]"
+            >
+              {{ showMoreAbout ? translate('therapistProfile.profile.showLess') : translate('therapistProfile.profile.showMore') }}
+              <i :class="['fas', showMoreAbout ? 'fa-chevron-up' : 'fa-chevron-left', 'text-sm']"></i>
+            </a>
             </div>
           </div>
 
@@ -111,15 +109,15 @@
             <div class="flex items-center justify-between mb-4 sm:mb-6">
               <div class="flex items-center gap-3">
                 <i class="fas fa-star text-[#D6A29A] text-xl"></i>
-                <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">التقييمات</h2>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-500 sm:hidden">
-                <i class="fas fa-arrows-left-right text-xs"></i>
-                <span>اسحب للتجول</span>
-              </div>
-              <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-mouse text-xs"></i>
-                <span>استخدم عجلة الماوس للتمرير</span>
+                   <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">{{ translate('therapistProfile.profile.testimonials') }}</h2>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500 sm:hidden">
+                  <i class="fas fa-arrows-left-right text-xs"></i>
+                  <span>{{ translate('therapistProfile.profile.swipeHint') }}</span>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                  <i class="fas fa-mouse text-xs"></i>
+                  <span>{{ translate('therapistProfile.profile.scrollHint') }}</span>
               </div>
             </div>
 
@@ -216,8 +214,12 @@
         <div class="w-full lg:w-80">
           <div class="sticky top-4 lg:top-8 p-4 sm:p-6 bg-white rounded-xl shadow-sm">
             <div class="mb-4">
-              <h2 class="text-xl text-center sm:text-2xl font-bold text-[#065f46] bg-[#9EBF3B] text-white p-3 rounded-lg">احجز جلستك</h2>
-              <p class="text-xs sm:text-sm text-[#047857] mt-2 bg-gray-50 p-2 rounded-lg">اختر التاريخ والوقت المناسبين لك</p>
+              <h2 class="text-xl text-center sm:text-2xl font-bold text-[#065f46] bg-[#9EBF3B] text-white p-3 rounded-lg">
+              {{ translate('therapistProfile.booking.title') }}
+                </h2>
+                <p class="text-xs sm:text-sm text-[#047857] mt-2 bg-gray-50 p-2 rounded-lg">
+                  {{ translate('therapistProfile.booking.subtitle') }}
+                </p>
             </div>
 
             <!-- Calendar - بدون حدود -->
@@ -227,9 +229,9 @@
                   <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="text-center bg-white rounded-lg px-2 sm:px-4 py-2">
-                  <div class="text-sm sm:text-lg font-bold text-gray-800">{{ currentMonthName }}</div>
-                  <div class="text-xs sm:text-sm font-medium text-gray-600">{{ currentYear }}</div>
-                </div>
+                   <div class="text-sm sm:text-lg font-bold text-gray-800">{{ currentMonthName }}</div>
+                <div class="text-xs sm:text-sm font-medium text-gray-600">{{ currentYear }}</div>
+              </div>
                 <button @click="nextMonth" class="p-2 rounded-lg hover:bg-[#9EBF3B] hover:text-white text-[#065f46] transition-colors">
                   <i class="fas fa-chevron-left"></i>
                 </button>
@@ -268,8 +270,10 @@
             <!-- Time Slots - بدون حدود -->
             <div v-if="selectedDate" class="bg-gray-50 rounded-lg p-3 transition-all duration-300">
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-[#065f46]">اختر الموعد</h3>
-                <span class="text-xs sm:text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">45 دقيقة</span>
+                  <h3 class="text-lg font-bold text-[#065f46]">{{ translate('therapistProfile.booking.chooseTime') }}</h3>
+                  <span class="text-xs sm:text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">
+                    {{ translate('therapistProfile.booking.duration') }}
+                  </span>
               </div>
               <div class="grid grid-cols-1 gap-2 max-h-40 sm:max-h-60 overflow-y-auto">
                 <button 
@@ -299,7 +303,7 @@
               >
                 <div class="flex items-center justify-center gap-2">
                   <i class="fas fa-calendar-check"></i>
-                  <span>تأكيد الحجز</span>
+                  <span>{{ translate('therapistProfile.booking.confirmBooking') }}</span>
                   <i class="fas fa-arrow-left text-sm"></i>
                 </div>
               </button>
@@ -308,7 +312,8 @@
             <!-- No Selection Message -->
             <div v-if="!selectedDate" class="text-center p-4 bg-gray-50 rounded-lg">
               <i class="fas fa-calendar-day text-2xl text-gray-400 mb-2"></i>
-              <p class="text-gray-600 text-sm">اختر تاريخاً لرؤية الأوقات المتاحة</p>
+                <p class="text-gray-600 text-sm">{{ translate('therapistProfile.booking.noDateSelected') }}</p>
+
             </div>
           </div>
         </div>
@@ -320,10 +325,13 @@
   </div>
 </template>
 
+
 <script>
 import Header from '@/components/frontend/layouts/header.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import Hero from '@/components/frontend/layouts/hero.vue'
+import { useTranslations } from '@/composables/useTranslations'
+import { inject, computed } from 'vue'
 
 export default {
   name: 'TherapistProfile',
@@ -338,6 +346,32 @@ export default {
       required: true
     }
   },
+  setup() {
+    const { translate } = useTranslations()
+    const { currentLanguage } = inject('languageState')
+    
+    const isRTL = computed(() => currentLanguage.value === 'ar')
+    
+    // استخدام computed للترجمة الديناميكية
+    const heroButtons = computed(() => [
+      { 
+        text: translate('buttons.startJourney'), 
+        icon: 'fas fa-play-circle', 
+        primary: true 
+      },
+      { 
+        text: translate('buttons.learnMore'), 
+        icon: 'fas fa-info-circle', 
+        primary: false 
+      }
+    ])
+
+    return {
+      translate,
+      isRTL,
+      heroButtons
+    }
+  },
   data() {
     return {
       showMoreAbout: false,
@@ -347,7 +381,6 @@ export default {
       currentMonth: new Date().getMonth(),
       currentYear: new Date().getFullYear(),
       currentTestimonialPage: 1,
-      daysOfWeek: ['جمعة', 'خميس', 'أربعاء', 'ثلاثاء', 'اثنين', 'أحد', 'سبت'],
       timeSlots: [
         { time: '12:00 م - 12:45 م', duration: '45 دقيقة' },
         { time: '12:45 م - 1:30 م', duration: '45 دقيقة' },
@@ -387,48 +420,6 @@ export default {
             location: 'الرياض',
             comment: 'تجربة مختلفة بصراحة. أسلوب د. عمرو واقعي وعملي، عطاني خطوات واضحة حسيت معها بتحسن حقيقي.',
             date: 'منذ 3 أيام'
-          },
-          {
-            id: 3,
-            user: 'مستخدم',
-            location: 'دبي',
-            comment: 'كنت مضطر أتعامل مع قلق شديد، د. عمرو حط لي خطة علاج منظمة وواضحة، الحمد لله النتائج ممتازة.',
-            date: 'منذ أسبوعين'
-          },
-          {
-            id: 4,
-            user: 'مستخدم وثق في منصتنا',
-            location: 'جدة',
-            comment: 'د. عمرو ساعدني في تجاوز أزمة نفسية صعبة، تعامله محترف ومشاعرته عالية جداً.',
-            date: 'منذ شهر'
-          },
-          {
-            id: 5,
-            user: 'مستخدم',
-            location: 'المنصورة',
-            comment: 'من أفضل المعالجين اللي قابلتهم، بيفهم مشاعرك من غير ما تتكلم كتير.',
-            date: 'منذ 5 أيام'
-          },
-          {
-            id: 6,
-            user: 'مستخدم وثق في منصتنا',
-            location: 'الإسكندرية',
-            comment: 'جلسات مع د. عمرو غيرت حياتي للأفضل، شكراً لكل الدعم النفسي اللي قدمه لي.',
-            date: 'منذ 10 أيام'
-          },
-          {
-            id: 7,
-            user: 'مستخدم',
-            location: 'الخبر',
-            comment: 'محترف جداً في التعامل مع حالات الاكتئاب، خطط العلاج فعالة ومنظمة.',
-            date: 'منذ 3 أسابيع'
-          },
-          {
-            id: 8,
-            user: 'مستخدم وثق في منصتنا',
-            location: 'الدوحة',
-            comment: 'أنصح أي حد يمر بأزمة نفسية يتواصل مع د. عمرو، خبرته كبيرة وأسلوبه راقي.',
-            date: 'منذ شهرين'
           }
         ]
       }
@@ -440,11 +431,20 @@ export default {
       return this.therapist.qualifications.slice(0, this.maxVisibleQualifications);
     },
     currentMonthName() {
-      const months = [
-        'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-        'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-      ];
+      const months = this.translate('therapistProfile.calendar.months');
+      // إذا كانت months نصاً، قم بتحويله إلى مصفوفة
+      if (typeof months === 'string') {
+        return months.split(',')[this.currentMonth];
+      }
       return months[this.currentMonth];
+    },
+    translatedDaysOfWeek() {
+      const days = this.translate('therapistProfile.calendar.daysOfWeek');
+      // إذا كانت days نصاً، قم بتحويله إلى مصفوفة
+      if (typeof days === 'string') {
+        return days.split(',');
+      }
+      return days;
     },
     calendarDays() {
       const year = this.currentYear;
@@ -505,7 +505,9 @@ export default {
         const dateObj = new Date(this.selectedDate);
         const formattedDate = dateObj.toLocaleDateString('ar-SA');
         
-        alert(`تم حجز الموعد بنجاح!\nالتاريخ: ${formattedDate}\nالوقت: ${this.selectedTimeSlot.time}\nالمدة: ${this.selectedTimeSlot.duration}`);
+        const successMessage = `${this.translate('therapistProfile.booking.bookingSuccess')}\n${this.translate('therapistProfile.booking.date')}: ${formattedDate}\n${this.translate('therapistProfile.booking.time')}: ${this.selectedTimeSlot.time}\n${this.translate('therapistProfile.profile.sessionDuration')}: ${this.selectedTimeSlot.duration}`;
+        
+        alert(successMessage);
         
         // Reset selection
         this.selectedDate = null;
