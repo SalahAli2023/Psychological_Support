@@ -3,7 +3,7 @@
         <div class="relative p-4 w-full max-h-full max-w-md">
             <div class="relative bg-white rounded-2xl shadow-xl sliding-down" :class="isRTL ? 'text-right' : 'text-left'">
                 <!-- Header -->
-                <div class="flex items-center justify-between p-6 border-b border-gray-200 rounded-t-2xl" :class="isRTL ? 'flex-row-reverse' : ''">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200 rounded-t-2xl">
                     <h3 class="text-xl font-bold text-gray-800">{{ translate('verify.title') }}</h3>
                     <button 
                         type="button" 
@@ -42,11 +42,11 @@
                         <div class="flex-1" :class="isRTL ? 'text-right' : 'text-left'">
                             <div class="text-base font-medium mb-1" 
                                 :class="selectedMethod === 'sms' ? 'text-primary-green' : 'text-gray-800'">
-                                {{ translate('verify.sms.title') }}
+                                {{ getTranslatedTitle('verify.sms.title') }}
                             </div>
                             <div class="text-sm" 
                                 :class="selectedMethod === 'sms' ? 'text-primary-green' : 'text-gray-600'">
-                                {{ translate('verify.sms.description') }}
+                                {{ getTranslatedDescription('verify.sms.description') }}
                             </div>
                         </div>
                         <div v-if="selectedMethod === 'sms'" class="w-6 h-6 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0">
@@ -86,11 +86,11 @@
                         <div class="flex-1" :class="isRTL ? 'text-right' : 'text-left'">
                             <div class="text-base font-medium mb-1" 
                                 :class="selectedMethod === 'whatsapp' ? 'text-blue-600' : 'text-gray-800'">
-                                {{ translate('verify.whatsapp.title').value  }}
+                                {{ getTranslatedTitle('verify.whatsapp.title') }}
                             </div>
                             <div class="text-sm" 
                                 :class="selectedMethod === 'whatsapp' ? 'text-blue-600' : 'text-gray-600'">
-                                {{ translate('verify.whatsapp.description').value }}
+                                {{ getTranslatedDescription('verify.whatsapp.description') }}
                             </div>
                         </div>
                         <div v-if="selectedMethod === 'whatsapp'" class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
@@ -102,13 +102,13 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="flex items-center p-6 border-t border-gray-200 rounded-b-2xl gap-3" :class="isRTL ? 'flex-row-reverse' : ''">
+                <div class="flex items-center p-6 border-t border-gray-200 rounded-b-2xl gap-3" >
                     <button 
                         type="button" 
                         @click="closeModal"
                         class="flex-1 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                     >
-                        {{ translate('verify.cancel') }}
+                        {{ getTranslatedTitle('verify.cancel') }}
                     </button>
                     <button 
                         type="button" 
@@ -116,7 +116,7 @@
                         :disabled="!selectedMethod"
                         class="flex-1 py-3 text-white bg-primary-green rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                     >
-                        {{ translate('verify.continue') }}
+                        {{ getTranslatedTitle('verify.continue') }}
                     </button>
                 </div>
             </div>
@@ -124,7 +124,7 @@
     </div>
 </template>
 
-<!-- <script setup>
+<script setup>
 import { ref, watch, computed } from 'vue'
 import { t } from '@/locales'
 
@@ -152,11 +152,20 @@ const isRTL = computed(() => {
     return props.language === 'ar'
 })
 
-// Translation function
-// const translate = (key) => {
-//     return t(key, props.language)
-// }
-const translate = (key) => computed(() => t(key, props.language))
+// Translation functions
+const translate = (key) => {
+    return t(key, props.language)
+}
+
+const getTranslatedTitle = (key) => {
+    const translation = t(key, props.language)
+    return typeof translation === 'object' ? translation[props.language] : translation
+}
+
+const getTranslatedDescription = (key) => {
+    const translation = t(key, props.language)
+    return typeof translation === 'object' ? translation[props.language] : translation
+}
 
 // Watch for prop changes
 watch(() => props.initialMethod, (newMethod) => {
@@ -181,44 +190,6 @@ const confirmMethod = () => {
 const closeModal = () => {
     emit('close')
 }
-</script> -->
-
-<script setup>
-import { ref, watch, computed } from 'vue'
-import { t } from '@/locales'
-
-const props = defineProps({
-  show: { type: Boolean, default: false },
-  initialMethod: { type: String, default: 'sms' },
-  language: { type: String, default: 'ar' }
-})
-
-const emit = defineEmits(['close', 'confirm'])
-const selectedMethod = ref(props.initialMethod)
-const currentLang = ref(props.language)
-
-// تحديث اللغة فور تغيرها من المكون الأب
-watch(() => props.language, (newLang) => {
-  currentLang.value = newLang
-})
-
-// تحديد الاتجاه حسب اللغة
-const isRTL = computed(() => currentLang.value === 'ar')
-
-// دالة الترجمة
-const translate = (key) => t(key, currentLang.value)
-
-// مراقبة عرض المودال
-watch(() => props.show, (newVal) => {
-  if (newVal) selectedMethod.value = props.initialMethod
-})
-
-const selectMethod = (method) => (selectedMethod.value = method)
-const confirmMethod = () => {
-  emit('confirm', selectedMethod.value)
-  closeModal()
-}
-const closeModal = () => emit('close')
 </script>
 
 <style scoped>

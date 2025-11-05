@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-900 flex items-center justify-center p-4">
+  <div class="fixed inset-0 z-900 flex items-center justify-center p-4" :dir="language === 'ar' ? 'rtl' : 'ltr'">
     <div class="modal-overlay fixed inset-0" @click="$emit('close')"></div>
 
     <div class="relative bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl animate-slide-up">
@@ -7,7 +7,7 @@
       <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-start z-10">
         <div class="flex-1">
           <h2 class="text-2xl font-bold text-gray-800">
-            {{ translate('measureModal.welcome') }} {{ measure.title }}
+            {{ translate('measureModal.welcome') }} {{ getTranslatedTitle(measure) }}
           </h2>
         </div>
         <button
@@ -41,7 +41,7 @@
             <h3 class="text-lg font-semibold text-gray-800">
               {{ translate('measureModal.aboutTest') }}
             </h3>
-            <p class="text-gray-600 leading-relaxed">{{ measure.description }}</p>
+            <p class="text-gray-600 leading-relaxed">{{ getTranslatedDescription(measure) }}</p>
 
             <div class="grid grid-cols-2 gap-4 text-sm">
               <div class="flex items-center text-gray-700">
@@ -93,7 +93,7 @@
               {{ measure.questions.length }}
             </h3>
             <p class="text-gray-700 text-lg leading-relaxed">
-              {{ measure.questions[currentQuestionIndex] }}
+              {{ getTranslatedQuestion(measure.questions[currentQuestionIndex]) }}
             </p>
 
             <!-- الخيارات -->
@@ -102,7 +102,10 @@
                 v-for="(option, index) in measure.options"
                 :key="index"
                 class="flex items-center p-4 bg-white rounded-lg border-2 border-gray-200 cursor-pointer transition-all hover:border-primary-green hover:bg-gray-50"
-                :class="{ 'border-primary-green bg-blue-50': answers[currentQuestionIndex] === index }"
+                :class="{ 
+                  'border-primary-green bg-blue-50': answers[currentQuestionIndex] === index,
+                  // 'flex-row-reverse': language === 'ar'
+                }"
               >
                 <input
                   type="radio"
@@ -111,7 +114,7 @@
                   v-model="answers[currentQuestionIndex]"
                   class="w-5 h-5 text-primary-green border-gray-800 focus:ring-primary-green"
                 />
-                <span class="mr-3 text-gray-700 text-right flex-1">{{ option }}</span>
+                <span class="text-gray-700 flex-1" :class="language === 'ar' ? 'mr-3 text-right' : 'ml-3 text-left'">{{ getTranslatedOption(option) }}</span>
               </label>
             </div>
           </div>
@@ -119,24 +122,44 @@
           <!-- أزرار التنقل -->
           <div class="flex justify-between gap-3">
             <button
+              v-if="language === 'ar'"
               @click="$emit('previous-question')"
               :disabled="currentQuestionIndex === 0"
-              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center"
             >
               <i class="fas fa-arrow-right ml-2"></i>
               {{ translate('measureModal.previous') }}
             </button>
+            
+            <button
+              v-else
+              @click="$emit('previous-question')"
+              :disabled="currentQuestionIndex === 0"
+              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>
+              {{ translate('measureModal.previous') }}
+            </button>
 
+            <!-- زر التالي -->
             <button
               v-if="currentQuestionIndex < measure.questions.length - 1"
               @click="$emit('next-question')"
               :disabled="answers[currentQuestionIndex] === undefined"
-              class="px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              class="px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center"
             >
-              {{ translate('measureModal.next') }}
-              <i class="fas fa-arrow-left ml-2"></i>
+              <template v-if="language === 'ar'">
+                {{ translate('measureModal.next') }}
+                <i class="fas fa-arrow-left mr-2"></i>
+              </template>
+              <template v-else>
+                
+                {{ translate('measureModal.next') }} 
+                <i class="fas fa-arrow-right mr-2"></i>
+              </template>
             </button>
 
+            <!-- زر التقديم -->
             <button
               v-else
               @click="$emit('submit-test')"
@@ -171,28 +194,28 @@
               </p>
             </div>
 
-            <div class="bg-white p-6 rounded-lg border border-gray-200 text-right">
+            <div class="bg-white p-6 rounded-lg border border-gray-200" :class="language === 'ar' ? 'text-right' : 'text-left'">
               <h4 class="text-lg font-semibold text-gray-800 mb-2">
-                {{ testResult.interpretation.level }}
+                {{ getTranslatedInterpretation(testResult.interpretation, 'level') }}
               </h4>
               <p class="text-gray-600 leading-relaxed">
-                {{ testResult.interpretation.desc }}
+                {{ getTranslatedInterpretation(testResult.interpretation, 'desc') }}
               </p>
             </div>
           </div>
 
           <!-- التوصيات -->
-          <div class="bg-gray-50 p-6 rounded-lg space-y-6">
-            <h3 class="text-lg font-semibold text-gray-800 text-right">
+          <div class="bg-gray-50 p-6 rounded-lg space-y-6" :class="language === 'ar' ? 'text-right' : 'text-left'">
+            <h3 class="text-lg font-semibold text-gray-800">
               {{ translate('measureModal.recommendations') }}
             </h3>
 
             <div class="space-y-4">
-              <div class="flex items-start gap-4">
+              <div class="flex items-start gap-4" >
                 <div class="w-12 h-12 rounded-full bg-primary-green/20 flex items-center justify-center flex-shrink-0">
                   <i class="fas fa-user-md text-primary-green text-lg"></i>
                 </div>
-                <div class="flex-1 text-right">
+                <div class="flex-1">
                   <h4 class="font-semibold text-gray-800 mb-1">
                     {{ translate('measureModal.consult.title') }}
                   </h4>
@@ -209,12 +232,12 @@
                 <div class="w-12 h-12 rounded-full bg-primary-green/20 flex items-center justify-center flex-shrink-0">
                   <i class="fas fa-book text-primary-green text-lg"></i>
                 </div>
-                <div class="flex-1 text-right">
+                <div class="flex-1">
                   <h4 class="font-semibold text-gray-800 mb-1">
                     {{ translate('measureModal.resources.title') }}
                   </h4>
                   <p class="text-gray-600 text-sm mb-3">
-                    {{ translate('measureModal.resources.desc') }} {{ measure.title }}
+                    {{ translate('measureModal.resources.desc') }} {{ getTranslatedTitle(measure) }}
                   </p>
                   <button class="px-4 py-2 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all text-sm">
                     {{ translate('measureModal.resources.button') }}
@@ -225,19 +248,19 @@
           </div>
 
           <!-- أزرار الإجراءات -->
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row gap-3" :class="language === 'ar' ? 'flex-row-reverse' : ''">
             <button
               @click="$emit('retake-test')"
-              class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium"
+              class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium flex items-center justify-center"
             >
-              <i class="fas fa-redo ml-2"></i>
+              <i class="fas fa-redo" :class="language === 'ar' ? 'ml-2' : 'mr-2'"></i>
               {{ translate('measureModal.retake') }}
             </button>
             <button
               @click="$emit('show-other-measures')"
-              class="flex-1 px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all font-medium"
+              class="flex-1 px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all font-medium flex items-center justify-center"
             >
-              <i class="fas fa-list ml-2"></i>
+              <i class="fas fa-list" :class="language === 'ar' ? 'ml-2' : 'mr-2'"></i>
               {{ translate('measureModal.otherMeasures') }}
             </button>
           </div>
@@ -272,6 +295,28 @@ export default {
   methods: {
     translate(key) {
       return t(key, this.language)
+    },
+    
+    getTranslatedTitle(measure) {
+      return typeof measure.title === 'object' ? measure.title[this.language] : measure.title;
+    },
+
+    getTranslatedDescription(measure) {
+      return typeof measure.description === 'object' ? measure.description[this.language] : measure.description;
+    },
+
+    getTranslatedQuestion(question) {
+      return typeof question === 'object' ? question[this.language] : question;
+    },
+
+    getTranslatedOption(option) {
+      return typeof option === 'object' ? option[this.language] : option;
+    },
+
+    getTranslatedInterpretation(interpretation, key) {
+      if (!interpretation) return '';
+      const value = interpretation[key];
+      return typeof value === 'object' ? value[this.language] : value;
     }
   }
 }

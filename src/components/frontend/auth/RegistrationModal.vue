@@ -285,7 +285,7 @@ const { showSuccess, showError } = useNotifications()
 const { login } = useProfile()
 
 const emit = defineEmits(['close', 'switch-to-login', 'registration-success'])
-
+const currentLanguage = ref(props.language)
 const currentStep = ref(1)
 const isSubmitting = ref(false)
 const resendCounter = ref(0)
