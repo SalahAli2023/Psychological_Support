@@ -19,10 +19,10 @@
         >
           <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
             <i :class="measure.icon" class="text-primary-pink"></i>
-            {{ translate(measure.title) }}
+            {{ getTranslatedTitle(measure) }}
           </h3>
           <p class="text-gray-600 text-sm mb-4 flex-grow">
-            {{ measure.description }}
+            {{ getTranslatedDescription(measure) }}
           </p>
           <div class="flex justify-between text-sm text-gray-500 mb-4">
             <div class="flex items-center gap-1">
@@ -78,8 +78,18 @@ export default {
   setup(props) {
     const translate = (key) => t(key, props.language);
 
+    const getTranslatedTitle = (measure) => {
+      return typeof measure.title === 'object' ? measure.title[props.language] : measure.title;
+    };
+
+    const getTranslatedDescription = (measure) => {
+      return typeof measure.description === 'object' ? measure.description[props.language] : measure.description;
+    };
+
     return {
-      translate
+      translate,
+      getTranslatedTitle,
+      getTranslatedDescription
     };
   }
 }

@@ -3,7 +3,7 @@ export const measuresData = [
             // ========== مقياس القلق  ==========
             {
                 id: 'anxiety',
-                title: 'anxietyScale',
+                title: { ar: 'مقياس القلق', en: 'Anxiety Scale' },
                 description: { 
                     ar: 'مقياس معتمد عالمياً لتقييم أعراض القلق العام وشدتها خلال الأسبوعين الماضيين',
                     en: 'Internationally certified scale to assess general anxiety symptoms and their severity over the past two weeks'
@@ -56,7 +56,7 @@ export const measuresData = [
             // ========== مقياس الاكتئاب  ==========
             {
                 id: 'depression',
-                title: 'depressionScale',
+                title: {ar:'مقياس الاكتئاب',en:'Depression Scale'},
                 description: { 
                     ar: 'تقييم لمشاعر الحزن والاكتئاب ومدى تأثيرها على حياتك اليومية',
                     en: 'Assessment of sadness and depression feelings and their impact on your daily life'
@@ -114,7 +114,7 @@ export const measuresData = [
             // ========== مقياس الضغوط النفسية ==========
             {
                 id: 'psychological-stress',
-                title: 'stressScale',
+                title: {ar:'مقياس الضغوط النفسية',en:'Stress Scale'},
                 description: { 
                     ar: 'تقييم مستوى الضغوط والتوتر النفسي الذي تتعرض له في الحياة اليومية', 
                     en: 'Assessment of psychological stress and tension levels in daily life'
@@ -225,7 +225,7 @@ export const measuresData = [
             // ========== مقياس جودة الحياة ==========
             {
                 id: 'quality-of-life',
-                title: 'qualityOfLifeScale',
+                title: {ar:'مقياس جودة الحياة',en:'Quality Of Life Scale'},
                 description: { 
                     ar: 'قياس مستوى الرضا عن مختلف جوانب الحياة وتحديد مجالات التحسين', 
                     en: 'Measuring satisfaction levels with various life aspects and identifying improvement areas'
@@ -328,7 +328,7 @@ export const measuresData = [
             // ========== مقياس تقدير الذات ==========
             {
                 id: 'self-esteem',
-                title: 'selfEsteemScale',
+                title: {ar:'مقياس تقدير الذات',en:'Esteem Scale'},
                 description: { 
                     ar: 'تقييم مستوى الثقة بالنفس وتقدير الذات من خلال مقياس علمي معتمد', 
                     en: 'Assessment of self-confidence and self-esteem through a certified scientific scale'
@@ -442,7 +442,7 @@ export const measuresData = [
             // ========== مقياس فرط النشاط ونقص الانتباه ==========
             {
                 id: 'child-adhd',
-                title: 'adhdScale',
+                title: {ar:'مقياس فرط النشاط ونقص الانتباه',en:'Adhd Scale'},
                 description: { 
                     ar: 'تقييم أعراض فرط النشاط ونقص الانتباه لدى الأطفال',
                     en: 'Assessment of hyperactivity and attention deficit symptoms in children'
@@ -493,7 +493,7 @@ export const measuresData = [
             // ========== مقياس اكتئاب الأطفال ==========
             {
                 id: 'child-depression',
-                title: 'childDepressionScale',
+                title: {ar:'مقياس اكتئاب الأطفال',en:'Child Depression Scale'},
                 description: { 
                     ar: 'تقييم مشاعر الحزن والاكتئاب لدى الأطفال والمراهقين',
                     en: 'Assessment of sadness and depression feelings in children and adolescents'
@@ -544,7 +544,7 @@ export const measuresData = [
             // ========== مقياس الكفاءة الاجتماعية ==========
             {
                 id: 'social-competence',
-                title: 'socialCompetenceScale',
+                title: {ar:'مقياس الكفاءة الاجتماعية',en:'Social Competence Scale'},
                 description: { 
                     ar: 'تقييم المهارات الاجتماعية والقدرة على التفاعل مع الآخرين',
                     en: 'Assessment of social skills and ability to interact with others'
@@ -596,7 +596,7 @@ export const measuresData = [
             // ========== مقياس اضطرابات الشخصية ==========
             {
                 id: 'personality-disorders',
-                title: 'personalityDisordersScale',
+                title: {ar:'مقياس اضطرابات الشخصية',en:'Personality Disorder Scale'},
                 description: { 
                     ar: 'مقياس متقدم لتقييم أنماط الشخصية والاضطرابات المحتملة',
                     en: 'Advanced scale to assess personality patterns and potential disorders'
@@ -652,7 +652,7 @@ export const measuresData = [
             // ========== مقياس الذكاء العاطفي ==========
             {
                 id: 'emotional-intelligence',
-                title: 'emotionalIntelligenceScale',
+                title: {ar:'مقياس الذكاء عاطفي',en:'Emotional Intelligence Scale'},
                 description: { 
                     ar: 'تقييم القدرة على فهم وإدارة المشاعر والعواطف',
                     en: 'Assessment of the ability to understand and manage emotions and feelings'
@@ -705,7 +705,7 @@ export const measuresData = [
             // ========== مقياس العنف الأسري ==========
             {
                 id: 'domestic-violence',
-                title: 'domesticViolenceScale',
+                title: {ar:'مقياس العنف الأسري',en:'Domestic Violenc  Scale'},
                 description: { 
                     ar: 'تقييم التعرض للعنف الأسري وتأثيره على الصحة النفسية',
                     en: 'Assessment of exposure to domestic violence and its impact on mental health'
