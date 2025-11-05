@@ -274,6 +274,45 @@ export const en = {
       various: 'Various Issues'
     }
   },
+  therapistProfile: {
+  hero: {
+    title: 'Therapist Details',
+    subtitle: 'Book your session with a certified mental health expert'
+  },
+  breadcrumb: {
+    home: 'Home',
+    therapists: 'Therapists',
+    therapist: 'Therapist Details'
+  },
+  profile: {
+    sessionDuration: 'Session Duration',
+    minutes: 'minutes',
+    affiliation: 'Certified by the Arab Alliance of Psychotherapy Experts',
+    aboutExpert: 'About the Expert',
+    qualifications: 'Academic Qualifications',
+    showMore: 'Read More',
+    showLess: 'Show Less',
+    testimonials: 'Testimonials',
+    swipeHint: 'Swipe to scroll',
+    scrollHint: 'Use mouse wheel to scroll'
+  },
+  booking: {
+    title: 'Book Your Session',
+    subtitle: 'Choose the date and time that suits you',
+    chooseDate: 'Choose Date',
+    chooseTime: 'Choose Time',
+    duration: '45 minutes',
+    confirmBooking: 'Confirm Booking',
+    noDateSelected: 'Choose a date to see available times',
+    bookingSuccess: 'Appointment booked successfully!',
+    date: 'Date',
+    time: 'Time'
+  },
+  calendar: {
+    daysOfWeek: ['Fri', 'Thu', 'Wed', 'Tue', 'Mon', 'Sun', 'Sat'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  }
+},
   footer: {
     stayInTouch: 'Stay in',
     contact: ' Touch ',

@@ -274,6 +274,45 @@ export const ar = {
       various: 'مشكلات منوعة'
     }
   },
+  therapistProfile: {
+  hero: {
+    title: 'تفاصيل الأخصائي',
+    subtitle: 'احجز جلستك مع خبير الصحة النفسية المعتمد'
+  },
+  breadcrumb: {
+    home: 'الرئيسية',
+    therapists: 'المعالجين',
+    therapist: 'تفاصيل المعالج'
+  },
+  profile: {
+    sessionDuration: 'مدة الجلسة',
+    minutes: 'دقيقة',
+    affiliation: 'معتمد من التحالف العربي لخبراء العلاج النفسي',
+    aboutExpert: 'عن الخبير',
+    qualifications: 'المؤهلات العلمية',
+    showMore: 'قراءة المزيد',
+    showLess: 'إظهار أقل',
+    testimonials: 'التقييمات',
+    swipeHint: 'اسحب للتجول',
+    scrollHint: 'استخدم عجلة الماوس للتمرير'
+  },
+  booking: {
+    title: 'احجز جلستك',
+    subtitle: 'اختر التاريخ والوقت المناسبين لك',
+    chooseDate: 'اختر التاريخ',
+    chooseTime: 'اختر الموعد',
+    duration: '45 دقيقة',
+    confirmBooking: 'تأكيد الحجز',
+    noDateSelected: 'اختر تاريخاً لرؤية الأوقات المتاحة',
+    bookingSuccess: 'تم حجز الموعد بنجاح!',
+    date: 'التاريخ',
+    time: 'الوقت'
+  },
+  calendar: {
+    daysOfWeek: ['جمعة', 'خميس', 'أربعاء', 'ثلاثاء', 'اثنين', 'أحد', 'سبت'],
+    months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+  }
+},
   footer: {
     stayInTouch: 'ابقَ على',
     contact: ' اتصال ',
