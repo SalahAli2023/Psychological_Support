@@ -13,7 +13,7 @@
           :key="category.id"
           class="category-card bg-white rounded-2xl shadow-xl p-6 cursor-pointer border-2 transition-all duration-300"
           :class="activeCategory === category.id ? 'border-primary-green ring-4 ring-primary-green/20' : 'border-transparent'"
-          @click="$emit('filter-change', category.id)"
+          @click="$emit('filter-change', category.filter)"
         >
           <!-- أيقونة التصنيف -->
           <div class="category-icon w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden" :class="category.color">
@@ -22,10 +22,10 @@
           </div>
           
           <!-- عنوان التصنيف -->
-          <h3 class="text-xl font-bold text-center mb-4 text-gray-800">{{ getTranslatedCategoryTitle(category) }}</h3>
+          <h3 class="text-xl font-bold text-center mb-4 text-gray-800">{{ translate(`categories.${category.id}.title`) }}</h3>
           
           <!-- وصف التصنيف -->
-          <p class="text-gray-600 text-center mb-6 text-sm leading-relaxed">{{ getTranslatedCategoryDescription(category) }}</p>
+          <p class="text-gray-600 text-center mb-6 text-sm leading-relaxed">{{ translate(`categories.${category.id}.description`) }}</p>
           
           <!-- إحصائيات التصنيف -->
           <div class="flex justify-center gap-6 mb-6 text-sm">
@@ -129,22 +129,17 @@ export default {
       return t(key, props.language)
     }
 
-    // ترجمة عنوان التصنيف
-    const getTranslatedCategoryTitle = (category) => {
-      return typeof category.title === 'object' ? category.title[props.language] : category.title
-    }
-
-    // ترجمة وصف التصنيف
-    const getTranslatedCategoryDescription = (category) => {
-      return typeof category.description === 'object' ? category.description[props.language] : category.description
-    }
-
     // حساب عدد المقاييس في كل تصنيف
     const getMeasuresCount = (categoryId) => {
       if (categoryId === 'all') return props.measures.length
       
+      const categoryMap = {
+        'women': 'women',
+        'children': 'children', 
+      }
+      
       return props.measures.filter(measure => 
-        measure.category === categoryId
+        measure.category === categoryMap[categoryId]
       ).length
     }
 
@@ -158,8 +153,14 @@ export default {
         return Math.round(times.reduce((a, b) => a + b, 0) / times.length) || 0
       }
       
+      const categoryMap = {
+        'women': 'women',
+        'children': 'children',
+        'specialists': 'specialists'
+      }
+      
       const categoryMeasures = props.measures.filter(measure => 
-        measure.category === categoryId
+        measure.category === categoryMap[categoryId]
       )
       
       if (categoryMeasures.length === 0) return 0
@@ -174,21 +175,23 @@ export default {
 
     // الحصول على أيقونة التصنيف النشط
     const getActiveCategoryIcon = computed(() => {
-      const category = categories.find(cat => cat.id === props.activeCategory)
+      const category = categories.find(cat => 
+        props.activeCategory === 'allMeasures' ? cat.id === 'all' : cat.filter === props.activeCategory
+      )
       return category?.icon || 'fas fa-layer-group'
     })
 
     // الحصول على عنوان التصنيف النشط
     const getActiveCategoryTitle = computed(() => {
-      const category = categories.find(cat => cat.id === props.activeCategory)
-      return category ? getTranslatedCategoryTitle(category) : translate('categories.all.title')
+      const category = categories.find(cat => 
+        props.activeCategory === 'allMeasures' ? cat.id === 'all' : cat.filter === props.activeCategory
+      )
+      return category ? translate(`categories.${category.id}.title`) : translate('categories.all.title')
     })
 
     return {
       categories,
       translate,
-      getTranslatedCategoryTitle,
-      getTranslatedCategoryDescription,
       getMeasuresCount,
       getAverageTime,
       getActiveCategoryIcon,
