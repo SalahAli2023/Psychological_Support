@@ -1,9 +1,9 @@
 <template>
   <div :class="isRTL ? 'text-right' : 'text-left'">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-3">{{ translate('registrationPage.title') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-800 mb-3">{{ getTranslatedTitle('registrationPage.title') }}</h1>
       <p class="text-gray-600 text-lg">
-        {{ translate('registrationPage.description') }}
+        {{ getTranslatedDescription('registrationPage.description') }}
       </p>
     </div>
 
@@ -41,12 +41,12 @@
     <div class="min-h-96">
       <!-- Step 1: Phone Number -->
       <div v-if="currentStep === 1" class="space-y-6">
-        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ translate('registrationPage.phoneStep.title') }}</h3>
+        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ getTranslatedTitle('registrationPage.phoneStep.title') }}</h3>
         
         <form @submit.prevent="handlePhoneSubmit" class="space-y-6">
           <!-- Country -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ translate('registrationPage.phoneStep.countryLabel') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedTitle('registrationPage.phoneStep.countryLabel') }}</label>
             <div class="relative">
               <select 
                 v-model="form.country"
@@ -54,7 +54,7 @@
                 class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-green focus:border-transparent appearance-none bg-white text-lg"
                 :class="isRTL ? 'pr-4' : 'pl-4'"
               >
-                <option value="">{{ translate('registrationPage.phoneStep.selectCountry') }}</option>
+                <option value="">{{ getTranslatedTitle('registrationPage.phoneStep.selectCountry') }}</option>
                 <option 
                   v-for="country in countries" 
                   :key="country.code"
@@ -72,7 +72,7 @@
 
           <!-- Phone Number -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ translate('registrationPage.phoneStep.phoneLabel') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedTitle('registrationPage.phoneStep.phoneLabel') }}</label>
             <div class="flex gap-3" :class="isRTL ? 'flex-row-reverse' : ''">
               <div class="flex-shrink-0 w-28 px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-center text-gray-700 text-lg font-medium">
                 {{ form.dialCode }}
@@ -80,7 +80,7 @@
               <input 
                 v-model="form.phone"
                 type="tel"
-                :placeholder="translate('registrationPage.phoneStep.phonePlaceholder')"
+                :placeholder="getTranslatedTitle('registrationPage.phoneStep.phonePlaceholder')"
                 @input="validatePhone"
                 class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-green focus:border-transparent text-lg"
                 :class="errors.phone ? 'border-red-500' : ''"
@@ -94,31 +94,31 @@
             :disabled="!isPhoneValid || isSubmitting"
             class="w-full py-4 bg-primary-green text-white rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg"
           >
-            <span v-if="!isSubmitting">{{ translate('registrationPage.phoneStep.continue') }}</span>
+            <span v-if="!isSubmitting">{{ getTranslatedTitle('registrationPage.phoneStep.continue') }}</span>
             <span v-else class="flex items-center justify-center gap-3" :class="isRTL ? 'flex-row-reverse' : ''">
               <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              {{ translate('registrationPage.phoneStep.sending') }}
+              {{ getTranslatedTitle('registrationPage.phoneStep.sending') }}
             </span>
           </button>
         </form>
 
         <div v-if="isPage" class="text-center pt-6 border-t border-gray-200">
           <p class="text-gray-600">
-            {{ translate('registrationPage.phoneStep.haveAccount') }}
-            <a href="/login" class="text-primary-green hover:text-opacity-80 font-bold" :class="isRTL ? 'mr-1' : 'ml-1'">{{ translate('registrationPage.phoneStep.login') }}</a>
+            {{ getTranslatedDescription('registrationPage.phoneStep.haveAccount') }}
+            <a href="/login" class="text-primary-green hover:text-opacity-80 font-bold" :class="isRTL ? 'mr-1' : 'ml-1'">{{ getTranslatedTitle('registrationPage.phoneStep.login') }}</a>
           </p>
         </div>
       </div>
 
       <!-- Step 2: Verification Code -->
       <div v-if="currentStep === 2" class="space-y-6">
-        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ translate('registrationPage.otpStep.title') }}</h3>
+        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ getTranslatedTitle('registrationPage.otpStep.title') }}</h3>
         
         <form @submit.prevent="handleOtpSubmit" class="space-y-6">
           <div class="text-center space-y-3">
-            <p class="text-gray-600 text-lg">{{ translate('registrationPage.otpStep.sentTo') }}</p>
+            <p class="text-gray-600 text-lg">{{ getTranslatedDescription('registrationPage.otpStep.sentTo') }}</p>
             <p class="font-semibold text-primary-green text-xl">{{ form.dialCode }} {{ form.phone }}</p>
-            <p class="text-gray-500">{{ translate('registrationPage.otpStep.via') }} {{ selectedMethod === 'sms' ? translate('registrationPage.otpStep.sms') : translate('registrationPage.otpStep.whatsapp') }}</p>
+            <p class="text-gray-500">{{ getTranslatedDescription('registrationPage.otpStep.via') }} {{ selectedMethod === 'sms' ? getTranslatedTitle('registrationPage.otpStep.sms') : getTranslatedTitle('registrationPage.otpStep.whatsapp') }}</p>
           </div>
 
           <!-- OTP Inputs -->
@@ -138,7 +138,7 @@
           <!-- OTP Actions -->
           <div class="text-center space-y-4">
             <div v-if="resendCounter > 0" class="text-gray-600 text-lg">
-              <span>{{ translate('registrationPage.otpStep.resendIn') }}</span>
+              <span>{{ getTranslatedDescription('registrationPage.otpStep.resendIn') }}</span>
               <span class="font-semibold mx-2">{{ formatTime(resendCounter) }}</span>
             </div>
             <button 
@@ -147,7 +147,7 @@
               @click="resendOtp"
               class="text-primary-green hover:text-opacity-80 font-bold text-lg transition-colors"
             >
-              {{ translate('registrationPage.otpStep.resend') }}
+              {{ getTranslatedTitle('registrationPage.otpStep.resend') }}
             </button>
             
             <div class="space-y-2">
@@ -156,7 +156,7 @@
                 @click="showMethodModal = true"
                 class="text-gray-600 hover:text-gray-800 block mx-auto transition-colors text-lg"
               >
-                {{ translate('registrationPage.otpStep.changeMethod') }}
+                {{ getTranslatedTitle('registrationPage.otpStep.changeMethod') }}
               </button>
               
               <button 
@@ -164,7 +164,7 @@
                 @click="currentStep = 1"
                 class="text-gray-600 hover:text-gray-800 block mx-auto transition-colors text-lg"
               >
-                {{ translate('registrationPage.otpStep.editNumber') }}
+                {{ getTranslatedTitle('registrationPage.otpStep.editNumber') }}
               </button>
             </div>
           </div>
@@ -174,10 +174,10 @@
             :disabled="!isOtpComplete || isSubmitting"
             class="w-full py-4 bg-primary-green text-white rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg"
           >
-            <span v-if="!isSubmitting">{{ translate('registrationPage.otpStep.confirm') }}</span>
+            <span v-if="!isSubmitting">{{ getTranslatedTitle('registrationPage.otpStep.confirm') }}</span>
             <span v-else class="flex items-center justify-center gap-3" :class="isRTL ? 'flex-row-reverse' : ''">
               <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              {{ translate('registrationPage.otpStep.verifying') }}
+              {{ getTranslatedTitle('registrationPage.otpStep.verifying') }}
             </span>
           </button>
         </form>
@@ -185,16 +185,16 @@
 
       <!-- Step 3: Personal Information -->
       <div v-if="currentStep === 3" class="space-y-6">
-        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ translate('registrationPage.infoStep.title') }}</h3>
+        <h3 class="text-xl font-semibold text-center text-gray-800 mb-6">{{ getTranslatedTitle('registrationPage.infoStep.title') }}</h3>
         
         <form @submit.prevent="handleInfoSubmit" class="space-y-6">
           <!-- Name -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ translate('registrationPage.infoStep.nameLabel') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedTitle('registrationPage.infoStep.nameLabel') }}</label>
             <input 
               v-model="form.name"
               type="text"
-              :placeholder="translate('registrationPage.infoStep.namePlaceholder')"
+              :placeholder="getTranslatedTitle('registrationPage.infoStep.namePlaceholder')"
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-green focus:border-transparent text-lg"
               :class="errors.name ? 'border-red-500' : ''"
             >
@@ -203,11 +203,11 @@
 
           <!-- Email -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ translate('registrationPage.infoStep.emailLabel') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedTitle('registrationPage.infoStep.emailLabel') }}</label>
             <input 
               v-model="form.email"
               type="email"
-              :placeholder="translate('registrationPage.infoStep.emailPlaceholder')"
+              :placeholder="getTranslatedTitle('registrationPage.infoStep.emailPlaceholder')"
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-green focus:border-transparent text-lg"
               :class="errors.email ? 'border-red-500' : ''"
             >
@@ -219,10 +219,10 @@
             :disabled="!form.name || isSubmitting"
             class="w-full py-4 bg-primary-green text-white rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg"
           >
-            <span v-if="!isSubmitting">{{ translate('registrationPage.infoStep.confirm') }}</span>
+            <span v-if="!isSubmitting">{{ getTranslatedTitle('registrationPage.infoStep.confirm') }}</span>
             <span v-else class="flex items-center justify-center gap-3" :class="isRTL ? 'flex-row-reverse' : ''">
               <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              {{ translate('registrationPage.infoStep.creating') }}
+              {{ getTranslatedTitle('registrationPage.infoStep.creating') }}
             </span>
           </button>
         </form>
@@ -234,9 +234,9 @@
           <i class="fas fa-check text-4xl text-primary-green"></i>
         </div>
         
-        <h3 class="text-2xl font-bold text-gray-800">{{ translate('registrationPage.successStep.title') }}</h3>
+        <h3 class="text-2xl font-bold text-gray-800">{{ getTranslatedTitle('registrationPage.successStep.title') }}</h3>
         <p class="text-gray-600 text-lg leading-relaxed max-w-md mx-auto">
-          {{ translate('registrationPage.successStep.message') }}
+          {{ getTranslatedDescription('registrationPage.successStep.message') }}
         </p>
 
         <!-- Download Buttons -->
@@ -246,8 +246,8 @@
              :class="isRTL ? 'flex-row-reverse' : ''">
             <i class="fab fa-apple text-2xl"></i>
             <div :class="isRTL ? 'text-right' : 'text-left'">
-              <div class="text-xs opacity-80">{{ translate('registrationPage.successStep.downloadOn') }}</div>
-              <div class="font-bold text-lg">{{ translate('registrationPage.successStep.appStore') }}</div>
+              <div class="text-xs opacity-80">{{ getTranslatedTitle('registrationPage.successStep.downloadOn') }}</div>
+              <div class="font-bold text-lg">{{ getTranslatedTitle('registrationPage.successStep.appStore') }}</div>
             </div>
           </a>
           
@@ -256,8 +256,8 @@
              :class="isRTL ? 'flex-row-reverse' : ''">
             <i class="fab fa-google-play text-2xl"></i>
             <div :class="isRTL ? 'text-right' : 'text-left'">
-              <div class="text-xs opacity-80">{{ translate('registrationPage.successStep.getItOn') }}</div>
-              <div class="font-bold text-lg">{{ translate('registrationPage.successStep.googlePlay') }}</div>
+              <div class="text-xs opacity-80">{{ getTranslatedTitle('registrationPage.successStep.getItOn') }}</div>
+              <div class="font-bold text-lg">{{ getTranslatedTitle('registrationPage.successStep.googlePlay') }}</div>
             </div>
           </a>
         </div>
@@ -267,7 +267,7 @@
             @click="handleRegistrationSuccess"
             class="px-12 py-4 bg-primary-green text-white rounded-xl hover:bg-opacity-90 transition-all font-bold text-lg"
           >
-            {{ translate('registrationPage.successStep.start') }}
+            {{ getTranslatedTitle('registrationPage.successStep.start') }}
           </button>
         </div>
       </div>
@@ -283,7 +283,6 @@
     />
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useNotifications } from '@/composables/useNotifications'
@@ -307,6 +306,11 @@ const emit = defineEmits(['registration-success'])
 
 const { showSuccess, showError } = useNotifications()
 const { login } = useProfile()
+
+const currentLanguage = ref(props.language)
+watch(() => props.language, (newLanguage) => {
+  currentLanguage.value = newLanguage
+})
 
 const currentStep = ref(1)
 const isSubmitting = ref(false)
@@ -332,7 +336,17 @@ const isRTL = computed(() => {
 
 // Translation function
 const translate = (key) => {
-  return t(key, props.language)
+  return t(key, currentLanguage.value)
+}
+
+const getTranslatedTitle = (key) => {
+  const translation = t(key, currentLanguage.value)
+  return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedDescription = (key) => {
+  const translation = t(key, currentLanguage.value)
+  return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
 const steps = computed(() => [

@@ -583,6 +583,24 @@ measuresHero: {
     },
 
     registrationPage: {
+      hero: {
+        title: "Join Nafsani Community",
+        description: "Start your mental health journey with certified assessment tools and personalized content for your needs"
+      },
+      features: {
+        metrics: {
+          title: "Certified Metrics",
+          description: "A comprehensive set of internationally certified psychological assessments for your mental health"
+        },
+        content: {
+          title: "Personalized Content",
+          description: "Resources and articles specifically designed to support your mental health improvement journey"
+        },
+        community: {
+          title: "Supportive Community",
+          description: "Join a community of people who share your interests and challenges"
+        }
+      },
       title: 'Create Your Account',
       description: 'Join Nafsiyati community and start your journey in understanding mental health',
       steps: {
