@@ -773,6 +773,10 @@ export const en = {
         "education": "Education and awareness"
       }
     }
+  },
+  "resourcesSection": {
+    "title": "Helpful Resources",
+    "description": "A collection of useful resources and articles to support your mental health"
   }
 };
   

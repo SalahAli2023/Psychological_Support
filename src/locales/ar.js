@@ -773,5 +773,9 @@ export const ar = {
         "education": "التعليم والتوعية"
       }
     }
+  },
+  resourcesSection: {
+    "title": "موارد مساعدة",
+    "description": "مجموعة من الموارد والمقالات المفيدة لدعم صحتك النفسية"
   }
 };
