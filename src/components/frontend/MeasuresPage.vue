@@ -40,7 +40,9 @@
       />
       
       <!-- الموارد -->
-      <ResourcesSection :resources="resources" />
+      <ResourcesSection 
+      :resources="resources"
+      :language="currentLanguage" />
     </main>
     
     <Footer />

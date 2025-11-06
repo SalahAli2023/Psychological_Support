@@ -1130,23 +1130,80 @@ export const measuresData = [
 export const resourcesData = [
     {
         id: 1,
-        title: 'فهم القلق وكيفية التعامل معه',
-        excerpt: 'مقال شامل عن أسباب القلق وأعراضه واستراتيجيات فعالة للتعامل معه.',
+        title: {
+            ar: 'فهم القلق وكيفية التعامل معه',
+            en: 'Understanding Anxiety and How to Deal with It'
+        },
+        excerpt: {
+            ar: 'مقال شامل عن أسباب القلق وأعراضه واستراتيجيات فعالة للتعامل معه.',
+            en: 'Comprehensive article about anxiety causes, symptoms, and effective coping strategies.'
+        },
         image: 'https://picsum.photos/seed/anxiety-article/400/200.jpg',
         link: '#'
     },
     {
         id: 2,
-        title: 'تقنيات الاسترخاء العميق',
-        excerpt: 'تعلم تقنيات الاسترخاء المختلفة مثل التنفس العميق والتأمل واليوغا.',
+        title: {
+            ar: 'تقنيات الاسترخاء العميق',
+            en: 'Deep Relaxation Techniques'
+        },
+        excerpt: {
+            ar: 'تعلم تقنيات الاسترخاء المختلفة مثل التنفس العميق والتأمل واليوغا.',
+            en: 'Learn various relaxation techniques such as deep breathing, meditation, and yoga.'
+        },
         image: 'https://picsum.photos/seed/relaxation-techniques/400/200.jpg',
         link: '#'
     },
     {
         id: 3,
-        title: 'بناء الثقة بالنفس',
-        excerpt: 'دليل عملي لزيادة الثقة بالنفس وتقدير الذات من خلال تمارين بسيطة.',
+        title: {
+            ar: 'بناء الثقة بالنفس',
+            en: 'Building Self-Confidence'
+        },
+        excerpt: {
+            ar: 'دليل عملي لزيادة الثقة بالنفس وتقدير الذات من خلال تمارين بسيطة.',
+            en: 'Practical guide to increase self-confidence and self-esteem through simple exercises.'
+        },
         image: 'https://picsum.photos/seed/self-confidence/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 4,
+        title: {
+            ar: 'إدارة الضغوط النفسية',
+            en: 'Managing Psychological Stress'
+        },
+        excerpt: {
+            ar: 'أساليب فعالة للتعامل مع الضغوط اليومية والحفاظ على الصحة النفسية.',
+            en: 'Effective methods for dealing with daily stress and maintaining mental health.'
+        },
+        image: 'https://picsum.photos/seed/stress-management/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 5,
+        title: {
+            ar: 'تحسين جودة النوم',
+            en: 'Improving Sleep Quality'
+        },
+        excerpt: {
+            ar: 'نصائح وعادات لتحسين نمط النوم والحصول على راحة أفضل.',
+            en: 'Tips and habits to improve sleep patterns and get better rest.'
+        },
+        image: 'https://picsum.photos/seed/sleep-quality/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 6,
+        title: {
+            ar: 'التواصل الفعال في العلاقات',
+            en: 'Effective Communication in Relationships'
+        },
+        excerpt: {
+            ar: 'مهارات التواصل التي تعزز العلاقات الشخصية والمهنية.',
+            en: 'Communication skills that enhance personal and professional relationships.'
+        },
+        image: 'https://picsum.photos/seed/communication/400/200.jpg',
         link: '#'
     }
 ];
