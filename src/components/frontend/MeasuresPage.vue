@@ -3,8 +3,16 @@
     <Header /> 
 
     <!-- قسم الهيرو  -->
-    <HeroSection
-    :language="currentLanguage"
+    <Hero 
+      :title="translate('measuresHero.title')"
+      :highlight="translate('measuresHero.titleKey')"
+      :subtitle="translate('measuresHero.description')"
+      :subtitleKey="translate('measuresHero.subtitle')"
+
+      :buttons="[
+        { text: translate('measureModal.startTest'), icon: 'fas fa-play-circle', primary: true },
+        { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
+      ]"
     />
 
     <main class="max-w-7xl mx-auto px-6">
@@ -80,7 +88,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
-import HeroSection from '@/components/frontend/measures/HeroSection.vue'
+import Hero from '@/components/frontend/layouts/hero.vue'
 import PopularMeasures from '@/components/frontend/measures/PopularMeasures.vue'
 import CategorySection from '@/components/frontend/measures/CategorySection.vue'
 import AllMeasures from '@/components/frontend/measures/AllMeasures.vue'
@@ -90,13 +98,15 @@ import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
 import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import { measuresData, resourcesData } from '@/data/measures'
+import { useTranslations } from '@/composables/useTranslations'
+
 
 export default {
   name: 'MeasuresPage',
   components: {
     Header,
     Footer,
-    HeroSection,
+    Hero,
     CategorySection,
     PopularMeasures,
     AllMeasures,
@@ -170,6 +180,7 @@ export default {
     })
 
     // الدوال
+    const {translate}=useTranslations()
     const openRegistrationModal = (measure) => {
       currentMeasure.value = measure
       showRegistrationModal.value = true
@@ -302,6 +313,7 @@ export default {
       filteredMeasures,
       popularMeasures,
       currentLanguage,
+      translate,
       openRegistrationModal,
       closeRegistrationModal,
       handleRegistrationSuccess,
