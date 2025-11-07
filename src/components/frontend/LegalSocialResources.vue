@@ -3,16 +3,15 @@
         <!-- Header -->
         <Header :language="currentLanguage" />
 
-        <Hero 
-            :title="translate('resourcesPage.title')"
-            :subtitle="translate('resourcesPage.description')"
-            :buttons="[
-                { text: translate('measureModal.startTest'), icon: 'fas fa-play-circle', primary: true },
-                { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
-            ]"
-        />
         <!-- Main Content -->
         <main class="container mx-auto px-4 py-28">
+            <!-- Page Header -->
+            <div class="text-center mb-16 animate-slide-up">
+                <h1 class="text-4xl font-bold text-gray-800 mb-6">{{ getTranslatedTitle('resourcesPage.title') }}</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    {{ getTranslatedDescription('resourcesPage.description') }}
+                </p>
+            </div>
 
             <!-- Resources Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
@@ -23,8 +22,8 @@
                             <i class="fas fa-balance-scale text-primary-green text-2xl"></i>
                         </div>
                         <div :class="isRTL ? 'text-right' : 'text-left'">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ translate('resourcesPage.legalResources.title') }}</h2>
-                            <p class="text-gray-600">{{ translate('resourcesPage.legalResources.description') }}</p>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ getTranslatedTitle('resourcesPage.legalResources.title') }}</h2>
+                            <p class="text-gray-600">{{ getTranslatedDescription('resourcesPage.legalResources.description') }}</p>
                         </div>
                     </div>
 
@@ -35,7 +34,7 @@
                                 <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center">
                                     <i class="fas fa-gavel text-white text-sm"></i>
                                 </div>
-                                {{ translate('resourcesPage.lawsSection.title') }}
+                                {{ getTranslatedTitle('resourcesPage.lawsSection.title') }}
                             </h3>
                         
                             <!-- Law Categories Navigation -->
@@ -82,12 +81,12 @@
                                 <div class="w-10 h-10 bg-primary-pink rounded-full flex items-center justify-center">
                                     <i class="fas fa-shield-alt text-white text-sm"></i>
                                 </div>
-                                {{ translate('resourcesPage.womenChildrenRights.title') }}
+                                {{ getTranslatedTitle('resourcesPage.womenChildrenRights.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(right, index) in womenChildrenRights" :key="index" 
                                     class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2"
-                                    >
+                                   >
                                     <div class="w-8 h-8 bg-primary-green rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-check text-white text-xs"></i>
                                     </div>
@@ -105,8 +104,8 @@
                             <i class="fas fa-hands-helping text-primary-pink text-2xl"></i>
                         </div>
                         <div :class="isRTL ? 'text-right' : 'text-left'">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ translate('resourcesPage.socialResources.title') }}</h2>
-                            <p class="text-gray-600">{{ translate('resourcesPage.socialResources.description') }}</p>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ getTranslatedTitle('resourcesPage.socialResources.title') }}</h2>
+                            <p class="text-gray-600">{{ getTranslatedDescription('resourcesPage.socialResources.description') }}</p>
                         </div>
                     </div>
 
@@ -117,7 +116,7 @@
                                 <div class="w-10 h-10 bg-primary-pink rounded-full flex items-center justify-center">
                                     <i class="fas fa-users text-white text-sm"></i>
                                 </div>
-                                {{ translate('resourcesPage.communitySupport.title') }}
+                                {{ getTranslatedTitle('resourcesPage.communitySupport.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(support, index) in communitySupport" :key="index"
@@ -137,7 +136,7 @@
                                 <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center">
                                     <i class="fas fa-home text-white text-sm"></i>
                                 </div>
-                                {{ translate('resourcesPage.positiveEducation.title') }}
+                                {{ getTranslatedTitle('resourcesPage.positiveEducation.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(education, index) in positiveEducation" :key="index"
@@ -157,8 +156,8 @@
             <!-- Emergency Contacts -->
             <div class="bg-gradient-to-r from-primary-green/10 to-primary-pink/10 rounded-2xl shadow-lg p-8 mb-16 border border-primary-green/20 animate-slide-up" style="animation-delay: 0.3s">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ translate('resourcesPage.emergencyContacts.title') }}</h2>
-                    <p class="text-gray-600 text-lg">{{ translate('resourcesPage.emergencyContacts.description') }}</p>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ getTranslatedTitle('resourcesPage.emergencyContacts.title') }}</h2>
+                    <p class="text-gray-600 text-lg">{{ getTranslatedDescription('resourcesPage.emergencyContacts.description') }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -167,8 +166,8 @@
                         <div class="w-16 h-16 bg-primary-green rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-phone-alt text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.emergencyNumbers.title') }}</h3>
-                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.emergencyNumbers.description') }}</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ getTranslatedTitle('resourcesPage.emergencyContacts.emergencyNumbers.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ getTranslatedDescription('resourcesPage.emergencyContacts.emergencyNumbers.description') }}</p>
                         <div class="space-y-3">
                             <div class="text-primary-green font-bold text-xl hover:text-primary-pink transition-colors duration-300">911</div>
                             <div class="text-primary-green font-bold text-xl hover:text-primary-pink transition-colors duration-300">0800-123-456</div>
@@ -180,10 +179,10 @@
                         <div class="w-16 h-16 bg-primary-pink rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-comments text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.directChat.title') }}</h3>
-                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.directChat.description') }}</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ getTranslatedTitle('resourcesPage.emergencyContacts.directChat.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ getTranslatedDescription('resourcesPage.emergencyContacts.directChat.description') }}</p>
                         <button class="bg-primary-pink text-white px-8 py-3 rounded-xl hover:bg-primary-green transform hover:scale-105 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
-                            {{ translate('resourcesPage.emergencyContacts.directChat.button') }}
+                            {{ getTranslatedTitle('resourcesPage.emergencyContacts.directChat.button') }}
                         </button>
                     </div>
 
@@ -192,11 +191,11 @@
                         <div class="w-16 h-16 bg-primary-green rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-headset text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.supportLines.title') }}</h3>
-                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.supportLines.description') }}</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ getTranslatedTitle('resourcesPage.emergencyContacts.supportLines.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ getTranslatedDescription('resourcesPage.emergencyContacts.supportLines.description') }}</p>
                         <div class="space-y-3">
-                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ translate('resourcesPage.emergencyContacts.supportLines.womenSupport') }}</div>
-                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ translate('resourcesPage.emergencyContacts.supportLines.childrenSupport') }}</div>
+                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ getTranslatedTitle('resourcesPage.emergencyContacts.supportLines.womenSupport') }}</div>
+                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ getTranslatedTitle('resourcesPage.emergencyContacts.supportLines.childrenSupport') }}</div>
                         </div>
                     </div>
 
@@ -205,8 +204,8 @@
                         <div class="w-16 h-16 bg-primary-pink rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-envelope text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.contactInfo.title') }}</h3>
-                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.contactInfo.description') }}</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ getTranslatedTitle('resourcesPage.emergencyContacts.contactInfo.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ getTranslatedDescription('resourcesPage.emergencyContacts.contactInfo.description') }}</p>
                         <div class="space-y-3 text-sm">
                             <div class="text-primary-pink hover:text-primary-green transition-colors duration-300 cursor-pointer">info@cswc.org</div>
                             <div class="text-primary-pink hover:text-primary-green transition-colors duration-300 cursor-pointer">support@cswc.org</div>
@@ -218,8 +217,8 @@
             <!-- Supporting Organizations -->
             <div class="bg-white rounded-2xl shadow-lg p-8 animate-slide-up" style="animation-delay: 0.4s">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ translate('resourcesPage.supportingOrganizations.title') }}</h2>
-                    <p class="text-gray-600 text-lg">{{ translate('resourcesPage.supportingOrganizations.description') }}</p>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ getTranslatedTitle('resourcesPage.supportingOrganizations.title') }}</h2>
+                    <p class="text-gray-600 text-lg">{{ getTranslatedDescription('resourcesPage.supportingOrganizations.description') }}</p>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -244,14 +243,12 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTranslations } from '@/composables/useTranslations'
+import { t } from '@/locales'
 import Header from '@/components/frontend/layouts/Header.vue'
-import Hero from '@/components/frontend/layouts/hero.vue'
 import Footer from '@/components/frontend/layouts/Footer.vue'
 import { yemeniLaws, getLawCategories, getTranslatedLaw } from '@/data/yemeni-laws.js'
 
 const router = useRouter()
-const {translate}=useTranslations()
 
 // اللغة التفاعلية
 const currentLanguage = ref(localStorage.getItem('preferredLanguage') || 'ar')
@@ -269,29 +266,44 @@ const isRTL = computed(() => {
     return currentLanguage.value === 'ar'
 })
 
+// دوال الترجمة
+const translate = (key) => {
+    return t(key, currentLanguage.value)
+}
+
+const getTranslatedTitle = (key) => {
+    const translation = t(key, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedDescription = (key) => {
+    const translation = t(key, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
 // دوال الترجمة للبيانات المحلية
 const getTranslatedRight = (key) => {
-    const translation = translate(`resourcesPage.womenChildrenRights.list.${key}`, currentLanguage.value)
+    const translation = t(`resourcesPage.womenChildrenRights.list.${key}`, currentLanguage.value)
     return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
 const getTranslatedSupport = (key) => {
-    const translation = translate(`resourcesPage.communitySupport.list.${key}`, currentLanguage.value)
+    const translation = t(`resourcesPage.communitySupport.list.${key}`, currentLanguage.value)
     return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
 const getTranslatedEducation = (key) => {
-    const translation = translate(`resourcesPage.positiveEducation.list.${key}`, currentLanguage.value)
+    const translation = t(`resourcesPage.positiveEducation.list.${key}`, currentLanguage.value)
     return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
 const getTranslatedOrganization = (key) => {
-    const translation = translate(`resourcesPage.supportingOrganizations.list.${key}`, currentLanguage.value)
+    const translation = t(`resourcesPage.supportingOrganizations.list.${key}`, currentLanguage.value)
     return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
 const getTranslatedOrganizationDesc = (key) => {
-    const translation = translate(`resourcesPage.supportingOrganizations.descriptions.${key}`, currentLanguage.value)
+    const translation = t(`resourcesPage.supportingOrganizations.descriptions.${key}`, currentLanguage.value)
     return typeof translation === 'object' ? translation[currentLanguage.value] : translation
 }
 
@@ -406,6 +418,19 @@ onMounted(() => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--color-secondary-green);
+}
+
+.animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .hover-lift {
