@@ -40,7 +40,9 @@
       />
       
       <!-- الموارد -->
-      <ResourcesSection :resources="resources" />
+      <ResourcesSection 
+      :resources="resources"
+      :language="currentLanguage" />
     </main>
     
     <Footer />
@@ -219,32 +221,57 @@ export default {
     const calculateResults = () => {
       let score = 0
       const measure = currentMeasure.value
-      
-      answers.value.forEach((answer, index) => {
-        if (answer !== undefined) {
-          if (typeof measure.scores === 'function') {
-            score += measure.scores(index)[answer]
-          } else {
-            score += measure.scores[answer]
-          }
-        }
-      })
-      
-      let maxScore = 0
-      if (typeof measure.scores === 'function') {
-        measure.questions.forEach((_, index) => {
-          maxScore += Math.max(...measure.scores(index))
-        })
-      } else {
-        maxScore = measure.questions.length * Math.max(...measure.scores)
+    // حساب النتيجة بناء على الإجابات
+    answers.value.forEach((answer, index) => {
+      if (answer !== undefined && measure.scores) {
+        score += measure.scores[answer] || 0
       }
+    })
+        
+    // الحصول على التفسير بناء على اللغة الحالية
+    let interpretation
+    if (typeof measure.interpretation === 'function') {
+      interpretation = measure.interpretation(score, currentLanguage.value)
+    } else {
+      // تفسير افتراضي إذا لم يكن هناك دالة تفسير
+      const maxPossibleScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : 0
+      const percentage = maxPossibleScore > 0 ? (score / maxPossibleScore) * 100 : 0
       
-      const interpretation = measure.interpretation(score)
-      
-      testResult.value = { score, maxScore, interpretation }
-      testStep.value = 'results'
+      // if (percentage >= 80) {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'مرتفع' : 'High',
+      //     desc: currentLanguage.value === 'ar' 
+      //       ? 'نتيجتك تشير إلى مستوى مرتفع. ننصح بمراجعة مختص للدعم المناسب.'
+      //       : 'Your results indicate a high level. We recommend consulting a specialist for appropriate support.'
+      //   }
+      // } else if (percentage >= 50) {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'متوسط' : 'Medium',
+      //     desc: currentLanguage.value === 'ar'
+      //       ? 'نتيجتك تشير إلى مستوى متوسط. ننصح بممارسة تقنيات الاسترخاء.'
+      //       : 'Your results indicate a medium level. We recommend practicing relaxation techniques.'
+      //   }
+      // } else {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'منخفض' : 'Low',
+      //     desc: currentLanguage.value === 'ar'
+      //       ? 'نتيجتك تشير إلى مستوى منخفض. حافظ على ممارسة العادات الصحية.'
+      //       : 'Your results indicate a low level. Maintain healthy habits.'
+      //   }
+      // }
     }
     
+    // حساب أقصى درجة ممكنة
+    const maxScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : measure.questions.length * 3
+    
+    testResult.value = { 
+      score: Math.round(score), 
+      maxScore: Math.round(maxScore), 
+      interpretation 
+    }
+    
+    testStep.value = 'results'
+  }
     const retakeTest = () => {
       testStep.value = 'info'
       currentQuestionIndex.value = 0
