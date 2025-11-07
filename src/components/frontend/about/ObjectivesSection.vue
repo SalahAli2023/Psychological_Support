@@ -2,7 +2,7 @@
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-fade-in">
           {{ translate('about.objectives.title') }} <span class="text-[#9EBF3B]">{{ translate('about.objectives.highlight') }}</span>
         </h2>
 

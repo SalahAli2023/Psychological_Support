@@ -13,19 +13,26 @@
       </p>
 
       <!-- الأزرار مع تغيير الاتجاه بناءً على اللغة -->
-      <div class="flex justify-center gap-4" :class="[isRTL ? 'flex-row-reverse' : 'flex-row']">
-        <button
-          v-for="(btn, index) in buttons"
-          :key="index"
-          @click="$emit('cta', btn)"
-          :class="buttonClasses(btn)"
-        >
-          <!-- تغيير ترتيب الأيقونة بناءً على اللغة -->
-          <i v-if="btn.icon && isRTL" :class="[btn.icon, 'mx-2']"></i>
-          {{ btn.text }}
-          <i v-if="btn.icon && !isRTL" :class="[btn.icon, 'mx-2']"></i>
-        </button>
-      </div>
+     <div
+  class="flex justify-center items-center gap-2 flex-nowrap overflow-x-auto"
+  :class="[isRTL ? 'flex-row-reverse' : 'flex-row']"
+>
+  <button
+    v-for="(btn, index) in buttons"
+    :key="index"
+    @click="$emit('cta', btn)"
+    :class="buttonClasses(btn)"
+    class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition rounded-2xl
+           text-sm px-4 py-2 w-auto
+           max-sm:w-[80px] max-sm:text-xs whitespace-nowrap"
+  >
+    <!-- تغيير ترتيب الأيقونة بناءً على اللغة -->
+    <i v-if="btn.icon && isRTL" :class="[btn.icon, 'mx-1']"></i>
+    {{ btn.text }}
+    <i v-if="btn.icon && !isRTL" :class="[btn.icon, 'mx-1']"></i>
+  </button>
+</div>
+
     </div>
   </section>
 </template>
@@ -114,7 +121,7 @@ defineEmits(['cta'])
 }
 
 .hero-title {
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
   line-height: 1.3;

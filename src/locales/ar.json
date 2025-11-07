@@ -1,0 +1,30 @@
+{
+      "app": {
+            "title": "لوحة التحكم النفسية",
+            "search": "ابحث…",
+            "language": "اللغة",
+            "theme": "السمة",
+            "light": "فاتح",
+            "dark": "داكن"
+      },
+      "nav": {
+            "dashboard": "الرئيسية",
+            "appointments": "المواعيد",
+            "users": "المستخدمون",
+            "articles": "المقالات",
+            "programs": "البرامج",
+            "library": "المكتبة",
+            "assessments": "المقاييس",
+            "settings": "الإعدادات"
+      },
+      "dashboard": {
+            "welcome": "مرحباً",
+            "kpi_upcoming": "الجلسات القادمة",
+            "kpi_clients": "العملاء",
+            "kpi_new_users": "مستخدمون جدد",
+            "quick_actions": "إجراءات سريعة",
+            "book_session": "حجز جلسة",
+            "create_article": "إنشاء مقال",
+            "add_user": "إضافة مستخدم"
+      }
+}

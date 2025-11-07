@@ -13,7 +13,7 @@
       <div class="flex-shrink-0">
         <router-link to="/">
           <img 
-            src="/images/flogcs.png" 
+            src="@/assets/images/logo/flogcs.png" 
             :alt="t('header.logoAlt')" 
             class="h-10 sm:h-[60px] w-auto" 
           />

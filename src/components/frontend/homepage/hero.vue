@@ -8,7 +8,7 @@
       playsinline
       class="absolute inset-0 w-full h-full object-cover z-0"
     >
-      <source src="http://localhost:5173/images/hipno-video.mp4" type="video/mp4">
+      <source src="@/assets/video/hipno-video.mp4" type="video/mp4">
     </video>
 
     <!-- طبقة شفافة فوق الفيديو -->
@@ -57,6 +57,7 @@
 <script setup>
 import { inject } from 'vue'
 
+import { computed, ref, onMounted } from 'vue';
 // استخدام inject للحصول على دالة الترجمة
 const { translate } = inject('languageState')
 

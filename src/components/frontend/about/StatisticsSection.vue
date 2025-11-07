@@ -2,7 +2,7 @@
   <section class="py-20 bg-gradient-to-br from-[#9EBF3B]/5 to-[#D6A29A]/5">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-fade-in-down">
           {{ translate('about.statistics.title') }} <span class="text-[#9EBF3B]">{{ translate('about.statistics.highlight') }}</span>
         </h2>
 

@@ -1,16 +1,28 @@
-import { createApp } from 'vue'
-import '@fortawesome/fontawesome-free/css/all.min.css'
-import router from './routes/front.js'
-import App from './App.vue'
+import { createApp } from 'vue';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import router from './routes/index.js';
+import App from './App.vue';
+import { createPinia } from 'pinia';
+import { createI18n } from 'vue-i18n';
 
-import './assets/article-health-styles.css'
-import './style.css'
+import en from './locales/en.json';
+import ar from './locales/ar.json';
+import './assets/css/article-health-styles.css';
+import './assets/css/style.css';
 
-// أولاً ننشئ التطبيق
-const app = createApp(App)
+const app = createApp(App);
 
-// ثم نربط الراوتر بالتطبيق
-app.use(router)
+const pinia = createPinia();
+app.use(pinia);
 
-// وأخيرًا نثبّت التطبيق في العنصر الرئيسي بالصفحة
-app.mount('#app')
+const i18n = createI18n({
+  legacy: false,
+  locale: localStorage.getItem('locale') || 'en',
+  fallbackLocale: 'en',
+  messages: { en, ar },
+});
+app.use(i18n);
+
+app.use(router);
+
+app.mount('#app');
