@@ -70,7 +70,8 @@ body {
 }
 
 @utility animate-slide-up {
-  animation: slide-up 0.3s ease-out;
+  animation: slide-up 0.8s ease-out forwards;
+  transform: translateY(30px);
 }
 
 @keyframes spin {
