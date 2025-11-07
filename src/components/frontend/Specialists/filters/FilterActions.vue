@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-2 sticky bottom-0 bg-white pt-2">
+  <div class="space-y-2  bottom-0 bg-white pt-2">
     <button 
       @click="$emit('resetFilters')" 
       class="w-full bg-[#dc2626] hover:bg-[#dc2626] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm"
