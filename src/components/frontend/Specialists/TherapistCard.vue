@@ -5,8 +5,8 @@
       <div class="flex sm:justify-start">
         <div class="relative">
           <img :src="therapist.image" :alt="therapist.name" 
-               class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4"
-               :class="index % 2 === 0 ? 'ring-[#9EBF3B]' : 'ring-[#D6A29A]'" />
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4"
+              :class="index % 2 === 0 ? 'ring-primary-green' : 'ring-primary-pink'" />
         </div>
       </div>
 
@@ -20,7 +20,7 @@
             <!-- Rating -->
             <div class="flex items-center gap-2 mb-3">
               <div class="flex">
-                <i v-for="i in 5" :key="i" class="fas fa-star text-sm text-[#D6A29A]"></i>
+                <i v-for="i in 5" :key="i" class="fas fa-star text-sm text-primary-pink"></i>
               </div>
               <span class="text-[#059669] font-semibold text-sm">{{ therapist.rating }}/50 {{ translate('therapists.therapist.sessions') }}</span>
             </div>
@@ -37,7 +37,7 @@
           <!-- Book Button -->
           <div class="flex justify-end sm:justify-end">
             <router-link :to="`/therapist/${therapist.id}`" 
-                         class="text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all text-sm sm:text-base bg-[#9EBF3B] hover:bg-[#c9928a]">
+                         class="text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all text-sm sm:text-base bg-primary-green hover:bg-secondary-pink">
               {{ translate('therapists.therapist.book') }}
             </router-link>
           </div>

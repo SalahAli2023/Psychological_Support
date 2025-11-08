@@ -75,11 +75,11 @@
         class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-200"
         :class="contentItemClass"
       >
-        <div class="bg-gradient-to-br from-[#9EBF3B] to-[#8aab34] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
+        <div class="bg-gradient-to-br from-primary-green to-secondary-green text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           01
         </div>
         <div class="mt-4">
-          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">{{ translate('home.howItWorks.steps.step1') }}</h3>
+          <h3 class="text-lg font-bold mb-2 text-primary-green">{{ translate('home.howItWorks.steps.step1') }}</h3>
           <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step1Desc') }}</p>
         </div>
       </div>
@@ -89,10 +89,10 @@
         :class="contentItemClass"
       >
         <div class="mb-4">
-          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">{{ translate('home.howItWorks.steps.step2') }}</h3>
+          <h3 class="text-lg font-bold mb-2 text-primary-pink">{{ translate('home.howItWorks.steps.step2') }}</h3>
           <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step2Desc') }}</p>
         </div>
-        <div class="bg-gradient-to-br from-[#D6A29A] to-[#c58f87] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
+        <div class="bg-gradient-to-br from-primary-pink to-secondary-pink text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           02
         </div>
       </div>
@@ -101,11 +101,11 @@
         class="flex flex-col items-center text-center relative z-10 transition-all duration-700 delay-400"
         :class="contentItemClass"
       >
-        <div class="bg-gradient-to-br from-[#9EBF3B] to-[#8aab34] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
+        <div class="bg-gradient-to-br from-primary-green to-secondary-green text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           03
         </div>
         <div class="mt-4">
-          <h3 class="text-lg font-bold mb-2 text-[#9EBF3B]">{{ translate('home.howItWorks.steps.step3') }}</h3>
+          <h3 class="text-lg font-bold mb-2 text-primary-green">{{ translate('home.howItWorks.steps.step3') }}</h3>
           <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step3Desc') }}</p>
         </div>
       </div>
@@ -115,10 +115,10 @@
         :class="contentItemClass"
       >
         <div class="mb-4">
-          <h3 class="text-lg font-bold mb-2 text-[#D6A29A]">{{ translate('home.howItWorks.steps.step4') }}</h3>
+          <h3 class="text-lg font-bold mb-2 text-primary-pink">{{ translate('home.howItWorks.steps.step4') }}</h3>
           <p class="text-gray-600 w-56">{{ translate('home.howItWorks.steps.step4Desc') }}</p>
         </div>
-        <div class="bg-gradient-to-br from-[#D6A29A] to-[#c58f87] text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
+        <div class="bg-gradient-to-br from-primary-pink to-secondary-pink text-white text-4xl font-semibold w-24 h-24 flex items-center justify-center rounded-2xl shadow-md transition-transform duration-500 transform hover:scale-110 hover:shadow-lg border-2 border-white">
           04
         </div>
       </div>
@@ -137,8 +137,8 @@
           :class="[
             'text-white text-2xl font-semibold w-16 h-16 flex items-center justify-center rounded-xl shadow-md transition-transform duration-500 transform hover:scale-110 border-2 border-white',
             index % 2 === 0
-              ? 'bg-gradient-to-br from-[#9EBF3B] to-[#8aab34]'
-              : 'bg-gradient-to-br from-[#D6A29A] to-[#c58f87]',
+              ? 'bg-gradient-to-br from-primary-green to-secondary-green'
+              : 'bg-gradient-to-br from-primary-pink to-secondary-pink',
           ]"
         >
           {{ step.number }}
@@ -146,7 +146,7 @@
         <div class="pr-4 pl-4 text-right flex-1">
           <h3 
             class="text-lg font-bold mb-2"
-            :class="index % 2 === 0 ? 'text-[#9EBF3B]' : 'text-[#D6A29A]'"
+            :class="index % 2 === 0 ? 'text-primary-green' : 'text-primary-pink'"
           >
             {{ step.title }}
           </h3>

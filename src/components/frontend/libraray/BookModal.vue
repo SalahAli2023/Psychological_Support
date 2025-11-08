@@ -26,9 +26,9 @@
 
           <div class="flex flex-col md:flex-row h-full">
             <!-- الجانب الأيسر - صورة الكتاب -->
-            <div class="md:w-2/5 bg-gradient-to-br from-[#9EBF3B] to-[#7CA52D] p-4 sm:p-6 flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
+            <div class="md:w-2/5 bg-gradient-to-br from-primary-green to-[#7CA52D] p-4 sm:p-6 flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
               <!-- تأثيرات زخرفية شفافة -->
-              <div class="absolute top-0 left-0 w-32 h-32 bg-[#9EBF3B]/10 rounded-full -translate-x-16 -translate-y-16"></div>
+              <div class="absolute top-0 left-0 w-32 h-32 bg-primary-green/10 rounded-full -translate-x-16 -translate-y-16"></div>
               <div class="absolute bottom-0 right-0 w-48 h-48 bg-[#7CA52D]/5 rounded-full translate-x-24 translate-y-24"></div>
               
               <div class="relative z-10 w-32 h-44 sm:w-40 h-56 md:w-48 md:h-64 mx-auto">
@@ -38,7 +38,7 @@
                   class="w-full h-full object-cover rounded-xl shadow-2xl border-8 border-white/30"
                 />
                 <!-- شارة التقييم -->
-                <div class="absolute -bottom-2 -left-2 bg-gradient-to-r from-[#d6a29a] to-[#d6a29a] text-white px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                <div class="absolute -bottom-2 -left-2 bg-gradient-to-r from-primary-pink to-secondary-pink text-white px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
                   <i class="fas fa-star text-xs"></i>
                   <span class="font-bold text-xs">{{ selectedBook.rating }}</span>
                 </div>
@@ -53,7 +53,7 @@
                   {{ selectedBook.title }}
                 </h2>
                 <div class="flex items-center gap-2 text-gray-600 mb-2 sm:mb-3">
-                  <i class="fas fa-user-edit text-[#9EBF3B] text-sm"></i>
+                  <i class="fas fa-user-edit text-primary-green text-sm"></i>
                   <span class="text-sm sm:text-base font-medium">{{ selectedBook.author }}</span>
                 </div>
                 
@@ -73,7 +73,7 @@
               <!-- التقييم -->
               <div class="mb-3 sm:mb-4">
                 <div class="flex items-center gap-2 mb-1">
-                  <div class="flex text-[#d6a29a] text-sm sm:text-base">
+                  <div class="flex text-primary-pink text-sm sm:text-base">
                     <i v-for="star in 5" :key="star" 
                        :class="star <= Math.floor(selectedBook.rating) ? 'fas' : star - 0.5 <= selectedBook.rating ? 'fas fa-star-half-alt' : 'far'" 
                        class="fa-star">
@@ -87,7 +87,7 @@
               <!-- الوصف -->
               <div class="mb-4 sm:mb-6">
                 <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                  <i class="fas fa-file-alt text-[#9EBF3B] text-sm"></i>
+                  <i class="fas fa-file-alt text-primary-green text-sm"></i>
                   {{ translate('modal.bookSummary') }}
                 </h3>
                 <p class="text-gray-600 leading-relaxed text-justify text-xs sm:text-sm">
@@ -98,15 +98,15 @@
               <!-- الإحصائيات -->
               <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">328</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">328</div>
                   <div class="text-xs text-gray-500">{{ translate('modal.pages') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">4.2</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">4.2</div>
                   <div class="text-xs text-gray-500">{{ translate('modal.readingTime') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-[#9EBF3B] mb-1">15K</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">15K</div>
                   <div class="text-xs text-gray-500">{{ translate('modal.readers') }}</div>
                 </div>
               </div>
@@ -116,7 +116,7 @@
                 <div class="flex flex-col sm:flex-row gap-2" :class="isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'">
                   <button 
                     @click="downloadBook"
-                    class="flex-1 bg-gradient-to-r from-[#9EBF3B] to-[#8cad35] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                    class="flex-1 bg-gradient-to-r from-primary-green to-secondary-green text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
                     :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                   >
                     <i class="fas fa-download text-xs sm:text-sm"></i>
@@ -125,7 +125,7 @@
                   
                   <button 
                     @click="previewBook"
-                    class="flex-1 border-2 border-[#9EBF3B] text-[#9EBF3B] px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                    class="flex-1 border-2 border-primary-green text-primary-green px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-primary-green hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
                     :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                   >
                     <i class="fas fa-eye text-xs sm:text-sm"></i>
@@ -135,7 +135,7 @@
                 
                 <button 
                   @click="rateBook"
-                  class="w-full border-2 border-[#d6a29a] text-[#d6a29a] px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-[#d6a29a] hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                  class="w-full border-2 border-primary-pink text-primary-pink px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-primary-pink hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
                   :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                 >
                   <i class="fas fa-star text-xs sm:text-sm"></i>

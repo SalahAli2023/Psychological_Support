@@ -6,18 +6,18 @@
     <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <nav class="flex items-center space-x-2 text-sm text-gray-600" dir="rtl">
-          <router-link to="/" class="hover:text-[#9EBF3B] transition-colors duration-300">
+          <router-link to="/" class="hover:text-primary-green transition-colors duration-300">
             {{ currentLanguage === 'ar' ? 'الرئيسية' : 'Home' }}
           </router-link>
           <i class="fas fa-chevron-left text-xs text-gray-400"></i>
           <span 
-            class="hover:text-[#9EBF3B] transition-colors duration-300 cursor-pointer"
+            class="hover:text-primary-green transition-colors duration-300 cursor-pointer"
             @click="handleBackToEvents"
           >
             {{ currentLanguage === 'ar' ? 'الفعاليات' : 'Events' }}
           </span>
           <i class="fas fa-chevron-left text-xs text-gray-400"></i>
-          <span class="text-[#9EBF3B] font-medium">{{ event.title }}</span>
+          <span class="text-primary-green font-medium">{{ event.title }}</span>
         </nav>
       </div>
     </div>
@@ -56,8 +56,8 @@
                 <!-- معلومات الفعالية -->
                 <div class="space-y-3">
                   <div class="flex items-center gap-3 text-gray-700">
-                    <div class="w-10 h-10 bg-[#9EBF3B] bg-opacity-10 rounded-xl flex items-center justify-center">
-                      <i class="fas fa-calendar text-[#9EBF3B]"></i>
+                    <div class="w-10 h-10 bg-primary-green bg-opacity-10 rounded-xl flex items-center justify-center">
+                      <i class="fas fa-calendar text-primary-green"></i>
                     </div>
                     <div>
                       <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'التاريخ والوقت' : 'Date & Time' }}</p>
@@ -66,8 +66,8 @@
                   </div>
                   
                   <div class="flex items-center gap-3 text-gray-700">
-                    <div class="w-10 h-10 bg-[#D6A29A] bg-opacity-10 rounded-xl flex items-center justify-center">
-                      <i class="fas fa-map-marker-alt text-[#D6A29A]"></i>
+                    <div class="w-10 h-10 bg-primary-pink bg-opacity-10 rounded-xl flex items-center justify-center">
+                      <i class="fas fa-map-marker-alt text-primary-pink"></i>
                     </div>
                     <div>
                       <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'الموقع' : 'Location' }}</p>
@@ -76,8 +76,8 @@
                   </div>
                   
                   <div class="flex items-center gap-3 text-gray-700">
-                    <div class="w-10 h-10 bg-[#9EBF3B] bg-opacity-10 rounded-xl flex items-center justify-center">
-                      <i class="fas fa-clock text-[#9EBF3B]"></i>
+                    <div class="w-10 h-10 bg-primary-green bg-opacity-10 rounded-xl flex items-center justify-center">
+                      <i class="fas fa-clock text-primary-green"></i>
                     </div>
                     <div>
                       <p class="text-sm text-gray-500">{{ currentLanguage === 'ar' ? 'المدة' : 'Duration' }}</p>
@@ -102,7 +102,7 @@
 
             <!-- النبذة العامة -->
             <div class="mb-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-primary-green inline-block">
                 {{ currentLanguage === 'ar' ? 'نبذة عن الفعالية' : 'Event Overview' }}
               </h2>
               <p class="text-gray-700 leading-relaxed text-lg">
@@ -112,7 +112,7 @@
 
             <!-- المواضيع المغطاة -->
             <div class="mb-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#D6A29A] inline-block">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-primary-pink inline-block">
                 {{ currentLanguage === 'ar' ? 'المواضيع المغطاة' : 'Covered Topics' }}
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -121,7 +121,7 @@
                   :key="index"
                   class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-300"
                 >
-                  <i class="fas fa-check text-[#9EBF3B] mt-1 flex-shrink-0"></i>
+                  <i class="fas fa-check text-primary-green mt-1 flex-shrink-0"></i>
                   <span class="text-gray-700">{{ topic }}</span>
                 </div>
               </div>

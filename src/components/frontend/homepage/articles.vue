@@ -6,11 +6,11 @@
   >
     <!-- أشكال زخرفية في الخلفية -->
     <div 
-      class="absolute top-10 left-10 w-32 h-32 bg-[#D6A29A] opacity-5 rounded-full blur-2xl transition-all duration-1000"
+      class="absolute top-10 left-10 w-32 h-32 bg-primary-pink opacity-5 rounded-full blur-2xl transition-all duration-1000"
       :class="decorativeClass"
     ></div>
     <div 
-      class="absolute bottom-10 right-10 w-40 h-40 bg-[#9EBF3B] opacity-5 rounded-full blur-2xl transition-all duration-1000"
+      class="absolute bottom-10 right-10 w-40 h-40 bg-primary-green opacity-5 rounded-full blur-2xl transition-all duration-1000"
       :class="decorativeClass"
     ></div>
 
@@ -50,7 +50,7 @@
       <div class="text-center mt-12">
         <router-link
           to="/article"
-          class="curtain-hover-btn relative bg-transparent text-[#9EBF3B] font-bold text-base px-8 py-4 rounded-xl border-2 border-[#9EBF3B] transition-all duration-500 transform overflow-hidden group inline-block text-center"
+          class="curtain-hover-btn relative bg-transparent text-primary-green font-bold text-base px-8 py-4 rounded-xl border-2 border-primary-green transition-all duration-500 transform overflow-hidden group inline-block text-center"
           :class="{ 
             'opacity-0 translate-y-4': !isVisible,
             'opacity-100 translate-y-0': isVisible

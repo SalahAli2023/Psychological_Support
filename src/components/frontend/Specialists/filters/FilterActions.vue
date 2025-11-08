@@ -8,7 +8,7 @@
     </button>
     <button 
       @click="$emit('applyFilters')" 
-      class="w-full bg-[#9EBF3B] hover:bg-[#9EBF3B] text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm"
+      class="w-full bg-primary-green hover:bg-primary-green text-white py-3 rounded-xl font-bold shadow hover:shadow-md transition-all text-sm"
     >
       {{ translate('therapists.filters.search') }}
     </button>

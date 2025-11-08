@@ -7,16 +7,16 @@
   >
     <!-- أشكال زخرفية في الخلفية -->
     <div 
-      class="absolute top-10 left-10 w-32 h-32 bg-[#D6A29A] opacity-5 rounded-full blur-2xl transition-all duration-1000 delay-300"
+      class="absolute top-10 left-10 w-32 h-32 bg-primary-pink opacity-5 rounded-full blur-2xl transition-all duration-1000 delay-300"
       :class="decorativeClass"
     ></div>
     <div 
-      class="absolute bottom-10 right-10 w-40 h-40 bg-[#9EBF3B] opacity-5 rounded-full blur-2xl transition-all duration-1000 delay-500"
+      class="absolute bottom-10 right-10 w-40 h-40 bg-primary-green opacity-5 rounded-full blur-2xl transition-all duration-1000 delay-500"
       :class="decorativeClass"
     ></div>
     <!-- شكل زخرفي إضافي -->
     <div 
-      class="absolute top-1/2 left-1/4 w-24 h-24 bg-[#D6A29A] opacity-3 rounded-full blur-xl transition-all duration-1000 delay-700"
+      class="absolute top-1/2 left-1/4 w-24 h-24 bg-primary-pink opacity-3 rounded-full blur-xl transition-all duration-1000 delay-700"
       :class="decorativeClass"
     ></div>
 
@@ -44,7 +44,7 @@
             :key="faq.id"
             class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden border border-gray-100"
             :class="{ 
-              'ring-2 ring-[#D6A29A] ring-opacity-50 shadow-lg': openQuestionId === faq.id,
+              'ring-2 ring-primary-pink ring-opacity-50 shadow-lg': openQuestionId === faq.id,
               'opacity-0 translate-y-8': !isVisible,
               'opacity-100 translate-y-0': isVisible
             }"
@@ -55,13 +55,13 @@
             <!-- زر السؤال -->
             <button 
               @click="toggleQuestion(faq.id)"
-              class="w-full px-6 py-5 text-right flex items-center justify-between text-gray-800 font-semibold hover:text-[#D6A29A] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#D6A29A] focus:ring-opacity-50"
-              :class="{ 'text-[#D6A29A]': openQuestionId === faq.id }"
+              class="w-full px-6 py-5 text-right flex items-center justify-between text-gray-800 font-semibold hover:text-primary-pink transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-pink focus:ring-opacity-50"
+              :class="{ 'text-primary-pink': openQuestionId === faq.id }"
             >
               <span class="flex items-center gap-3 text-right">
                 <!-- رقم السؤال -->
                 <span 
-                  class="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6A29A] text-white text-sm flex items-center justify-center font-bold transition-all duration-300 transform hover:scale-110"
+                  class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-pink text-white text-sm flex items-center justify-center font-bold transition-all duration-300 transform hover:scale-110"
                   :class="{ 'scale-0': !isVisible, 'scale-100': isVisible }"
                   :style="{ transitionDelay: `${index * 100 + 500}ms` }"
                 >
@@ -74,7 +74,7 @@
               <div class="flex items-center gap-2">
                 <svg 
                   class="w-5 h-5 transition-transform duration-300" 
-                  :class="{ 'rotate-180 text-[#D6A29A]': openQuestionId === faq.id, 'text-gray-400': openQuestionId !== faq.id }"
+                  :class="{ 'rotate-180 text-primary-pink': openQuestionId === faq.id, 'text-gray-400': openQuestionId !== faq.id }"
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -103,7 +103,7 @@
             :key="faq.id"
             class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden border border-gray-100"
             :class="{ 
-              'ring-2 ring-[#D6A29A] ring-opacity-50 shadow-lg': openQuestionId === faq.id,
+              'ring-2 ring-primary-pink ring-opacity-50 shadow-lg': openQuestionId === faq.id,
               'opacity-0 translate-y-8': !isVisible,
               'opacity-100 translate-y-0': isVisible
             }"
@@ -114,13 +114,13 @@
             <!-- زر السؤال -->
             <button 
               @click="toggleQuestion(faq.id)"
-              class="w-full px-6 py-5 text-right flex items-center justify-between text-gray-800 font-semibold hover:text-[#D6A29A] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#D6A29A] focus:ring-opacity-50"
-              :class="{ 'text-[#D6A29A]': openQuestionId === faq.id }"
+              class="w-full px-6 py-5 text-right flex items-center justify-between text-gray-800 font-semibold hover:text-primary-pink transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-pink focus:ring-opacity-50"
+              :class="{ 'text-primary-pink': openQuestionId === faq.id }"
             >
               <span class="flex items-center gap-3 text-right">
                 <!-- رقم السؤال -->
                 <span 
-                  class="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6A29A] text-white text-sm flex items-center justify-center font-bold transition-all duration-300 transform hover:scale-110"
+                  class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-pink text-white text-sm flex items-center justify-center font-bold transition-all duration-300 transform hover:scale-110"
                   :class="{ 'scale-0': !isVisible, 'scale-100': isVisible }"
                   :style="{ transitionDelay: `${(index + 4) * 100 + 500}ms` }"
                 >
@@ -133,7 +133,7 @@
               <div class="flex items-center gap-2">
                 <svg 
                   class="w-5 h-5 transition-transform duration-300" 
-                  :class="{ 'rotate-180 text-[#D6A29A]': openQuestionId === faq.id, 'text-gray-400': openQuestionId !== faq.id }"
+                  :class="{ 'rotate-180 text-primary-pink': openQuestionId === faq.id, 'text-gray-400': openQuestionId !== faq.id }"
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -162,7 +162,7 @@
         :class="buttonClass"
       >
         <!-- خلفية متصلة -->
-        <div class="absolute inset-0 bg-[#9EBF3B]"></div>
+        <div class="absolute inset-0 bg-primary-green"></div>
         
         <!-- أشكال زخرفية في الخلفية -->
         <div class="absolute top-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
@@ -176,7 +176,7 @@
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
-              class="bg-white text-[#9EBF3B] font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform"
+              class="bg-white text-primary-green font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform"
               :class="{ 'opacity-0 translate-y-4': !isVisible, 'opacity-100 translate-y-0 hover:scale-105': isVisible }"
               style="transition-delay: 1100ms"
             >
@@ -186,7 +186,7 @@
               </span>
             </button>
             <button 
-              class="bg-transparent text-white font-bold py-4 px-8 rounded-xl border-2 border-white hover:bg-white hover:text-[#9EBF3B] transition-all duration-300 shadow-lg hover:shadow-xl transform"
+              class="bg-transparent text-white font-bold py-4 px-8 rounded-xl border-2 border-white hover:bg-white hover:text-primary-green transition-all duration-300 shadow-lg hover:shadow-xl transform"
               :class="{ 'opacity-0 translate-y-4': !isVisible, 'opacity-100 translate-y-0 hover:scale-105': isVisible }"
               style="transition-delay: 1200ms"
             >

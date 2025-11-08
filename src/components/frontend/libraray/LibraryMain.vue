@@ -36,7 +36,7 @@
               <button
                 v-if="isRTL"
                 @click="searchBooks"
-                class="bg-[#9EBF3B] text-white px-6 py-3 rounded-lg hover:bg-[#8cad35] transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
+                class="bg-primary-green text-white px-6 py-3 rounded-lg hover:bg-secondary-green transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
                 :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
               >
                 <i class="fas fa-search" :class="isRTL ? 'ml-2' : 'mr-2'"></i>
@@ -47,7 +47,7 @@
                 v-model="search"
                 type="text"
                 :placeholder="searchPlaceholder"
-                class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#9EBF3B] focus:border-transparent text-gray-700"
+                class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent text-gray-700"
                 :class="isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'"
                 @keyup.enter="searchBooks"
               />
@@ -56,7 +56,7 @@
               <button
                 v-if="!isRTL"
                 @click="searchBooks"
-                class="bg-[#9EBF3B] text-white px-6 py-3 rounded-lg hover:bg-[#8cad35] transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
+                class="bg-primary-green text-white px-6 py-3 rounded-lg hover:bg-secondary-green transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg min-w-[120px] justify-center"
                 :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
               >
                 <span>{{ translate('buttons.search') }}</span>

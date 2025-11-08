@@ -1,10 +1,10 @@
 <template>
   <div class="hidden lg:block w-80">
-    <div class="p-6 bg-white rounded-2xl shadow-lg border border-[#9EBF3B] sticky top-8">
+    <div class="p-6 bg-white rounded-2xl shadow-lg border border-primary-green sticky top-8">
       <!-- Desktop Header -->
-      <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#9EBF3B]">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-primary-green">
         <div class="flex items-center gap-3">
-          <i class="fas fa-sliders-h text-[#9EBF3B] text-xl"></i>
+          <i class="fas fa-sliders-h text-primary-green text-xl"></i>
           <h2 class="text-xl font-bold text-[#065f46]">{{ translate('therapists.filters.title') }}</h2>
         </div>
         <button 

@@ -23,7 +23,7 @@
       <div class="flex flex-row items-center gap-3 md:gap-6 sm:gap-4 relative">
         <router-link
           to="/join"
-          class="bg-[#9EBF3B] text-white font-semibold h-12 w-[130px] sm:w-[180px] md:w-[200px] rounded-2xl flex items-center justify-center gap-2 hover:bg-[#8aab34] transition-all duration-300 shadow-md hover:shadow-lg text-base sm:text-lg"
+          class="bg-primary-green text-white font-semibold h-12 w-[130px] sm:w-[180px] md:w-[200px] rounded-2xl flex items-center justify-center gap-2 hover:bg-secondary-green transition-all duration-300 shadow-md hover:shadow-lg text-base sm:text-lg"
         >
           <img
             src="https://injazalarab.org/_nuxt/img/compus-arrow.7f03aae.svg"
@@ -38,7 +38,7 @@
 
         <button
           @click="toggleLanguage"
-          class="bg-[#9EBF3B] text-white font-semibold h-12 w-12 rounded-2xl flex items-center justify-center gap-2 hover:bg-[#8aab34] transition-all duration-300 shadow-md hover:shadow-lg"
+          class="bg-primary-green text-white font-semibold h-12 w-12 rounded-2xl flex items-center justify-center gap-2 hover:bg-secondary-green transition-all duration-300 shadow-md hover:shadow-lg"
           :title="t('header.languageToggle')"
         >
           {{ currentLanguage === 'ar' ? 'EN' : 'AR' }}
@@ -46,7 +46,7 @@
 
         <button
           @click="toggleMenu"
-          class="w-12 h-12 bg-[#9EBF3B] text-white text-2xl font-bold rounded-2xl flex items-center justify-center shadow-md hover:bg-[#8aab34] hover:shadow-lg transition-all duration-300"
+          class="w-12 h-12 bg-primary-green text-white text-2xl font-bold rounded-2xl flex items-center justify-center shadow-md hover:bg-secondary-green hover:shadow-lg transition-all duration-300"
           :aria-label="t('header.openMenu')"
         >
           &#9776;
@@ -65,7 +65,7 @@
 
    <button
   @click="toggleMenu"
-  class="absolute md:top-8 top-6 md:left-8 left-4 w-12 h-12 border-2 border-[#9EBF3B] text-[#9EBF3B] text-2xl font-bold rounded-2xl flex items-center justify-center shadow-md hover:bg-[#9EBF3B] hover:text-white transition-all duration-300"
+  class="absolute md:top-8 top-6 md:left-8 left-4 w-12 h-12 border-2 border-primary-green text-primary-green text-2xl font-bold rounded-2xl flex items-center justify-center shadow-md hover:bg-primary-green hover:text-white transition-all duration-300"
   :aria-label="t('header.closeMenu')"
 >
         &times;
@@ -77,7 +77,7 @@
           :key="item.path"
           :to="item.path"
           @click="toggleMenu"
-          class="hover:text-[#9EBF3B] hover:scale-110 transition-all duration-300 cursor-pointer py-2 block"
+          class="hover:text-primary-green hover:scale-110 transition-all duration-300 cursor-pointer py-2 block"
         >
           {{ item.name[currentLanguage] }}
         </router-link>
