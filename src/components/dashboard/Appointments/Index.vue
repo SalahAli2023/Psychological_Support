@@ -1,71 +1,91 @@
 <template>
-	<div class="space-y-4">
-		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-semibold">Appointments</h1>
-			<Button variant="primary" @click="openCreate">Book Session</Button>
+	<div class="space-y-4 p-4">
+		<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+			<h1 class="text-xl font-semibold text-primary sm:text-2xl">Appointments</h1>
+			<Button variant="primary" class="w-full sm:w-auto" @click="openCreate">Book Session</Button>
 		</div>
-		<div class="flex flex-wrap items-center gap-2">
-			<select v-model="status" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900">
+		
+		<div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+			<select v-model="status" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary sm:w-48">
 				<option value="">All statuses</option>
 				<option value="scheduled">Scheduled</option>
 				<option value="completed">Completed</option>
 				<option value="cancelled">Cancelled</option>
 			</select>
-			<input v-model="therapist" placeholder="Therapist" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-			<input v-model="date" type="date" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
+			<input v-model="therapist" placeholder="Therapist" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary sm:w-48" />
+			<input v-model="date" type="date" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary sm:w-48" />
 		</div>
+		
 		<Card>
 			<template #header>List</template>
-			<table class="min-w-full text-sm">
-				<thead>
-					<tr class="text-start text-gray-500">
-						<th class="px-3 py-2 text-start">Client</th>
-						<th class="px-3 py-2 text-start">Therapist</th>
-						<th class="px-3 py-2 text-start">Date</th>
-						<th class="px-3 py-2 text-start">Status</th>
-						<th class="px-3 py-2 text-start"></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="a in filtered" :key="a.id" class="border-t border-gray-200 dark:border-gray-800">
-						<td class="px-3 py-2">{{ a.clientName }}</td>
-						<td class="px-3 py-2">{{ a.therapist }}</td>
-						<td class="px-3 py-2">{{ new Date(a.startsAt).toLocaleString() }}</td>
-						<td class="px-3 py-2">
-							<span class="badge" :class="{
-								'border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300': a.status==='scheduled',
-								'border-gray-300 text-gray-700 dark:border-gray-700 dark:text-gray-300': a.status==='completed',
-								'border-rose-300 text-rose-700 dark:border-rose-700 dark:text-rose-300': a.status==='cancelled',
-							}">{{ a.status }}</span>
-						</td>
-						<td class="px-3 py-2">
-							<Button size="sm" variant="outline" @click="edit(a)">Edit</Button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="overflow-x-auto -mx-2 sm:mx-0">
+				<table class="min-w-full text-sm">
+					<thead>
+						<tr class="text-start text-secondary">
+							<th class="px-3 py-3 text-start min-w-[120px]">Client</th>
+							<th class="px-3 py-3 text-start min-w-[120px]">Therapist</th>
+							<th class="px-3 py-3 text-start min-w-[150px]">Date</th>
+							<th class="px-3 py-3 text-start min-w-[100px]">Status</th>
+							<th class="px-3 py-3 text-start min-w-[100px]">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="a in filtered" :key="a.id" class="border-t border-primary">
+							<td class="px-3 py-3 text-primary whitespace-nowrap">{{ a.clientName }}</td>
+							<td class="px-3 py-3 text-primary whitespace-nowrap">{{ a.therapist }}</td>
+							<td class="px-3 py-3 text-primary whitespace-nowrap text-sm">{{ new Date(a.startsAt).toLocaleString() }}</td>
+							<td class="px-3 py-3">
+								<span class="badge border text-primary text-xs whitespace-nowrap" :class="{
+									'border-emerald-300 text-emerald-700': a.status==='scheduled',
+									'border-gray-300 text-gray-700': a.status==='completed',
+									'border-rose-300 text-rose-700': a.status==='cancelled',
+								}">{{ a.status }}</span>
+							</td>
+							<td class="px-3 py-3">
+								<Button size="sm" variant="outline" class="whitespace-nowrap" @click="edit(a)">Edit</Button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div v-if="filtered.length === 0" class="text-center py-8 text-secondary">
+				No appointments found
+			</div>
 		</Card>
 
 		<!-- Modal -->
-		<div v-if="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3" @click.self="close">
-			<div class="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
-				<div class="mb-3 flex items-center justify-between">
-					<div class="text-lg font-semibold">{{ current?.id ? 'Edit Session' : 'Book Session' }}</div>
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" @click="close">✕</button>
+		<div v-if="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+			<div class="w-full max-w-md rounded-xl border border-primary bg-primary p-4 shadow-lg max-h-[90vh] overflow-y-auto">
+				<div class="mb-4 flex items-center justify-between">
+					<div class="text-lg font-semibold text-primary">{{ current?.id ? 'Edit Session' : 'Book Session' }}</div>
+					<button class="inline-grid h-8 w-8 place-items-center rounded-lg hover:bg-tertiary text-primary" @click="close">✕</button>
 				</div>
-				<div class="grid gap-3">
-					<input v-model="form.clientName" placeholder="Client" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-					<input v-model="form.therapist" placeholder="Therapist" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-					<input v-model="form.startsAt" type="datetime-local" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-					<select v-model="form.status" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900">
-						<option value="scheduled">Scheduled</option>
-						<option value="completed">Completed</option>
-						<option value="cancelled">Cancelled</option>
-					</select>
+				<div class="space-y-4">
+					<div>
+						<label class="block text-sm text-primary mb-2">Client Name</label>
+						<input v-model="form.clientName" placeholder="Enter client name" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" />
+					</div>
+					<div>
+						<label class="block text-sm text-primary mb-2">Therapist</label>
+						<input v-model="form.therapist" placeholder="Enter therapist name" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" />
+					</div>
+					<div>
+						<label class="block text-sm text-primary mb-2">Date & Time</label>
+						<input v-model="form.startsAt" type="datetime-local" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" />
+					</div>
+					<div>
+						<label class="block text-sm text-primary mb-2">Status</label>
+						<select v-model="form.status" class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary">
+							<option value="scheduled">Scheduled</option>
+							<option value="completed">Completed</option>
+							<option value="cancelled">Cancelled</option>
+						</select>
+					</div>
 				</div>
-				<div class="mt-4 flex justify-end gap-2">
-					<Button variant="outline" @click="close">Cancel</Button>
-					<Button variant="primary" @click="save">Save</Button>
+				<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+					<Button variant="outline" class="w-full sm:w-auto" @click="close">Cancel</Button>
+					<Button variant="primary" class="w-full sm:w-auto" @click="save">Save</Button>
 				</div>
 			</div>
 		</div>

@@ -1,16 +1,16 @@
 <template>
 	<div class="space-y-4">
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-semibold">{{ t('nav.programs') }}</h1>
+			<h1 class="text-2xl font-semibold text-primary">{{ t('nav.programs') }}</h1>
 			<Button variant="primary" @click="openCreate">Add Program</Button>
 		</div>
 		<Card>
 			<template #header>Programs</template>
-			<ul class="divide-y divide-gray-200 dark:divide-gray-800">
+			<ul class="divide-y divide-primary">
 				<li v-for="p in programs" :key="p.id" class="flex items-center justify-between px-2 py-3">
 					<div>
-						<div class="font-medium">{{ p.title }}</div>
-						<div class="text-sm text-gray-500">{{ p.sessions.length }} sessions</div>
+						<div class="font-medium text-primary">{{ p.title }}</div>
+						<div class="text-sm text-secondary">{{ p.sessions.length }} sessions</div>
 					</div>
 					<div class="flex items-center gap-2">
 						<Button size="sm" variant="outline" @click="edit(p)">Edit</Button>
@@ -21,18 +21,31 @@
 
 		<!-- Modal -->
 		<div v-if="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3" @click.self="close">
-			<div class="w-full max-w-3xl rounded-xl border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
+			<div class="w-full max-w-3xl rounded-xl border border-primary bg-primary p-4 shadow-lg">
 				<div class="mb-3 flex items-center justify-between">
-					<div class="text-lg font-semibold">{{ current?.id ? 'Edit Program' : 'Add Program' }}</div>
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" @click="close">✕</button>
+					<div class="text-lg font-semibold text-primary">{{ current?.id ? 'Edit Program' : 'Add Program' }}</div>
+					<button class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary" @click="close">✕</button>
 				</div>
 				<div class="grid gap-3">
-					<input v-model="form.title" placeholder="Title" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-					<QuillEditor theme="snow" v-model:content="form.description" contentType="html" class="h-64 rounded-lg bg-white dark:bg-gray-900" />
-					<label class="text-sm">Sessions</label>
+					<input 
+						v-model="form.title" 
+						placeholder="Title" 
+						class="rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" 
+					/>
+					<QuillEditor 
+						theme="snow" 
+						v-model:content="form.description" 
+						contentType="html" 
+						class="h-64 rounded-lg bg-primary text-primary" 
+					/>
+					<label class="text-sm text-primary">Sessions</label>
 					<div class="space-y-2">
 						<div v-for="(s,idx) in form.sessions" :key="idx" class="flex items-center gap-2">
-							<input v-model="form.sessions[idx]" class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" placeholder="Session title" />
+							<input 
+								v-model="form.sessions[idx]" 
+								class="flex-1 rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" 
+								placeholder="Session title" 
+							/>
 							<Button size="sm" variant="outline" @click="form.sessions.splice(idx,1)">Remove</Button>
 						</div>
 						<Button size="sm" variant="secondary" @click="form.sessions.push('')">Add Session</Button>

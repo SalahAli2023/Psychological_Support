@@ -1,10 +1,17 @@
 <template>
 	<div class="space-y-4">
 		<div class="flex flex-wrap items-center justify-between gap-2">
-			<h1 class="text-2xl font-semibold">Users</h1>
+			<h1 class="text-2xl font-semibold text-primary">Users</h1>
 			<div class="flex items-center gap-2">
-				<input v-model="q" placeholder="Search users" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900" />
-				<select v-model="role" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900">
+				<input 
+					v-model="q" 
+					placeholder="Search users" 
+					class="rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary" 
+				/>
+				<select 
+					v-model="role" 
+					class="rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary"
+				>
 					<option value="">All</option>
 					<option>Admin</option>
 					<option>Therapist</option>
@@ -16,17 +23,17 @@
 			<template #header>Users</template>
 			<table class="min-w-full text-sm">
 				<thead>
-					<tr class="text-start text-gray-500">
+					<tr class="text-start text-secondary">
 						<th class="px-3 py-2 text-start">Name</th>
 						<th class="px-3 py-2 text-start">Email</th>
 						<th class="px-3 py-2 text-start">Role</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="u in filtered" :key="u.id" class="border-t border-gray-200 dark:border-gray-800">
-						<td class="px-3 py-2">{{ u.name }}</td>
-						<td class="px-3 py-2">{{ u.email }}</td>
-						<td class="px-3 py-2"><span class="badge">{{ u.role }}</span></td>
+					<tr v-for="u in filtered" :key="u.id" class="border-t border-primary">
+						<td class="px-3 py-2 text-primary">{{ u.name }}</td>
+						<td class="px-3 py-2 text-primary">{{ u.email }}</td>
+						<td class="px-3 py-2"><span class="badge text-primary">{{ u.role }}</span></td>
 					</tr>
 				</tbody>
 			</table>

@@ -1,11 +1,11 @@
 <template>
 	<div class="card flex items-center gap-4">
-		<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300">
+		<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-500/20 text-accent-500">
 			<slot name="icon" />
 		</div>
 		<div class="min-w-0">
-			<div class="text-xs text-gray-500">{{ label }}</div>
-			<div class="truncate text-2xl font-semibold">{{ value }}</div>
+			<div class="text-xs text-secondary">{{ label }}</div>
+			<div class="truncate text-2xl font-semibold text-primary">{{ value }}</div>
 		</div>
 		<div class="ms-auto text-xs" :class="deltaClass">{{ delta }}</div>
 	</div>
