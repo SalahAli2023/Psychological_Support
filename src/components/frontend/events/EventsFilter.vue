@@ -7,7 +7,7 @@
         v-model="searchQuery"
         type="text" 
         :placeholder="translate('events.filter.searchPlaceholder')"
-        class="w-full px-12 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#9EBF3B] focus:ring-4 focus:ring-[#9EBF3B]/20 transition-all duration-300 text-base shadow-sm hover:shadow-md"
+        class="w-full px-12 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-primary-green focus:ring-4 focus:ring-primary-green/20 transition-all duration-300 text-base shadow-sm hover:shadow-md"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       />
       <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
@@ -17,7 +17,7 @@
     <div class="relative">
       <select 
         v-model="selectedCategory"
-        class="w-full md:w-48 px-4 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 focus:outline-none focus:border-[#9EBF3B] focus:ring-4 focus:ring-[#9EBF3B]/20 transition-all duration-300 appearance-none shadow-sm hover:shadow-md text-base"
+        class="w-full md:w-48 px-4 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 focus:outline-none focus:border-primary-green focus:ring-4 focus:ring-primary-green/20 transition-all duration-300 appearance-none shadow-sm hover:shadow-md text-base"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
         <option value="all">{{ translate('events.filter.allEvents') }}</option>

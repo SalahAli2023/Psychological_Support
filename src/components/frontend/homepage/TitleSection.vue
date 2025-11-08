@@ -28,11 +28,11 @@ defineProps({
   },
   highlightColor: {
     type: String,
-    default: 'text-[#9EBF3B]',
+    default: 'text-primary-green',
   },
   gradientClass: {
     type: String,
-    default: 'bg-[#d6a29a]',
+    default: 'bg-primary-pink',
   },
   titleClass: String,
   lineClass: String,

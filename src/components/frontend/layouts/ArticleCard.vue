@@ -18,7 +18,7 @@
     <!-- محتوى المقال -->
     <div class="p-6 flex flex-col flex-1">
       <!-- العنوان -->
-      <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#D6A29A] transition-colors duration-300">
+      <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-pink transition-colors duration-300">
         {{ article.title }}
       </h3>
 
@@ -51,7 +51,7 @@
           </div>
           
           <!-- زر "اقرأ المزيد" -->
-          <button class="bg-[#9EBF3B] text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-[#8aab34] hover:shadow-lg transition-all duration-300 whitespace-nowrap flex items-center gap-2">
+          <button class="bg-primary-green text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-secondary-green hover:shadow-lg transition-all duration-300 whitespace-nowrap flex items-center gap-2">
             <span>{{ getReadMoreText() }}</span>
             <i class="fas fa-arrow-left text-xs" v-if="currentLanguage === 'ar'"></i>
             <i class="fas fa-arrow-right text-xs" v-else></i>

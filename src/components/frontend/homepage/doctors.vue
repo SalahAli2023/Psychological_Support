@@ -7,11 +7,11 @@
   >
     <!-- أشكال زخرفية في الخلفية -->
     <div 
-      class="absolute top-0 left-0 w-72 h-72 bg-[#9EBF3B] opacity-5 rounded-full blur-3xl transition-all duration-1000 delay-300"
+      class="absolute top-0 left-0 w-72 h-72 bg-primary-green opacity-5 rounded-full blur-3xl transition-all duration-1000 delay-300"
       :class="decorativeClass"
     ></div>
     <div 
-      class="absolute bottom-0 right-0 w-80 h-80 bg-[#D6A29A] opacity-5 rounded-full blur-3xl transition-all duration-1000 delay-500"
+      class="absolute bottom-0 right-0 w-80 h-80 bg-primary-pink opacity-5 rounded-full blur-3xl transition-all duration-1000 delay-500"
       :class="decorativeClass"
     ></div>
     
@@ -37,7 +37,7 @@
         <!-- زر السابق -->
         <button 
           @click="prevExpert" 
-          class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-[#9EBF3B] hover:text-[#D6A29A] transition-all duration-300 hover:scale-110"
+          class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-primary-green hover:text-primary-pink transition-all duration-300 hover:scale-110"
           :class="navButtonClass"
         >
           <i class="fas fa-chevron-right text-sm md:text-lg"></i>
@@ -46,7 +46,7 @@
         <!-- زر التالي -->
         <button 
           @click="nextExpert" 
-          class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-[#9EBF3B] hover:text-[#D6A29A] transition-all duration-300 hover:scale-110"
+          class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-primary-green hover:text-primary-pink transition-all duration-300 hover:scale-110"
           :class="navButtonClass"
         >
           <i class="fas fa-chevron-left text-sm md:text-lg"></i>
@@ -78,7 +78,7 @@
                     <div class=" transition-all duration-700 delay-400 order-1 lg:order-2"
                          :class="expertInfoClass">
                       <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">{{ expert.name }}</h3>
-                      <p class="text-lg sm:text-xl text-[#D6A29A] font-semibold mb-4 md:mb-6">{{ expert.specialty }}</p>
+                      <p class="text-lg sm:text-xl text-primary-pink font-semibold mb-4 md:mb-6">{{ expert.specialty }}</p>
                       
                       <!-- الوصف -->
                       <p class="text-gray-600 leading-relaxed mb-6 md:mb-8 text-sm sm:text-base md:text-lg">
@@ -88,13 +88,13 @@
                       <!-- أزرار التواصل -->
                       <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start transition-all duration-700 delay-600"
                            :class="buttonClass">
-                        <button class="bg-[#9EBF3B] text-white font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl hover:bg-[#8aa835] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm md:text-base">
+                        <button class="bg-primary-green text-white font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl hover:bg-[#8aa835] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm md:text-base">
                           <span class="flex items-center gap-2 justify-center">
                             {{ translate('home.experts.book') }}
                             <i class="fas fa-calendar-check text-xs md:text-sm"></i>
                           </span>
                         </button>
-                        <button class="bg-transparent text-[#9EBF3B] font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl border-2 border-[#9EBF3B] hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 transform hover:scale-105 text-sm md:text-base">
+                        <button class="bg-transparent text-primary-green font-semibold py-2 md:py-3 px-6 md:px-8 rounded-xl border-2 border-primary-green hover:bg-primary-green hover:text-white transition-all duration-300 transform hover:scale-105 text-sm md:text-base">
                           <span class="flex items-center gap-2 justify-center">
                             {{ translate('home.experts.profile') }}
                             <i class="fas fa-user text-xs md:text-sm"></i>
@@ -118,7 +118,7 @@
           :key="index"
           @click="goToExpert(index)"
           class="w-8 h-2 md:w-12 md:h-2 rounded-full transition-all duration-300 hover:scale-110"
-          :class="index === currentIndex ? 'bg-[#9EBF3B] scale-110' : 'bg-gray-300 hover:bg-gray-400'"
+          :class="index === currentIndex ? 'bg-primary-green scale-110' : 'bg-gray-300 hover:bg-gray-400'"
         >
         </button>
       </div>

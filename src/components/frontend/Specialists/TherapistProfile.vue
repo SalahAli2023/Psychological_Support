@@ -33,7 +33,7 @@
                 <img 
                   :src="therapist.image" 
                   :alt="therapist.name"
-                  class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover ring-4 ring-[#9EBF3B]"
+                  class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover ring-4 ring-primary-green"
                 >
               </div>
 
@@ -49,7 +49,7 @@
                 <!-- Rating -->
                 <div class="flex items-center sm:justify-start gap-3 mb-3 sm:mb-4">
                   <div class="flex">
-                    <i v-for="i in 5" :key="i" class="fas fa-star text-[#D6A29A] text-sm sm:text-lg"></i>
+                    <i v-for="i in 5" :key="i" class="fas fa-star text-primary-pink text-sm sm:text-lg"></i>
                   </div>
                   <span class="text-[#059669] font-bold text-sm sm:text-lg">
                     {{ therapist.rating }} / {{ therapist.totalSessions }} جلسة
@@ -78,7 +78,7 @@
           <!-- About the Expert -->
           <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm mb-6 sm:mb-8">
             <div class="flex items-center gap-3 mb-4">
-              <i class="fas fa-info-circle text-[#9EBF3B] text-xl"></i>
+              <i class="fas fa-info-circle text-primary-green text-xl"></i>
                <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">{{ translate('therapistProfile.profile.aboutExpert') }}</h2>
             </div>
 
@@ -86,7 +86,7 @@
               <h3 class="text-lg font-semibold text-[#047857] mb-3">{{ translate('therapistProfile.profile.qualifications') }}</h3>
               <ul class="space-y-2">
                 <li v-for="qualification in visibleQualifications" :key="qualification" class="flex items-start gap-3">
-                  <i class="fas fa-check-circle text-[#9EBF3B] mt-1"></i>
+                  <i class="fas fa-check-circle text-primary-green mt-1"></i>
                   <span class="text-gray-700 text-sm sm:text-base">{{ qualification }}</span>
                 </li>
               </ul>
@@ -108,7 +108,7 @@
           <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm">
             <div class="flex items-center justify-between mb-4 sm:mb-6">
               <div class="flex items-center gap-3">
-                <i class="fas fa-star text-[#D6A29A] text-xl"></i>
+                <i class="fas fa-star text-primary-pink text-xl"></i>
                    <h2 class="text-xl sm:text-2xl font-bold text-[#065f46]">{{ translate('therapistProfile.profile.testimonials') }}</h2>
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-500 sm:hidden">
@@ -132,7 +132,7 @@
                     class="rounded-lg p-4 hover:shadow-sm transition-shadow w-80 flex-shrink-0 bg-gray-50"
                   >
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-8 h-8 bg-[#9EBF3B] rounded-full flex items-center justify-center">
+                      <div class="w-8 h-8 bg-primary-green rounded-full flex items-center justify-center">
                         <i class="fas fa-user text-white text-xs"></i>
                       </div>
                       <div>
@@ -142,7 +142,7 @@
                     </div>
                     
                     <div class="flex mb-3">
-                      <i v-for="i in 5" :key="i" class="fas fa-star text-[#D6A29A] text-xs"></i>
+                      <i v-for="i in 5" :key="i" class="fas fa-star text-primary-pink text-xs"></i>
                     </div>
 
                     <p class="text-gray-700 mb-3 text-sm leading-relaxed line-clamp-3">
@@ -151,8 +151,8 @@
 
                     <div class="flex justify-between items-center">
                       <div class="flex gap-1">
-                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
-                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
+                        <i class="fas fa-quote-right text-primary-green text-xs"></i>
+                        <i class="fas fa-quote-right text-primary-green text-xs"></i>
                       </div>
                       <span class="text-xs text-gray-400">{{ testimonial.date }}</span>
                     </div>
@@ -169,7 +169,7 @@
                     class="rounded-lg p-4 hover:shadow-sm transition-shadow bg-gray-50"
                   >
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-8 h-8 bg-[#9EBF3B] rounded-full flex items-center justify-center">
+                      <div class="w-8 h-8 bg-primary-green rounded-full flex items-center justify-center">
                         <i class="fas fa-user text-white text-xs"></i>
                       </div>
                       <div>
@@ -179,7 +179,7 @@
                     </div>
                     
                     <div class="flex mb-3">
-                      <i v-for="i in 5" :key="i" class="fas fa-star text-[#D6A29A] text-xs"></i>
+                      <i v-for="i in 5" :key="i" class="fas fa-star text-primary-pink text-xs"></i>
                     </div>
 
                     <p class="text-gray-700 mb-3 text-sm leading-relaxed">
@@ -188,8 +188,8 @@
 
                     <div class="flex justify-between items-center">
                       <div class="flex gap-1">
-                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
-                        <i class="fas fa-quote-right text-[#9EBF3B] text-xs"></i>
+                        <i class="fas fa-quote-right text-primary-green text-xs"></i>
+                        <i class="fas fa-quote-right text-primary-green text-xs"></i>
                       </div>
                       <span class="text-xs text-gray-400">{{ testimonial.date }}</span>
                     </div>
@@ -203,7 +203,7 @@
                   v-for="n in Math.ceil(therapist.testimonials.length / 2)" 
                   :key="n"
                   class="w-2 h-2 rounded-full bg-gray-300 transition-all duration-300"
-                  :class="{ 'bg-[#9EBF3B] w-4': currentTestimonialPage === n }"
+                  :class="{ 'bg-primary-green w-4': currentTestimonialPage === n }"
                 ></div>
               </div>
             </div>
@@ -214,7 +214,7 @@
         <div class="w-full lg:w-80">
           <div class="sticky top-4 lg:top-8 p-4 sm:p-6 bg-white rounded-xl shadow-sm">
             <div class="mb-4">
-              <h2 class="text-xl text-center sm:text-2xl font-bold text-[#065f46] bg-[#9EBF3B] text-white p-3 rounded-lg">
+              <h2 class="text-xl text-center sm:text-2xl font-bold text-[#065f46] bg-primary-green text-white p-3 rounded-lg">
               {{ translate('therapistProfile.booking.title') }}
                 </h2>
                 <p class="text-xs sm:text-sm text-[#047857] mt-2 bg-gray-50 p-2 rounded-lg">
@@ -225,14 +225,14 @@
             <!-- Calendar - بدون حدود -->
             <div class="mb-6 bg-gray-50 rounded-lg p-3">
               <div class="flex   items-center justify-between mb-4">
-                <button @click="previousMonth" class="p-2 rounded-lg hover:bg-[#9EBF3B] hover:text-white text-[#065f46] transition-colors">
+                <button @click="previousMonth" class="p-2 rounded-lg hover:bg-primary-green hover:text-white text-[#065f46] transition-colors">
                   <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="text-center bg-white rounded-lg px-2 sm:px-4 py-2">
                    <div class="text-sm sm:text-lg font-bold text-gray-800">{{ currentMonthName }}</div>
                 <div class="text-xs sm:text-sm font-medium text-gray-600">{{ currentYear }}</div>
               </div>
-                <button @click="nextMonth" class="p-2 rounded-lg hover:bg-[#9EBF3B] hover:text-white text-[#065f46] transition-colors">
+                <button @click="nextMonth" class="p-2 rounded-lg hover:bg-primary-green hover:text-white text-[#065f46] transition-colors">
                   <i class="fas fa-chevron-left"></i>
                 </button>
               </div>
@@ -254,12 +254,12 @@
                     'p-1 sm:p-2 text-xs sm:text-sm rounded-lg   transition-all font-medium',
                     day.isCurrentMonth 
                       ? day.isSelected 
-                        ? 'bg-[#9EBF3B] text-white shadow-sm' 
+                        ? 'bg-primary-green text-white shadow-sm' 
                         : day.isToday
                           ? 'bg-gray-300 text-gray-800'
                           : 'text-gray-700 hover:bg-gray-200'
                       : 'text-gray-300',
-                    day.isSelected ? 'ring-2 ring-[#9EBF3B]' : ''
+                    day.isSelected ? 'ring-2 ring-primary-green' : ''
                   ]"
                 >
                   {{ day.day }}
@@ -283,7 +283,7 @@
                   :class="[
                     'p-2 sm:p-3 rounded-lg transition-all flex items-center justify-between',
                     slot === selectedTimeSlot 
-                      ? 'bg-[#9EBF3B] text-white shadow-sm' 
+                      ? 'bg-primary-green text-white shadow-sm' 
                       : 'bg-white hover:bg-gray-100'
                   ]"
                 >
@@ -299,7 +299,7 @@
               <button 
                 v-if="selectedTimeSlot"
                 @click="bookAppointment"
-                class="w-full mt-4 bg-[#9EBF3B] hover:bg-[#8cad35] text-white py-3 rounded-xl font-bold shadow-sm hover:shadow transition-all"
+                class="w-full mt-4 bg-primary-green hover:bg-[#8cad35] text-white py-3 rounded-xl font-bold shadow-sm hover:shadow transition-all"
               >
                 <div class="flex items-center justify-center gap-2">
                   <i class="fas fa-calendar-check"></i>
