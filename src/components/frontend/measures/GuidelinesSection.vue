@@ -4,10 +4,10 @@
       <div class="rounded-2xl p-8 max-w-4xl mx-auto bg-[rgba(158,191,59,0.05)] border-r-4 border-primary-green">
         <div class="text-center mb-8">
           <h2 class="text-3xl font-bold mb-4 text-gray-800">
-            {{ getTranslatedTitle('guidelines.title') }}
+            {{ translate('guidelines.title') }}
           </h2>
           <p class="text-gray-600">
-            {{ getTranslatedDescription('guidelines.subtitle') }}
+            {{ translate('guidelines.subtitle') }}
           </p>
         </div>
 
@@ -34,8 +34,7 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { t } from '@/locales'
-
+import { useTranslations } from '@/composables/useTranslations'
 export default {
   name: 'GuidelinesSection',
   props: {
@@ -51,29 +50,16 @@ export default {
       return currentLanguage.value === 'ar'
     })
 
-    const translate = (key) => {
-      return t(key, currentLanguage.value)
-    }
-
-    const getTranslatedTitle = (key) => {
-      const translation = t(key, currentLanguage.value)
-      return typeof translation === 'object' ? translation[currentLanguage.value] : translation
-    }
-
-    const getTranslatedDescription = (key) => {
-      const translation = t(key, currentLanguage.value)
-      return typeof translation === 'object' ? translation[currentLanguage.value] : translation
-    }
-
+    const {translate} = useTranslations()
+    
     const getGuidelinesList = () => {
-      const list = t('guidelines.list', currentLanguage.value)
+      const list = translate('guidelines.list', currentLanguage.value)
       return Array.isArray(list) ? list : []
     }
 
     return {
       isRTL,
-      getTranslatedTitle,
-      getTranslatedDescription,
+      translate,
       getGuidelinesList
     }
   }
