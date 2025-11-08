@@ -1,29 +1,30 @@
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
-        <Header />
+        <Header :language="currentLanguage" />
 
+        <Hero 
+            :title="translate('resourcesPage.title')"
+            :subtitle="translate('resourcesPage.description')"
+            :buttons="[
+                { text: translate('buttons.startJourney'), icon: 'fas fa-play-circle', primary: true },
+                { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
+            ]"
+        />
         <!-- Main Content -->
         <main class="container mx-auto px-4 py-28">
-            <!-- Page Header -->
-            <div class="text-center mb-16 animate-slide-up">
-                <h1 class="text-4xl font-bold text-gray-800 mb-6">الموارد القانونية والاجتماعية</h1>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    نقدم لكم مجموعة شاملة من الموارد القانونية والاجتماعية لدعم المرأة والطفل وحماية حقوقهم
-                </p>
-            </div>
 
             <!-- Resources Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
                 <!-- Legal Resources -->
                 <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 animate-slide-up" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 mb-8">
+                    <div class="flex items-center gap-4 mb-8" >
                         <div class="w-14 h-14 bg-gray-200 bg-opacity-10 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-balance-scale text-primary-green text-2xl"></i>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">الموارد القانونية</h2>
-                            <p class="text-gray-600">تشريعات وقوانين حماية المرأة والطفل</p>
+                        <div :class="isRTL ? 'text-right' : 'text-left'">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ translate('resourcesPage.legalResources.title') }}</h2>
+                            <p class="text-gray-600">{{ translate('resourcesPage.legalResources.description') }}</p>
                         </div>
                     </div>
 
@@ -34,7 +35,7 @@
                                 <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center">
                                     <i class="fas fa-gavel text-white text-sm"></i>
                                 </div>
-                                مواد القانون اليمني
+                                {{ translate('resourcesPage.lawsSection.title') }}
                             </h3>
                         
                             <!-- Law Categories Navigation -->
@@ -61,12 +62,14 @@
                                     :style="`animation-delay: ${index * 0.1}s`"
                                 >
                                     <div class="flex justify-between items-start mb-3">
-                                        <span class="text-primary-green font-bold text-lg">{{ law.number }}</span>
-                                        <span class="text-primary-pink text-xs bg-primary-pink/10 px-3 py-1.5 rounded-full font-medium">{{ law.lawTitle }}</span>
+                                        <span class="text-primary-green font-bold text-lg">{{ getTranslatedLawField(law, 'number') }}</span>
+                                        <span class="text-primary-pink text-xs bg-primary-pink/10 px-3 py-1.5 rounded-full font-medium">{{ getTranslatedLawField(law, 'lawTitle') }}</span>
                                     </div>
-                                    <p class="text-gray-700 text-right leading-relaxed mb-3 text-lg">{{ law.text }}</p>
+                                    <p class="text-gray-700 leading-relaxed mb-3 text-lg" :class="isRTL ? 'text-right' : 'text-left'">
+                                        {{ getTranslatedLawField(law, 'text') }}
+                                    </p>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{{ law.category }}</span>
+                                        <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{{ getTranslatedLawField(law, 'category') }}</span>
                                         <div class="w-2 h-2 bg-primary-green rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     </div>
                                 </div>
@@ -79,15 +82,16 @@
                                 <div class="w-10 h-10 bg-primary-pink rounded-full flex items-center justify-center">
                                     <i class="fas fa-shield-alt text-white text-sm"></i>
                                 </div>
-                                أبرز الحقوق الخاصة بالمرأة والطفل
+                                {{ translate('resourcesPage.womenChildrenRights.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(right, index) in womenChildrenRights" :key="index" 
-                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2">
+                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2"
+                                    >
                                     <div class="w-8 h-8 bg-primary-green rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-check text-white text-xs"></i>
                                     </div>
-                                    <span class="text-gray-700 text-right flex-1">{{ right }}</span>
+                                    <span class="text-gray-700 flex-1" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedRight(right) }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -100,9 +104,9 @@
                         <div class="w-14 h-14 bg-gray-200 bg-opacity-10 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-hands-helping text-primary-pink text-2xl"></i>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">الموارد الاجتماعية</h2>
-                            <p class="text-gray-600">برامج دعم ومبادرات مجتمعية</p>
+                        <div :class="isRTL ? 'text-right' : 'text-left'">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ translate('resourcesPage.socialResources.title') }}</h2>
+                            <p class="text-gray-600">{{ translate('resourcesPage.socialResources.description') }}</p>
                         </div>
                     </div>
 
@@ -113,15 +117,16 @@
                                 <div class="w-10 h-10 bg-primary-pink rounded-full flex items-center justify-center">
                                     <i class="fas fa-users text-white text-sm"></i>
                                 </div>
-                                الدعم المجتمعي
+                                {{ translate('resourcesPage.communitySupport.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(support, index) in communitySupport" :key="index"
-                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2">
+                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2"
+                                   >
                                     <div class="w-8 h-8 bg-primary-pink rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-heart text-white text-xs"></i>
                                     </div>
-                                    <span class="text-gray-700 text-right flex-1">{{ support }}</span>
+                                    <span class="text-gray-700 flex-1" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedSupport(support) }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -132,15 +137,16 @@
                                 <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center">
                                     <i class="fas fa-home text-white text-sm"></i>
                                 </div>
-                                التربية الإيجابية
+                                {{ translate('resourcesPage.positiveEducation.title') }}
                             </h3>
                             <ul class="space-y-4">
                                 <li v-for="(education, index) in positiveEducation" :key="index"
-                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2">
+                                    class="flex items-center gap-4 p-3 rounded-lg bg-white/50 hover:bg-white transition-all duration-300 transform hover:translate-x-2"
+                                   >
                                     <div class="w-8 h-8 bg-primary-green rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-star text-white text-xs"></i>
                                     </div>
-                                    <span class="text-gray-700 text-right flex-1">{{ education }}</span>
+                                    <span class="text-gray-700 flex-1" :class="isRTL ? 'text-right' : 'text-left'">{{ getTranslatedEducation(education) }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -151,8 +157,8 @@
             <!-- Emergency Contacts -->
             <div class="bg-gradient-to-r from-primary-green/10 to-primary-pink/10 rounded-2xl shadow-lg p-8 mb-16 border border-primary-green/20 animate-slide-up" style="animation-delay: 0.3s">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">خطوط المساعدة وخدمات الطوارئ</h2>
-                    <p class="text-gray-600 text-lg">تواصل معنا في أي وقت للحصول على المساعدة الفورية</p>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ translate('resourcesPage.emergencyContacts.title') }}</h2>
+                    <p class="text-gray-600 text-lg">{{ translate('resourcesPage.emergencyContacts.description') }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -161,8 +167,8 @@
                         <div class="w-16 h-16 bg-primary-green rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-phone-alt text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">أرقام هواتف الطوارئ</h3>
-                        <p class="text-gray-600 text-sm mb-4">خدمات الطوارئ المتاحة 24/7</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.emergencyNumbers.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.emergencyNumbers.description') }}</p>
                         <div class="space-y-3">
                             <div class="text-primary-green font-bold text-xl hover:text-primary-pink transition-colors duration-300">911</div>
                             <div class="text-primary-green font-bold text-xl hover:text-primary-pink transition-colors duration-300">0800-123-456</div>
@@ -174,10 +180,10 @@
                         <div class="w-16 h-16 bg-primary-pink rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-comments text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">محادثة مباشرة</h3>
-                        <p class="text-gray-600 text-sm mb-4">تواصل فوري مع المركز</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.directChat.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.directChat.description') }}</p>
                         <button class="bg-primary-pink text-white px-8 py-3 rounded-xl hover:bg-primary-green transform hover:scale-105 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
-                            ابدأ المحادثة
+                            {{ translate('resourcesPage.emergencyContacts.directChat.button') }}
                         </button>
                     </div>
 
@@ -186,11 +192,11 @@
                         <div class="w-16 h-16 bg-primary-green rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-headset text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">خطوط الدعم</h3>
-                        <p class="text-gray-600 text-sm mb-4">خطوط المساعدة والدعم النفسي</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.supportLines.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.supportLines.description') }}</p>
                         <div class="space-y-3">
-                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">دعم نسائي: 0800-111-222</div>
-                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">دعم أطفال: 0800-333-444</div>
+                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ translate('resourcesPage.emergencyContacts.supportLines.womenSupport') }}</div>
+                            <div class="text-primary-green font-bold hover:text-primary-pink transition-colors duration-300">{{ translate('resourcesPage.emergencyContacts.supportLines.childrenSupport') }}</div>
                         </div>
                     </div>
 
@@ -199,8 +205,8 @@
                         <div class="w-16 h-16 bg-primary-pink rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-envelope text-white text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">معلومات التواصل</h3>
-                        <p class="text-gray-600 text-sm mb-4">البريد والتواصل العام</p>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ translate('resourcesPage.emergencyContacts.contactInfo.title') }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ translate('resourcesPage.emergencyContacts.contactInfo.description') }}</p>
                         <div class="space-y-3 text-sm">
                             <div class="text-primary-pink hover:text-primary-green transition-colors duration-300 cursor-pointer">info@cswc.org</div>
                             <div class="text-primary-pink hover:text-primary-green transition-colors duration-300 cursor-pointer">support@cswc.org</div>
@@ -212,8 +218,8 @@
             <!-- Supporting Organizations -->
             <div class="bg-white rounded-2xl shadow-lg p-8 animate-slide-up" style="animation-delay: 0.4s">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">الجهات الداعمة والشركاء</h2>
-                    <p class="text-gray-600 text-lg">نعمل مع شبكة من الجهات الداعمة لتقديم أفضل الخدمات</p>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ translate('resourcesPage.supportingOrganizations.title') }}</h2>
+                    <p class="text-gray-600 text-lg">{{ translate('resourcesPage.supportingOrganizations.description') }}</p>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -223,73 +229,127 @@
                              :class="org.bgColor">
                             <i :class="org.icon" class="text-white text-2xl"></i>
                         </div>
-                        <h3 class="font-semibold text-gray-800 text-lg">{{ org.name }}</h3>
-                        <p class="text-gray-500 text-sm mt-2">{{ org.description }}</p>
+                        <h3 class="font-semibold text-gray-800 text-lg">{{ getTranslatedOrganization(org.name) }}</h3>
+                        <p class="text-gray-500 text-sm mt-2">{{ getTranslatedOrganizationDesc(org.description) }}</p>
                     </div>
                 </div>
             </div>
         </main>
 
         <!-- Footer -->
-        <Footer />
+        <Footer :language="currentLanguage" />
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useTranslations } from '@/composables/useTranslations'
 import Header from '@/components/frontend/layouts/Header.vue'
+import Hero from '@/components/frontend/layouts/hero.vue'
 import Footer from '@/components/frontend/layouts/Footer.vue'
-import { yemeniLaws, getLawCategories } from '@/data/yemeni-laws.js'
+import { yemeniLaws, getLawCategories, getTranslatedLaw } from '@/data/yemeni-laws.js'
+
+const router = useRouter()
+const {translate}=useTranslations()
+
+// اللغة التفاعلية
+const currentLanguage = ref(localStorage.getItem('preferredLanguage') || 'ar')
+
+// راقب تغييرات اللغة
+const handleLanguageChange = (event) => {
+    currentLanguage.value = event.detail.language
+}
+
+onMounted(() => {
+    window.addEventListener('languageChanged', handleLanguageChange)
+})
+
+const isRTL = computed(() => {
+    return currentLanguage.value === 'ar'
+})
+
+// دوال الترجمة للبيانات المحلية
+const getTranslatedRight = (key) => {
+    const translation = translate(`resourcesPage.womenChildrenRights.list.${key}`, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedSupport = (key) => {
+    const translation = translate(`resourcesPage.communitySupport.list.${key}`, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedEducation = (key) => {
+    const translation = translate(`resourcesPage.positiveEducation.list.${key}`, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedOrganization = (key) => {
+    const translation = translate(`resourcesPage.supportingOrganizations.list.${key}`, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+const getTranslatedOrganizationDesc = (key) => {
+    const translation = translate(`resourcesPage.supportingOrganizations.descriptions.${key}`, currentLanguage.value)
+    return typeof translation === 'object' ? translation[currentLanguage.value] : translation
+}
+
+// دالة للحصول على الحقول المترجمة للقوانين
+const getTranslatedLawField = (law, field) => {
+    const value = law[field]
+    return typeof value === 'object' ? value[currentLanguage.value] : value
+}
 
 const selectedCategory = ref('الأسرة')
 const lawCategories = ref([])
 
-// البيانات المحلية
+// البيانات المحلية - سيتم نقلها لملف الترجمة
 const womenChildrenRights = [
-    'الحقوق الأساسية للمرأة في العمل والتعليم',
-    'حقوق الطفل في الرعاية والحماية',
-    'القوانين الخاصة بحماية المرأة من العنف',
-    'التشريعات المتعلقة بالحضانة والنفقة'
+    'right1',
+    'right2', 
+    'right3',
+    'right4'
 ]
 
 const communitySupport = [
-    'مجموعات دعم للنساء',
-    'مجموعات دعم للأطفال والمراهقين',
-    'دور المجتمع المدني في حماية المرأة والطفل',
-    'برامج التوعية المجتمعية'
+    'support1',
+    'support2',
+    'support3',
+    'support4'
 ]
 
 const positiveEducation = [
-    'أساسيات الصحة النفسية للأسرة',
-    'الوقاية من العنف الأسري والمجتمعي',
-    'مهارات التعامل مع الضغوط اليومية',
-    'التعاون بين البيت والمدرسة'
+    'education1',
+    'education2',
+    'education3',
+    'education4'
 ]
 
 const supportingOrganizations = [
     {
-        name: 'المستشفيات',
+        name: 'hospitals',
         icon: 'fas fa-hospital',
         bgColor: 'bg-primary-green',
-        description: 'الرعاية الصحية والطبية'
+        description: 'healthcare'
     },
     {
-        name: 'المحاكم',
+        name: 'courts',
         icon: 'fas fa-gavel',
         bgColor: 'bg-primary-pink',
-        description: 'الخدمات القضائية والقانونية'
+        description: 'legalServices'
     },
     {
-        name: 'الشرطة',
+        name: 'police',
         icon: 'fas fa-shield-alt',
         bgColor: 'bg-primary-green',
-        description: 'الحماية والأمن'
+        description: 'protection'
     },
     {
-        name: 'المدارس',
+        name: 'schools',
         icon: 'fas fa-school',
         bgColor: 'bg-primary-pink',
-        description: 'التعليم والتوعية'
+        description: 'education'
     }
 ]
 
@@ -297,10 +357,11 @@ const filteredLaws = computed(() => {
     const allLaws = []
     Object.values(yemeniLaws).forEach(lawCategory => {
         lawCategory.articles.forEach(article => {
-            if (article.category === selectedCategory.value) {
+            const articleCategory = typeof article.category === 'object' ? article.category[currentLanguage.value] : article.category
+            if (articleCategory === selectedCategory.value) {
                 allLaws.push({
                     ...article,
-                    lawTitle: lawCategory.title
+                    lawTitle: typeof lawCategory.title === 'object' ? lawCategory.title[currentLanguage.value] : lawCategory.title
                 })
             }
         })
@@ -312,12 +373,18 @@ const selectCategory = (category) => {
     selectedCategory.value = category
 }
 
+// تحديث التصنيفات عند تغيير اللغة
+watch(currentLanguage, () => {
+    lawCategories.value = getLawCategories(currentLanguage.value)
+})
+
 onMounted(() => {
-    lawCategories.value = getLawCategories()
+    lawCategories.value = getLawCategories(currentLanguage.value)
 })
 </script>
 
 <style scoped>
+/* نفس الـ styles بدون تغيير */
 .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary-green) #f1f1f1;
@@ -341,20 +408,6 @@ onMounted(() => {
     background: var(--color-secondary-green);
 }
 
-.animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
-    opacity: 0;
-    transform: translateY(30px);
-}
-
-@keyframes slideUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* تأثيرات hover إضافية */
 .hover-lift {
     transition: all 0.3s ease;
 }

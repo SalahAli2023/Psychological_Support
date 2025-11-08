@@ -32,7 +32,7 @@
 
             <!-- الأيقونة -->
             <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
-              <i :class="measure.icon" class="text-[#9EBF3B] text-lg"></i>
+              <i :class="measure.icon" class="text-primary-green text-lg"></i>
             </div>
           </div>
 
@@ -49,11 +49,11 @@
             <div class="flex items-center justify-between">
               <div class="text-sm text-gray-500">
                 <div class="flex items-center gap-1 mb-1">
-                  <i class="fas fa-question-circle text-[#9EBF3B]"></i>
+                  <i class="fas fa-question-circle text-primary-green"></i>
                   <span>{{ measure.questions.length }} {{ translate('allMeasures.questions') }}</span>
                 </div>
                 <div class="flex items-center gap-1">
-                  <i class="fas fa-clock text-[#D6A29A]"></i>
+                  <i class="fas fa-clock text-primary-pink"></i>
                   <span>{{ measure.time }} {{ translate('allMeasures.minutes') }}</span>
                 </div>
               </div>
@@ -62,15 +62,15 @@
               <div class="flex items-center gap-1 text-sm">
                 <div class="flex text-yellow-400">
                   <i v-for="star in 5" :key="star" 
-                     class="fas fa-star text-sm" 
-                     :class="star <= measure.rating ? 'text-yellow-400' : 'text-gray-300'"></i>
+                      class="fas fa-star text-sm" 
+                      :class="star <= measure.rating ? 'text-yellow-400' : 'text-gray-300'"></i>
                 </div>
                 <span class="text-gray-500">({{ measure.reviews }})</span>
               </div>
             </div>
 
             <!-- الزر -->
-            <button class="w-full mt-4 px-6 py-2.5 bg-[#9EBF3B] text-white rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:bg-[#8cad35]">
+            <button class="w-full mt-4 px-6 py-2.5 bg-primary-green text-white rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:bg-[#8cad35]">
               {{ translate('allMeasures.start') }}
             </button>
           </div>
@@ -80,7 +80,7 @@
       <!-- رسالة عدم وجود نتائج -->
       <div v-else class="text-center py-12">
         <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-[#9EBF3B20]">
-          <i class="fas fa-search text-3xl text-[#9EBF3B]"></i>
+          <i class="fas fa-search text-3xl text-primary-green"></i>
         </div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">
           {{ translate('allMeasures.noResults.title') }}
@@ -99,7 +99,7 @@
             class="px-3 py-1 rounded-md border text-sm font-medium"
             :class="currentPage === 1
               ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-              : 'text-[#9EBF3B] border-[#9EBF3B] hover:bg-[#9EBF3B] hover:text-white'"
+              : 'text-primary-green border-primary-green hover:bg-primary-green hover:text-white'"
           >
             {{ translate('allMeasures.pagination.prev') }}
           </button>
@@ -114,7 +114,7 @@
             class="px-3 py-1 rounded-md border text-sm font-medium"
             :class="currentPage === totalPages
               ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-              : 'text-[#D6A29A] border-secondary-pink hover:bg-[#D6A29A] hover:text-white'"
+              : 'text-primary-pink border-secondary-pink hover:bg-primary-pink hover:text-white'"
           >
             {{ translate('allMeasures.pagination.next') }}
           </button>
@@ -127,7 +127,7 @@
 <script>
 import { ref, computed } from "vue";
 import { categoryTitles } from "@/data/measures";
-import { t } from "@/locales";
+import { useTranslations } from '@/composables/useTranslations'
 
 export default {
   name: "MeasuresPage",
@@ -135,16 +135,14 @@ export default {
     measures: { type: Array, default: () => [] },
     activeFilter: { type: String, default: "allMeasures" },
     language: { type: String, default: "ar" },
-  },methods: {
-    translate(key) {
-      return t(key, this.language)
-    }
   },
 
   emits: ["measure-click"],
   setup(props) {
     const currentPage = ref(1);
     const itemsPerPage = 9;
+    const {translate}=useTranslations()
+
     const getDefaultImage = (category) => {
           const images = {
             women:
@@ -178,11 +176,6 @@ export default {
     const prevPage = () => {
       if (currentPage.value > 1) currentPage.value--;
     };
-    // const getCategoryTitle = (category) => categoryTitles[category] || category;
-
-    
-
-    // const translate = (key) => t(key, props.language);
 
     const getCategoryTitle = (category) => {
       const title = categoryTitles[category];
@@ -196,8 +189,6 @@ export default {
     const getTranslatedDescription = (measure) => {
       return typeof measure.description === 'object' ? measure.description[props.language] : measure.description;
     };
-
-    const translate = (key) => t(key, props.language);
 
     return {
       currentPage,

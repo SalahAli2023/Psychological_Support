@@ -2,8 +2,8 @@
   <!-- Footer احترافي -->
   <footer class="bg-gradient-to-br from-slate-900 to-gray-900 text-white relative overflow-hidden">
     <!-- شكل زخرفي -->
-    <div class="absolute top-0 left-0 w-72 h-72 bg-[#9EBF3B] opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#D6A29A] opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
+    <div class="absolute top-0 left-0 w-72 h-72 bg-[#9EBF3B] opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#D6A29A] opacity-10 rounded-full translate-x-1/3 translate-y-1/3"></div>
     
     <div class="relative z-10">
       <!-- قسم النشرة الإخبارية -->
@@ -28,19 +28,19 @@
                     <input 
                       type="email" 
                       :placeholder="$t('footer.emailPlaceholder')"
-                      class="w-full px-4 py-3 bg-white/5 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#9EBF3B] focus:ring-2 focus:ring-[#9EBF3B] focus:ring-opacity-20 transition-all duration-300"
+                      class="w-full px-4 py-3 bg-white/5 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#9EBF3B] focus:ring-2 focus:ring-[#9EBF3B] focus:ring-opacity-30 transition-all duration-300"
                       required
                     >
                   </div>
-                  <button 
-                    type="submit"
-                    class="w-full bg-gradient-to-r from-[#9EBF3B] to-emerald-500 hover:from-emerald-500 hover:to-[#9EBF3B] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md"
-                  >
-                    <span class="flex items-center justify-center gap-2">
-                      <i class="fas fa-paper-plane"></i>
-                      {{ $t('footer.subscribeButton') }}
-                    </span>
-                  </button>
+               <button 
+  type="submit"
+  class="w-full bg-gradient-to-r from-[#9EBF3B] to-[#8bab2e] hover:from-[#8bab2e] hover:to-[#6b8722] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md"
+>
+  <span class="flex items-center justify-center gap-2">
+    <i class="fas fa-paper-plane"></i>
+    {{ $t('footer.subscribeButton') }}
+  </span>
+</button>
                 </form>
               </div>
             </div>
@@ -54,7 +54,7 @@
           <!-- معلومات الشركة -->
           <div class="lg:col-span-2">
             <div class="flex items-center gap-4 mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#9EBF3B] to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <div class="w-14 h-14 bg-gradient-to-br from-[#9EBF3B] to-[#8bab2e] rounded-2xl flex items-center justify-center shadow-lg">
                 <i class="fas fa-heart text-white text-xl"></i>
               </div>
               <div>
@@ -72,13 +72,13 @@
               <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#9EBF3B] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
                 <i class="fab fa-twitter text-gray-400 group-hover:text-white"></i>
               </a>
-              <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#9EBF3B] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
+              <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#D6A29A] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
                 <i class="fab fa-instagram text-gray-400 group-hover:text-white"></i>
               </a>
               <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#9EBF3B] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
                 <i class="fab fa-linkedin-in text-gray-400 group-hover:text-white"></i>
               </a>
-              <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#9EBF3B] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
+              <a href="#" class="group w-12 h-12 bg-white/5 hover:bg-[#D6A29A] rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg border border-white/10">
                 <i class="fab fa-youtube text-gray-400 group-hover:text-white"></i>
               </a>
             </div>
@@ -138,7 +138,7 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
+                <a href="/legal" class="text-gray-300 hover:text-[#D6A29A] transition-all duration-300 flex items-center gap-3 group">
                   <i class="fas fa-book text-[#D6A29A] text-sm"></i>
                   {{ $t('footer.resources') }}
                 </a>
@@ -194,7 +194,7 @@
             <div class="flex flex-wrap justify-center gap-6 text-sm">
               <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.termsText') }}</a>
               <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.privacyText') }}</a>
-              <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.faqText') }}</a>
+              <a href="#" class="text-gray-400 hover:text-[#D6A29A] transition-colors">{{ $t('footer.faqText') }}</a>
               <a href="#" class="text-gray-400 hover:text-[#9EBF3B] transition-colors">{{ $t('footer.contactUsText') }}</a>
             </div>
           </div>

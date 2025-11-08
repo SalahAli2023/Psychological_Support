@@ -3,7 +3,7 @@ export const measuresData = [
             // ========== مقياس القلق  ==========
             {
                 id: 'anxiety',
-                title: 'anxietyScale',
+                title: { ar: 'مقياس القلق', en: 'Anxiety Scale' },
                 description: { 
                     ar: 'مقياس معتمد عالمياً لتقييم أعراض القلق العام وشدتها خلال الأسبوعين الماضيين',
                     en: 'Internationally certified scale to assess general anxiety symptoms and their severity over the past two weeks'
@@ -56,7 +56,7 @@ export const measuresData = [
             // ========== مقياس الاكتئاب  ==========
             {
                 id: 'depression',
-                title: 'depressionScale',
+                title: {ar:'مقياس الاكتئاب',en:'Depression Scale'},
                 description: { 
                     ar: 'تقييم لمشاعر الحزن والاكتئاب ومدى تأثيرها على حياتك اليومية',
                     en: 'Assessment of sadness and depression feelings and their impact on your daily life'
@@ -114,7 +114,7 @@ export const measuresData = [
             // ========== مقياس الضغوط النفسية ==========
             {
                 id: 'psychological-stress',
-                title: 'stressScale',
+                title: {ar:'مقياس الضغوط النفسية',en:'Stress Scale'},
                 description: { 
                     ar: 'تقييم مستوى الضغوط والتوتر النفسي الذي تتعرض له في الحياة اليومية', 
                     en: 'Assessment of psychological stress and tension levels in daily life'
@@ -225,7 +225,7 @@ export const measuresData = [
             // ========== مقياس جودة الحياة ==========
             {
                 id: 'quality-of-life',
-                title: 'qualityOfLifeScale',
+                title: {ar:'مقياس جودة الحياة',en:'Quality Of Life Scale'},
                 description: { 
                     ar: 'قياس مستوى الرضا عن مختلف جوانب الحياة وتحديد مجالات التحسين', 
                     en: 'Measuring satisfaction levels with various life aspects and identifying improvement areas'
@@ -328,7 +328,7 @@ export const measuresData = [
             // ========== مقياس تقدير الذات ==========
             {
                 id: 'self-esteem',
-                title: 'selfEsteemScale',
+                title: {ar:'مقياس تقدير الذات',en:'Esteem Scale'},
                 description: { 
                     ar: 'تقييم مستوى الثقة بالنفس وتقدير الذات من خلال مقياس علمي معتمد', 
                     en: 'Assessment of self-confidence and self-esteem through a certified scientific scale'
@@ -442,7 +442,7 @@ export const measuresData = [
             // ========== مقياس فرط النشاط ونقص الانتباه ==========
             {
                 id: 'child-adhd',
-                title: 'adhdScale',
+                title: {ar:'مقياس فرط النشاط ونقص الانتباه',en:'Adhd Scale'},
                 description: { 
                     ar: 'تقييم أعراض فرط النشاط ونقص الانتباه لدى الأطفال',
                     en: 'Assessment of hyperactivity and attention deficit symptoms in children'
@@ -493,7 +493,7 @@ export const measuresData = [
             // ========== مقياس اكتئاب الأطفال ==========
             {
                 id: 'child-depression',
-                title: 'childDepressionScale',
+                title: {ar:'مقياس اكتئاب الأطفال',en:'Child Depression Scale'},
                 description: { 
                     ar: 'تقييم مشاعر الحزن والاكتئاب لدى الأطفال والمراهقين',
                     en: 'Assessment of sadness and depression feelings in children and adolescents'
@@ -544,7 +544,7 @@ export const measuresData = [
             // ========== مقياس الكفاءة الاجتماعية ==========
             {
                 id: 'social-competence',
-                title: 'socialCompetenceScale',
+                title: {ar:'مقياس الكفاءة الاجتماعية',en:'Social Competence Scale'},
                 description: { 
                     ar: 'تقييم المهارات الاجتماعية والقدرة على التفاعل مع الآخرين',
                     en: 'Assessment of social skills and ability to interact with others'
@@ -596,7 +596,7 @@ export const measuresData = [
             // ========== مقياس اضطرابات الشخصية ==========
             {
                 id: 'personality-disorders',
-                title: 'personalityDisordersScale',
+                title: {ar:'مقياس اضطرابات الشخصية',en:'Personality Disorder Scale'},
                 description: { 
                     ar: 'مقياس متقدم لتقييم أنماط الشخصية والاضطرابات المحتملة',
                     en: 'Advanced scale to assess personality patterns and potential disorders'
@@ -652,7 +652,7 @@ export const measuresData = [
             // ========== مقياس الذكاء العاطفي ==========
             {
                 id: 'emotional-intelligence',
-                title: 'emotionalIntelligenceScale',
+                title: {ar:'مقياس الذكاء عاطفي',en:'Emotional Intelligence Scale'},
                 description: { 
                     ar: 'تقييم القدرة على فهم وإدارة المشاعر والعواطف',
                     en: 'Assessment of the ability to understand and manage emotions and feelings'
@@ -705,7 +705,7 @@ export const measuresData = [
             // ========== مقياس العنف الأسري ==========
             {
                 id: 'domestic-violence',
-                title: 'domesticViolenceScale',
+                title: {ar:'مقياس العنف الأسري',en:'Domestic Violenc  Scale'},
                 description: { 
                     ar: 'تقييم التعرض للعنف الأسري وتأثيره على الصحة النفسية',
                     en: 'Assessment of exposure to domestic violence and its impact on mental health'
@@ -1130,23 +1130,80 @@ export const measuresData = [
 export const resourcesData = [
     {
         id: 1,
-        title: 'فهم القلق وكيفية التعامل معه',
-        excerpt: 'مقال شامل عن أسباب القلق وأعراضه واستراتيجيات فعالة للتعامل معه.',
+        title: {
+            ar: 'فهم القلق وكيفية التعامل معه',
+            en: 'Understanding Anxiety and How to Deal with It'
+        },
+        excerpt: {
+            ar: 'مقال شامل عن أسباب القلق وأعراضه واستراتيجيات فعالة للتعامل معه.',
+            en: 'Comprehensive article about anxiety causes, symptoms, and effective coping strategies.'
+        },
         image: 'https://picsum.photos/seed/anxiety-article/400/200.jpg',
         link: '#'
     },
     {
         id: 2,
-        title: 'تقنيات الاسترخاء العميق',
-        excerpt: 'تعلم تقنيات الاسترخاء المختلفة مثل التنفس العميق والتأمل واليوغا.',
+        title: {
+            ar: 'تقنيات الاسترخاء العميق',
+            en: 'Deep Relaxation Techniques'
+        },
+        excerpt: {
+            ar: 'تعلم تقنيات الاسترخاء المختلفة مثل التنفس العميق والتأمل واليوغا.',
+            en: 'Learn various relaxation techniques such as deep breathing, meditation, and yoga.'
+        },
         image: 'https://picsum.photos/seed/relaxation-techniques/400/200.jpg',
         link: '#'
     },
     {
         id: 3,
-        title: 'بناء الثقة بالنفس',
-        excerpt: 'دليل عملي لزيادة الثقة بالنفس وتقدير الذات من خلال تمارين بسيطة.',
+        title: {
+            ar: 'بناء الثقة بالنفس',
+            en: 'Building Self-Confidence'
+        },
+        excerpt: {
+            ar: 'دليل عملي لزيادة الثقة بالنفس وتقدير الذات من خلال تمارين بسيطة.',
+            en: 'Practical guide to increase self-confidence and self-esteem through simple exercises.'
+        },
         image: 'https://picsum.photos/seed/self-confidence/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 4,
+        title: {
+            ar: 'إدارة الضغوط النفسية',
+            en: 'Managing Psychological Stress'
+        },
+        excerpt: {
+            ar: 'أساليب فعالة للتعامل مع الضغوط اليومية والحفاظ على الصحة النفسية.',
+            en: 'Effective methods for dealing with daily stress and maintaining mental health.'
+        },
+        image: 'https://picsum.photos/seed/stress-management/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 5,
+        title: {
+            ar: 'تحسين جودة النوم',
+            en: 'Improving Sleep Quality'
+        },
+        excerpt: {
+            ar: 'نصائح وعادات لتحسين نمط النوم والحصول على راحة أفضل.',
+            en: 'Tips and habits to improve sleep patterns and get better rest.'
+        },
+        image: 'https://picsum.photos/seed/sleep-quality/400/200.jpg',
+        link: '#'
+    },
+    {
+        id: 6,
+        title: {
+            ar: 'التواصل الفعال في العلاقات',
+            en: 'Effective Communication in Relationships'
+        },
+        excerpt: {
+            ar: 'مهارات التواصل التي تعزز العلاقات الشخصية والمهنية.',
+            en: 'Communication skills that enhance personal and professional relationships.'
+        },
+        image: 'https://picsum.photos/seed/communication/400/200.jpg',
         link: '#'
     }
 ];

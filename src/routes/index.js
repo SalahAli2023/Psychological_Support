@@ -1,0 +1,78 @@
+import { createRouter, createWebHistory } from 'vue-router';
+
+// --- Backend Pages ---
+const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
+const Dashboard = () => import('../components/dashboard/Dashboard/Index.vue');
+const Appointments = () => import('../components/dashboard/Appointments/Index.vue');
+const Users = () => import('../components/dashboard/Users/Index.vue');
+const Articles = () => import('../components/dashboard/Articles/Index.vue');
+const Programs = () => import('../components/dashboard/Programs/Index.vue');
+const Library = () => import('../components/dashboard/Library/Index.vue');
+const Assessments = () => import('../components/dashboard/Assessments/Index.vue');
+const Settings = () => import('../components/dashboard/Settings/Index.vue');
+
+// --- Frontend Pages ---
+import HomePage from '../components/frontend/home.vue'
+import AboutPage  from '../components/frontend/AboutPage.vue' 
+import EventsPage from '../components/frontend/EventsPage.vue'
+import MeasuresPage from '../components/frontend/MeasuresPage.vue'
+import ArticleMain from '../components/frontend/article/ArticleMain.vue'
+import ArticleDetail from '../components/frontend/article/ArticleDetail.vue'
+import Specialists from '../components/frontend/Specialists/TherapistList.vue'
+import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
+import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
+import contact from '../components/frontend/contact.vue'
+import register from '../components/frontend/RegistrationPage.vue'
+import LegalSocialResources from '../components/frontend/LegalSocialResources.vue'
+
+// --- دمج جميع المسارات ---
+const routes = [
+  // Frontend routes
+  { path: '/', name: 'Home', component: HomePage },
+  { path: '/events', name: 'Events', component: EventsPage },
+  { path: '/about', name: 'About', component: AboutPage },
+  { path: '/measures', name: 'Measures', component: MeasuresPage },
+  { path: '/article', name: 'ArticleMain', component: ArticleMain },
+  { path: '/article/:id', name: 'ArticleDetail', component: ArticleDetail, props: true },
+  { path: '/Specialists', name: 'Specialists', component: Specialists, props: true },
+  { path: '/therapist/:id', name: 'therapisteDetail', component: therapisteDetail, props: true },
+  { path: '/library', name: 'library', component: LibraryMain, props: true },
+  { path: '/contact', name: 'contact', component: contact, props: true },
+  { path: '/register', name: 'register', component: register, props: true },
+  { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
+
+  // Backend routes (nested under /admin)
+  {
+    path: '/admin',
+    component: AppLayout,
+    children: [
+      { path: 'Dashboard', name: 'Dashboard', component: Dashboard },
+      { path: 'appointments', name: 'appointments', component: Appointments },
+      { path: 'users', name: 'users', component: Users },
+      { path: 'articles', name: 'articles', component: Articles },
+      { path: 'programs', name: 'programs', component: Programs },
+      { path: 'library', name: 'admin-library', component: Library },
+      { path: 'assessments', name: 'assessments', component: Assessments },
+      { path: 'settings', name: 'settings', component: Settings },
+    ]
+  }
+];
+
+// --- إنشاء الراوتر ---
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+  scrollBehavior() {
+    return { top: 0 };
+  },
+});
+
+// --- حارس التنقل لتغيير اتجاه اللغة ---
+router.beforeEach((to, from, next) => {
+  const savedLanguage = localStorage.getItem('preferredLanguage') || 'ar';
+  document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = savedLanguage;
+  next();
+});
+
+export default router;

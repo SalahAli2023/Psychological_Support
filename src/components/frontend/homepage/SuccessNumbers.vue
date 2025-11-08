@@ -11,8 +11,8 @@
       <!-- العنوان -->
       <div class="inline-block relative text-center w-full mb-16">
         <TitleSection
-          mainText="أرقام"
-          highlightText="النجاح"
+          :mainText="translate('home.stats.title')"
+          :highlightText="translate('home.stats.highlight')"
         />
       </div>
 
@@ -22,48 +22,48 @@
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-200"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/دولة.png" alt="خريطة" class="w-full h-full object-contain light-green-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/دولة.png" alt="خريطة" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
           >{{ animatedCounters[0] }}</span>
-          <p class="mt-2 text-base md:text-lg text-gray-700">دولة نغطيها حالياً</p>
+          <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.countries') }}</p>
         </div>
 
         <!-- الرقم 2 -->
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-300"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/سؤال.png" alt="سؤال" class="w-full h-full object-contain light-green-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/سؤال.png" alt="سؤال" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
           >{{ animatedCounters[1] }}</span>
-          <p class="mt-2 text-base md:text-lg text-gray-700">سؤال تمت الإجابة عليه من خبراء</p>
+          <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.questions') }}</p>
         </div>
 
         <!-- الرقم 3 -->
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-400"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/جلسات.png" alt="جلسة" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/جلسات.png" alt="جلسة" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
           >{{ animatedCounters[2] }}</span>
-          <p class="mt-2 text-base md:text-lg text-gray-700">جلسات أونلاين علاجية ناجحة</p>
+          <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.sessions') }}</p>
         </div>
 
         <!-- الرقم 4 -->
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-500"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/مستخدمون.png" alt="مستخدمين" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/مستخدمون.png" alt="مستخدمين" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
           >{{ animatedCounters[3] }}</span>
-          <p class="mt-2 text-base md:text-lg text-gray-700">مستخدم وثق في منصتنا</p>
+          <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.users') }}</p>
         </div>
       </div>
     </div>
@@ -80,11 +80,17 @@ export default {
    components: {
     TitleSection
   },
+  inject: ['languageState'],
   data() {
     return {
       animatedCounters: [0, 0, 0, 0],
       targetValues: [12, 4500, 2105, 3320],
       animationStarted: false
+    }
+  },
+  computed: {
+    translate() {
+      return this.languageState?.translate || ((key) => key)
     }
   },
   watch: {
@@ -143,12 +149,6 @@ export default {
   filter: invert(76%) sepia(10%) saturate(600%) hue-rotate(320deg) brightness(90%) contrast(85%) opacity(0.7);
 }
 
-/* الخط تحت العنوان - حل نهائي */
-.line-under-title {
-  height: 2px !important;
-  border-radius: 0 !important;
-}
-
 /* تحسين التجاوب */
 @media (max-width: 768px) {
   .text-3xl {
@@ -162,12 +162,6 @@ export default {
   .w-24 {
     width: 4rem;
     height: 4rem;
-  }
-
-  /* التأكد من أن الخط يبقى خطاً في الجوال */
-  .line-under-title {
-    height: 2px !important;
-    border-radius: 0 !important;
   }
 }
 

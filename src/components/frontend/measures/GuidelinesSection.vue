@@ -1,18 +1,29 @@
 <template>
   <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
-      <div class="guidelines-section rounded-2xl p-8 max-w-4xl mx-auto">
+      <div class="rounded-2xl p-8 max-w-4xl mx-auto bg-[rgba(158,191,59,0.05)] border-r-4 border-primary-green">
         <div class="text-center mb-8">
           <h2 class="text-3xl font-bold mb-4 text-gray-800">
-            {{ translate('guidelines.title', lang) }}
+            {{ translate('guidelines.title') }}
           </h2>
           <p class="text-gray-600">
-            {{ translate('guidelines.subtitle', lang) }}
+            {{ translate('guidelines.subtitle') }}
           </p>
         </div>
 
-        <ul class="guidelines-list space-y-4 text-gray-700 text-lg">
-          <li v-for="(item, index) in translate('guidelines.list', lang)" :key="index">
+        <ul class="space-y-4 text-gray-700 text-lg">
+          <li 
+            v-for="(item, index) in getGuidelinesList()" 
+            :key="index"
+            class="relative"
+            :class="isRTL ? 'pr-8' : 'pl-8'"
+          >
+            <span 
+              class="absolute text-primary-green font-bold"
+              :class="isRTL ? 'right-0 top-0' : 'left-0 top-0'"
+            >
+              ✓
+            </span>
             {{ item }}
           </li>
         </ul>
@@ -22,37 +33,35 @@
 </template>
 
 <script>
-import { t } from '@/locales'
+import { ref, computed } from 'vue'
+import { useTranslations } from '@/composables/useTranslations'
 export default {
   name: 'GuidelinesSection',
   props: {
-    language: { type: String, default: 'ar' }
+    language: { 
+      type: String, 
+      default: 'ar' 
+    }
   },
-  methods: {
-    translate(key) {
-      return t(key, this.language)
+  setup(props) {
+    const currentLanguage = ref(props.language)
+
+    const isRTL = computed(() => {
+      return currentLanguage.value === 'ar'
+    })
+
+    const {translate} = useTranslations()
+    
+    const getGuidelinesList = () => {
+      const list = translate('guidelines.list', currentLanguage.value)
+      return Array.isArray(list) ? list : []
+    }
+
+    return {
+      isRTL,
+      translate,
+      getGuidelinesList
     }
   }
 }
 </script>
-
-<style scoped>
-.guidelines-section {
-  background: rgba(158, 191, 59, 0.05);
-  border-right: 4px solid #9EBF3B;
-}
-
-.guidelines-list li {
-  position: relative;
-  padding-right: 30px;
-}
-
-.guidelines-list li::before {
-  content: '✓';
-  position: absolute;
-  right: 0;
-  top: 0;
-  color: #9EBF3B;
-  font-weight: bold;
-}
-</style>

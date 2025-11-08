@@ -10,7 +10,7 @@
       <!-- التصنيف في أعلى يمين الصورة -->
       <div class="absolute top-3 right-3 z-10">
         <span class="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-white text-gray-800 shadow-md border border-gray-200 whitespace-nowrap">
-          {{ article.category }}
+          {{ getTranslatedCategory(article.category) }}
         </span>
       </div>
     </div>
@@ -31,7 +31,7 @@
 
       <!-- قسم المعلومات - مثبت في الأسفل دائماً -->
       <div class="mt-auto pt-4">
-        <div class="flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center justify-between text-xs text-gray-500" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
           <!-- معلومات الكاتب والتاريخ -->
           <div class="flex flex-col">
             <!-- اسم الكاتب -->
@@ -51,8 +51,10 @@
           </div>
           
           <!-- زر "اقرأ المزيد" -->
-          <button class="bg-[#9EBF3B] text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-[#9EBF3B] hover:shadow-lg transition-all duration-300 whitespace-nowrap">
-            اقرأ المزيد
+          <button class="bg-[#9EBF3B] text-white font-semibold text-xs px-3 py-3 rounded-lg shadow-md hover:bg-[#8aab34] hover:shadow-lg transition-all duration-300 whitespace-nowrap flex items-center gap-2">
+            <span>{{ getReadMoreText() }}</span>
+            <i class="fas fa-arrow-left text-xs" v-if="currentLanguage === 'ar'"></i>
+            <i class="fas fa-arrow-right text-xs" v-else></i>
           </button>
         </div>
       </div>
@@ -61,6 +63,11 @@
 </template>
 
 <script setup>
+import { useTranslations } from '@/composables/useTranslations'
+
+// استخدام composable الترجمة
+const { currentLanguage, translate } = useTranslations()
+
 // تعريف الـ props التي يستقبلها المكون
 defineProps({
   article: {
@@ -68,6 +75,24 @@ defineProps({
     required: true
   }
 });
+
+// دالة للحصول على نص "اقرأ المزيد" المترجم
+const getReadMoreText = () => {
+  return translate('buttons.readMore')
+}
+
+// دالة لترجمة التصنيف
+const getTranslatedCategory = (category) => {
+  const categories = {
+    'evenings': currentLanguage === 'ar' ? 'أمسيات' : 'Evenings',
+    'events': currentLanguage === 'ar' ? 'فعاليات' : 'Events',
+    'workshops': currentLanguage === 'ar' ? 'ورش عمل' : 'Workshops',
+    'أمسيات': currentLanguage === 'ar' ? 'أمسيات' : 'Evenings',
+    'فعاليات': currentLanguage === 'ar' ? 'فعاليات' : 'Events',
+    'ورش عمل': currentLanguage === 'ar' ? 'ورش عمل' : 'Workshops'
+  }
+  return categories[category] || category
+}
 </script>
 
 <style scoped>

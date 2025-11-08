@@ -1,4 +1,3 @@
-<!-- ArticlesSection.vue -->
 <template>
   <!-- قسم المقالات التوعوية -->
   <section 
@@ -19,15 +18,15 @@
       <!-- العنوان الرئيسي -->
       <div class="text-center mb-16">
           <TitleSection
-          mainText="مقالات"
-          highlightText="توعوية"
+          :mainText="translate('home.articles.title')"
+          :highlightText="translate('home.articles.highlight')"
         />
       
         <p 
           class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mt-4 transition-all duration-700"
           :class="contentItemClass"
         >
-          اكتشف مجموعة من المقالات المختارة لمساعدتك على فهم نفسك بشكل أفضل وتعزيز صحتك النفسية
+          {{ translate('home.articles.subtitle') }}
         </p>
       </div>
 
@@ -59,7 +58,7 @@
           :style="{ transitionDelay: '800ms' }"
         >
           <span class="flex items-center gap-2 relative z-10 transition-colors duration-500 group-hover:text-white">
-            عرض جميع المقالات
+            {{ translate('home.articles.viewAll') }}
             <i class="fas fa-arrow-left transition-colors duration-500 group-hover:text-white"></i>
           </span>
         </router-link>
@@ -80,6 +79,7 @@ export default {
     TitleSection
   },
   mixins: [useScrollAnimation],
+  inject: ['languageState'],
   data() {
     return {
       articles: [
@@ -114,6 +114,9 @@ export default {
     }
   },
   computed: {
+    translate() {
+      return this.languageState?.translate || ((key) => key)
+    },
     decorativeClass() {
       return {
         'opacity-5': this.isVisible,

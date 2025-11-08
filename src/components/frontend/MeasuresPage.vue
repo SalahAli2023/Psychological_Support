@@ -3,8 +3,16 @@
     <Header /> 
 
     <!-- قسم الهيرو  -->
-    <HeroSection
-    :language="currentLanguage"
+    <Hero 
+      :title="translate('measuresHero.title')"
+      :highlight="translate('measuresHero.titleKey')"
+      :subtitle="translate('measuresHero.description')"
+      :subtitleKey="translate('measuresHero.subtitle')"
+
+      :buttons="[
+        { text: translate('measureModal.startTest'), icon: 'fas fa-play-circle', primary: true },
+        { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
+      ]"
     />
 
     <main class="max-w-7xl mx-auto px-6">
@@ -40,7 +48,9 @@
       />
       
       <!-- الموارد -->
-      <ResourcesSection :resources="resources" />
+      <ResourcesSection 
+      :resources="resources"
+      :language="currentLanguage" />
     </main>
     
     <Footer />
@@ -78,7 +88,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
-import HeroSection from '@/components/frontend/measures/HeroSection.vue'
+import Hero from '@/components/frontend/layouts/hero.vue'
 import PopularMeasures from '@/components/frontend/measures/PopularMeasures.vue'
 import CategorySection from '@/components/frontend/measures/CategorySection.vue'
 import AllMeasures from '@/components/frontend/measures/AllMeasures.vue'
@@ -88,13 +98,15 @@ import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
 import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import { measuresData, resourcesData } from '@/data/measures'
+import { useTranslations } from '@/composables/useTranslations'
+
 
 export default {
   name: 'MeasuresPage',
   components: {
     Header,
     Footer,
-    HeroSection,
+    Hero,
     CategorySection,
     PopularMeasures,
     AllMeasures,
@@ -168,6 +180,7 @@ export default {
     })
 
     // الدوال
+    const {translate}=useTranslations()
     const openRegistrationModal = (measure) => {
       currentMeasure.value = measure
       showRegistrationModal.value = true
@@ -219,32 +232,57 @@ export default {
     const calculateResults = () => {
       let score = 0
       const measure = currentMeasure.value
-      
-      answers.value.forEach((answer, index) => {
-        if (answer !== undefined) {
-          if (typeof measure.scores === 'function') {
-            score += measure.scores(index)[answer]
-          } else {
-            score += measure.scores[answer]
-          }
-        }
-      })
-      
-      let maxScore = 0
-      if (typeof measure.scores === 'function') {
-        measure.questions.forEach((_, index) => {
-          maxScore += Math.max(...measure.scores(index))
-        })
-      } else {
-        maxScore = measure.questions.length * Math.max(...measure.scores)
+    // حساب النتيجة بناء على الإجابات
+    answers.value.forEach((answer, index) => {
+      if (answer !== undefined && measure.scores) {
+        score += measure.scores[answer] || 0
       }
+    })
+        
+    // الحصول على التفسير بناء على اللغة الحالية
+    let interpretation
+    if (typeof measure.interpretation === 'function') {
+      interpretation = measure.interpretation(score, currentLanguage.value)
+    } else {
+      // تفسير افتراضي إذا لم يكن هناك دالة تفسير
+      const maxPossibleScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : 0
+      const percentage = maxPossibleScore > 0 ? (score / maxPossibleScore) * 100 : 0
       
-      const interpretation = measure.interpretation(score)
-      
-      testResult.value = { score, maxScore, interpretation }
-      testStep.value = 'results'
+      // if (percentage >= 80) {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'مرتفع' : 'High',
+      //     desc: currentLanguage.value === 'ar' 
+      //       ? 'نتيجتك تشير إلى مستوى مرتفع. ننصح بمراجعة مختص للدعم المناسب.'
+      //       : 'Your results indicate a high level. We recommend consulting a specialist for appropriate support.'
+      //   }
+      // } else if (percentage >= 50) {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'متوسط' : 'Medium',
+      //     desc: currentLanguage.value === 'ar'
+      //       ? 'نتيجتك تشير إلى مستوى متوسط. ننصح بممارسة تقنيات الاسترخاء.'
+      //       : 'Your results indicate a medium level. We recommend practicing relaxation techniques.'
+      //   }
+      // } else {
+      //   interpretation = {
+      //     level: currentLanguage.value === 'ar' ? 'منخفض' : 'Low',
+      //     desc: currentLanguage.value === 'ar'
+      //       ? 'نتيجتك تشير إلى مستوى منخفض. حافظ على ممارسة العادات الصحية.'
+      //       : 'Your results indicate a low level. Maintain healthy habits.'
+      //   }
+      // }
     }
     
+    // حساب أقصى درجة ممكنة
+    const maxScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : measure.questions.length * 3
+    
+    testResult.value = { 
+      score: Math.round(score), 
+      maxScore: Math.round(maxScore), 
+      interpretation 
+    }
+    
+    testStep.value = 'results'
+  }
     const retakeTest = () => {
       testStep.value = 'info'
       currentQuestionIndex.value = 0
@@ -275,6 +313,7 @@ export default {
       filteredMeasures,
       popularMeasures,
       currentLanguage,
+      translate,
       openRegistrationModal,
       closeRegistrationModal,
       handleRegistrationSuccess,

@@ -1,0 +1,30 @@
+{
+      "app": {
+            "title": "Psychology Admin",
+            "search": "Search…",
+            "language": "Language",
+            "theme": "Theme",
+            "light": "Light",
+            "dark": "Dark"
+      },
+      "nav": {
+            "dashboard": "Dashboard",
+            "appointments": "Appointments",
+            "users": "Users",
+            "articles": "Articles",
+            "programs": "Programs",
+            "library": "Library",
+            "assessments": "Assessments",
+            "settings": "Settings"
+      },
+      "dashboard": {
+            "welcome": "Welcome",
+            "kpi_upcoming": "Upcoming Sessions",
+            "kpi_clients": "Clients",
+            "kpi_new_users": "New Users",
+            "quick_actions": "Quick Actions",
+            "book_session": "Book Session",
+            "create_article": "Create Article",
+            "add_user": "Add User"
+      }
+}

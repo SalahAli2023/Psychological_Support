@@ -10,19 +10,19 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div 
           v-for="measure in measures" 
           :key="measure.id"
-          class="test-card bg-white rounded-xl shadow-lg p-6 cursor-pointer"
+          class="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-r-4 border-primary-pink transition-all duration-300 hover:translate-y-[-5px] hover:shadow-xl"
           @click="$emit('measure-click', measure)"
         >
           <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
             <i :class="measure.icon" class="text-primary-pink"></i>
-            {{ translate(measure.title) }}
+            {{ getTranslatedTitle(measure) }}
           </h3>
           <p class="text-gray-600 text-sm mb-4 flex-grow">
-            {{ measure.description }}
+            {{ getTranslatedDescription(measure) }}
           </p>
           <div class="flex justify-between text-sm text-gray-500 mb-4">
             <div class="flex items-center gap-1">
@@ -38,12 +38,14 @@
           <!-- نجوم التقييم -->
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
-              <div class="stars-container">
+              <div class="flex gap-0.5">
                 <i 
                   v-for="i in 5" 
                   :key="i" 
                   class="fas fa-star text-sm" 
-                  :class="i <= measure.rating ? 'star' : 'star empty'"
+                  :class="i <= measure.rating 
+                    ? 'text-transparent bg-gradient-to-br from-primary-green to-primary-pink bg-clip-text' 
+                    : 'text-gray-300'"
                 ></i>
               </div>
               <span class="text-xs text-gray-500 mr-1">({{ measure.reviews }})</span>
@@ -60,7 +62,7 @@
 </template>
 
 <script>
-import { t } from "@/locales";
+import { useTranslations } from '@/composables/useTranslations'
 
 export default {
   name: 'PopularMeasures',
@@ -76,43 +78,23 @@ export default {
   },
   emits: ['measure-click'],
   setup(props) {
-    const translate = (key) => t(key, props.language);
+    const {translate} = useTranslations()
+    const getTranslatedTitle = (measure) => {
+      return typeof measure.title === 'object' ? measure.title[props.language] : measure.title;
+    };
+
+    const getTranslatedDescription = (measure) => {
+      return typeof measure.description === 'object' ? measure.description[props.language] : measure.description;
+    };
 
     return {
-      translate
+      translate,
+      getTranslatedTitle,
+      getTranslatedDescription
     };
   }
 }
 </script>
 
 <style scoped>
-.test-card {
-  transition: all 0.3s ease;
-  border-right: 4px solid #D6A29A;
-}
-
-.test-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* تنسيق نجوم التقييم */
-.stars-container {
-  display: flex;
-  gap: 2px;
-}
-
-.star {
-  background: linear-gradient(135deg, #9EBF3B, #D6A29A);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.star.empty {
-  background: #E5E7EB;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 </style>

@@ -2,7 +2,7 @@
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
           {{ translate('testimonials.title') }}<span class="text-[#D6A29A]">{{ translate('testimonials.highlight') }}</span>
         </h2>
         <p class="text-base text-gray-600 max-w-2xl mx-auto">

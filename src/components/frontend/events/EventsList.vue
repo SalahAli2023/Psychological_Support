@@ -11,14 +11,20 @@
     </div>
 
     <!-- رسالة عدم وجود نتائج -->
-    <div v-if="filteredEvents.length === 0" class="text-center py-12">
+    <div v-if="filteredEvents.length === 0 && !loading" class="text-center py-12">
       <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
       <h3 class="text-xl font-bold text-gray-700 mb-2">{{ translate('events.list.noResults') }}</h3>
       <p class="text-gray-500">{{ translate('events.list.noResultsMessage') }}</p>
     </div>
 
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-3xl text-[#9EBF3B] mb-4"></i>
+      <p class="text-gray-600">{{ translate('loading') }}</p>
+    </div>
+
     <!-- Pagination -->
-    <div v-if="filteredEvents.length > 0" class="flex justify-center items-center gap-4 py-8">
+    <div v-if="filteredEvents.length > 0 && !loading" class="flex justify-center items-center gap-4 py-8">
       <!-- زر الصفحة السابقة -->
       <button
         @click="previousPage"
@@ -26,7 +32,8 @@
         class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
-        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right" v-if="currentLanguage === 'ar'"></i>
+        <i class="fas fa-chevron-left" v-else></i>
         <span>{{ translate('events.list.previous') }}</span>
       </button>
 
@@ -53,13 +60,14 @@
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
       >
         <span>{{ translate('events.list.next') }}</span>
-        <i class="fas fa-chevron-left"></i>
+        <i class="fas fa-chevron-left" v-if="currentLanguage === 'ar'"></i>
+        <i class="fas fa-chevron-right" v-else></i>
       </button>
     </div>
 
     <!-- معلومات الصفحة -->
-    <div v-if="filteredEvents.length > 0" class="text-center text-gray-600 text-sm">
-      {{ translate('events.list.showing').replace('{start}', startIndex + 1).replace('{end}', endIndex).replace('{total}', filteredEvents.length) }}
+    <div v-if="filteredEvents.length > 0 && !loading" class="text-center text-gray-600 text-sm">
+      {{ getShowingText() }}
     </div>
   </div>
 </template>
@@ -77,6 +85,7 @@ const emit = defineEmits(['event-selected'])
 
 // بيانات الفعاليات
 const events = ref([])
+const loading = ref(false)
 
 // إعدادات التقسيم
 const itemsPerPage = ref(6)
@@ -98,28 +107,50 @@ const props = defineProps({
 
 // مراقبة تغييرات الفلترة
 watch(() => props.filter, (newFilter) => {
-  filterCriteria.value = newFilter
+  console.log('Filter changed:', newFilter) // Debug
+  filterCriteria.value = { ...newFilter }
   currentPage.value = 1
-}, { deep: true })
+}, { deep: true, immediate: true })
 
 // الفعاليات المصفاة
 const filteredEvents = computed(() => {
-  let result = events.value
+  console.log('Filtering events with criteria:', filterCriteria.value) // Debug
+  console.log('Total events:', events.value.length) // Debug
+  
+  let result = [...events.value]
   
   // تطبيق البحث
-  if (filterCriteria.value.search) {
-    const query = filterCriteria.value.search.toLowerCase()
-    result = result.filter(event => 
-      event.title.toLowerCase().includes(query) || 
-      event.description.toLowerCase().includes(query)
-    )
+  if (filterCriteria.value.search && filterCriteria.value.search.trim() !== '') {
+    const query = filterCriteria.value.search.toLowerCase().trim()
+    result = result.filter(event => {
+      const matches = event.title?.toLowerCase().includes(query) || 
+                     event.description?.toLowerCase().includes(query)
+      console.log(`Event "${event.title}" matches search "${query}":`, matches) // Debug
+      return matches
+    })
   }
   
   // تطبيق التصفية حسب النوع
-  if (filterCriteria.value.category !== 'all') {
-    result = result.filter(event => event.type === filterCriteria.value.category)
+  if (filterCriteria.value.category && filterCriteria.value.category !== 'all') {
+    console.log('Filtering by category:', filterCriteria.value.category) // Debug
+    
+    // تحويل أنواع الفعاليات لتتناسب مع البيانات
+    const categoryMap = {
+      'evenings': 'أمسيات',
+      'events': 'فعاليات', 
+      'workshops': 'ورش عمل'
+    }
+    
+    const targetCategory = categoryMap[filterCriteria.value.category] || filterCriteria.value.category
+    
+    result = result.filter(event => {
+      const matches = event.type === targetCategory
+      console.log(`Event type "${event.type}" matches category "${targetCategory}":`, matches) // Debug
+      return matches
+    })
   }
   
+  console.log('Filtered results:', result.length) // Debug
   return result
 })
 
@@ -148,6 +179,19 @@ const visiblePages = computed(() => {
 
   return pages
 })
+
+// دالة للحصول على نص عرض النتائج
+const getShowingText = () => {
+  const start = startIndex.value + 1
+  const end = endIndex.value
+  const total = filteredEvents.value.length
+  
+  if (currentLanguage.value === 'ar') {
+    return `عرض ${start}-${end} من أصل ${total} فعالية`
+  } else {
+    return `Showing ${start}-${end} of ${total} events`
+  }
+}
 
 // دوال التنقل بين الصفحات
 const goToPage = (page) => {
@@ -184,11 +228,12 @@ const formatEventForArticleCard = (event) => {
     description: event.description,
     image: event.media,
     category: event.type,
-    author: event.speakers && event.speakers.length > 0 ? event.speakers[0].name : 'فريق الدعم النفسي',
+    author: event.speakers && event.speakers.length > 0 ? event.speakers[0].name : translate('events.details.speakerDefault'),
     date: event.date,
     duration: event.duration,
     location: event.location,
-    speakers: event.speakers
+    speakers: event.speakers,
+    readMoreText: translate('buttons.readMore')
   }
 }
 

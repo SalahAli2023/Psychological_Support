@@ -338,5 +338,486 @@ export const en = {
     termsText: 'Terms of Use',
     privacyText: 'Privacy Policy',
     faqText: 'FAQ'
+  },
+  //home page
+  home: {
+    fields: {
+      title: "Our",
+      highlight: "Fields",
+      subtitle: "We provide specialized services in various mental health fields"
+    },
+    visionMission: {
+      title: "Why Choose",
+      highlight: " Our Platform?",
+      items: {
+        therapists: "Certified Therapists",
+        therapistsDesc: "An elite group of specialists and psychotherapists with advanced academic degrees and experience in multiple fields.",
+        confidentiality: "Complete Confidentiality",
+        confidentialityDesc: "We protect your privacy. All sessions and personal information are protected and cannot be accessed by any party.",
+        easeOfUse: "Ease of Use",
+        easeOfUseDesc: "Comfortable user experience through our app. Start with registration, booking individual and group sessions, and messaging feature.",
+        flexibility: "Schedule Flexibility",
+        flexibilityDesc: "Choose the time that suits you, book your session flexibly, and start treatment from anywhere that suits you without conflicting with your commitments."
+      },
+      createAccount: "Create Account",
+      imageAlt: "Doctor's Image"
+    },
+    howItWorks: {
+      title: "How Our",
+      highlight: " Platform Works",
+      subtitle: "A simple and direct journey towards better mental health in just 4 steps",
+      steps: {
+        step1: "Register & Book",
+        step1Desc: "Create your account and choose the appropriate appointment with the specialist that suits your needs",
+        step2: "Meet Our Specialists",
+        step2Desc: "Meet your specialists through virtual sessions or book an appointment at the clinic",
+        step3: "Get Support", 
+        step3Desc: "Receive appropriate treatment and support with continuous follow-up for your condition development",
+        step4: "Track Progress",
+        step4Desc: "Track the improvement of your mental health with periodic reports and customized advice"
+      }
+    },
+    stats: {
+      title: "Success",
+      highlight: "Numbers",
+      items: {
+        countries: "Countries we currently cover",
+        questions: "Questions answered by experts",
+        sessions: "Successful online therapy sessions", 
+        users: "Users trusted our platform"
+      }
+    },
+    articles: {
+      title: "Awareness",
+      highlight: "Articles",
+      subtitle: "Discover a selection of articles to help you understand yourself better and enhance your mental health",
+      viewAll: "View All Articles"
+    },
+    experts: {
+      title: "Our",
+      highlight: "Experts",
+      subtitle: "An elite group of certified specialists with extensive experience in multiple fields",
+      book: "Book Consultation",
+      profile: "View Profile"
+    },
+    faq: {
+    title: "Frequently",
+    highlight: "Asked Questions", 
+    subtitle: "Here are answers to the questions our clients frequently ask. If you don't find an answer to your question, feel free to contact us.",
+    contactTitle: "Didn't find your answer?",
+    contactSubtitle: "Our team is ready to answer all your inquiries",
+    contactUs: "Contact Us Now",
+    whatsapp: "Message us on WhatsApp",
+    questions: {
+      sessionDuration: {
+        question: "What is the duration of a therapy session?",
+        answer: "The typical therapy session duration is 50 minutes. We recommend regular attendance to achieve the best results, but we can discuss and adjust the frequency based on your personal needs and goals."
+      },
+      confidentiality: {
+        question: "Are therapy consultations completely confidential?",
+        answer: "Yes, absolutely. All information you share during sessions is protected by strict confidentiality laws. No information can be shared with any third party without your written consent, except in cases specified by law."
+      },
+      booking: {
+        question: "How can I book an appointment?",
+        answer: "You can easily book an appointment by filling out the contact form on our website, or by contacting us directly on the listed numbers. Our team will respond to you to confirm the appointment that suits you."
+      },
+      difference: {
+        question: "What is the difference between a psychiatrist and a psychotherapist?",
+        answer: "A psychiatrist is a doctor who can diagnose mental conditions and prescribe medications, while a psychotherapist focuses on providing talk therapy and coping strategies. In many cases, collaboration between the two may be most beneficial."
+      },
+      online: {
+        question: "Can I get an online consultation?",
+        answer: "Yes, we provide online consultation sessions through secure and encrypted platforms. You can choose the mode that suits you, whether face-to-face at the clinic or online, while maintaining the same level of quality and confidentiality."
+      },
+      cost: {
+        question: "How much does a therapy session cost?",
+        answer: "The cost of sessions varies depending on the type of service and specialist. We offer various pricing plans to suit different budgets, and you can view the prices through the services page."
+      },
+      changeSpecialist: {
+        question: "Can I change the specialist?",
+        answer: "Yes, you can change the specialist at any time if you feel there is incompatibility. Our team will help you find the specialist that suits your needs."
+      },
+      paymentMethods: {
+        question: "What payment methods are available?",
+        answer: "We accept various payment methods including credit cards, bank transfers, and online payments. All transactions are secure and encrypted."
+      }
+    }
+    }
+  },
+
+  measuresHero: {
+
+    title: 'Psychological Tests and Assessments',
+    subtitle: 'Discover yourself better through trusted psychological scales',
+    description: 'Choose from a wide range of validated psychological assessments designed to meet your needs'
+
+  },
+
+  popularMeasures: {
+    title: "Most Popular Measures",
+    desc: "A curated selection of the most commonly used measures by users",
+    questions: "Questions",
+    minutes: "Minutes",
+    start: "Start Assessment"
+  },
+
+  categorySection: {
+    title: "Discover Suitable Measures",
+    subtitle: "Choose the category that fits your needs to find accredited psychological measures",
+    searchPlaceholder: "Search for a specific measure...",
+    activeCategory: "Selected Category:",
+    measuresCount: "measure",
+    averageTime: "min",
+    browseButton: "Browse Measures",
+    resultsCount: "result",
+    searchHint: "You can search for suitable measures to meet your needs"
+  },
+
+  categories: {
+    all: {
+      title: "All Measures",
+      description: "Browse all available psychological measures on the platform"
+    },
+    women: {
+      title: "For Women",
+      description: "Specialized measures for women's mental and educational health"
+    },
+    children: {
+      title: "For Children",
+      description: "Measures specifically designed for children and adolescents to assess development and skills"
+    }
+  },
+
+  // translations.en
+  allMeasures: {
+    title: "All Available Measures",
+    questions: "Questions",
+    minutes: "Minutes",
+    start: "Start Assessment",
+    noResults: {
+      title: "No results found",
+      desc: "Try different search terms or browse all categories"
+    },
+    pagination: {
+      prev: "Previous",
+      next: "Next",
+      page: "Page",
+      of: "of"
+    }
+  },
+
+  measureModal: {
+    welcome: 'Welcome to',
+    importantInfo: 'Important Information',
+    infoList: {
+      awareness: 'Results are for awareness purposes only and not a final diagnosis',
+      confidentiality: 'All your answers are confidential and secure',
+      stopAnytime: 'You can stop the test at any time'
+    },
+    aboutTest: 'About this test',
+    questionsCount: 'Questions',
+    time: 'Minutes',
+    startTest: 'Start Test',
+    progress: 'Progress',
+    questionNumber: 'Question',
+    of: 'of',
+    previous: 'Previous',
+    next: 'Next',
+    submit: 'Submit Test',
+    calculating: 'Calculating results...',
+    resultTitle: 'Assessment Result',
+    yourScore: 'Based on your answers, you scored',
+    points: 'points',
+    recommendations: 'Personalized Recommendations for You',
+    consult: {
+      title: 'Psychological Consultation Session',
+      desc: 'A session with a psychologist to discuss your results and coping strategies',
+      button: 'Book a Session'
+    },
+    resources: {
+      title: 'Helpful Resources',
+      desc: 'A collection of articles and exercises to help with',
+      button: 'View Resources'
+    },
+    retake: 'Retake Test',
+    otherMeasures: 'Other Measures'
+  },
+
+  guidelines: {
+    title: "Important Guidelines Before Starting",
+    subtitle: "To ensure accurate and reliable results",
+    list: [
+      "Choose a time when you feel relaxed and focused",
+      "Answer honestly and without hesitation — there are no right or wrong answers",
+      "Read each question carefully before responding",
+      "Don’t spend too much time thinking about each question",
+      "Make sure you're in a quiet and suitable environment",
+      "These results are for guidance only and do not replace professional consultation"
+    ]
+  },
+
+  registrationModal: {
+    title: 'Registration',
+    description: 'You must first register in the Nafsani app to start using the measures and join us on the journey of mental health awareness.',
+
+    steps: {
+      phone: 'Phone Number',
+      otp: 'Verification Code',
+      info: 'Personal Information'
+    },
+
+    phoneStep: {
+      enterPhone: 'Enter your phone number',
+      countryLabel: 'Country/Region',
+      selectCountry: 'Select Country',
+      phoneLabel: 'Phone Number',
+      phonePlaceholder: '7xxxxxxxx',
+      phoneError: 'The phone number must start with 7 and contain 9 digits',
+      continue: 'Continue',
+      sending: 'Sending...'
+    },
+
+    otpStep: {
+      title: 'Verify Phone Number',
+      sentTo: 'Enter the verification code sent to',
+      resendIn: 'Resend in',
+      resend: 'Resend Code',
+      editNumber: 'Edit Number',
+      confirm: 'Confirm',
+      verifying: 'Verifying...'
+    },
+
+    infoStep: {
+      title: 'Personal Information',
+      nameLabel: 'Full Name',
+      namePlaceholder: 'Enter your name',
+      emailLabel: 'Email (optional)',
+      emailPlaceholder: 'Enter your email',
+      confirm: 'Confirm',
+      creating: 'Creating account...',
+      nameRequired: 'Name is required'
+    },
+
+    successStep: {
+      title: 'Thank You',
+      message: 'You have successfully registered in Nafsani app. You can now download the app and enjoy our mental health services.',
+      start: 'Start',
+      appStore: 'App Store',
+      googlePlay: 'Google Play',
+      availableOn: 'Available on'
+    },
+
+    errors: {
+      sendCode: 'An error occurred while sending the verification code',
+      verifyCode: 'Invalid verification code',
+      resendCode: 'An error occurred while resending the code',
+      createAccount: 'An error occurred while creating the account'
+    },
+
+    success: {
+      codeSent: 'Verification code sent successfully',
+      verified: 'Phone number verified successfully',
+      codeResent: 'Verification code resent',
+      accountCreated: 'Account created successfully!'
+    }
+  },
+
+  registrationPage: {
+    hero: {
+      title: "Join Nafsani Community",
+      description: "Start your mental health journey with certified assessment tools and personalized content for your needs"
+    },
+    features: {
+      metrics: {
+        title: "Certified Metrics",
+        description: "A comprehensive set of internationally certified psychological assessments for your mental health"
+      },
+      content: {
+        title: "Personalized Content",
+        description: "Resources and articles specifically designed to support your mental health improvement journey"
+      },
+      community: {
+        title: "Supportive Community",
+        description: "Join a community of people who share your interests and challenges"
+      }
+    },
+    title: 'Create Your Account',
+    description: 'Join Nafsiyati community and start your journey in understanding mental health',
+    steps: {
+      phone: 'Phone Number',
+      otp: 'Verification Code',
+      info: 'Personal Information'
+    },
+    phoneStep: {
+      title: 'Enter Phone Number',
+      countryLabel: 'Country/Region',
+      selectCountry: 'Select Country',
+      phoneLabel: 'Phone Number',
+      phonePlaceholder: '7xxxxxxxx',
+      phoneError: 'Phone number must start with 7 and contain 9 digits',
+      continue: 'Continue',
+      sending: 'Sending',
+      haveAccount: 'Already have an account?',
+      login: 'Login'
+    },
+    otpStep: {
+      title: 'Verify Phone Number',
+      sentTo: 'Enter verification code sent to',
+      via: 'via',
+      sms: 'SMS',
+      whatsapp: 'WhatsApp',
+      resendIn: 'Resend in',
+      resend: 'Resend Verification Code',
+      changeMethod: 'Change Method',
+      editNumber: 'Edit Phone Number',
+      confirm: 'Confirm',
+      verifying: 'Verifying'
+    },
+    infoStep: {
+      title: 'Personal Information',
+      nameLabel: 'Full Name',
+      namePlaceholder: 'Enter your full name',
+      nameRequired: 'Name is required',
+      emailLabel: 'Email (Optional)',
+      emailPlaceholder: 'Enter your email',
+      confirm: 'Create Account',
+      creating: 'Creating Account'
+    },
+    successStep: {
+      title: 'Your Account Created Successfully! 🎉',
+      message: 'Welcome to Nafsiyati community. You can now download the app and enjoy our mental health services',
+      downloadOn: 'Download on the',
+      getItOn: 'Get it on',
+      appStore: 'App Store',
+      googlePlay: 'Google Play',
+      start: 'Start Your Journey'
+    },
+    success: {
+      codeSent: 'Verification code sent successfully',
+      verified: 'Phone number verified successfully',
+      accountCreated: 'Account created successfully!',
+      codeResent: 'Verification code resent successfully'
+    },
+    errors: {
+      verifyNumber: 'Error verifying phone number',
+      sendCode: 'Error sending verification code',
+      invalidCode: 'Invalid verification code',
+      createAccount: 'Error creating account',
+      resendCode: 'Error resending code'
+    }
+  },
+    
+  verify: {
+    title: "Verification Method",
+    sms: {
+      title: "Via SMS",
+      description: "Check your text messages"
+    },
+    whatsapp: {
+      title: "Via WhatsApp",
+      description: "Check your WhatsApp messages"
+    },
+    cancel: "Cancel",
+    continue: "Continue"
+  },
+  "resourcesPage": {
+    "title": "Legal and Social Resources",
+    "description": "We provide you with a comprehensive set of legal and social resources to support women and children and protect their rights",
+    
+    "legalResources": {
+      "title": "Legal Resources",
+      "description": "Legislation and laws for the protection of women and children"
+    },
+    
+    "socialResources": {
+      "title": "Social Resources",
+      "description": "Support programs and community initiatives"
+    },
+    
+    "lawsSection": {
+      "title": "Yemeni Law Articles"
+    },
+    
+    "womenChildrenRights": {
+      "title": "Key Rights for Women and Children",
+      "list": {
+        "right1": "Basic women's rights in work and education",
+        "right2": "Children's rights to care and protection",
+        "right3": "Laws specifically protecting women from violence",
+        "right4": "Legislation related to custody and alimony"
+      }
+    },
+    
+    "communitySupport": {
+      "title": "Community Support",
+      "list": {
+        "support1": "Support groups for women",
+        "support2": "Support groups for children and adolescents",
+        "support3": "The role of civil society in protecting women and children",
+        "support4": "Community awareness programs"
+      }
+    },
+    
+    "positiveEducation": {
+      "title": "Positive Parenting",
+      "list": {
+        "education1": "Basics of family mental health",
+        "education2": "Prevention of domestic and community violence",
+        "education3": "Skills for dealing with daily pressures",
+        "education4": "Cooperation between home and school"
+      }
+    },
+    
+    "emergencyContacts": {
+      "title": "Helplines and Emergency Services",
+      "description": "Contact us anytime for immediate assistance",
+      
+      "emergencyNumbers": {
+        "title": "Emergency Phone Numbers",
+        "description": "24/7 available emergency services"
+      },
+      
+      "directChat": {
+        "title": "Direct Chat",
+        "description": "Instant communication with the center",
+        "button": "Start Chat"
+      },
+      
+      "supportLines": {
+        "title": "Support Lines",
+        "description": "Helplines and psychological support",
+        "womenSupport": "Women Support: 0800-111-222",
+        "childrenSupport": "Children Support: 0800-333-444"
+      },
+      
+      "contactInfo": {
+        "title": "Contact Information",
+        "description": "Email and general communication"
+      }
+    },
+    
+    "supportingOrganizations": {
+      "title": "Supporting Organizations and Partners",
+      "description": "We work with a network of supporting organizations to provide the best services",
+      
+      "list": {
+        "hospitals": "Hospitals",
+        "courts": "Courts",
+        "police": "Police",
+        "schools": "Schools"
+      },
+      
+      "descriptions": {
+        "healthcare": "Healthcare and medical services",
+        "legalServices": "Judicial and legal services",
+        "protection": "Protection and security",
+        "education": "Education and awareness"
+      }
+    }
+  },
+  "resourcesSection": {
+    "title": "Helpful Resources",
+    "description": "A collection of useful resources and articles to support your mental health"
   }
 };
+  
