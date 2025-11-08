@@ -28,12 +28,12 @@
       <div class="flex justify-center items-center mt-2" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
         <div class="flex text-yellow-400" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
           <i v-for="star in 5" :key="star" 
-             :class="[
-               star <= Math.floor(book.rating) ? 'fas' : 
-               star - 0.5 <= book.rating ? 'fas fa-star-half-alt' : 'far',
-               'fa-star text-xs',
-               isRTL ? 'ml-1' : 'mr-1'
-             ]">
+            :class="[
+              star <= Math.floor(book.rating) ? 'fas' : 
+              star - 0.5 <= book.rating ? 'fas fa-star-half-alt' : 'far',
+              'fa-star text-xs',
+              isRTL ? 'ml-1' : 'mr-1'
+            ]">
           </i>
         </div>
         <span class="text-xs text-gray-500" :class="isRTL ? 'mr-1' : 'ml-1'">({{ book.rating }})</span>
