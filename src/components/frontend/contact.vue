@@ -26,7 +26,7 @@
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
             <div
-              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-[#8aab34] text-white text-2xl"
+              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-secondary-green text-white text-2xl"
             >
               <i class="fa-solid fa-phone"></i>
             </div>
@@ -41,7 +41,7 @@
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
             <div
-              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-[#8aab34] text-white text-2xl"
+              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-secondary-green text-white text-2xl"
             >
               <i class="fa-solid fa-envelope"></i>
             </div>
@@ -56,7 +56,7 @@
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
             <div
-              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-[#8aab34] text-white text-2xl"
+              class="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-primary-green to-secondary-green text-white text-2xl"
             >
               <i class="fa-solid fa-map-location-dot"></i>
             </div>
@@ -108,7 +108,7 @@
           <div class="flex justify-start">
   <button
     type="submit"
-    class="px-8 py-3 rounded-2xl bg-gradient-to-tr from-primary-green to-[#8aab34] text-white font-semibold hover:opacity-90 transition-all shadow-md"
+    class="px-8 py-3 rounded-2xl bg-gradient-to-tr from-primary-green to-secondary-green text-white font-semibold hover:opacity-90 transition-all shadow-md"
   >
     إرسال الرسالة
   </button>

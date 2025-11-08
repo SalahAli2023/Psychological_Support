@@ -38,7 +38,7 @@
                   class="w-full h-full object-cover rounded-xl shadow-2xl border-8 border-white/30"
                 />
                 <!-- شارة التقييم -->
-                <div class="absolute -bottom-2 -left-2 bg-gradient-to-r from-[#d6a29a] to-[#d6a29a] text-white px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                <div class="absolute -bottom-2 -left-2 bg-gradient-to-r from-primary-pink to-secondary-pink text-white px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
                   <i class="fas fa-star text-xs"></i>
                   <span class="font-bold text-xs">{{ selectedBook.rating }}</span>
                 </div>
@@ -73,7 +73,7 @@
               <!-- التقييم -->
               <div class="mb-3 sm:mb-4">
                 <div class="flex items-center gap-2 mb-1">
-                  <div class="flex text-[#d6a29a] text-sm sm:text-base">
+                  <div class="flex text-primary-pink text-sm sm:text-base">
                     <i v-for="star in 5" :key="star" 
                        :class="star <= Math.floor(selectedBook.rating) ? 'fas' : star - 0.5 <= selectedBook.rating ? 'fas fa-star-half-alt' : 'far'" 
                        class="fa-star">
@@ -135,7 +135,7 @@
                 
                 <button 
                   @click="rateBook"
-                  class="w-full border-2 border-[#d6a29a] text-[#d6a29a] px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-[#d6a29a] hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
+                  class="w-full border-2 border-primary-pink text-primary-pink px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-primary-pink hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
                   :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
                 >
                   <i class="fas fa-star text-xs sm:text-sm"></i>
