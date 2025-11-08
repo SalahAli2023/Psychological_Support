@@ -5,11 +5,11 @@
   >
     <!-- أشكال زخرفية -->
     <div 
-      class="absolute top-10 left-10 w-32 h-32 bg-[#D6A29A] opacity-10 rounded-full blur-2xl transition-all duration-1000"
+      class="absolute top-10 left-10 w-32 h-32 bg-primary-pink opacity-10 rounded-full blur-2xl transition-all duration-1000"
       :class="{ 'opacity-10 scale-100': isVisible, 'opacity-0 scale-50': !isVisible }"
     ></div>
     <div 
-      class="absolute bottom-10 right-10 w-40 h-40 bg-[#9EBF3B] opacity-10 rounded-full blur-2xl transition-all duration-1000"
+      class="absolute bottom-10 right-10 w-40 h-40 bg-primary-green opacity-10 rounded-full blur-2xl transition-all duration-1000"
       :class="{ 'opacity-10 scale-100': isVisible, 'opacity-0 scale-50': !isVisible }"
     ></div>
 
@@ -36,19 +36,19 @@
           }"
           :style="{ transitionDelay: `${index * 150 + 300}ms` }"
         >
-          <div class="absolute inset-0 bg-gradient-to-l from-[#9EBF3B] to-[#D6A29A] opacity-0 group-hover:opacity-5 transform translate-x-full group-hover:translate-x-0 transition-all duration-700 ease-out"></div>
-          <div class="relative z-10 w-12 h-12 bg-[#9EBF3B] rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#D6A29A] transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-l from-primary-green to-primary-pink opacity-0 group-hover:opacity-5 transform translate-x-full group-hover:translate-x-0 transition-all duration-700 ease-out"></div>
+          <div class="relative z-10 w-12 h-12 bg-primary-green rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary-pink transition-all duration-500">
             <i :class="specialty.icon" class="text-white group-hover:scale-110 transition-transform duration-300"></i>
           </div>
           <div class="relative z-10">
-            <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#9EBF3B] transition-colors duration-500">
+            <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-green transition-colors duration-500">
               {{ specialty.title }}
             </h3>
             <p class="text-gray-600 text-sm leading-relaxed group-hover:text-gray-700 transition-colors duration-500">
               {{ specialty.description }}
             </p>
           </div>
-          <div class="absolute bottom-0 right-0 w-0 h-1 bg-gradient-to-l from-[#9EBF3B] to-[#D6A29A] group-hover:w-full transition-all duration-700 ease-out"></div>
+          <div class="absolute bottom-0 right-0 w-0 h-1 bg-gradient-to-l from-primary-green to-primary-pink group-hover:w-full transition-all duration-700 ease-out"></div>
         </div>
       </div>
     </div>

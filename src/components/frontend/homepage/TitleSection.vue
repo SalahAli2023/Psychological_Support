@@ -28,7 +28,7 @@ defineProps({
   },
   highlightColor: {
     type: String,
-    default: 'text-[#9EBF3B]',
+    default: 'text-primary-green',
   },
   gradientClass: {
     type: String,

@@ -1,11 +1,11 @@
 <template>
   <section 
     ref="sectionRef"
-    class="relative py-16 bg-gradient-to-br from-[#9EBF3B]/10 via-[#D6A29A]/10 to-white font-almarai text-gray-800 overflow-hidden transition-all duration-1000"
+    class="relative py-16 bg-gradient-to-br from-primary-green/10 via-primary-pink/10 to-white font-almarai text-gray-800 overflow-hidden transition-all duration-1000"
     :class="sectionClass"
   >
-    <div class="absolute top-0 left-0 w-72 h-72 bg-[#9EBF3B] opacity-10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 right-0 w-80 h-80 bg-[#D6A29A] opacity-10 rounded-full blur-3xl"></div>
+    <div class="absolute top-0 left-0 w-72 h-72 bg-primary-green opacity-10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-80 h-80 bg-primary-pink opacity-10 rounded-full blur-3xl"></div>
 
     <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
       <!-- العنوان -->
@@ -25,7 +25,7 @@
             <img src="/images/دولة.png" alt="خريطة" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
-            class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
+            class="text-3xl md:text-4xl font-bold text-primary-green"
           >{{ animatedCounters[0] }}</span>
           <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.countries') }}</p>
         </div>
@@ -37,7 +37,7 @@
             <img src="/images/سؤال.png" alt="سؤال" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
-            class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
+            class="text-3xl md:text-4xl font-bold text-primary-green"
           >{{ animatedCounters[1] }}</span>
           <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.questions') }}</p>
         </div>
@@ -49,7 +49,7 @@
             <img src="/images/جلسات.png" alt="جلسة" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
-            class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
+            class="text-3xl md:text-4xl font-bold text-primary-pink"
           >{{ animatedCounters[2] }}</span>
           <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.sessions') }}</p>
         </div>
@@ -61,7 +61,7 @@
             <img src="/images/مستخدمون.png" alt="مستخدمين" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
-            class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
+            class="text-3xl md:text-4xl font-bold text-primary-pink"
           >{{ animatedCounters[3] }}</span>
           <p class="mt-2 text-base md:text-lg text-gray-700">{{ translate('home.stats.items.users') }}</p>
         </div>
