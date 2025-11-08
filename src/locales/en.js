@@ -446,10 +446,11 @@ export const en = {
   },
 
   measuresHero: {
-    title: 'Psychological Tests ',
-    titleKey: 'and Assessments',
-    subtitle: 'Discover yourself more deeply through our scientific measures',
-    description: 'Choose from a wide range of accredited psychological measures designed specifically for your needs'
+
+    title: 'Psychological Tests and Assessments',
+    subtitle: 'Discover yourself better through trusted psychological scales',
+    description: 'Choose from a wide range of validated psychological assessments designed to meet your needs'
+
   },
 
   popularMeasures: {

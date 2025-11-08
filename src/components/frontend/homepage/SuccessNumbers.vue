@@ -22,7 +22,7 @@
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-200"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/دولة.png" alt="خريطة" class="w-full h-full object-contain light-green-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/دولة.png" alt="خريطة" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
@@ -34,7 +34,7 @@
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-300"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/سؤال.png" alt="سؤال" class="w-full h-full object-contain light-green-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/سؤال.png" alt="سؤال" class="w-full h-full object-contain light-green-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#9EBF3B]"
@@ -46,7 +46,7 @@
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-400"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/جلسات.png" alt="جلسة" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/جلسات.png" alt="جلسة" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
@@ -58,7 +58,7 @@
         <div class="flex flex-col items-center justify-end transition-all duration-700 delay-500"
              :class="contentItemClass">
           <div class="w-24 h-24 mb-4 flex items-center justify-center">
-            <img src="/images/مستخدمون.png" alt="مستخدمين" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
+            <img src="@/assets/images/Statistics/مستخدمون.png" alt="مستخدمين" class="w-full h-full object-contain light-pink-filter transition-all duration-700">
           </div>
           <span 
             class="text-3xl md:text-4xl font-bold text-[#D6A29A]"
