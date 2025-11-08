@@ -11,14 +11,19 @@
         <div 
           v-for="category in categories" 
           :key="category.id"
-          class="category-card bg-white rounded-2xl shadow-xl p-6 cursor-pointer border-2 transition-all duration-300"
-          :class="activeCategory === category.id ? 'border-primary-green ring-4 ring-primary-green/20' : 'border-transparent'"
+          class="relative bg-white rounded-2xl shadow-xl p-6 cursor-pointer border-2 transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50 category-card"
+          :class="activeCategory === category.id 
+            ? 'border-primary-green ring-4 ring-primary-green/20' 
+            : 'border-transparent hover:border-primary-green/30'"
           @click="$emit('filter-change', category.filter)"
         >
           <!-- أيقونة التصنيف -->
-          <div class="category-icon w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden" :class="category.color">
+          <div 
+            class="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-6"
+            :class="[category.color, 'hover:before:opacity-100']"
+          >
             <i :class="category.icon" class="text-white text-3xl z-10"></i>
-            <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-sm opacity-0 transition-opacity duration-300 before:opacity-0"></div>
           </div>
           
           <!-- عنوان التصنيف -->
@@ -40,17 +45,19 @@
           </div>
           
           <!-- زر التصفح -->
-          <button class="w-full py-3 bg-gradient-to-l from-primary-green to-secondary-green text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-2">
+          <button class="w-full py-3 bg-gradient-to-l from-primary-green to-secondary-green text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-2 hover:scale-105">
             <span>{{ translate('categorySection.browseButton') }}</span>
             <i class="fas fa-arrow-left text-sm"></i>
           </button>
 
           <!-- شريط التمييز السفلي -->
-          <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-primary-green to-transparent opacity-0 transition-opacity duration-300" :class="activeCategory === category.id ? 'opacity-100' : ''"></div>
+          <div 
+            class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-primary-green to-transparent transition-opacity duration-300"
+            :class="activeCategory === category.id ? 'opacity-100' : 'opacity-0'"
+          ></div>
         </div>
       </div>
 
-      
       <!-- مؤشر التصنيف النشط -->
       <div class="text-center mt-8">
         <div class="inline-flex items-center gap-4 bg-gray-100 rounded-full px-6 py-3">
@@ -62,39 +69,13 @@
         </div>
       </div>
     </div>
-
-    <div class="text-center mt-12">
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">{{ translate('categorySection.searchHint') }}</p>
-      </div>
-
-    <!-- شريط البحث في قسم التصنيفات -->
-      <div class="max-w-2xl mx-auto mt-4">
-        <div class="relative">
-          <input 
-            type="text" 
-            :value="searchQuery"
-            @input="$emit('update:searchQuery', $event.target.value)"
-            :placeholder="translate('categorySection.searchPlaceholder')"
-            class="w-full px-6 py-4 pr-16 rounded-2xl text-gray-800 focus:outline-none focus:ring-4 focus:ring-primary-green/30 shadow-lg border border-gray-200 text-lg"
-          >
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">
-            <i class="fas fa-search text-xl"></i>
-          </div>
-          <div class="absolute left-10 top-1/2 transform -translate-y-1/2">
-            <span class="bg-primary-green text-white px-3 py-1 rounded-full text-sm">
-              {{ filteredMeasuresCount }} {{ translate('categorySection.resultsCount') }}
-            </span>
-          </div>
-        </div>
-      </div>
-
   </section>
 </template>
 
 <script>
 import { computed } from 'vue'
 import { categoriesData } from '@/data/measures'
-import { t } from '@/locales'
+import { useTranslations } from '@/composables/useTranslations'
 
 export default {
   name: 'CategorySection',
@@ -123,13 +104,9 @@ export default {
   emits: ['filter-change', 'update:searchQuery'],
   setup(props) {
     const categories = categoriesData
+    const { translate } = useTranslations()
 
     // دالة الترجمة
-    const translate = (key) => {
-      return t(key, props.language)
-    }
-
-    // حساب عدد المقاييس في كل تصنيف
     const getMeasuresCount = (categoryId) => {
       if (categoryId === 'all') return props.measures.length
       
@@ -156,7 +133,6 @@ export default {
       const categoryMap = {
         'women': 'women',
         'children': 'children',
-        'specialists': 'specialists'
       }
       
       const categoryMeasures = props.measures.filter(measure => 
@@ -202,66 +178,14 @@ export default {
 </script>
 
 <style scoped>
-.category-card {
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-}
-
-.category-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
+/* CSS الضرورية فقط للتأثيرات التي لا تدعمها Tailwind */
+.category-card-hover::before {
   background: linear-gradient(135deg, rgba(158, 191, 59, 0.05) 0%, rgba(214, 162, 154, 0.05) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  border-radius: 1rem;
-}
-
-.category-card:hover::before {
-  opacity: 1;
+  /* transition: all 0.3s ease; */
 }
 
 .category-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-}
-
-.category-icon {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.category-icon::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.category-card:hover .category-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.category-card:hover .category-icon::before {
-  opacity: 1;
-}
-
-/* تأثيرات للبحث */
-.search-highlight {
-  background: linear-gradient(120deg, #9EBF3B33, #D6A29A33);
-  background-repeat: no-repeat;
-  background-size: 100% 0.4em;
-  background-position: 0 88%;
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -62,8 +62,8 @@
               <div class="flex items-center gap-1 text-sm">
                 <div class="flex text-yellow-400">
                   <i v-for="star in 5" :key="star" 
-                     class="fas fa-star text-sm" 
-                     :class="star <= measure.rating ? 'text-yellow-400' : 'text-gray-300'"></i>
+                      class="fas fa-star text-sm" 
+                      :class="star <= measure.rating ? 'text-yellow-400' : 'text-gray-300'"></i>
                 </div>
                 <span class="text-gray-500">({{ measure.reviews }})</span>
               </div>
@@ -127,7 +127,7 @@
 <script>
 import { ref, computed } from "vue";
 import { categoryTitles } from "@/data/measures";
-import { t } from "@/locales";
+import { useTranslations } from '@/composables/useTranslations'
 
 export default {
   name: "MeasuresPage",
@@ -135,16 +135,14 @@ export default {
     measures: { type: Array, default: () => [] },
     activeFilter: { type: String, default: "allMeasures" },
     language: { type: String, default: "ar" },
-  },methods: {
-    translate(key) {
-      return t(key, this.language)
-    }
   },
 
   emits: ["measure-click"],
   setup(props) {
     const currentPage = ref(1);
     const itemsPerPage = 9;
+    const {translate}=useTranslations()
+
     const getDefaultImage = (category) => {
           const images = {
             women:
@@ -178,11 +176,6 @@ export default {
     const prevPage = () => {
       if (currentPage.value > 1) currentPage.value--;
     };
-    // const getCategoryTitle = (category) => categoryTitles[category] || category;
-
-    
-
-    // const translate = (key) => t(key, props.language);
 
     const getCategoryTitle = (category) => {
       const title = categoryTitles[category];
@@ -196,8 +189,6 @@ export default {
     const getTranslatedDescription = (measure) => {
       return typeof measure.description === 'object' ? measure.description[props.language] : measure.description;
     };
-
-    const translate = (key) => t(key, props.language);
 
     return {
       currentPage,
