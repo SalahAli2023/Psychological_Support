@@ -4,7 +4,7 @@
       <!-- العنوان الرئيسي مع الكلمة الأخيرة خضراء -->
       <h1 class="hero-title text-center">
         <span class="text-black">{{ displayTitle }}</span>
-        <span v-if="displayHighlight" class="text-[#9EBF3B]"> {{ displayHighlight }}</span>
+        <span v-if="displayHighlight" class="text-primary-green"> {{ displayHighlight }}</span>
       </h1>
 
       <!-- الوصف -->
@@ -101,7 +101,7 @@ const displayHighlight = computed(() => {
 const buttonClasses = (btn) => {
   const base = 'px-8 py-3 rounded-lg font-medium flex items-center transition-colors duration-300'
   if (btn.primary) return `${base} btn-primary text-white hover:shadow-lg transform hover:scale-105`
-  return `${base} border-2 border-gray-300 text-gray-700 hover:border-[#9EBF3B] hover:text-[#9EBF3B] hover:shadow-md`
+  return `${base} border-2 border-gray-300 text-gray-700 hover:border-primary-green hover:text-primary-green hover:shadow-md`
 }
 
 defineEmits(['cta'])
