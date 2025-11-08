@@ -1,5 +1,5 @@
 <template>
-  <div class="font-almarai">
+  <div class="font-almarai bg-white">
     <!-- Header -->
     <Header />
 
@@ -14,20 +14,16 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 py-8">
       <!-- Category Filter -->
-      <div class="w-full flex justify-center mb-8">
-        <div class="w-full" :class="filterContainerClass">
-          <CategoryFilter 
-            :categories="translatedCategories"
-            :activeCategory="activeCategory"
-            @category-change="handleCategoryChange"
-            @search-change="handleSearchChange"
-          />
-        </div>
-      </div>
+      <CategoryFilter 
+        :categories="translatedCategories"
+        :activeCategory="activeCategory"
+        @category-change="handleCategoryChange"
+        @search-change="handleSearchChange"
+      />
 
       <!-- Articles Grid -->
       <div class="mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" :class="gridContainerClass">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           <ArticleCard
             v-for="article in paginatedArticles"
             :key="article.id"
@@ -38,21 +34,21 @@
       </div>
 
       <!-- No Results -->
-      <div v-if="filteredArticles.length === 0" class="text-center py-12 bg-white rounded-xl shadow-md">
+      <div v-if="filteredArticles.length === 0" class="text-center py-12 bg-white rounded-xl shadow-md max-w-2xl mx-auto">
         <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-        <h3 class="text-xl font-bold text-[#065f46] mb-2">{{ noResultsText.title }}</h3>
+        <h3 class="text-xl font-bold text-emerald-800 mb-2">{{ noResultsText.title }}</h3>
         <p class="text-gray-600">{{ noResultsText.message }}</p>
       </div>
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="flex justify-center mt-8">
-          <Pagination 
-            :current-page="currentPage"
-            :total-pages="totalPages"
-            :total-items="filteredArticles.length"
-            :items-per-page="itemsPerPage"
-            @page-change="handlePageChange"
-          />
+        <Pagination 
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-items="filteredArticles.length"
+          :items-per-page="itemsPerPage"
+          @page-change="handlePageChange"
+        />
       </div>
     </div>
   </div>
@@ -148,13 +144,6 @@ export default {
         }
         return category;
       });
-    },
-    // حساب عرض الحاوية بناءً على عدد الأعمدة
-    filterContainerClass() {
-      return 'max-w-[1200px]'; // نفس عرض الكاردات
-    },
-    gridContainerClass() {
-      return 'max-w-[1200px] mx-auto'; // تأكيد أن الكاردات بنفس العرض
     }
   },
   methods: {
@@ -176,20 +165,9 @@ export default {
   }
 }
 </script>
+
 <style scoped>
-/* تحسينات إضافية للغة العربية */
 .font-almarai {
   font-family: 'Almarai', sans-serif;
 }
-
-/* تحسين المسافات للعربية */
-.grid > * {
-  margin-bottom: 1.5rem;
-}
-
-/* تحسين الظلال */
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-</style>
+</style>    

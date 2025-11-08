@@ -3,7 +3,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import router from './routes/front.js'
 import App from './App.vue'
 
-import './assets/article-health-styles.css'
 import './style.css'
 
 // أولاً ننشئ التطبيق
