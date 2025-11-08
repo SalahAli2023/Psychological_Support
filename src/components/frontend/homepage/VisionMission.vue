@@ -5,15 +5,14 @@
     :class="sectionClass"
   >
     <!-- خلفية ديكورية خفيفة -->
-    <div class="absolute top-0 left-0 w-64 h-64 bg-[#9EBF3B]/5 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 right-0 w-72 h-72 bg-[#D6A29A]/5 rounded-full blur-3xl"></div>
+    <div class="absolute top-0 left-0 w-64 h-64 bg-primary-green/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-72 h-72 bg-primary-pink/5 rounded-full blur-3xl"></div>
     
     <div class="max-w-6xl mx-auto px-6 text-gray-700 relative z-10">
       <TitleSection
         :mainText="translate('home.visionMission.title')"
         :highlightText="translate('home.visionMission.highlight')"
       />
-
       <!-- التقسيم إلى قسمين -->
       <div class="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
         <!-- القسم الأيمن (المحتوى) -->
@@ -30,7 +29,7 @@
                 <img :src="item.img" :alt="item.title" class="w-20 h-20 md:w-24 md:h-24 transition-all duration-500" />
               </div>
               <div class="flex-1">
-                <h3 class="text-xl font-semibold text-[#9EBF3B] mb-3">{{ item.title }}</h3>
+                <h3 class="text-xl font-semibold text-primary-green mb-3">{{ item.title }}</h3>
                 <p class="text-gray-600 leading-relaxed">{{ item.desc }}</p>
               </div>
             </div>
@@ -54,7 +53,7 @@
 
       <!-- زر إنشاء الحساب -->
       <div class="mt-16 md:mt-20 text-center transition-all duration-500 delay-250" :class="buttonClass">
-        <button class="bg-[#9EBF3B] hover:bg-[#8CAF35] text-white font-semibold px-10 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base md:text-lg">
+        <button class="bg-primary-green hover:bg-[#8CAF35] text-white font-semibold px-10 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base md:text-lg">
           {{ translate('home.visionMission.createAccount') }}
         </button>
       </div>

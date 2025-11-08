@@ -2,8 +2,8 @@
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-fade-in">
-          {{ translate('about.objectives.title') }} <span class="text-[#9EBF3B]">{{ translate('about.objectives.highlight') }}</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
+          {{ translate('about.objectives.title') }} <span class="text-primary-green">{{ translate('about.objectives.highlight') }}</span>
         </h2>
 
         <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-delay">
@@ -20,7 +20,7 @@
           :style="`animation-delay: ${index * 0.1}s`"
         >
           <!-- الرقم الدائري -->
-          <div class="w-12 h-12 bg-[#D6A29A] rounded-xl flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-110">
+          <div class="w-12 h-12 bg-primary-pink rounded-xl flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-110">
             <span class="text-white font-bold text-base">{{ index + 1 }}</span>
           </div>
           

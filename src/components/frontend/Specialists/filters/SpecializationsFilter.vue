@@ -42,7 +42,7 @@ export default {
   emits: ['update:filters'],
   methods: {
     getSpecializationClass(index) {
-      const colorClass = index % 2 === 0 ? 'border-[#9EBF3B] hover:border-[#9EBF3B]' : 'border-[#D6A29A] hover:border-[#D6A29A]'
+      const colorClass = index % 2 === 0 ? 'border-primary-green hover:border-primary-green' : 'border-primary-pink hover:border-primary-pink'
       return colorClass
     },
     toggleSpecialization(spec) {

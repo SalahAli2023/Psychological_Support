@@ -9,8 +9,8 @@
   --color-primary-green: #9EBF3B;
   --color-primary-pink: #D6A29A;
 
-  --color-secondary-green: #8AA835;
-  --color-secondary-pink: #C49085;
+  --color-secondary-green: #8AAB34;
+  --color-secondary-pink: #C58F87;
 
   --color-text-primary: #1F2937;
   --color-text-secondary: #6B7280;
@@ -30,6 +30,34 @@
 }
 
 
+
+
+
+/* 🔽 الحركات (Animations) */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-spin {
+  animation: spin 1s linear infinite;
+}
 
 
 

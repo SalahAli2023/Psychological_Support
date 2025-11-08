@@ -3,7 +3,7 @@
     <!-- الفلترة للجوال -->
     <button 
       @click="toggleMobileFilter"
-      class="md:hidden w-full bg-gradient-to-l from-[#9EBF3B] to-[#8cad35] text-white px-6 py-4 rounded-2xl flex items-center justify-between font-bold text-lg mb-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+      class="md:hidden w-full bg-gradient-to-l from-primary-green to-secondary-green text-white px-6 py-4 rounded-2xl flex items-center justify-between font-bold text-lg mb-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
       :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
     >
       <span class="flex items-center gap-3" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
@@ -26,7 +26,7 @@
         <!-- الهيدر -->
         <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200/50" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
           <div class="flex items-center gap-3" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
-            <div class="w-10 h-10 bg-gradient-to-br from-[#9EBF3B] to-[#8cad35] rounded-xl flex items-center justify-center shadow-lg">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary-green to-secondary-green rounded-xl flex items-center justify-center shadow-lg">
               <i class="fas fa-filter text-white text-lg"></i>
             </div>
             <div :class="isRTL ? 'text-right' : 'text-left'">
@@ -62,7 +62,7 @@
           </button>
           <button
             @click="toggleMobileFilter"
-            class="flex-1 bg-gradient-to-l from-[#9EBF3B] to-[#8cad35] text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-bold flex items-center justify-center gap-3 shadow-md transform hover:-translate-y-0.5"
+            class="flex-1 bg-gradient-to-l from-primary-green to-secondary-green text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-bold flex items-center justify-center gap-3 shadow-md transform hover:-translate-y-0.5"
             :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
           >
             <i class="fas fa-check-circle text-lg"></i>
@@ -77,7 +77,7 @@
       <!-- الهيدر -->
       <div class="flex justify-between items-center mb-8 pb-6 border-b border-gray-200/50" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
         <div class="flex items-center gap-4" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
-          <div class="w-12 h-12 bg-gradient-to-br from-[#9EBF3B] to-[#8cad35] rounded-2xl flex items-center justify-center shadow-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl flex items-center justify-center shadow-lg">
             <i class="fas fa-filter text-white text-xl"></i>
           </div>
           <div :class="isRTL ? 'text-right' : 'text-left'">
@@ -98,7 +98,7 @@
       <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
         <div class="flex justify-between items-center text-sm" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
           <span class="text-gray-600 font-medium">{{ translate('filters.appliedFilters') }}:</span>
-          <span class="bg-[#9EBF3B] text-white px-3 py-1 rounded-full font-bold">
+          <span class="bg-primary-green text-white px-3 py-1 rounded-full font-bold">
             {{ getAppliedFiltersCount }}
           </span>
         </div>
@@ -118,7 +118,7 @@
       <!-- زر تطبيق الفلاتر -->
       <button
         @click="$emit('apply-filters')"
-        class="w-full mt-8 bg-gradient-to-l from-[#9EBF3B] to-[#8cad35] text-white px-6 py-4 rounded-xl hover:shadow-xl transition-all duration-300 font-bold flex items-center justify-center gap-3 shadow-lg transform hover:-translate-y-0.5"
+        class="w-full mt-8 bg-gradient-to-l from-primary-green to-secondary-green text-white px-6 py-4 rounded-xl hover:shadow-xl transition-all duration-300 font-bold flex items-center justify-center gap-3 shadow-lg transform hover:-translate-y-0.5"
         :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
       >
         <i class="fas fa-rocket text-lg"></i>

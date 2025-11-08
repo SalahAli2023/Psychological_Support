@@ -1,8 +1,8 @@
 <template>
   <div class="lg:hidden mb-4 relative z-40">
-    <div class="bg-white rounded-2xl shadow-lg border border-[#9EBF3B] p-4 max-h-96 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-lg border border-primary-green p-4 max-h-96 overflow-y-auto">
       <!-- Mobile Header -->
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-[#9EBF3B] sticky top-0 bg-white">
+      <div class="flex items-center justify-between mb-4 pb-4 border-b border-primary-green sticky top-0 bg-white">
         <h2 class="text-xl font-bold text-[#065f46]">{{ translate('therapists.filters.title') }}</h2>
         <button @click="$emit('close')" class="p-2 text-gray-500 hover:text-gray-700">
           <i class="fas fa-times text-xl"></i>

@@ -6,7 +6,7 @@
         class="w-full flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition border border-gray-200"
       >
         <span class="font-medium text-gray-700">{{ title }}</span>
-        <i :class="openDropdowns[title] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-[#9EBF3B] transition-transform duration-300"></i>
+        <i :class="openDropdowns[title] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-primary-green transition-transform duration-300"></i>
       </button>
       
       <transition
@@ -25,10 +25,10 @@
             @click="$emit('toggle-filter', title, item)"
           >
             <div class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded mr-2 transition-all duration-200"
-                 :class="isFilterSelected(title, item) ? 'bg-[#9EBF3B] border-[#9EBF3B]' : 'bg-white'">
+                 :class="isFilterSelected(title, item) ? 'bg-primary-green border-primary-green' : 'bg-white'">
               <i v-if="isFilterSelected(title, item)" class="fas fa-check text-white text-xs"></i>
             </div>
-            <span :class="isFilterSelected(title, item) ? 'text-[#9EBF3B] font-medium' : 'text-gray-700'">
+            <span :class="isFilterSelected(title, item) ? 'text-primary-green font-medium' : 'text-gray-700'">
               {{ item }}
             </span>
           </div>

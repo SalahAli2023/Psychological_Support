@@ -16,7 +16,7 @@
       <p class="text-gray-500 text-sm sm:text-base mb-4">{{ translate('therapists.results.noResultsMessage') }}</p>
       <button 
         @click="$emit('resetFilters')" 
-        class="bg-[#D6A29A] hover:bg-[#c9928a] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition-all text-sm sm:text-base"
+        class="bg-primary-pink hover:bg-secondary-pink text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition-all text-sm sm:text-base"
       >
         {{ translate('therapists.results.showAll') }}
       </button>
