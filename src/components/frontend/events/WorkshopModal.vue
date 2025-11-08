@@ -33,11 +33,11 @@
             
             <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
               <span class="flex items-center gap-1">
-                <i class="fas fa-clock text-[#D6A29A]"></i>
+                <i class="fas fa-clock text-primary-pink"></i>
                 {{ workshop.duration }}
               </span>
               <span class="flex items-center gap-1">
-                <i class="fas fa-user text-[#9EBF3B]"></i>
+                <i class="fas fa-user text-primary-green"></i>
                 {{ workshop.speaker }}
               </span>
             </div>
@@ -52,7 +52,7 @@
                 :key="index"
                 class="flex items-start gap-2"
               >
-                <i class="fas fa-check text-[#9EBF3B] mt-1 flex-shrink-0"></i>
+                <i class="fas fa-check text-primary-green mt-1 flex-shrink-0"></i>
                 <span class="text-gray-700">{{ topic }}</span>
               </li>
             </ul>
@@ -62,7 +62,7 @@
           <div class="flex gap-3 pt-4">
             <button 
               @click="handleRegistration"
-              class="flex-1 bg-[#D6A29A] hover:bg-[#c47a73] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
+              class="flex-1 bg-primary-pink hover:bg-[#c47a73] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
             >
               سجل في الورشة
             </button>

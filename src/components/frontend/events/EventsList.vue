@@ -19,7 +19,7 @@
 
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-12">
-      <i class="fas fa-spinner fa-spin text-3xl text-[#9EBF3B] mb-4"></i>
+      <i class="fas fa-spinner fa-spin text-3xl text-primary-green mb-4"></i>
       <p class="text-gray-600">{{ translate('loading') }}</p>
     </div>
 
@@ -45,7 +45,7 @@
           @click="goToPage(page)"
           class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
           :class="page === currentPage 
-            ? 'bg-[#9EBF3B] text-white shadow-1xl' 
+            ? 'bg-primary-green text-white shadow-1xl' 
             : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'"
         >
           {{ page }}
@@ -124,7 +124,7 @@ const filteredEvents = computed(() => {
     const query = filterCriteria.value.search.toLowerCase().trim()
     result = result.filter(event => {
       const matches = event.title?.toLowerCase().includes(query) || 
-                     event.description?.toLowerCase().includes(query)
+                      event.description?.toLowerCase().includes(query)
       console.log(`Event "${event.title}" matches search "${query}":`, matches) // Debug
       return matches
     })

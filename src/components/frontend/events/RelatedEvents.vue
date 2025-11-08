@@ -2,7 +2,7 @@
   <div>
     <!-- فعاليات ذات صلة - تصميم عمودي -->
     <div class="bg-white rounded-2xl shadow p-6">
-      <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#9EBF3B] inline-block">
+      <h3 class="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-primary-green inline-block">
         {{ translate('events.details.relatedEvents') }}
       </h3>
       <div class="space-y-4">
@@ -19,11 +19,11 @@
               class="w-20 h-20 rounded-lg object-cover flex-shrink-0"
             />
             <div class="flex-1">
-              <h4 class="font-bold text-gray-900 group-hover:text-[#D6A29A] transition-colors duration-300 line-clamp-2 text-sm mb-1">
+              <h4 class="font-bold text-gray-900 group-hover:text-primary-pink transition-colors duration-300 line-clamp-2 text-sm mb-1">
                 {{ event.title }}
               </h4>
               <p class="text-gray-500 text-xs mb-2">
-                <i class="fas fa-calendar text-[#9EBF3B] ml-1"></i>
+                <i class="fas fa-calendar text-primary-green ml-1"></i>
                 {{ event.date }}
               </p>
               <span :class="`inline-block text-xs px-2 py-1 rounded-full ${getCategoryStyle(event.type)}`">
