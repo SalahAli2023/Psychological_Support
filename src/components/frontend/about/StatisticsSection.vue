@@ -1,9 +1,9 @@
 <template>
-  <section class="py-20 bg-gradient-to-br from-[#9EBF3B]/5 to-[#D6A29A]/5">
+  <section class="py-20 bg-gradient-to-br from-primary-green/5 to-primary-pink/5">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
-          {{ translate('about.statistics.title') }} <span class="text-[#9EBF3B]">{{ translate('about.statistics.highlight') }}</span>
+          {{ translate('about.statistics.title') }} <span class="text-primary-green">{{ translate('about.statistics.highlight') }}</span>
         </h2>
 
         <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
@@ -19,7 +19,7 @@
           :style="`animation-delay: ${stat.id * 0.2}s`"
           @mouseenter="startCounter(stat)"
         >
-          <div class="text-3xl md:text-4xl font-bold text-[#9EBF3B] mb-2" :id="`counter-${stat.id}`">
+          <div class="text-3xl md:text-4xl font-bold text-primary-green mb-2" :id="`counter-${stat.id}`">
             {{ stat.initialValue }}
           </div>
           <div class="text-gray-600 text-base">{{ stat.label }}</div>

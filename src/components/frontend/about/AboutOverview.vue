@@ -11,14 +11,14 @@
               class="w-full h-auto"
             />
             <!-- تراكب متدرج -->
-            <div class="absolute inset-0 bg-gradient-to-br from-[#9EBF3B]/10 to-[#D6A29A]/10 transition-opacity duration-500 hover:opacity-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-green/10 to-primary-pink/10 transition-opacity duration-500 hover:opacity-0"></div>
           </div>
         </div>
         
         <!-- المحتوى -->
         <div class="order-1 lg:order-1 text-start" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 animate-fade-in-right">
-            <span class="text-[#9EBF3B]">{{ translate('about.overview.title') }}</span>
+            <span class="text-primary-green">{{ translate('about.overview.title') }}</span>
           </h2>
           
           <div class="space-y-4 text-gray-600 leading-relaxed">
@@ -41,15 +41,15 @@
           
           <div class="mt-8 flex flex-wrap gap-4">
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.5s">
-              <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
+              <div class="w-3 h-3 bg-primary-green rounded-full"></div>
               <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.independent') }}</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.6s">
-              <div class="w-3 h-3 bg-[#D6A29A] rounded-full"></div>
+              <div class="w-3 h-3 bg-primary-pink rounded-full"></div>
               <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.nonprofit') }}</span>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 hover:shadow-md transition-all duration-300 animate-bounce-in" style="animation-delay: 0.7s">
-              <div class="w-3 h-3 bg-[#9EBF3B] rounded-full"></div>
+              <div class="w-3 h-3 bg-primary-green rounded-full"></div>
               <span class="text-gray-700 font-medium text-sm">{{ translate('about.overview.badges.licensed') }}</span>
             </div>
           </div>

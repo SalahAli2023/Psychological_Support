@@ -14,7 +14,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- الرؤية -->
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 animate-card-slide" style="animation-delay: 0.1s">
-          <div class="w-16 h-16 bg-[#9EBF3B] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
+          <div class="w-16 h-16 bg-primary-green rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-eye text-white text-2xl"></i>
           </div>
 
@@ -28,7 +28,7 @@
         
         <!-- الرسالة -->
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 animate-card-slide" style="animation-delay: 0.2s">
-          <div class="w-16 h-16 bg-[#D6A29A] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
+          <div class="w-16 h-16 bg-primary-pink rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-bullseye text-white text-2xl"></i>
           </div>
 
@@ -42,7 +42,7 @@
         
         <!-- القيم -->
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 animate-card-slide" style="animation-delay: 0.3s">
-          <div class="w-16 h-16 bg-[#9EBF3B] rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
+          <div class="w-16 h-16 bg-primary-green rounded-2xl flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform duration-300">
             <i class="fas fa-heart text-white text-2xl"></i>
           </div>
 
@@ -52,19 +52,19 @@
 
           <div class="space-y-3 text-right" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.4s">
-              <i class="fas fa-check text-[#9EBF3B]"></i>
+              <i class="fas fa-check text-primary-green"></i>
               <span>{{ translate('visionMission.values.items.justice') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.5s">
-              <i class="fas fa-check text-[#9EBF3B]"></i>
+              <i class="fas fa-check text-primary-green"></i>
               <span>{{ translate('visionMission.values.items.protection') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.6s">
-              <i class="fas fa-check text-[#9EBF3B]"></i>
+              <i class="fas fa-check text-primary-green"></i>
               <span>{{ translate('visionMission.values.items.participation') }}</span>
             </div>
             <div class="flex items-center gap-3 text-gray-600 animate-fade-in-list" style="animation-delay: 0.7s">
-              <i class="fas fa-check text-[#9EBF3B]"></i>
+              <i class="fas fa-check text-primary-green"></i>
               <span>{{ translate('visionMission.values.items.transparency') }}</span>
             </div>
           </div>

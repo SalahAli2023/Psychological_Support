@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-4">
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-          {{ translate('testimonials.title') }}<span class="text-[#D6A29A]">{{ translate('testimonials.highlight') }}</span>
+          {{ translate('testimonials.title') }}<span class="text-primary-pink">{{ translate('testimonials.highlight') }}</span>
         </h2>
         <p class="text-base text-gray-600 max-w-2xl mx-auto">
           {{ translate('testimonials.subtitle') }}
@@ -47,7 +47,7 @@
                 
                 <!-- المعلومات -->
                 <div class="flex items-center gap-2 justify-center" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
-                  <div class="w-8 h-8 bg-gradient-to-br from-[#9EBF3B] to-emerald-500 rounded-full flex items-center justify-center">
+                  <div class="w-8 h-8 bg-gradient-to-br from-primary-green to-emerald-500 rounded-full flex items-center justify-center">
                     <span class="text-white font-bold text-xs">{{ getInitials(testimonial) }}</span>
                   </div>
                   <div class="text-right">
@@ -63,14 +63,14 @@
         <!-- أزرار التنقل -->
         <button 
           @click="prevSlide"
-          class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 z-10"
+          class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-primary-green hover:text-white transition-all duration-300 z-10"
         >
           <i class="fas fa-chevron-right text-xs"></i>
         </button>
         
         <button 
           @click="nextSlide"
-          class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-[#9EBF3B] hover:text-white transition-all duration-300 z-10"
+          class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-primary-green hover:text-white transition-all duration-300 z-10"
         >
           <i class="fas fa-chevron-left text-xs"></i>
         </button>
@@ -269,7 +269,7 @@ const getCalculatedIndex = (dotIndex) => {
 // الحصول على كلاس الدوائر
 const getDotClass = (dotIndex) => {
   const calculatedIndex = getCalculatedIndex(dotIndex)
-  return calculatedIndex === currentIndex.value ? 'bg-[#9EBF3B] w-3' : 'bg-gray-300'
+  return calculatedIndex === currentIndex.value ? 'bg-primary-green w-3' : 'bg-gray-300'
 }
 
 // الانتقال إلى السلايدر المحسوب
