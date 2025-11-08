@@ -29,8 +29,6 @@
   }
 }
 
-/* كلاسات الألوان اليدوية */
-
 /* ✨ التدرجات اللونية */
 @utility from-primary-green {
   --tw-gradient-from: var(--color-primary-green);

@@ -6,7 +6,7 @@
         <div class="order-2 lg:order-2">
           <div class="relative rounded-2xl overflow-hidden animate-float">
             <img 
-              src="/images/جلسات.png" 
+              src="@/assets/images/Statistics/جلسات.png" 
               :alt="translate('about.overview.title')"
               class="w-full h-auto"
             />

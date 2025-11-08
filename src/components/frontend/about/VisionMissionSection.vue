@@ -2,7 +2,7 @@
   <section class="py-20 bg-gradient-to-br from-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-fade-in-down">
           {{ translate('visionMission.title') }}
         </h2>
 

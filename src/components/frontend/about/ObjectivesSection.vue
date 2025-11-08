@@ -2,8 +2,13 @@
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
+<<<<<<< HEAD
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
           {{ translate('about.objectives.title') }} <span class="text-primary-green">{{ translate('about.objectives.highlight') }}</span>
+=======
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-fade-in">
+          {{ translate('about.objectives.title') }} <span class="text-[#9EBF3B]">{{ translate('about.objectives.highlight') }}</span>
+>>>>>>> e4ca00736e482950bdaf5c16a78eb1bc09ff63f0
         </h2>
 
         <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-delay">
