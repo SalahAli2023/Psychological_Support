@@ -2,11 +2,13 @@
 	<RouterLink
 		:to="{ name: toName as any }"
 		:class="[
-			'flex items-center gap-3 rounded-lg px-3 py-2 text-sm',
-			isActive ? 'bg-brand-500 text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+			'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200',
+			isActive 
+				? 'bg-brand-500 text-white' 
+				: 'text-primary hover:bg-tertiary'
 		]"
 	>
-		<component :is="IconComp" class="h-5 w-5" />
+		<component :is="IconComp" class="h-5 w-5 text-inherit" />
 		<span v-if="showLabel" class="truncate">{{ label }}</span>
 	</RouterLink>
 </template>

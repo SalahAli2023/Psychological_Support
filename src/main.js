@@ -7,7 +7,7 @@ import { createI18n } from 'vue-i18n';
 
 import en from './locales/en.json';
 import ar from './locales/ar.json';
-import './assets/css/article-health-styles.css';
+
 import './assets/css/style.css';
 
 const app = createApp(App);

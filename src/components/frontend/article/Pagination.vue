@@ -1,21 +1,18 @@
 <template>
   <div class="flex flex-col items-center space-y-6" :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'">
     <!-- معلومات الصفحة -->
-    <div class="text-gray-600 text-sm">
+    <div class="text-gray-600 text-sm mb-4">
       {{ showingText }}
     </div>
 
     <!-- أزرار الصفحات -->
-    <div class="flex items-center" :class="currentLanguage === 'ar' ? 'space-x-2 space-x-reverse' : 'space-x-2'">
+    <div class="flex items-center gap-2" :class="currentLanguage === 'ar' ? 'flex-row-reverse' : ''">
       <!-- زر الصفحة السابقة -->
       <button
         @click="goToPage(currentPage - 1)"
         :disabled="currentPage === 1"
-        :class="[
-          'pagination-btn',
-          'prev-next-btn',
-          currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
-        ]"
+        class="flex items-center justify-center w-10 h-10 rounded-xl font-semibold text-sm transition-all duration-300 ease-in-out border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#9EBF3B] hover:text-white"
+        :class="currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 border-gray-200 hover:border-[#9EBF3B]'"
       >
         <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
       </button>
@@ -25,13 +22,10 @@
         v-for="page in visiblePages"
         :key="page"
         @click="goToPage(page)"
-        :class="[
-          'pagination-btn',
-          'page-number',
-          page === currentPage 
-            ? 'active-page' 
-            : 'inactive-page hover:bg-gray-100'
-        ]"
+        class="flex items-center justify-center w-10 h-10 rounded-xl font-semibold text-sm transition-all duration-300 ease-in-out border-2"
+        :class="page === currentPage 
+          ? 'bg-gradient-to-r from-[#9EBF3B] to-[#8aaa2f] text-white transform scale-110 shadow-lg shadow-[#9EBF3B]/30' 
+          : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-[#9EBF3B] hover:-translate-y-0.5 hover:shadow-md'"
       >
         {{ page }}
       </button>
@@ -40,27 +34,22 @@
       <button
         @click="goToPage(currentPage + 1)"
         :disabled="currentPage === totalPages"
-        :class="[
-          'pagination-btn',
-          'prev-next-btn',
-          currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'
-        ]"
+        class="flex items-center justify-center w-10 h-10 rounded-xl font-semibold text-sm transition-all duration-300 ease-in-out border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#9EBF3B] hover:text-white"
+        :class="currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 border-gray-200 hover:border-[#9EBF3B]'"
       >
         <i :class="currentLanguage === 'ar' ? 'fas fa-chevron-left' : 'fas fa-chevron-right'"></i>
       </button>
     </div>
 
     <!-- نقاط التقدم -->
-    <div class="flex" :class="currentLanguage === 'ar' ? 'space-x-1 space-x-reverse' : 'space-x-1'">
+    <div class="flex gap-1" :class="currentLanguage === 'ar' ? 'flex-row-reverse' : ''">
       <div
         v-for="page in totalPages"
         :key="page"
-        :class="[
-          'h-1 rounded-full transition-all duration-300 cursor-pointer',
-          page === currentPage 
-            ? 'bg-primary w-6' 
-            : 'bg-gray-300 w-2 hover:bg-gray-400'
-        ]"
+        class="h-1 rounded-full transition-all duration-300 cursor-pointer"
+        :class="page === currentPage 
+          ? 'bg-[#9EBF3B] w-6' 
+          : 'bg-gray-300 w-2 hover:bg-gray-400'"
         @click="goToPage(page)"
       ></div>
     </div>
@@ -94,7 +83,6 @@ export default {
   setup(props) {
     const { translate, currentLanguage } = useTranslations()
     
-    // نص عرض النتائج مع الترجمة
     const showingText = computed(() => {
       const start = (props.currentPage - 1) * props.itemsPerPage + 1
       const end = Math.min(props.currentPage * props.itemsPerPage, props.totalItems)
@@ -106,19 +94,7 @@ export default {
       }
     })
 
-    const paginationText = {
-      previous: translate('pagination.previous'),
-      next: translate('pagination.next'),
-      page: translate('pagination.page'),
-      of: translate('pagination.of'),
-      showing: translate('pagination.showing'),
-      to: translate('pagination.to'),
-      ofResults: translate('pagination.ofResults'),
-      results: translate('pagination.results')
-    }
-    
     return {
-      paginationText,
       showingText,
       currentLanguage
     }
@@ -159,7 +135,3 @@ export default {
   emits: ['page-change']
 }
 </script>
-
-<style scoped>
-
-</style>
