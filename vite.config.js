@@ -9,6 +9,8 @@ export default defineConfig({
     vue(),
     tailwindcss()
   ],
+  base: process.env.NODE_ENV === 'production' ? '/psychological_support/' : './',
+  // base: '/psychological_support/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src') 
