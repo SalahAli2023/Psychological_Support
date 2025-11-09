@@ -26,30 +26,52 @@
 			</nav>
 		</aside>
 
-		<!-- Mobile Drawer -->
-		<div v-if="drawer" class="fixed inset-0 z-40 md:hidden" @click.self="drawer = false">
-			<div class="absolute inset-0 bg-black/40"></div>
-			<aside class="absolute start-0 top-0 h-full w-72 overflow-y-auto border-e border-primary bg-secondary p-3">
-				<div class="mb-2 flex items-center justify-between">
-					<div class="flex items-center gap-3">
-						<img src="./images/dashboard/logo.png" :alt="t('app.title')" class="h-10 w-auto" />
-					</div>
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary" @click="drawer=false">
-						<XMarkIcon class="h-5 w-5" />
-					</button>
-				</div>
-				<nav class="space-y-1">
-					<NavItem to-name="dashboard" :label="t('nav.Dashboard')" icon="home" />
-					<NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" />
-					<NavItem to-name="users" :label="t('nav.users')" icon="users" />
-					<NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
-					<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
-					<NavItem to-name="library" :label="t('nav.library')" icon="folder" />
-					<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
-					<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
-				</nav>
-			</aside>
-		</div>
+       <!-- Mobile Drawer -->
+<transition name="slide">
+  <div
+    v-if="drawer"
+    class="fixed inset-0 z-[9999] flex md:hidden"
+  >
+    <!-- الخلفية الداكنة -->
+    <div
+      class="absolute inset-0 bg-black/40"
+      @click="drawer = false"
+    ></div>
+
+    <!-- القائمة -->
+    <aside
+      class="relative h-full w-72 bg-secondary border-e border-primary shadow-xl p-3 transform transition-transform duration-300 ease-in-out"
+    >
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img
+            src='@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png'
+            :alt="t('app.title')"
+            class="h-10 w-auto"
+          />
+        </div>
+        <button
+          class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary"
+          @click="drawer = false"
+        >
+          <XMarkIcon class="h-5 w-5" />
+        </button>
+      </div>
+
+      <nav class="space-y-1">
+        <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" />
+        <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" />
+        <NavItem to-name="users" :label="t('nav.users')" icon="users" />
+        <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
+        <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
+        <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
+        <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
+        <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
+      </nav>
+    </aside>
+  </div>
+</transition>
+
 
 		<!-- Content -->
 		<div class="flex-1 flex flex-col">
@@ -143,4 +165,14 @@ if (savedTheme === 'dark') {
 </script>
 
 <style scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+
+
 </style>
