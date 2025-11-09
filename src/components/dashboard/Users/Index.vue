@@ -26,9 +26,9 @@
       <table class="min-w-full text-sm border-collapse border border-primary">
         <thead>
           <tr class="text-start text-secondary bg-primary">
-            <th class="px-3 py-2 border-b border-primary">Name</th>
-            <th class="px-3 py-2 border-b border-primary">Email</th>
-            <th class="px-3 py-2 border-b border-primary">Role</th>
+            <th class="px-3 py-2 border-b border-primary text-start">Name</th>
+            <th class="px-3 py-2 border-b border-primary text-start">Email</th>
+            <th class="px-3 py-2 border-b border-primary text-start">Role</th>
           </tr>
         </thead>
         <tbody>

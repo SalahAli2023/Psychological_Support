@@ -9,7 +9,7 @@
 			<div class="overflow-x-auto">
 				<table class="min-w-full text-sm">
 					<thead>
-						<tr class="text-start text-secondary">
+						<tr class="text-start sm:text-start text-secondary">
 							<th class="px-3 py-2 text-start">Title</th>
 							<th class="px-3 py-2 text-start">Author</th>
 							<th class="px-3 py-2 text-start">Updated</th>
