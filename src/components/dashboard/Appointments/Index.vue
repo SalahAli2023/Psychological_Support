@@ -45,11 +45,11 @@
         <table class="min-w-full text-sm hidden sm:table">
           <thead>
             <tr class="text-start text-secondary">
-              <th class="px-2 py-2 min-w-[100px] sm:px-3 sm:py-3">Client</th>
-              <th class="px-2 py-2 min-w-[100px] sm:px-3 sm:py-3">Therapist</th>
-              <th class="px-2 py-2 min-w-[130px] sm:px-3 sm:py-3">Date</th>
-              <th class="px-2 py-2 min-w-[80px] sm:px-3 sm:py-3">Status</th>
-              <th class="px-2 py-2 min-w-[80px] sm:px-3 sm:py-3">Actions</th>
+              <th class="px-2 py-2 min-w-[100px] sm:px-3 sm:py-3 text-start">Client</th>
+              <th class="px-2 py-2 min-w-[100px] sm:px-3 sm:py-3 text-start">Therapist</th>
+              <th class="px-2 py-2 min-w-[130px] sm:px-3 sm:py-3 text-start">Date</th>
+              <th class="px-2 py-2 min-w-[80px] sm:px-3 sm:py-3 text-start">Status</th>
+              <th class="px-2 py-2 min-w-[80px] sm:px-3 sm:py-3 text-start">Actions</th>
             </tr>
           </thead>
           <tbody>
