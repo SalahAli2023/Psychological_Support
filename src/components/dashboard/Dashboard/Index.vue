@@ -1,12 +1,11 @@
 <template>
-	 <div class="space-y-6 p-6  bg-primary min-h-screen">
-		<h1 class="text-2xl font-semibold">{{ t('nav.dashboard') }}</h1>
+	 <div class="space-y-6 p-6 bg-primary min-h-screen">
+		<h1 class="text-2xl font-semibold text-primary">{{ t('nav.dashboard') }}</h1>
 
 		<!-- Top hero + side cards -->
 		<div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
 			<!-- Hero analytics card -->
-			<div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-[#7F9D2F] 
-			p-6 text-white shadow dark:border-gray-800 dark:from-brand-500 dark:to-[#6D8B28] lg:col-span-2">
+			<div class="relative overflow-hidden rounded-2xl border border-primary bg-brand-500 p-6 text-white shadow lg:col-span-2">
 				<div class="flex items-start justify-between">
 					<div>
 						<div class="text-lg font-semibold">Website Analytics</div>
@@ -43,18 +42,18 @@
 				<template #header>Visitors Statistics</template>
 				<div class="grid grid-cols-2 gap-3 text-sm">
 					<div>
-						<div class="text-gray-500">Today</div>
+						<div class="text-secondary">Today</div>
 						<div class="mt-1 text-xl font-semibold text-brand-500">1,264</div>
 					</div>
 					<div>
-						<div class="text-gray-500">This Week</div>
-						<div class="mt-1 text-xl font-semibold">8,943</div>
+						<div class="text-secondary">This Week</div>
+						<div class="mt-1 text-xl font-semibold text-primary">8,943</div>
 					</div>
 					<div class="col-span-2 mt-2">
 						<svg viewBox="0 0 200 60" class="h-16 w-full text-accent-500">
 							<polyline fill="none" stroke="currentColor" stroke-width="3" points="0,40 20,35 40,38 60,28 80,32 100,20 120,26 140,24 160,18 180,22 200,20" />
 						</svg>
-						<div class="mt-1 text-xs text-gray-500">Visitors trend</div>
+						<div class="mt-1 text-xs text-secondary">Visitors trend</div>
 					</div>
 				</div>
 			</Card>
@@ -81,9 +80,9 @@
 			<Card class="xl:col-span-2">
 				<template #header>Upcoming Appointments</template>
 				<ul class="space-y-2">
-					<li v-for="item in appointments.items.slice(0,6)" :key="item.id" class="flex items-center justify-between rounded-md border border-gray-200 p-3 dark:border-gray-800">
-						<div class="font-medium">{{ item.clientName }}</div>
-						<div class="text-sm text-gray-500">{{ new Date(item.startsAt).toLocaleString() }}</div>
+					<li v-for="item in appointments.items.slice(0,6)" :key="item.id" class="flex items-center justify-between rounded-md border border-primary p-3">
+						<div class="font-medium text-primary">{{ item.clientName }}</div>
+						<div class="text-sm text-secondary">{{ new Date(item.startsAt).toLocaleString() }}</div>
 					</li>
 				</ul>
 			</Card>

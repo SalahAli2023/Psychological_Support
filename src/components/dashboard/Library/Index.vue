@@ -1,16 +1,16 @@
 <template>
 	<div class="space-y-4">
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-semibold">Library</h1>
+			<h1 class="text-2xl font-semibold text-primary">Library</h1>
 			<Button variant="secondary" @click="upload">Upload</Button>
 		</div>
 		<Card>
 			<template #header>Resources</template>
-			<ul class="divide-y divide-gray-200 dark:divide-gray-800">
+			<ul class="divide-y divide-primary">
 				<li v-for="r in resources" :key="r.id" class="flex items-center justify-between px-2 py-3">
 					<div>
-						<div class="font-medium">{{ r.name }}</div>
-						<div class="text-sm text-gray-500">{{ r.type }} • {{ r.size }}</div>
+						<div class="font-medium text-primary">{{ r.name }}</div>
+						<div class="text-sm text-secondary">{{ r.type }} • {{ r.size }}</div>
 					</div>
 					<Button size="sm" variant="outline">Download</Button>
 				</li>
