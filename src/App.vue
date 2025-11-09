@@ -6,5 +6,6 @@
 </template>
 
 <script setup>
-
+import { useTranslations } from '@/composables/useTranslations'
+const { currentLanguage } = useTranslations()
 </script>
