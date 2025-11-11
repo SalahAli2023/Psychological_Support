@@ -8,7 +8,7 @@ const Users = () => import('../components/dashboard/Users/Index.vue');
 const Articles = () => import('../components/dashboard/Articles/Index.vue');
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
-const Assessments = () => import('../components/dashboard/Assessments/Index.vue');
+const Assessments = () => import('../components/dashboard/Measures/Index.vue');
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
 
 // --- Frontend Pages ---
