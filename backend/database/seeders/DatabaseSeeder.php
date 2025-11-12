@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SpecializationSeeder::class,
             LibraryCategorySeeder::class,
             LegalResourceCategorySeeder::class,
+            PsychologicalScalesSeeder::class,
         ]);
 
         // Create admin user
