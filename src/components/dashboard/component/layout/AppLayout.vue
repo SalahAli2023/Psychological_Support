@@ -1,6 +1,6 @@
 <template>
-	<div class="min-h-screen bg-primary flex">
-		<!-- Floating settings button -->
+    <div class="min-h-screen bg-primary flex">
+        <!-- Floating settings button -->
   <RouterLink
   :to="{ name: 'settings' }"
   class="fixed end-3 bottom-4 z-50 inline-grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white shadow-lg hover:bg-[#8FAE2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
@@ -9,22 +9,72 @@
   <Cog6ToothIcon class="h-6 w-6" />
 </RouterLink>
 
-		<!-- Desktop Sidebar -->
-		<aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
-			<div class="flex h-16 items-center justify-center px-4">
-				<img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
-			</div>
-			<nav class="flex-1 px-2 py-2 space-y-1">
-				<NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
-				<NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
-				<NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
-				<NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
-				<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
-				<NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
-				<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
-				<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
-			</nav>
-		</aside>
+        <!-- Desktop Sidebar -->
+        <aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
+            <div class="flex h-16 items-center justify-center px-4">
+                <img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
+            </div>
+            <nav class="flex-1 px-2 py-2 space-y-1">
+                <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
+                <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
+                <NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
+                <NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
+                <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
+                <NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
+                <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
+                
+                <!-- 新的系统设置菜单项 - 带子菜单 -->
+                <div class="relative">
+                    <button 
+                        @click.stop="systemMenuOpen = !systemMenuOpen"
+                        :class="[
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200 w-full text-primary hover:bg-tertiary',
+                            systemMenuOpen ? 'bg-tertiary' : ''
+                        ]"
+                    >
+                        <CogIcon class="h-5 w-5 text-inherit" />
+                        <span v-if="!collapsed" class="truncate">تهيئة الأنظمة</span>
+                        <ChevronDownIcon v-if="!collapsed" :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
+                    </button>
+                    
+                    <!-- 子菜单 -->
+                    <transition name="submenu">
+                        <div v-if="systemMenuOpen && !collapsed" class="mt-1 ms-4 space-y-1">
+                            <RouterLink 
+                                :to="{ name: 'measurement-categories' }"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                            >
+                                <ChartBarSquareIcon class="h-4 w-4" />
+                                <span class="truncate">اصناف المقاييس</span>
+                            </RouterLink>
+                            <RouterLink 
+                                :to="{ name: 'system-parameters' }"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                            >
+                                <AdjustmentsHorizontalIcon class="h-4 w-4" />
+                                <span class="truncate">معلمات النظام</span>
+                            </RouterLink>
+                            <RouterLink 
+                                :to="{ name: 'user-permissions' }"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                            >
+                                <ShieldCheckIcon class="h-4 w-4" />
+                                <span class="truncate">صلاحيات المستخدمين</span>
+                            </RouterLink>
+                            <RouterLink 
+                                :to="{ name: 'system-backup' }"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                            >
+                                <CloudIcon class="h-4 w-4" />
+                                <span class="truncate">نسخ احتياطي</span>
+                            </RouterLink>
+                        </div>
+                    </transition>
+                </div>
+                
+                <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
+            </nav>
+        </aside>
 
        <!-- Mobile Drawer -->
 <transition name="slide">
@@ -66,6 +116,56 @@
         <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
         <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
         <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
+        
+        <!-- 新的系统设置菜单项 - 移动端版本 -->
+        <div class="relative">
+            <button 
+                @click.stop="systemMenuOpen = !systemMenuOpen"
+                :class="[
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200 w-full text-primary hover:bg-tertiary',
+                    systemMenuOpen ? 'bg-tertiary' : ''
+                ]"
+            >
+                <CogIcon class="h-5 w-5 text-inherit" />
+                <span class="truncate">تهيئة الأنظمة</span>
+                <ChevronDownIcon :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
+            </button>
+            
+            <!-- 子菜单 -->
+            <transition name="submenu">
+                <div v-if="systemMenuOpen" class="mt-1 ms-4 space-y-1">
+                    <RouterLink 
+                        :to="{ name: 'measurement-categories' }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                    >
+                        <ChartBarSquareIcon class="h-4 w-4" />
+                        <span class="truncate">اصناف المقاييس</span>
+                    </RouterLink>
+                    <RouterLink 
+                        :to="{ name: 'system-parameters' }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                    >
+                        <AdjustmentsHorizontalIcon class="h-4 w-4" />
+                        <span class="truncate">معلمات النظام</span>
+                    </RouterLink>
+                    <RouterLink 
+                        :to="{ name: 'user-permissions' }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                    >
+                        <ShieldCheckIcon class="h-4 w-4" />
+                        <span class="truncate">صلاحيات المستخدمين</span>
+                    </RouterLink>
+                    <RouterLink 
+                        :to="{ name: 'system-backup' }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                    >
+                        <CloudIcon class="h-4 w-4" />
+                        <span class="truncate">نسخ احتياطي</span>
+                    </RouterLink>
+                </div>
+            </transition>
+        </div>
+        
         <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
       </nav>
     </aside>
@@ -73,48 +173,48 @@
 </transition>
 
 
-		<!-- Content -->
-		<div class="flex-1 flex flex-col">
-			<header class="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-primary px-3 md:px-4 py-3 backdrop-blur bg-secondary">
-				<div class="flex items-center gap-2">
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary md:hidden" @click="drawer = true" aria-label="Open menu">
-						<Bars3Icon class="h-5 w-5" />
-					</button>
-					<button class="hidden md:inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="collapsed = !collapsed" aria-label="Toggle sidebar">
-						<ChevronDoubleLeftIcon v-if="!collapsed" class="h-5 w-5" />
-						<ChevronDoubleRightIcon v-else class="h-5 w-5" />
-					</button>
-					<div class="relative w-full max-w-full md:max-w-2xl">
-						<MagnifyingGlassIcon class="pointer-events-none absolute inset-y-0 start-3 my-auto h-5 w-5 text-tertiary" />
-						<input :placeholder="t('app.search')" class="w-full rounded-lg border border-transparent bg-tertiary ps-10 pe-3 py-2 text-sm text-primary outline-none ring-1 ring-transparent transition focus:bg-primary focus:ring-2 focus:ring-brand-500" />
-					</div>
-				</div>
-				<div class="flex items-center gap-1.5">
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="toggleTheme" :title="themeLabel">
-						<MoonIcon v-if="isDark" class="h-5 w-5" />
-						<SunIcon v-else class="h-5 w-5" />
-					</button>
-					<button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="toggleLocale" :title="nextLocaleLabel">
-						<LanguageIcon class="h-5 w-5" />
-					</button>
-					<div class="relative">
-						<button class="inline-flex items-center gap-2" @click="avatarOpen = !avatarOpen" aria-label="User menu">
-							<img src="@/assets/images/dashboard/images.jpg" alt="avatar" class="h-9 w-9 rounded-full object-cover" />
-						</button>
-						<div v-if="avatarOpen" class="user-menu absolute end-0 mt-2 w-44 overflow-hidden rounded-lg border border-primary bg-primary text-sm shadow-lg">
-							<div class="px-3 py-2 font-medium text-primary">Dalal</div>
-							<hr class="border-primary" />
-							<RouterLink :to="{ name: 'settings' }" class="block px-3 py-2 text-primary hover:bg-secondary">Settings</RouterLink>
-							<button class="block w-full text-start px-3 py-2 text-primary hover:bg-secondary">Logout</button>
-						</div>
-					</div>
-				</div>
-			</header>
-			<main class="p-3 md:p-4 bg-primary">
-				<RouterView />
-			</main>
-		</div>
-	</div>
+        <!-- Content -->
+        <div class="flex-1 flex flex-col">
+            <header class="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-primary px-3 md:px-4 py-3 backdrop-blur bg-secondary">
+                <div class="flex items-center gap-2">
+                    <button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary md:hidden" @click="drawer = true" aria-label="Open menu">
+                        <Bars3Icon class="h-5 w-5" />
+                    </button>
+                    <button class="hidden md:inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="collapsed = !collapsed" aria-label="Toggle sidebar">
+                        <ChevronDoubleLeftIcon v-if="!collapsed" class="h-5 w-5" />
+                        <ChevronDoubleRightIcon v-else class="h-5 w-5" />
+                    </button>
+                    <div class="relative w-full max-w-full md:max-w-2xl">
+                        <MagnifyingGlassIcon class="pointer-events-none absolute inset-y-0 start-3 my-auto h-5 w-5 text-tertiary" />
+                        <input :placeholder="t('app.search')" class="w-full rounded-lg border border-transparent bg-tertiary ps-10 pe-3 py-2 text-sm text-primary outline-none ring-1 ring-transparent transition focus:bg-primary focus:ring-2 focus:ring-brand-500" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="toggleTheme" :title="themeLabel">
+                        <MoonIcon v-if="isDark" class="h-5 w-5" />
+                        <SunIcon v-else class="h-5 w-5" />
+                    </button>
+                    <button class="inline-grid h-9 w-9 place-items-center rounded-lg text-primary hover:bg-tertiary" @click="toggleLocale" :title="nextLocaleLabel">
+                        <LanguageIcon class="h-5 w-5" />
+                    </button>
+                    <div class="relative">
+                        <button class="inline-flex items-center gap-2" @click="avatarOpen = !avatarOpen" aria-label="User menu">
+                            <img src="@/assets/images/dashboard/images.jpg" alt="avatar" class="h-9 w-9 rounded-full object-cover" />
+                        </button>
+                        <div v-if="avatarOpen" class="user-menu absolute end-0 mt-2 w-44 overflow-hidden rounded-lg border border-primary bg-primary text-sm shadow-lg">
+                            <div class="px-3 py-2 font-medium text-primary">Dalal</div>
+                            <hr class="border-primary" />
+                            <RouterLink :to="{ name: 'settings' }" class="block px-3 py-2 text-primary hover:bg-secondary">Settings</RouterLink>
+                            <button class="block w-full text-start px-3 py-2 text-primary hover:bg-secondary">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="p-3 md:p-4 bg-primary">
+                <RouterView />
+            </main>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -122,20 +222,37 @@ import { RouterView, RouterLink } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NavItem from './NavItem.vue';
-import { SunIcon, MoonIcon, LanguageIcon, Cog6ToothIcon, Bars3Icon, XMarkIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import { 
+    SunIcon, 
+    MoonIcon, 
+    LanguageIcon, 
+    Cog6ToothIcon, 
+    Bars3Icon, 
+    XMarkIcon, 
+    ChevronDoubleLeftIcon, 
+    ChevronDoubleRightIcon, 
+    MagnifyingGlassIcon,
+    ChartBarSquareIcon,
+    ChevronDownIcon,
+    CogIcon,
+    AdjustmentsHorizontalIcon,
+    ShieldCheckIcon,
+    CloudIcon
+} from '@heroicons/vue/24/outline';
 
 const { t, locale } = useI18n();
 
 const drawer = ref(false);
 const collapsed = ref(false);
 const avatarOpen = ref(false);
+const systemMenuOpen = ref(false);
 
 const toggleLocale = () => {
-	const next = locale.value === 'en' ? 'ar' : 'en';
-	locale.value = next;
-	localStorage.setItem('locale', next);
-	document.documentElement.lang = next === 'ar' ? 'ar' : 'en';
-	document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr';
+    const next = locale.value === 'en' ? 'ar' : 'en';
+    locale.value = next;
+    localStorage.setItem('locale', next);
+    document.documentElement.lang = next === 'ar' ? 'ar' : 'en';
+    document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr';
 };
 
 const isDark = computed(() => document.documentElement.classList.contains('dark'));
@@ -143,24 +260,28 @@ const themeLabel = computed(() => (isDark.value ? t('app.light') : t('app.dark')
 const nextLocaleLabel = computed(() => (locale.value === 'en' ? 'AR' : 'EN'));
 
 const toggleTheme = () => {
-	document.documentElement.classList.toggle('dark');
-	localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
 };
 
 onMounted(() => {
-	window.addEventListener('click', (e) => {
-		const target = e.target as HTMLElement;
-		if (!target.closest('[aria-label="User menu"]') && !target.closest('.user-menu')) {
-			avatarOpen.value = false;
-		}
-	});
+    window.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('[aria-label="User menu"]') && !target.closest('.user-menu')) {
+            avatarOpen.value = false;
+        }
+        // 关闭系统设置菜单，如果点击的不是菜单区域
+        if (!target.closest('.relative')) {
+            systemMenuOpen.value = false;
+        }
+    });
 });
 
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme === 'dark') {
-	document.documentElement.classList.add('dark');
+    document.documentElement.classList.add('dark');
 } else if (savedTheme === 'light') {
-	document.documentElement.classList.remove('dark');
+    document.documentElement.classList.remove('dark');
 }
 </script>
 
@@ -174,5 +295,21 @@ if (savedTheme === 'dark') {
   transform: translateX(-100%);
 }
 
+.rotate-180 {
+  transform: rotate(180deg);
+}
 
+.submenu-enter-active,
+.submenu-leave-active {
+  transition: all 0.3s ease;
+  max-height: 500px;
+  opacity: 1;
+}
+
+.submenu-enter-from,
+.submenu-leave-to {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
 </style>

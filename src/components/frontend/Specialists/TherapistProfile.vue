@@ -29,7 +29,7 @@
           <div class="p-4 sm:p-6 bg-white rounded-xl shadow-sm mb-6 sm:mb-8">
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
               <!-- Profile Image -->
-              <div class="flex justify-center sm:justify-start">
+              <div class="flex  sm:justify-start">
                 <img 
                   :src="therapist.image" 
                   :alt="therapist.name"
