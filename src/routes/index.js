@@ -9,6 +9,8 @@ const Articles = () => import('../components/dashboard/Articles/Index.vue');
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Index.vue');
+// 新添加的测量类别组件
+const MeasurementCategories = () => import('../components/dashboard/SystemConfig/MeasurementCategories/index.vue');
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
 
 // --- Frontend Pages ---
@@ -53,6 +55,8 @@ const routes = [
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'library', name: 'admin-library', component: Library },
       { path: 'assessments', name: 'assessments', component: Assessments },
+      // 新添加的测量类别路由
+      { path: 'measurement-categories', name: 'measurement-categories', component: MeasurementCategories },
       { path: 'settings', name: 'settings', component: Settings },
     ]
   }
