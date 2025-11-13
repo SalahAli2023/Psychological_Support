@@ -18,6 +18,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
+import {CalendarDaysIcon} from '@heroicons/vue/24/outline';
 import { 
     HomeIcon, 
     CalendarIcon, 
@@ -52,6 +53,15 @@ const route = useRoute();
 const isActive = computed(() => route.name === (props.toName as any));
 
 const icons: Record<string, any> = {
+	home: HomeIcon,
+	calendar: CalendarIcon,
+	events: CalendarDaysIcon,
+	users: UsersIcon,
+	document: DocumentTextIcon,
+	academic: AcademicCapIcon,
+	folder: FolderIcon,
+	chart: ChartBarIcon,
+	cog: Cog6ToothIcon,
     home: HomeIcon,
     calendar: CalendarIcon,
     users: UsersIcon,

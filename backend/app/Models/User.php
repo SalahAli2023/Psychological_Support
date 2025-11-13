@@ -93,6 +93,11 @@ class User extends Authenticatable
         return $this->hasMany(Program::class, 'created_by');
     }
 
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(UserAssessment::class);
+    }
+
     /**
      * Check if user is admin.
      */

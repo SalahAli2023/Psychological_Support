@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 // --- Backend Pages ---
 const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
@@ -12,6 +13,7 @@ const Assessments = () => import('../components/dashboard/Measures/Index.vue');
 // 新添加的测量类别组件
 const MeasurementCategories = () => import('../components/dashboard/SystemConfig/MeasurementCategories/index.vue');
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
+const Events = () => import('../components/dashboard/Events/Index.vue'); 
 
 // --- Frontend Pages ---
 import HomePage from '../components/frontend/home.vue'
@@ -27,9 +29,12 @@ import contact from '../components/frontend/contact.vue'
 import register from '../components/frontend/RegistrationPage.vue'
 import LegalSocialResources from '../components/frontend/LegalSocialResources.vue'
 
+// --- Auth Pages ---
+const Login = () => import('../components/dashboard/auth/Login.vue');
+
 // --- دمج جميع المسارات ---
 const routes = [
-  // Frontend routes
+  // Frontend routes (عامة)
   { path: '/', name: 'Home', component: HomePage },
   { path: '/events', name: 'Events', component: EventsPage },
   { path: '/about', name: 'About', component: AboutPage },
@@ -43,22 +48,40 @@ const routes = [
   { path: '/register', name: 'register', component: register, props: true },
   { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
 
-  // Backend routes (nested under /admin)
+  // Auth routes
+  { 
+    path: '/admin/login', 
+    name: 'login', 
+    component: Login,
+    meta: { requiresGuest: true }
+  },
+
+  // Backend routes (محمية - تتطلب تسجيل دخول)
   {
     path: '/admin',
     component: AppLayout,
+    meta: { requiresAuth: true },
     children: [
-      { path: 'Dashboard', name: 'Dashboard', component: Dashboard },
+      { path: '', redirect: { name: 'Dashboard' } },
+      { path: 'dashboard', name: 'Dashboard', component: Dashboard },
       { path: 'appointments', name: 'appointments', component: Appointments },
       { path: 'users', name: 'users', component: Users },
       { path: 'articles', name: 'articles', component: Articles },
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'libraries', name: 'libraries', component: Library },
+      { path: 'events', name: 'events', component: Events },
+
       { path: 'assessments', name: 'assessments', component: Assessments },
       // 新添加的测量类别路由
       { path: 'measurement-categories', name: 'measurement-categories', component: MeasurementCategories },
       { path: 'settings', name: 'settings', component: Settings },
     ]
+  },
+
+  // Redirect for unknown routes
+  { 
+    path: '/:pathMatch(.*)*', 
+    redirect: '/' 
   }
 ];
 
@@ -71,12 +94,26 @@ const router = createRouter({
   },
 });
 
-// --- حارس التنقل لتغيير اتجاه اللغة ---
+// --- حارس التنقل للحماية والمصادقة ---
 router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  
+  // تغيير اتجاه اللغة
   const savedLanguage = localStorage.getItem('preferredLanguage') || 'ar';
   document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.lang = savedLanguage;
-  next();
+
+  // التحقق من المصادقة
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // إذا كانت الصفحة تتطلب تسجيل دخول ولم يكن المستخدم مسجل
+    next('/admin/login');
+  } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    // إذا كان المستخدم مسجل بالفعل وحاول الدخول لصفحة التسجيل
+    next('/admin/dashboard');
+  } else {
+    // المسار مسموح
+    next();
+  }
 });
 
 export default router;

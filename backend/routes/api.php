@@ -10,6 +10,10 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ProgramController;
 use App\Http\Controllers\Api\LegalResourceController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ScaleCategoryController;
+use App\Http\Controllers\Api\PsychologicalScaleController;
+use App\Http\Controllers\Api\AssessmentController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -94,3 +98,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/legal-resources/{id}', [LegalResourceController::class, 'update']);
     Route::delete('/legal-resources/{id}', [LegalResourceController::class, 'destroy']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Scale Categories
+    Route::get('categories', [ScaleCategoryController::class, 'index']);
+    Route::get('categories/{id}', [ScaleCategoryController::class, 'show']);
+    Route::get('categories/{id}/scales', [ScaleCategoryController::class, 'getScales']);
+    
+    // Psychological Scales
+    Route::get('scales', [PsychologicalScaleController::class, 'index']);
+    Route::get('scales/{id}', [PsychologicalScaleController::class, 'show']);
+    Route::get('scales/{id}/questions', [PsychologicalScaleController::class, 'getQuestions']);
+    
+    // Assessments (تغطي التقييمات + النتائج)
+    Route::get('assessments', [AssessmentController::class, 'index']);
+    Route::get('assessments/{id}', [AssessmentController::class, 'show']);
+    Route::post('assessments', [AssessmentController::class, 'store']);
+    Route::get('assessments/statistics', [AssessmentController::class, 'getUserStatistics']);
+    Route::get('assessments/{id}/result', [AssessmentController::class, 'getAssessmentResult']);
+});
+
+// Public routes
+Route::get('public/categories', [ScaleCategoryController::class, 'index']);
+Route::get('public/scales', [PsychologicalScaleController::class, 'index']);
