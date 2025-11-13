@@ -7,16 +7,19 @@
             "light": "Light",
             "dark": "Dark"
       },
-      "nav": {
-            "dashboard": "Dashboard",
-            "appointments": "Appointments",
-            "users": "Users",
-            "articles": "Articles",
-            "programs": "Programs",
-            "library": "Library",
-            "assessments": "Assessments",
-            "settings": "Settings"
-      },
+ "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "users": "Users",
+    "articles": "Articles",
+    "programs": "Programs",
+    "library": "Library",
+    "assessments": "Assessments",
+    "assessmentCategories": "Assessment Categories",
+    "assessmentTypes": "Assessment Types",
+    "assessmentResults": "Assessment Results",
+    "settings": "Settings"
+  },
       "dashboard": {
             "welcome": "Welcome",
             "kpi_upcoming": "Upcoming Sessions",

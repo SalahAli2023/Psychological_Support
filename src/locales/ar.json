@@ -8,15 +8,18 @@
             "dark": "داكن"
       },
       "nav": {
-            "dashboard": "الرئيسية",
-            "appointments": "المواعيد",
-            "users": "المستخدمون",
-            "articles": "المقالات",
-            "programs": "البرامج",
-            "library": "المكتبة",
-            "assessments": "المقاييس",
-            "settings": "الإعدادات"
-      },
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "users": "المستخدمين",
+    "articles": "المقالات",
+    "programs": "البرامج",
+    "library": "المكتبة",
+    "assessments": "المقاييس",
+    "assessmentCategories": "تصنيف المقاييس",
+    "assessmentTypes": "أنواع المقاييس",
+    "assessmentResults": "نتائج المقاييس",
+    "settings": "الإعدادات"
+  },
       "dashboard": {
             "welcome": "مرحباً",
             "kpi_upcoming": "الجلسات القادمة",
