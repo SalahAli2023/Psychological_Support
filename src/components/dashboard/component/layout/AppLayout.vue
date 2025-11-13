@@ -21,6 +21,7 @@
 				<NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
 				<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
 				<NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
+				<NavItem to-name="events" :label="t('nav.events')" icon="calendar" :show-label="!collapsed" />
 				<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
 				<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
 			</nav>
@@ -65,6 +66,7 @@
         <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
         <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
         <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
+		<NavItem to-name="events" :label="t('nav.events')" icon="calendar" />
         <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
         <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
       </nav>

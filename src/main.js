@@ -17,6 +17,7 @@ const app = createApp(App);
 const pinia = createPinia();
 app.use(pinia);
 
+
 const i18n = createI18n({
   legacy: false,
   locale: localStorage.getItem('locale') || 'en',

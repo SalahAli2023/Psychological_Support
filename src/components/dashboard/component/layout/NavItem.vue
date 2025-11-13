@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
-import { HomeIcon, CalendarIcon, UsersIcon, DocumentTextIcon, AcademicCapIcon, FolderIcon, ChartBarIcon, Cog6ToothIcon } from '@heroicons/vue/24/outline';
+import { HomeIcon, CalendarIcon, UsersIcon, DocumentTextIcon, AcademicCapIcon, FolderIcon, ChartBarIcon, Cog6ToothIcon ,CalendarDaysIcon} from '@heroicons/vue/24/outline';
 
 interface Props { toName: string; label: string; icon?: string; showLabel?: boolean }
 const props = withDefaults(defineProps<Props>(), { icon: 'home', showLabel: true });
@@ -27,6 +27,7 @@ const isActive = computed(() => route.name === (props.toName as any));
 const icons: Record<string, any> = {
 	home: HomeIcon,
 	calendar: CalendarIcon,
+	events: CalendarDaysIcon,
 	users: UsersIcon,
 	document: DocumentTextIcon,
 	academic: AcademicCapIcon,
