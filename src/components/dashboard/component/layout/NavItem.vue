@@ -57,9 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute, RouterLink } from 'vue-router';
-import {CalendarDaysIcon} from '@heroicons/vue/24/outline';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { 
     ChevronDownIcon,
     HomeIcon,
@@ -106,15 +105,15 @@ const router = useRouter();
 const dropdownOpen = ref(false);
 
 const icons: Record<string, any> = {
-	home: HomeIcon,
-	calendar: CalendarIcon,
-	events: CalendarDaysIcon,
-	users: UsersIcon,
-	document: DocumentTextIcon,
-	academic: AcademicCapIcon,
-	folder: FolderIcon,
-	chart: ChartBarIcon,
-	cog: Cog6ToothIcon,
+    home: HomeIcon,
+    calendar: CalendarIcon,
+    users: UsersIcon,
+    document: DocumentTextIcon,
+    academic: AcademicCapIcon,
+    folder: FolderIcon,
+    chart: ChartBarIcon,
+    chartBar: ChartBarSquareIcon,
+    cog: Cog6ToothIcon,
     clock: ClockIcon,
     user: UserIcon,
     shield: ShieldCheckIcon,
