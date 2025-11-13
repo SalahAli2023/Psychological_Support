@@ -283,7 +283,7 @@ const programItems = [
 ];
 
 const libraryItems = [
-	{ toName: 'library', label: 'المكتبة الرئيسية', icon: 'folder' },
+	{ toName: 'libraries', label: 'المكتبة الرئيسية', icon: 'folder' },
 	{ toName: 'books', label: 'الكتب', icon: 'book' },
 	{ toName: 'resources', label: 'المصادر', icon: 'document' },
 	{ toName: 'media', label: 'الوسائط', icon: 'video' }

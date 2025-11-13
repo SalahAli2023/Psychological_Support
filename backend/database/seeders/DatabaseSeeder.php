@@ -12,19 +12,7 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-        // Seed categories and initial data
-        $this->call([
-            ArticleCategorySeeder::class,
-            SpecializationSeeder::class,
-            LibraryCategorySeeder::class,
-            LegalResourceCategorySeeder::class,
-            PsychologicalScalesSeeder::class,
-            UserAssessmentsSeeder::class,
-        ]);
-
-        // Create admin user
-        User::create([
+    {    User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
@@ -49,5 +37,19 @@ class DatabaseSeeder extends Seeder
             'role' => 'Client',
             'joined_at' => now(),
         ]);
+        // Seed categories and initial data
+        $this->call([
+            ArticleCategorySeeder::class,
+            SpecializationSeeder::class,
+           LibraryCategorySeeder::class,
+            ArticleSeeder::class,
+            LibraryItemSeeder::class,
+            LegalResourceCategorySeeder::class,
+            PsychologicalScalesSeeder::class,
+            UserAssessmentsSeeder::class,
+        ]);
+ 
+        // Create admin user
+       
     }
 }
