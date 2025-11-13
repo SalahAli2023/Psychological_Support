@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
-import { HomeIcon, CalendarIcon, UsersIcon, DocumentTextIcon, AcademicCapIcon, FolderIcon, ChartBarIcon, Cog6ToothIcon ,CalendarDaysIcon} from '@heroicons/vue/24/outline';
+import {CalendarDaysIcon} from '@heroicons/vue/24/outline';
 import { 
     HomeIcon, 
     CalendarIcon, 
