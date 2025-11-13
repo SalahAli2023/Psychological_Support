@@ -68,6 +68,15 @@
 					:items="libraryItems"
 					:collapsed="collapsed"
 				/>
+
+				<!-- Events مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.events')" 
+					icon="calendar" 
+					:show-label="!collapsed"
+					:items="eventItems"
+					:collapsed="collapsed"
+				/>
 				
 				<!-- Assessments مع قائمة فرعية -->
 				<NavItem 
@@ -160,6 +169,15 @@
 							:items="libraryItems"
 							:collapsed="false"
 						/>
+
+						<!-- Events مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.events')" 
+							icon="calendar" 
+							:show-label="true"
+							:items="eventItems"
+							:collapsed="false"
+						/>
 						
 						<!-- Assessments مع قائمة فرعية -->
 						<NavItem 
@@ -231,7 +249,7 @@
 import { RouterView, RouterLink } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import NavItem from './NavItem.vue'; // تم التصحيح هنا
+import NavItem from './NavItem.vue';
 import { 
 	SunIcon, 
 	MoonIcon, 
@@ -287,6 +305,11 @@ const libraryItems = [
 	{ toName: 'books', label: 'الكتب', icon: 'book' },
 	{ toName: 'resources', label: 'المصادر', icon: 'document' },
 	{ toName: 'media', label: 'الوسائط', icon: 'video' }
+];
+
+// العناصر الفرعية للفعاليات - فقط جميع الفعاليات
+const eventItems = [
+	{ toName: 'events', label: 'جميع الفعاليات', icon: 'calendar' }
 ];
 
 const assessmentItems = [
