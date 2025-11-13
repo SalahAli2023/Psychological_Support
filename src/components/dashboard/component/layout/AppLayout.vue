@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
 	<div class="min-h-screen bg-primary flex">
 		<!-- Floating settings button -->
 		<RouterLink
@@ -225,6 +226,7 @@
 			</main>
 		</div>
 	</div>
+
 </template>
 
 <script setup lang="ts">
