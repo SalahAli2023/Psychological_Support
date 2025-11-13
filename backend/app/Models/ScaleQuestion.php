@@ -29,7 +29,8 @@ class ScaleQuestion extends Model
 
     public function options(): HasMany
     {
-        return $this->hasMany(QuestionOption::class)->orderBy('option_order');
+        return $this->hasMany(QuestionOption::class, 'question_id');
+        // return $this->hasMany(QuestionOption::class)->orderBy('option_order');
     }
 
     // Accessor

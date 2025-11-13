@@ -24,7 +24,8 @@ class QuestionOption extends Model
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(ScaleQuestion::class);
+        return $this->belongsTo(ScaleQuestion::class, 'question_id');
+        //  return $this->belongsTo(ScaleQuestion::class);
     }
 
     // Accessor
