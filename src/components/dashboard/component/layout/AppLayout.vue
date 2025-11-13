@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
 	<div class="min-h-screen bg-primary flex">
 		<!-- Floating settings button -->
 		<RouterLink
@@ -17,7 +16,7 @@
 			</div>
 			<nav class="flex-1 px-2 py-2 space-y-1">
 				<!-- Dashboard مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.dashboard')" 
 					icon="home" 
 					:show-label="!collapsed"
@@ -26,7 +25,7 @@
 				/>
 				
 				<!-- Appointments مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.appointments')" 
 					icon="calendar" 
 					:show-label="!collapsed"
@@ -35,7 +34,7 @@
 				/>
 				
 				<!-- Users مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.users')" 
 					icon="users" 
 					:show-label="!collapsed"
@@ -44,7 +43,7 @@
 				/>
 				
 				<!-- Articles مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.articles')" 
 					icon="document" 
 					:show-label="!collapsed"
@@ -53,7 +52,7 @@
 				/>
 				
 				<!-- Programs مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.programs')" 
 					icon="academic" 
 					:show-label="!collapsed"
@@ -62,7 +61,7 @@
 				/>
 				
 				<!-- Library مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.library')" 
 					icon="folder" 
 					:show-label="!collapsed"
@@ -71,7 +70,7 @@
 				/>
 				
 				<!-- Assessments مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.assessments')" 
 					icon="chart" 
 					:show-label="!collapsed"
@@ -80,7 +79,7 @@
 				/>
 				
 				<!-- Settings مع قائمة فرعية -->
-				<NavDropdown 
+				<NavItem 
 					:label="t('nav.settings')" 
 					icon="cog" 
 					:show-label="!collapsed"
@@ -109,7 +108,7 @@
 
 					<nav class="space-y-1">
 						<!-- Dashboard مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.dashboard')" 
 							icon="home" 
 							:show-label="true"
@@ -118,7 +117,7 @@
 						/>
 						
 						<!-- Appointments مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.appointments')" 
 							icon="calendar" 
 							:show-label="true"
@@ -127,7 +126,7 @@
 						/>
 						
 						<!-- Users مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.users')" 
 							icon="users" 
 							:show-label="true"
@@ -136,7 +135,7 @@
 						/>
 						
 						<!-- Articles مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.articles')" 
 							icon="document" 
 							:show-label="true"
@@ -145,7 +144,7 @@
 						/>
 						
 						<!-- Programs مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.programs')" 
 							icon="academic" 
 							:show-label="true"
@@ -154,7 +153,7 @@
 						/>
 						
 						<!-- Library مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.library')" 
 							icon="folder" 
 							:show-label="true"
@@ -163,7 +162,7 @@
 						/>
 						
 						<!-- Assessments مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.assessments')" 
 							icon="chart" 
 							:show-label="true"
@@ -172,7 +171,7 @@
 						/>
 						
 						<!-- Settings مع قائمة فرعية -->
-						<NavDropdown 
+						<NavItem 
 							:label="t('nav.settings')" 
 							icon="cog" 
 							:show-label="true"
@@ -226,14 +225,13 @@
 			</main>
 		</div>
 	</div>
-
 </template>
 
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import NavDropdown from './NavItem.vue';
+import NavItem from './NavItem.vue'; // تم التصحيح هنا
 import { 
 	SunIcon, 
 	MoonIcon, 
@@ -255,53 +253,53 @@ const avatarOpen = ref(false);
 // تعريف العناصر الفرعية لكل قائمة
 const dashboardItems = [
 	{ toName: 'Dashboard', label: 'لوحة التحكم الرئيسية', icon: 'home' },
-	{ toName: 'dashboard-stats', label: 'الإحصائيات', icon: 'chartBar' },
-	{ toName: 'dashboard-reports', label: 'التقارير', icon: 'document' }
+	{ toName: 'stats', label: 'الإحصائيات', icon: 'chartBar' },
+	{ toName: 'reports', label: 'التقارير', icon: 'document' }
 ];
 
 const appointmentItems = [
 	{ toName: 'appointments', label: 'جميع المواعيد', icon: 'calendar' },
-	{ toName: 'appointments-upcoming', label: 'المواعيد القادمة', icon: 'clock' },
-	{ toName: 'appointments-history', label: 'سجل المواعيد', icon: 'folder' }
+	{ toName: 'upcoming', label: 'المواعيد القادمة', icon: 'clock' },
+	{ toName: 'history', label: 'سجل المواعيد', icon: 'folder' }
 ];
 
 const userItems = [
 	{ toName: 'users', label: 'جميع المستخدمين', icon: 'users' },
-	{ toName: 'users-clients', label: 'العملاء', icon: 'user' },
-	{ toName: 'users-therapists', label: 'المعالجين', icon: 'academic' },
-	{ toName: 'users-admins', label: 'المشرفين', icon: 'shield' }
+	{ toName: 'clients', label: 'العملاء', icon: 'user' },
+	{ toName: 'therapists', label: 'المعالجين', icon: 'academic' },
+	{ toName: 'admins', label: 'المشرفين', icon: 'shield' }
 ];
 
 const articleItems = [
 	{ toName: 'articles', label: 'جميع المقالات', icon: 'document' },
-	{ toName: 'articles-categories', label: 'تصنيفات المقالات', icon: 'folder' },
-	{ toName: 'articles-new', label: 'مقال جديد', icon: 'plus' }
+	{ toName: 'categories', label: 'تصنيفات المقالات', icon: 'folder' },
+	{ toName: 'new-article', label: 'مقال جديد', icon: 'plus' }
 ];
 
 const programItems = [
 	{ toName: 'programs', label: 'جميع البرامج', icon: 'academic' },
-	{ toName: 'programs-therapy', label: 'برامج العلاج', icon: 'heart' },
-	{ toName: 'programs-workshops', label: 'ورش العمل', icon: 'users' }
+	{ toName: 'therapy', label: 'برامج العلاج', icon: 'heart' },
+	{ toName: 'workshops', label: 'ورش العمل', icon: 'users' }
 ];
 
 const libraryItems = [
 	{ toName: 'library', label: 'المكتبة الرئيسية', icon: 'folder' },
-	{ toName: 'library-books', label: 'الكتب', icon: 'book' },
-	{ toName: 'library-resources', label: 'المصادر', icon: 'document' },
-	{ toName: 'library-media', label: 'الوسائط', icon: 'video' }
+	{ toName: 'books', label: 'الكتب', icon: 'book' },
+	{ toName: 'resources', label: 'المصادر', icon: 'document' },
+	{ toName: 'media', label: 'الوسائط', icon: 'video' }
 ];
 
 const assessmentItems = [
 	{ toName: 'assessments', label: 'جميع المقاييس', icon: 'chart' },
-	{ toName: 'assessments-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
-	{ toName: 'assessments-results', label: 'نتائج المقاييس', icon: 'chartBar' }
+	{ toName: 'assessment-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
+	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
 ];
 
 const settingItems = [
 	{ toName: 'settings', label: 'الإعدادات العامة', icon: 'cog' },
-	{ toName: 'settings-profile', label: 'الملف الشخصي', icon: 'user' },
-	{ toName: 'settings-security', label: 'الأمان', icon: 'shield' },
-	{ toName: 'settings-notifications', label: 'الإشعارات', icon: 'bell' }
+	{ toName: 'profile', label: 'الملف الشخصي', icon: 'user' },
+	{ toName: 'security', label: 'الأمان', icon: 'shield' },
+	{ toName: 'notifications', label: 'الإشعارات', icon: 'bell' }
 ];
 
 const toggleLocale = () => {
