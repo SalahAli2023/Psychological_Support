@@ -37,14 +37,21 @@ class PsychologicalScale extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(ScaleQuestion::class)->orderBy('question_order');
+        // return $this->hasMany(ScaleQuestion::class)->orderBy('question_order');
+        return $this->hasMany(ScaleQuestion::class, 'scale_id');
     }
 
     public function interpretations(): HasMany
     {
-        return $this->hasMany(ResultInterpretation::class)->orderBy('min_score');
+        return $this->hasMany(ResultInterpretation::class, 'scale_id'); 
+        // return $this->hasMany(ResultInterpretation::class)->orderBy('min_score');
     }
 
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(UserAssessment::class, 'scale_id');
+    }
+    
     // Accessors
     public function getNameAttribute(): string
     {
