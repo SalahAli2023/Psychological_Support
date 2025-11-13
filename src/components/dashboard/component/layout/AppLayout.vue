@@ -20,7 +20,7 @@
                 <NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
                 <NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
                 <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
-                <NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
+                <NavItem to-name="libraries" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
                 <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
                 
                 <!-- 新的系统设置菜单项 - 带子菜单 -->

@@ -53,7 +53,7 @@ const routes = [
       { path: 'users', name: 'users', component: Users },
       { path: 'articles', name: 'articles', component: Articles },
       { path: 'programs', name: 'programs', component: Programs },
-      { path: 'library', name: 'admin-library', component: Library },
+      { path: 'libraries', name: 'libraries', component: Library },
       { path: 'assessments', name: 'assessments', component: Assessments },
       // 新添加的测量类别路由
       { path: 'measurement-categories', name: 'measurement-categories', component: MeasurementCategories },
