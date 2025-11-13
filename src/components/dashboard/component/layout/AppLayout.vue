@@ -9,72 +9,22 @@
   <Cog6ToothIcon class="h-6 w-6" />
 </RouterLink>
 
-        <!-- Desktop Sidebar -->
-        <aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
-            <div class="flex h-16 items-center justify-center px-4">
-                <img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
-            </div>
-            <nav class="flex-1 px-2 py-2 space-y-1">
-                <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
-                <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
-                <NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
-                <NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
-                <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
-                <NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
-                <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
-                
-                <!-- 新的系统设置菜单项 - 带子菜单 -->
-                <div class="relative">
-                    <button 
-                        @click.stop="systemMenuOpen = !systemMenuOpen"
-                        :class="[
-                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200 w-full text-primary hover:bg-tertiary',
-                            systemMenuOpen ? 'bg-tertiary' : ''
-                        ]"
-                    >
-                        <CogIcon class="h-5 w-5 text-inherit" />
-                        <span v-if="!collapsed" class="truncate">تهيئة الأنظمة</span>
-                        <ChevronDownIcon v-if="!collapsed" :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
-                    </button>
-                    
-                    <!-- 子菜单 -->
-                    <transition name="submenu">
-                        <div v-if="systemMenuOpen && !collapsed" class="mt-1 ms-4 space-y-1">
-                            <RouterLink 
-                                :to="{ name: 'measurement-categories' }"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                            >
-                                <ChartBarSquareIcon class="h-4 w-4" />
-                                <span class="truncate">اصناف المقاييس</span>
-                            </RouterLink>
-                            <RouterLink 
-                                :to="{ name: 'system-parameters' }"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                            >
-                                <AdjustmentsHorizontalIcon class="h-4 w-4" />
-                                <span class="truncate">معلمات النظام</span>
-                            </RouterLink>
-                            <RouterLink 
-                                :to="{ name: 'user-permissions' }"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                            >
-                                <ShieldCheckIcon class="h-4 w-4" />
-                                <span class="truncate">صلاحيات المستخدمين</span>
-                            </RouterLink>
-                            <RouterLink 
-                                :to="{ name: 'system-backup' }"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                            >
-                                <CloudIcon class="h-4 w-4" />
-                                <span class="truncate">نسخ احتياطي</span>
-                            </RouterLink>
-                        </div>
-                    </transition>
-                </div>
-                
-                <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
-            </nav>
-        </aside>
+		<!-- Desktop Sidebar -->
+		<aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
+			<div class="flex h-16 items-center justify-center px-4">
+				<img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
+			</div>
+			<nav class="flex-1 px-2 py-2 space-y-1">
+				<NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
+				<NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
+				<NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
+				<NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
+				<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
+				<NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
+				<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
+				<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
+			</nav>
+		</aside>
 
        <!-- Mobile Drawer -->
 <transition name="slide">
@@ -115,9 +65,9 @@
         <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
         <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
         <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
+		<NavItem to-name="events" :label="t('nav.events')" icon="calendar" />
         <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
         
-        <!-- 新的系统设置菜单项 - 移动端版本 -->
         <div class="relative">
             <button 
                 @click.stop="systemMenuOpen = !systemMenuOpen"
@@ -131,7 +81,6 @@
                 <ChevronDownIcon :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
             </button>
             
-            <!-- 子菜单 -->
             <transition name="submenu">
                 <div v-if="systemMenuOpen" class="mt-1 ms-4 space-y-1">
                     <RouterLink 
