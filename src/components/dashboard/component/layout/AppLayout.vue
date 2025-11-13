@@ -1,126 +1,128 @@
 <template>
     <div class="min-h-screen bg-primary flex">
         <!-- Floating settings button -->
-  <RouterLink
-  :to="{ name: 'settings' }"
-  class="fixed end-3 bottom-4 z-50 inline-grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white shadow-lg hover:bg-[#8FAE2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-  aria-label="Open settings"
->
-  <Cog6ToothIcon class="h-6 w-6" />
-</RouterLink>
-
-		<!-- Desktop Sidebar -->
-		<aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
-			<div class="flex h-16 items-center justify-center px-4">
-				<img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
-			</div>
-			<nav class="flex-1 px-2 py-2 space-y-1">
-				<NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
-				<NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
-				<NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
-				<NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
-				<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
-				<NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
-				<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
-				<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
-			</nav>
-		</aside>
-
-       <!-- Mobile Drawer -->
-<transition name="slide">
-  <div
-    v-if="drawer"
-    class="fixed inset-0 z-[9999] flex md:hidden"
-  >
-    <!-- الخلفية الداكنة -->
-    <div
-      class="absolute inset-0 bg-black/40"
-      @click="drawer = false"
-    ></div>
-
-    <!-- القائمة -->
-    <aside
-      class="relative h-full w-72 bg-secondary border-e border-primary shadow-xl p-3 transform transition-transform duration-300 ease-in-out"
-    >
-      <div class="mb-2 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img
-            src='@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png'
-            :alt="t('app.title')"
-            class="h-10 w-auto"
-          />
-        </div>
-        <button
-          class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary"
-          @click="drawer = false"
+        <RouterLink
+            :to="{ name: 'settings' }"
+            class="fixed end-3 bottom-4 z-50 inline-grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white shadow-lg hover:bg-[#8FAE2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            aria-label="Open settings"
         >
-          <XMarkIcon class="h-5 w-5" />
-        </button>
-      </div>
+            <Cog6ToothIcon class="h-6 w-6" />
+        </RouterLink>
 
-      <nav class="space-y-1">
-        <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" />
-        <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" />
-        <NavItem to-name="users" :label="t('nav.users')" icon="users" />
-        <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
-        <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
-        <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
-		<NavItem to-name="events" :label="t('nav.events')" icon="calendar" />
-        <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
-        
-        <div class="relative">
-            <button 
-                @click.stop="systemMenuOpen = !systemMenuOpen"
-                :class="[
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200 w-full text-primary hover:bg-tertiary',
-                    systemMenuOpen ? 'bg-tertiary' : ''
-                ]"
+        <!-- Desktop Sidebar -->
+        <aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
+            <div class="flex h-16 items-center justify-center px-4">
+                <img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
+            </div>
+            <nav class="flex-1 px-2 py-2 space-y-1">
+                <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
+                <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
+                <NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
+                <NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
+                <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
+                <NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
+                <!-- رابط الفعاليات المضاف -->
+                <NavItem to-name="events" :label="t('nav.events')" icon="calendar" :show-label="!collapsed" />
+                <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
+                <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
+            </nav>
+        </aside>
+
+        <!-- Mobile Drawer -->
+        <transition name="slide">
+            <div
+                v-if="drawer"
+                class="fixed inset-0 z-[9999] flex md:hidden"
             >
-                <CogIcon class="h-5 w-5 text-inherit" />
-                <span class="truncate">تهيئة الأنظمة</span>
-                <ChevronDownIcon :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
-            </button>
-            
-            <transition name="submenu">
-                <div v-if="systemMenuOpen" class="mt-1 ms-4 space-y-1">
-                    <RouterLink 
-                        :to="{ name: 'measurement-categories' }"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                    >
-                        <ChartBarSquareIcon class="h-4 w-4" />
-                        <span class="truncate">اصناف المقاييس</span>
-                    </RouterLink>
-                    <RouterLink 
-                        :to="{ name: 'system-parameters' }"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                    >
-                        <AdjustmentsHorizontalIcon class="h-4 w-4" />
-                        <span class="truncate">معلمات النظام</span>
-                    </RouterLink>
-                    <RouterLink 
-                        :to="{ name: 'user-permissions' }"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                    >
-                        <ShieldCheckIcon class="h-4 w-4" />
-                        <span class="truncate">صلاحيات المستخدمين</span>
-                    </RouterLink>
-                    <RouterLink 
-                        :to="{ name: 'system-backup' }"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
-                    >
-                        <CloudIcon class="h-4 w-4" />
-                        <span class="truncate">نسخ احتياطي</span>
-                    </RouterLink>
-                </div>
-            </transition>
-        </div>
-        
-        <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
-      </nav>
-    </aside>
-  </div>
-</transition>
+                <!-- الخلفية الداكنة -->
+                <div
+                    class="absolute inset-0 bg-black/40"
+                    @click="drawer = false"
+                ></div>
 
+                <!-- القائمة -->
+                <aside
+                    class="relative h-full w-72 bg-secondary border-e border-primary shadow-xl p-3 transform transition-transform duration-300 ease-in-out"
+                >
+                    <div class="mb-2 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img
+                                src='@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png'
+                                :alt="t('app.title')"
+                                class="h-10 w-auto"
+                            />
+                        </div>
+                        <button
+                            class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary"
+                            @click="drawer = false"
+                        >
+                            <XMarkIcon class="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    <nav class="space-y-1">
+                        <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" />
+                        <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" />
+                        <NavItem to-name="users" :label="t('nav.users')" icon="users" />
+                        <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
+                        <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
+                        <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
+                        <!-- رابط الفعاليات المضاف -->
+                        <NavItem to-name="events" :label="t('nav.events')" icon="calendar" />
+                        <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
+                        
+                        <div class="relative">
+                            <button 
+                                @click.stop="systemMenuOpen = !systemMenuOpen"
+                                :class="[
+                                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-200 w-full text-primary hover:bg-tertiary',
+                                    systemMenuOpen ? 'bg-tertiary' : ''
+                                ]"
+                            >
+                                <CogIcon class="h-5 w-5 text-inherit" />
+                                <span class="truncate">تهيئة الأنظمة</span>
+                                <ChevronDownIcon :class="['h-4 w-4 ms-auto transition-transform', systemMenuOpen ? 'rotate-180' : '']" />
+                            </button>
+                            
+                            <transition name="submenu">
+                                <div v-if="systemMenuOpen" class="mt-1 ms-4 space-y-1">
+                                    <RouterLink 
+                                        :to="{ name: 'measurement-categories' }"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                                    >
+                                        <ChartBarSquareIcon class="h-4 w-4" />
+                                        <span class="truncate">اصناف المقاييس</span>
+                                    </RouterLink>
+                                    <RouterLink 
+                                        :to="{ name: 'system-parameters' }"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                                    >
+                                        <AdjustmentsHorizontalIcon class="h-4 w-4" />
+                                        <span class="truncate">معلمات النظام</span>
+                                    </RouterLink>
+                                    <RouterLink 
+                                        :to="{ name: 'user-permissions' }"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                                    >
+                                        <ShieldCheckIcon class="h-4 w-4" />
+                                        <span class="truncate">صلاحيات المستخدمين</span>
+                                    </RouterLink>
+                                    <RouterLink 
+                                        :to="{ name: 'system-backup' }"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-tertiary"
+                                    >
+                                        <CloudIcon class="h-4 w-4" />
+                                        <span class="truncate">نسخ احتياطي</span>
+                                    </RouterLink>
+                                </div>
+                            </transition>
+                        </div>
+                        
+                        <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
+                    </nav>
+                </aside>
+            </div>
+        </transition>
 
         <!-- Content -->
         <div class="flex-1 flex flex-col">
