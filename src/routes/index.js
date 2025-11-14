@@ -11,7 +11,11 @@ const Articles = () => import('../components/dashboard/Articles/Index.vue');
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Measures/Index.vue');
-//therapists
+
+const LegalResources = () => import('../components/dashboard/LegalResources/Index.vue')
+
+
+
 
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
 const Events = () => import('../components/dashboard/Events/Index.vue'); 
@@ -74,6 +78,7 @@ const routes = [
       { path: 'events', name: 'events', component: Events },
 
       { path: 'assessments', name: 'assessments', component: Assessments },
+      { path: 'legal-resources', name: 'legal-resources', component: LegalResources },
       
       { path: 'settings', name: 'settings', component: Settings },
     ]
