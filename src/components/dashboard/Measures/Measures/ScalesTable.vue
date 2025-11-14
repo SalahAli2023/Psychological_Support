@@ -14,12 +14,12 @@
         <table class="min-w-full text-sm">
           <thead>
             <tr class="text-start text-secondary bg-secondary">
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm">اسم المقياس</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm hidden sm:table-cell">الفئة</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm">الأسئلة</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm hidden md:table-cell">التفسير</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm">الحالة</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-medium text-xs sm:text-sm">الإجراءات</th>
+              <th class="px-2 sm:px-4 py-3 text-start  font-bold text-xs sm:text-sm">اسم المقياس</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm hidden sm:table-cell">الفئة</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">الأسئلة</th>
+              <th class="px-2 sm:px-4 py-3 text-start ffont-bold text-xs sm:text-sm hidden md:table-cell">التفسير</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">الحالة</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-boldtext-xs sm:text-sm">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
