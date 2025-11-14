@@ -1,11 +1,10 @@
-
 <template>
   <div class="bg-white">
     <!-- الهيدر -->
     <Header />
     
     <!-- محتوى تفاصيل المقالة -->
-    <ArticleDetailContent :article-id="articleId" />
+    <ArticleDetailContent :article-id="articleId" :key="articleId" />
     
     <!-- الفوتر -->
     <Footer />
@@ -28,7 +27,14 @@ export default {
     return {
       articleId: this.$route.params.id
     }
+  },
+  watch: {
+    '$route.params.id': {
+      handler(newId) {
+        this.articleId = newId
+      },
+      immediate: true
+    }
   }
 }
-
 </script>

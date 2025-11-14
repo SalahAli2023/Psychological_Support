@@ -172,4 +172,10 @@ class ArticleController extends Controller
         $categories = ArticleCategory::all();
         return ArticleCategoryResource::collection($categories)->response();
     }
+
+    public function categoriesList(Request $request)
+{
+    $categories = ArticleCategory::all();
+    return ArticleCategoryResource::collection($categories);
+}
 }
