@@ -6,11 +6,12 @@ const AppLayout = () => import('../components/dashboard/component/layout/AppLayo
 const Dashboard = () => import('../components/dashboard/Dashboard/Index.vue');
 const Appointments = () => import('../components/dashboard/Appointments/Index.vue');
 const Users = () => import('../components/dashboard/Users/Index.vue');
+const therapists = () => import('../components/dashboard/Users/therapists/TherapistsManagement.vue');
 const Articles = () => import('../components/dashboard/Articles/Index.vue');
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Measures/Index.vue');
-// 新添加的测量类别组件
+//therapists
 
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
 const Events = () => import('../components/dashboard/Events/Index.vue'); 
@@ -66,6 +67,7 @@ const routes = [
       { path: 'dashboard', name: 'Dashboard', component: Dashboard },
       { path: 'appointments', name: 'appointments', component: Appointments },
       { path: 'users', name: 'users', component: Users },
+      { path: 'therapists', name: 'therapists', component: therapists },
       { path: 'articles', name: 'articles', component: Articles },
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'libraries', name: 'libraries', component: Library },
