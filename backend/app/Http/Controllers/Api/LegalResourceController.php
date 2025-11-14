@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LegalResourceResource;
+use App\Http\Resources\LegalResourceCategoryResource;
 use App\Models\LegalResource;
 use App\Models\LegalResourceCategory;
 use Illuminate\Http\Request;
@@ -70,5 +71,12 @@ class LegalResourceController extends Controller
         $resource->delete();
 
         return response()->json(['message' => 'Legal resource deleted successfully']);
+    }
+
+    // دالة جديدة لجلب الفئات
+    public function categories(Request $request)
+    {
+        $categories = LegalResourceCategory::all();
+        return LegalResourceCategoryResource::collection($categories);
     }
 }
