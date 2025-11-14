@@ -25,7 +25,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
 Route::get('/articles/categories/list', [ArticleController::class, 'categories']);
-
+// Route::get('/articles/categories', [ArticleController::class, 'categories']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
 
