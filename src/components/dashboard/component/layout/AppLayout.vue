@@ -77,6 +77,15 @@
 					:items="eventItems"
 					:collapsed="collapsed"
 				/>
+
+				<!-- 🔥 الموارد القانونية - الجديدة -->
+				<NavItem 
+					:label="t('nav.legalResources')" 
+					icon="scale" 
+					:show-label="!collapsed"
+					:items="legalResourceItems"
+					:collapsed="collapsed"
+				/>
 				
 				<!-- Assessments مع قائمة فرعية -->
 				<NavItem 
@@ -176,6 +185,15 @@
 							icon="calendar" 
 							:show-label="true"
 							:items="eventItems"
+							:collapsed="false"
+						/>
+
+						<!-- 🔥 الموارد القانونية - الجديدة -->
+						<NavItem 
+							:label="t('nav.legalResources')" 
+							icon="scale" 
+							:show-label="true"
+							:items="legalResourceItems"
 							:collapsed="false"
 						/>
 						
@@ -310,6 +328,13 @@ const libraryItems = [
 // العناصر الفرعية للفعاليات - فقط جميع الفعاليات
 const eventItems = [
 	{ toName: 'events', label: 'جميع الفعاليات', icon: 'calendar' }
+];
+
+// 🔥 العناصر الفرعية للموارد القانونية - الجديدة
+const legalResourceItems = [
+	{ toName: 'legal-resources', label: 'جميع الموارد', icon: 'scale' },
+	{ toName: 'legal-categories', label: 'تصنيفات الموارد', icon: 'folder' },
+	{ toName: 'new-legal-resource', label: 'مورد جديد', icon: 'plus' }
 ];
 
 const assessmentItems = [
