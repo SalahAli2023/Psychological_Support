@@ -6,7 +6,8 @@
                 <h1 class="text-3xl font-bold text-primary">{{ t('library.title') }}</h1>
                 <p class="text-secondary mt-2">{{ t('library.subtitle') }}</p>
             </div>
-             <Button 
+            <Button 
+                v-if="hasAuth"
                 variant="primary" 
                 size="lg" 
                 class="flex items-center gap-2"
@@ -15,50 +16,6 @@
                 <CloudArrowUpIcon class="h-5 w-5" />
                 {{ t('library.upload.upload') }}
             </Button>
-        </div>
-
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard 
-                :label="t('library.total_items')" 
-                :value="totalItems" 
-                delta="+12%"
-                :positive="true"
-            >
-                <template #icon>
-                    <FolderIcon class="h-6 w-6" />
-                </template>
-            </StatCard>
-            <StatCard 
-                :label="t('library.total_downloads')" 
-                :value="totalDownloads" 
-                delta="+8%"
-                :positive="true"
-            >
-                <template #icon>
-                    <ArrowDownTrayIcon class="h-6 w-6" />
-                </template>
-            </StatCard>
-            <StatCard 
-                :label="t('library.new_this_week')" 
-                :value="newItems" 
-                delta="+5"
-                :positive="true"
-            >
-                <template #icon>
-                    <SparklesIcon class="h-6 w-6" />
-                </template>
-            </StatCard>
-            <StatCard 
-                :label="t('library.avg_rating')" 
-                :value="averageRating" 
-                delta="+0.2"
-                :positive="true"
-            >
-                <template #icon>
-                    <StarIcon class="h-6 w-6" />
-                </template>
-            </StatCard>
         </div>
 
         <!-- Search and Filters -->
@@ -71,6 +28,7 @@
                         v-model="searchQuery"
                         :placeholder="t('library.search_placeholder')"
                         class="w-full pl-10 pr-4 py-3 rounded-lg border border-primary bg-primary text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                        @input="handleSearch"
                     />
                 </div>
 
@@ -79,6 +37,7 @@
                     <select 
                         v-model="selectedCategory"
                         class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        @change="fetchItems"
                     >
                         <option value="">{{ t('library.all_categories') }}</option>
                         <option 
@@ -93,6 +52,7 @@
                     <select 
                         v-model="selectedType"
                         class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        @change="fetchItems"
                     >
                         <option value="">{{ t('library.all_types') }}</option>
                         <option value="book">{{ t('library.books') }}</option>
@@ -133,8 +93,164 @@
             </div>
         </Card>
 
-        <!-- Content Layout Toggle -->
-        <div class="flex items-center justify-between">
+        <!-- Management Table for Admin -->
+        <Card v-if="hasAuth" class="p-6">
+            <template #header>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div class="text-base sm:text-lg">إدارة محتويات المكتبة</div>
+                    <div class="text-sm text-secondary">
+                        إجمالي العناصر: {{ items.length }}
+                    </div>
+                </div>
+            </template>
+
+            <!-- Loading State -->
+            <div v-if="loading" class="flex justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+            </div>
+
+            <!-- Error State -->
+            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+                {{ error }}
+            </div>
+
+            <!-- Success Message -->
+            <div v-else-if="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+                {{ successMessage }}
+            </div>
+
+            <!-- Table -->
+            <div v-if="!loading && items.length > 0" class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="text-start text-secondary bg-secondary">
+                            <th class="px-4 py-3 text-start font-medium">#</th>
+                            <th class="px-4 py-3 text-start font-medium">العنوان</th>
+                            <th class="px-4 py-3 text-start font-medium">النوع</th>
+                            <th class="px-4 py-3 text-start font-medium">التصنيف</th>
+                            <th class="px-4 py-3 text-start font-medium">المشاهدات</th>
+                            <th class="px-4 py-3 text-start font-medium">التنزيلات</th>
+                            <th class="px-4 py-3 text-start font-medium">التقييم</th>
+                            <th class="px-4 py-3 text-start font-medium">الحالة</th>
+                            <th class="px-4 py-3 text-start font-medium">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr 
+                            v-for="(item, index) in items" 
+                            :key="item.id" 
+                            class="border-t border-primary hover:bg-secondary transition-colors"
+                        >
+                            <td class="px-4 py-3 text-primary font-medium text-center">
+                                {{ index + 1 }}
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <div class="flex items-center gap-3">
+                                    <img 
+                                        v-if="item.cover_image" 
+                                        :src="item.cover_image" 
+                                        :alt="item.title_ar"
+                                        class="w-10 h-10 rounded-lg object-cover"
+                                    >
+                                    <div v-else class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                                        <DocumentTextIcon class="h-5 w-5 text-gray-500" />
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-primary">{{ item.title_ar }}</span>
+                                        <span class="text-xs text-secondary">{{ item.author_ar }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <span class="badge badge-neutral">
+                                    {{ getTypeLabel(item.type) }}
+                                </span>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <span class="badge badge-brand">
+                                    {{ locale === 'ar' ? item.category?.name_ar : item.category?.name_en }}
+                                </span>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <div class="flex items-center gap-1">
+                                    <EyeIcon class="h-4 w-4 text-secondary" />
+                                    {{ item.views }}
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <div class="flex items-center gap-1">
+                                    <ArrowDownTrayIcon class="h-4 w-4 text-secondary" />
+                                    {{ item.downloads }}
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-primary">
+                                <div class="flex items-center gap-1">
+                                    <StarIcon class="h-4 w-4 text-yellow-500" />
+                                    {{ item.rating }} ({{ item.rating_count }})
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-3">
+                                <span :class="['badge', item.is_published ? 'badge-brand' : 'badge-neutral']">
+                                    {{ item.is_published ? 'منشور' : 'مسودة' }}
+                                </span>
+                                <span v-if="item.is_new" class="badge badge-green ml-1">
+                                    جديد
+                                </span>
+                            </td>
+                            
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
+                                    <Button 
+                                        size="sm" 
+                                        variant="outline" 
+                                        @click="handleEdit(item)"
+                                        class="text-xs"
+                                    >
+                                        تعديل
+                                    </Button>
+                                    <button 
+                                        @click="handleTogglePublish(item)" 
+                                        class="p-1 text-secondary hover:text-primary"
+                                        :title="item.is_published ? 'إلغاء النشر' : 'نشر'"
+                                    >
+                                        <EyeIcon v-if="item.is_published" class="h-4 w-4" />
+                                        <EyeSlashIcon v-else class="h-4 w-4" />
+                                    </button>
+                                    <Button 
+                                        size="sm" 
+                                        variant="outline" 
+                                        @click="handleDelete(item.id)" 
+                                        class="text-xs text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                                    >
+                                        حذف
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="!loading && items.length === 0" class="text-center py-8 text-secondary">
+                <FolderOpenIcon class="h-16 w-16 mx-auto mb-4 text-secondary" />
+                <h3 class="text-lg font-medium text-primary mb-2">لا توجد محتويات</h3>
+                <p class="text-secondary mb-4">لم يتم إضافة أي محتوى للمكتبة بعد</p>
+                <Button @click="upload" variant="outline">
+                    إضافة محتوى جديد
+                </Button>
+            </div>
+        </Card>
+
+        <!-- Content Layout Toggle (for non-admin users) -->
+        <div v-else class="flex items-center justify-between">
             <div class="text-secondary">
                 {{ t('library.showing') }} {{ filteredItems.length }} {{ t('library.of') }} {{ totalItems }}
             </div>
@@ -160,202 +276,135 @@
             </div>
         </div>
 
-        <!-- Library Content -->
-        <div v-if="filteredItems.length > 0">
-            <!-- Grid View -->
-            <div 
-                v-if="viewMode === 'grid'" 
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-                <LibraryCard 
-                    v-for="item in filteredItems"
-                    :key="item.id"
-                    :item="item"
-                    :locale="locale"
-                    @download="handleDownload"
-                    @view="handleView"
-                />
+        <!-- Library Content (for non-admin users) -->
+        <div v-if="!hasAuth">
+            <div v-if="loading" class="flex justify-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
             </div>
 
-            <!-- List View -->
-            <div v-else class="space-y-4">
-                <LibraryListItem 
-                    v-for="item in filteredItems"
-                    :key="item.id"
-                    :item="item"
-                    :locale="locale"
-                    @download="handleDownload"
-                    @view="handleView"
-                />
+            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                {{ error }}
             </div>
-        </div>
 
-        <!-- Empty State -->
-        <div v-else class="text-center py-12">
-            <FolderOpenIcon class="mx-auto h-16 w-16 text-tertiary" />
-            <h3 class="mt-4 text-lg font-medium text-primary">{{ t('library.no_results') }}</h3>
-            <p class="mt-2 text-secondary">{{ t('library.no_results_desc') }}</p>
-            <Button 
-                variant="primary" 
-                class="mt-4"
-                @click="clearFilters"
-            >
-                {{ t('library.clear_filters') }}
-            </Button>
+            <div v-else-if="filteredItems.length > 0">
+                <!-- Grid View -->
+                <div 
+                    v-if="viewMode === 'grid'" 
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                >
+                    <LibraryCard 
+                        v-for="item in filteredItems"
+                        :key="item.id"
+                        :item="item"
+                        :locale="locale"
+                        @download="handleDownload"
+                        @view="handleView"
+                    />
+                </div>
+
+                <!-- List View -->
+                <div v-else class="space-y-4">
+                    <LibraryListItem 
+                        v-for="item in filteredItems"
+                        :key="item.id"
+                        :item="item"
+                        :locale="locale"
+                        @download="handleDownload"
+                        @view="handleView"
+                    />
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else class="text-center py-12">
+                <FolderOpenIcon class="mx-auto h-16 w-16 text-tertiary" />
+                <h3 class="mt-4 text-lg font-medium text-primary">{{ t('library.no_results') }}</h3>
+                <p class="mt-2 text-secondary">{{ t('library.no_results_desc') }}</p>
+                <Button 
+                    variant="primary" 
+                    class="mt-4"
+                    @click="clearFilters"
+                >
+                    {{ t('library.clear_filters') }}
+                </Button>
+            </div>
         </div>
 
         <!-- Upload Modal -->
-       <UploadModal 
-		v-if="showUploadModal"
-		:categories="categories"
-		@close="showUploadModal = false"
-		@uploaded="handleUpload"
-	/>
+        <UploadModal 
+            v-if="showUploadModal"
+            :categories="categories"
+            :editing-item="editingItem"
+            @close="showUploadModal = false"
+            @uploaded="handleUpload"
+        />
+
+        <!-- Delete Confirmation Modal -->
+        <DeleteConfirmModal
+            :show="showDeleteConfirm"
+            @confirm="confirmDelete"
+            @cancel="showDeleteConfirm = false"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '@/stores/auth';
+import { useLibraryStore, type LibraryItem } from '@/stores/library';
 import Button from '@/components/dashboard/component/ui/Button.vue';
 import Card from '@/components/dashboard/component/ui/Card.vue';
-import StatCard from '@/components/dashboard/component/ui/StatCard.vue';
 import LibraryCard from './LibraryCard.vue';
 import LibraryListItem from './LibraryListItem.vue';
 import UploadModal from './UploadModal.vue';
+import DeleteConfirmModal from '@/components/dashboard/events/DeleteConfirmModal.vue';
 import {
     FolderIcon,
     ArrowDownTrayIcon,
-    SparklesIcon,
-    StarIcon,
     MagnifyingGlassIcon,
     BarsArrowUpIcon,
     XMarkIcon,
     Squares2X2Icon,
     Bars3Icon,
     FolderOpenIcon,
-    CloudArrowUpIcon
+    CloudArrowUpIcon,
+    DocumentTextIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    StarIcon
 } from '@heroicons/vue/24/outline';
 
 const { t, locale } = useI18n();
+const authStore = useAuthStore();
+const libraryStore = useLibraryStore();
 
 // Data
-const resources = ref<any[]>([]);
-const categories = ref<any[]>([]);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 const selectedType = ref('');
 const sortBy = ref('newest');
 const viewMode = ref<'grid' | 'list'>('grid');
 const showUploadModal = ref(false);
-
-// Mock data - replace with actual API calls
-const mockData = {
-    categories: [
-        { id: 1, key: 'therapy', name_ar: 'العلاج النفسي', name_en: 'Psychotherapy', color: '#8FAE2F' },
-        { id: 2, key: 'assessment', name_ar: 'التقييم', name_en: 'Assessment', color: '#C28E86' },
-        { id: 3, key: 'research', name_ar: 'الأبحاث', name_en: 'Research', color: '#4F86C6' },
-    ],
-    items: [
-        {
-            id: 1,
-            title_ar: 'أساسيات العلاج المعرفي السلوكي',
-            title_en: 'Cognitive Behavioral Therapy Basics',
-            description_ar: 'دليل شامل لأساسيات العلاج المعرفي السلوكي',
-            description_en: 'Comprehensive guide to CBT basics',
-            author_ar: 'د. أحمد محمد',
-            author_en: 'Dr. Ahmed Mohamed',
-            type: 'book',
-            category_id: 1,
-            cover_image: '/images/cbt-book.jpg',
-            file_path: '/files/cbt-basics.pdf',
-            file_size: '2.4MB',
-            pages: 156,
-            publish_date: '2023-01-15',
-            downloads: 245,
-            views: 567,
-            rating: 4.5,
-            rating_count: 34,
-            is_new: true,
-            is_published: true
-        },
-        {
-            id: 2,
-            title_ar: 'دليل تقييم الاكتئاب',
-            title_en: 'Depression Assessment Guide',
-            description_ar: 'أداة شاملة لتقييم حالات الاكتئاب',
-            description_en: 'Comprehensive tool for depression assessment',
-            author_ar: 'د. سارة الخالد',
-            author_en: 'Dr. Sara Al Khalid',
-            type: 'guide',
-            category_id: 2,
-            cover_image: '/images/depression-guide.jpg',
-            file_path: '/files/depression-assessment.pdf',
-            file_size: '1.8MB',
-            pages: 89,
-            publish_date: '2023-03-20',
-            downloads: 189,
-            views: 423,
-            rating: 4.2,
-            rating_count: 28,
-            is_new: false,
-            is_published: true
-        },
-        {
-            id: 3,
-            title_ar: 'دراسة عن فعالية العلاج الجماعي',
-            title_en: 'Study on Group Therapy Effectiveness',
-            description_ar: 'بحث علمي حول فعالية العلاج النفسي الجماعي',
-            description_en: 'Scientific research on group therapy effectiveness',
-            author_ar: 'د. محمد العلي',
-            author_en: 'Dr. Mohammed Al Ali',
-            type: 'research',
-            category_id: 3,
-            cover_image: '/images/group-therapy-research.jpg',
-            file_path: '/files/group-therapy-study.pdf',
-            file_size: '3.2MB',
-            pages: 234,
-            publish_date: '2023-02-10',
-            downloads: 156,
-            views: 289,
-            rating: 4.7,
-            rating_count: 19,
-            is_new: true,
-            is_published: true
-        },
-        {
-            id: 4,
-            title_ar: 'تقنيات إدارة القلق',
-            title_en: 'Anxiety Management Techniques',
-            description_ar: 'مقال شامل عن تقنيات إدارة القلق والتوتر',
-            description_en: 'Comprehensive article on anxiety management techniques',
-            author_ar: 'د. فاطمة القاسم',
-            author_en: 'Dr. Fatima Al Qasim',
-            type: 'article',
-            category_id: 1,
-            cover_image: '/images/anxiety-article.jpg',
-            file_path: '/files/anxiety-techniques.pdf',
-            file_size: '1.1MB',
-            pages: 45,
-            publish_date: '2023-04-05',
-            downloads: 278,
-            views: 512,
-            rating: 4.3,
-            rating_count: 42,
-            is_new: false,
-            is_published: true
-        }
-    ]
-};
+const showDeleteConfirm = ref(false);
+const editingItem = ref<LibraryItem | null>(null);
+const deleteTargetId = ref<number | null>(null);
+const successMessage = ref('');
 
 // Computed
+const hasAuth = computed(() => authStore.isAuthenticated);
+const loading = computed(() => libraryStore.loading);
+const error = computed(() => libraryStore.error);
+const items = computed(() => libraryStore.items);
+const categories = computed(() => libraryStore.categories);
+
 const filteredItems = computed(() => {
-    let items = [...resources.value];
+    let filtered = [...items.value];
     
-    // Search filter
+    // Client-side filtering for search
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        items = items.filter(item => 
+        filtered = filtered.filter(item => 
             item.title_ar.toLowerCase().includes(query) ||
             item.title_en.toLowerCase().includes(query) ||
             item.description_ar?.toLowerCase().includes(query) ||
@@ -363,44 +412,35 @@ const filteredItems = computed(() => {
         );
     }
     
-    // Category filter
+    // Client-side filtering for category and type
     if (selectedCategory.value) {
-        items = items.filter(item => item.category_id.toString() === selectedCategory.value);
+        filtered = filtered.filter(item => item.category_id.toString() === selectedCategory.value);
     }
     
-    // Type filter
     if (selectedType.value) {
-        items = items.filter(item => item.type === selectedType.value);
+        filtered = filtered.filter(item => item.type === selectedType.value);
     }
     
-    // Sorting
+    // Client-side sorting
     switch (sortBy.value) {
         case 'newest':
-            items.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
+            filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
             break;
         case 'popular':
-            items.sort((a, b) => b.downloads - a.downloads);
+            filtered.sort((a, b) => b.downloads - a.downloads);
             break;
         case 'rating':
-            items.sort((a, b) => b.rating - a.rating);
+            filtered.sort((a, b) => b.rating - a.rating);
             break;
         case 'title':
-            items.sort((a, b) => a.title_en.localeCompare(b.title_en));
+            filtered.sort((a, b) => a.title_en.localeCompare(b.title_en));
             break;
     }
     
-    return items;
+    return filtered;
 });
 
-const totalItems = computed(() => resources.value.length);
-const totalDownloads = computed(() => resources.value.reduce((sum, item) => sum + item.downloads, 0));
-const newItems = computed(() => resources.value.filter(item => item.is_new).length);
-const averageRating = computed(() => {
-    const ratedItems = resources.value.filter(item => item.rating_count > 0);
-    return ratedItems.length > 0 
-        ? (ratedItems.reduce((sum, item) => sum + item.rating, 0) / ratedItems.length).toFixed(1)
-        : '0.0';
-});
+const totalItems = computed(() => items.value.length);
 
 const activeFilters = computed(() => {
     const filters = [];
@@ -430,8 +470,83 @@ const sortOptions = [
 ];
 
 // Methods
+const fetchItems = async () => {
+    const params: any = {};
+    
+    if (selectedCategory.value) params.category_id = selectedCategory.value;
+    if (selectedType.value) params.type = selectedType.value;
+    if (searchQuery.value) params.search = searchQuery.value;
+    
+    await libraryStore.fetchItems(params);
+};
+
+const fetchCategories = async () => {
+    await libraryStore.fetchCategories();
+};
+
 const upload = () => {
+    editingItem.value = null;
     showUploadModal.value = true;
+};
+
+const handleEdit = (item: LibraryItem) => {
+    editingItem.value = item;
+    showUploadModal.value = true;
+};
+
+const handleDelete = async (itemId: number) => {
+    deleteTargetId.value = itemId;
+    showDeleteConfirm.value = true;
+};
+
+const confirmDelete = async () => {
+    if (!deleteTargetId.value) return;
+
+    try {
+        await libraryStore.deleteItem(deleteTargetId.value);
+        successMessage.value = 'تم حذف العنصر بنجاح';
+        
+        setTimeout(() => {
+            successMessage.value = '';
+        }, 3000);
+        
+    } catch (err: any) {
+        error.value = err.response?.data?.message || 'فشل في حذف العنصر';
+        console.error('Failed to delete item:', err);
+    } finally {
+        showDeleteConfirm.value = false;
+        deleteTargetId.value = null;
+    }
+};
+
+const handleTogglePublish = async (item: LibraryItem) => {
+    try {
+        const formData = new FormData();
+        formData.append('is_published', item.is_published ? '0' : '1');
+        formData.append('_method', 'PUT');
+
+        await libraryStore.updateItem(item.id, formData);
+        
+        successMessage.value = item.is_published ? 'تم إلغاء نشر العنصر' : 'تم نشر العنصر';
+        
+        setTimeout(() => {
+            successMessage.value = '';
+        }, 3000);
+        
+    } catch (err: any) {
+        error.value = err.response?.data?.message || 'فشل في تحديث حالة العنصر';
+        console.error('Failed to toggle publish:', err);
+    }
+};
+
+const getTypeLabel = (type: string) => {
+    const types: { [key: string]: string } = {
+        book: 'كتاب',
+        research: 'بحث',
+        guide: 'دليل',
+        article: 'مقال'
+    };
+    return types[type] || type;
 };
 
 const toggleSort = () => {
@@ -441,42 +556,90 @@ const toggleSort = () => {
 };
 
 const removeFilter = (filterKey: string) => {
-    if (filterKey === 'category') selectedCategory.value = '';
-    if (filterKey === 'type') selectedType.value = '';
+    if (filterKey === 'category') {
+        selectedCategory.value = '';
+    } else if (filterKey === 'type') {
+        selectedType.value = '';
+    }
+    fetchItems();
 };
 
 const clearFilters = () => {
     searchQuery.value = '';
     selectedCategory.value = '';
     selectedType.value = '';
+    fetchItems();
 };
 
-const handleDownload = (item: any) => {
-    // Implement download logic
-    console.log('Downloading:', item);
-    item.downloads++;
+const handleSearch = () => {
+    clearTimeout((window as any).searchTimeout);
+    (window as any).searchTimeout = setTimeout(() => {
+        fetchItems();
+    }, 500);
 };
 
-const handleView = (item: any) => {
-    // Implement view logic
-    console.log('Viewing:', item);
-    item.views++;
+const handleDownload = async (item: LibraryItem) => {
+    try {
+        if (item.file_path) {
+            window.open(item.file_path, '_blank');
+        }
+    } catch (err) {
+        console.error('Download failed:', err);
+    }
 };
 
-const handleUpload = (newItem: any) => {
-    resources.value.unshift(newItem);
-    showUploadModal.value = false;
+const handleView = async (item: LibraryItem) => {
+    try {
+        await libraryStore.incrementViews(item.id);
+    } catch (err) {
+        console.error('Failed to view item:', err);
+    }
+};
+
+const handleUpload = async () => {
+    try {
+        await fetchItems();
+        showUploadModal.value = false;
+        editingItem.value = null;
+    } catch (err) {
+        console.error('Failed to refresh after upload:', err);
+    }
 };
 
 // Lifecycle
-onMounted(() => {
-    categories.value = mockData.categories;
-    resources.value = mockData.items;
-    console.log('Data loaded:', resources.value.length, 'items');
+onMounted(async () => {
+    await Promise.all([fetchItems(), fetchCategories()]);
+});
+
+// Watchers
+watch([selectedCategory, selectedType], () => {
+    fetchItems();
 });
 </script>
 
 <style scoped>
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-brand {
+    background-color: rgb(220 252 231);
+    color: rgb(22 101 52);
+}
+
+.badge-neutral {
+    background-color: rgb(254 249 195);
+    color: rgb(113 63 18);
+}
+
+.badge-green {
+    background-color: rgb(220 252 231);
+    color: rgb(22 101 52);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 6px;

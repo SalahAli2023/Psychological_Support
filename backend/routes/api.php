@@ -36,6 +36,9 @@ Route::get('/therapists/specializations/list', [TherapistController::class, 'spe
 Route::get('/library', [LibraryController::class, 'index']);
 Route::get('/library/{id}', [LibraryController::class, 'show']);
 Route::get('/library/categories/list', [LibraryController::class, 'categories']);
+Route::get('/library/{id}/download', [LibraryController::class, 'incrementDownloads']);
+Route::post('/library/{id}/rate', [LibraryController::class, 'rateItem']);
+Route::get('/library/favorites', [LibraryController::class, 'favorites']);
 
 Route::get('/measures', [MeasureController::class, 'index']);
 Route::get('/measures/{id}', [MeasureController::class, 'show']);
@@ -72,7 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);
 
     // Library (admin only)
-    Route::post('/library', [LibraryController::class, 'store']);
+     Route::post('/library', [LibraryController::class, 'store']);
     Route::put('/library/{id}', [LibraryController::class, 'update']);
     Route::delete('/library/{id}', [LibraryController::class, 'destroy']);
 

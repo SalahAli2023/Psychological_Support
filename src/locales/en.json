@@ -99,7 +99,10 @@
       "supported_formats": "PDF, DOC, DOCX, JPG, PNG, MP4, MOV (Max 50MB)",
       "cancel": "Cancel",
       "uploading": "Uploading...",
-      "upload": "Upload File"
+      "upload": "Upload File",
+        "edit_title": "Update item",
+      "edit_subtitle": "Uadate data item",
+      "update": "Update"
     }
   }
 }

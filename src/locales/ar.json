@@ -99,7 +99,10 @@
       "supported_formats": "PDF, DOC, DOCX, JPG, PNG, MP4, MOV (الحد الأقصى 50MB)",
       "cancel": "إلغاء",
       "uploading": "جاري الرفع...",
-      "upload": "رفع الملف"
+      "upload": "رفع الملف",
+      "edit_title": "تعديل العنصر",
+      "edit_subtitle": "تعديل بيانات العنصر الموجود",
+      "update": "تحديث"
     }
   }
 }
