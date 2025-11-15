@@ -131,6 +131,58 @@ const fetchCategories = async () => {
     }
   }
 
+
+  const deleteCategory = async (categoryId: string) => {
+  loading.value = true
+  error.value = null
+  try {
+    await api.delete(`/articles/categories/${categoryId}`)
+    categories.value = categories.value.filter(category => category.id !== categoryId)
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'فشل في حذف التصنيف'
+    throw err
+  } finally {
+    loading.value = false
+  }
+}
+
+const createCategory = async (categoryData: any) => {
+  loading.value = true
+  error.value = null
+  try {
+    const response = await api.post('/articles/categories', categoryData)
+    categories.value.unshift(response.data.data)
+    return response.data.data
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'فشل في إنشاء التصنيف'
+    throw err
+  } finally {
+    loading.value = false
+  }
+}
+
+// تحديث تصنيف
+const updateCategory = async (id: string, categoryData: any) => {
+  loading.value = true
+  error.value = null
+  try {
+    const response = await api.put(`/articles/categories/${id}`, categoryData)
+    
+    const index = categories.value.findIndex(category => category.id === id)
+    if (index !== -1) {
+      categories.value[index] = response.data.data
+    }
+    
+    return response.data.data
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'فشل في تحديث التصنيف'
+    throw err
+  } finally {
+    loading.value = false
+  }
+}
+
+
   return {
     articles,
     categories,
@@ -140,6 +192,10 @@ const fetchCategories = async () => {
     fetchCategories,
     createArticle,
     updateArticle,
-    deleteArticle
+    deleteArticle,
+    createCategory,
+   updateCategory,
+   deleteCategory
+
   }
 })

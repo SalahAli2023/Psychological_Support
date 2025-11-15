@@ -58,7 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/articles', [ArticleController::class, 'store']);
     Route::put('/articles/{id}', [ArticleController::class, 'update']);
     Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
-
+    Route::post('/articles/categories', [ArticleController::class, 'storeCategory']);
+    Route::put('/articles/categories/{id}', [ArticleController::class, 'updateCategory']);
+    Route::delete('/articles/categories/{id}', [ArticleController::class, 'destroyCategory']);
     // Events (admin only)
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{id}', [EventController::class, 'update']);

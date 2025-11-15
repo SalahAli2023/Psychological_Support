@@ -8,6 +8,8 @@ const Appointments = () => import('../components/dashboard/Appointments/Index.vu
 const Users = () => import('../components/dashboard/Users/Index.vue');
 const therapists = () => import('../components/dashboard/Users/therapists/TherapistsManagement.vue');
 const Articles = () => import('../components/dashboard/Articles/Index.vue');
+const ArticleCategories = () => import('../components/dashboard/Articles/ArticleCategories.vue');
+// const AddArticles = () => import('../components/dashboard/Articles/ArticleForm.vue');
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Measures/Index.vue');
@@ -69,6 +71,8 @@ const routes = [
       { path: 'users', name: 'users', component: Users },
       { path: 'therapists', name: 'therapists', component: therapists },
       { path: 'articles', name: 'articles', component: Articles },
+      { path: 'categories', name: 'categories', component: ArticleCategories },
+      // { path: 'new-article', name: 'new-article', component: AddArticles },
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'libraries', name: 'libraries', component: Library },
       { path: 'events', name: 'events', component: Events },
