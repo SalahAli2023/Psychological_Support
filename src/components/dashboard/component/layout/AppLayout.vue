@@ -309,7 +309,7 @@ const userItems = [
 const articleItems = [
 	{ toName: 'articles', label: 'جميع المقالات', icon: 'document' },
 	{ toName: 'categories', label: 'تصنيفات المقالات', icon: 'folder' },
-	{ toName: 'new-article', label: 'مقال جديد', icon: 'plus' }
+	// { toName: 'new-article', label: 'مقال جديد', icon: 'plus' }
 ];
 
 const programItems = [
