@@ -33,7 +33,7 @@
               
               <div class="relative z-10 w-32 h-44 sm:w-40 h-56 md:w-48 md:h-64 mx-auto">
                 <img 
-                  :src="selectedBook.cover" 
+                  :src="selectedBook.cover || '/images/default-book-cover.jpg'" 
                   :alt="selectedBook.title" 
                   class="w-full h-full object-cover rounded-xl shadow-2xl border-8 border-white/30"
                 />
@@ -57,15 +57,19 @@
                   <span class="text-sm sm:text-base font-medium">{{ selectedBook.author }}</span>
                 </div>
                 
-                <!-- التصنيف والسنة -->
+                <!-- التصنيف والسنة والنوع -->
                 <div class="flex flex-wrap gap-2 mb-2 sm:mb-3">
                   <span class="bg-blue-100/80 text-blue-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 backdrop-blur-sm">
                     <i class="fas fa-tag text-xs"></i>
-                    {{ selectedBook.category }}
+                    {{ selectedBook.category?.name_ar || selectedBook.category }}
                   </span>
                   <span class="bg-purple-100/80 text-purple-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 backdrop-blur-sm">
                     <i class="fas fa-calendar text-xs"></i>
                     {{ selectedBook.year }}
+                  </span>
+                  <span class="bg-green-100/80 text-green-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 backdrop-blur-sm">
+                    <i class="fas fa-book text-xs"></i>
+                    {{ getTypeLabel(selectedBook.type) }}
                   </span>
                 </div>
               </div>
@@ -81,7 +85,7 @@
                   </div>
                   <span class="text-gray-600 font-semibold text-xs sm:text-sm">({{ selectedBook.rating }})</span>
                 </div>
-                 <p class="text-gray-500 text-xs">{{ translate('modal.basedOnRatings', { count: 124 }) }}</p>
+                 <p class="text-gray-500 text-xs">{{ translate('modal.basedOnRatings', { count: selectedBook.rating_count || 0 }) }}</p>
               </div>
 
               <!-- الوصف -->
@@ -91,23 +95,23 @@
                   {{ translate('modal.bookSummary') }}
                 </h3>
                 <p class="text-gray-600 leading-relaxed text-justify text-xs sm:text-sm">
-                  {{ selectedBook.description }}
+                  {{ selectedBook.description || 'لا يوجد وصف متاح' }}
                 </p>
               </div>
 
               <!-- الإحصائيات -->
               <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">328</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">{{ selectedBook.pages || 'N/A' }}</div>
                   <div class="text-xs text-gray-500">{{ translate('modal.pages') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">4.2</div>
-                  <div class="text-xs text-gray-500">{{ translate('modal.readingTime') }}</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">{{ selectedBook.views }}</div>
+                  <div class="text-xs text-gray-500">{{ translate('modal.views') }}</div>
                 </div>
                 <div class="text-center p-2 bg-gray-50/80 rounded-xl backdrop-blur-sm">
-                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">15K</div>
-                  <div class="text-xs text-gray-500">{{ translate('modal.readers') }}</div>
+                  <div class="text-lg sm:text-xl font-bold text-primary-green mb-1">{{ selectedBook.downloads }}</div>
+                  <div class="text-xs text-gray-500">{{ translate('modal.downloads') }}</div>
                 </div>
               </div>
 
@@ -115,6 +119,7 @@
               <div class="flex flex-col gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4">
                 <div class="flex flex-col sm:flex-row gap-2" :class="isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'">
                   <button 
+                    v-if="selectedBook.file_path"
                     @click="downloadBook"
                     class="flex-1 bg-gradient-to-r from-primary-green to-secondary-green text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm backdrop-blur-sm min-h-[44px] sm:min-h-[50px]"
                     :class="isRTL ? 'flex-row-reverse' : 'flex-row'"
@@ -148,11 +153,11 @@
                 <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500" :class="isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'">
                   <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-language text-xs"></i>
-                    {{ translate('modal.language') }}: {{ translate('modal.arabic') }}
+                    {{ translate('modal.language') }}: {{ getLanguage(selectedBook) }}
                   </span>
                   <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-file-pdf text-xs"></i>
-                    PDF - 5.2 MB
+                    {{ getFileSize(selectedBook.file_size) }}
                   </span>
                   <span class="flex items-center gap-1 justify-center sm:justify-start" :class="isRTL ? 'flex-row-reverse' : 'flex-row'">
                     <i class="fas fa-shield-alt text-xs"></i>
@@ -184,9 +189,34 @@ export default {
     
     const isRTL = currentLanguage.value === 'ar'
     
+    const getTypeLabel = (type) => {
+      const types = {
+        book: 'كتاب',
+        research: 'بحث',
+        guide: 'دليل',
+        article: 'مقال'
+      }
+      return types[type] || type
+    }
+
+    const getLanguage = (book) => {
+      if (book.title_ar && !book.title_en) return 'عربي'
+      if (book.title_en && !book.title_ar) return 'English'
+      return 'ثنائي اللغة'
+    }
+
+    const getFileSize = (size) => {
+      if (!size) return 'N/A'
+      const mb = size / (1024 * 1024)
+      return `PDF - ${mb.toFixed(1)} MB`
+    }
+    
     return {
       translate,
-      isRTL
+      isRTL,
+      getTypeLabel,
+      getLanguage,
+      getFileSize
     }
   },
   emits: ['close', 'toggle-favorite', 'download', 'preview', 'rate'],
@@ -209,6 +239,8 @@ export default {
   }
 };
 </script>
+
+
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {

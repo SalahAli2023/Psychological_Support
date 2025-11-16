@@ -5,8 +5,12 @@
             <!-- Header -->
             <div class="flex items-center justify-between p-6 border-b border-primary bg-primary rounded-t-xl">
                 <div>
-                    <h2 class="text-xl font-semibold text-primary">{{ t('library.upload.title') }}</h2>
-                    <p class="text-sm text-secondary mt-1">{{ t('library.upload.subtitle') }}</p>
+                    <h2 class="text-xl font-semibold text-primary">
+                        {{ editingItem ? t('library.upload.edit_title') : t('library.upload.title') }}
+                    </h2>
+                    <p class="text-sm text-secondary mt-1">
+                        {{ editingItem ? t('library.upload.edit_subtitle') : t('library.upload.subtitle') }}
+                    </p>
                 </div>
                 <button 
                     @click="closeModal"
@@ -32,8 +36,9 @@
             <!-- Content مع تمرير -->
             <div class="overflow-y-auto max-h-[60vh] p-6 bg-primary">
                 <form @submit.prevent="handleSubmit" class="space-y-6">
-                    <!-- Upload Area -->
+                    <!-- Upload Area (يظهر فقط في حالة الإضافة) -->
                     <div 
+                        v-if="!editingItem"
                         @drop="handleDrop"
                         @dragover="handleDragOver"
                         @dragleave="handleDragLeave"
@@ -93,6 +98,24 @@
                                 {{ t('library.upload.remove_file') }}
                             </button>
                         </template>
+                    </div>
+
+                    <!-- File Info for Editing -->
+                    <div v-if="editingItem" class="bg-tertiary rounded-lg p-4">
+                        <h3 class="font-medium text-primary mb-2">الملف الحالي</h3>
+                        <div class="flex items-center gap-3">
+                            <DocumentIcon class="h-8 w-8 text-secondary" />
+                            <div>
+                                <p class="text-primary">{{ editingItem.title_ar }}</p>
+                                <p class="text-sm text-secondary">
+                                    {{ editingItem.file_size ? formatFileSize(editingItem.file_size) : 'غير معروف' }} • 
+                                    {{ getFileType(editingItem.file_path || '') }}
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-secondary mt-2">
+                            لتحميل ملف جديد، استخدم منطقة الرفع أعلاه
+                        </p>
                     </div>
 
                     <!-- Form Grid -->
@@ -259,12 +282,13 @@
                             {{ t('library.upload.cover_image') }}
                         </label>
                         <div class="flex items-center gap-4">
+                            <!-- Cover Preview -->
                             <div 
-                                v-if="coverPreview"
+                                v-if="coverPreview || (editingItem && editingItem.cover_image)"
                                 class="relative w-24 h-32 rounded-lg overflow-hidden border border-primary"
                             >
                                 <img 
-                                    :src="coverPreview" 
+                                    :src="coverPreview || editingItem?.cover_image" 
                                     alt="Cover preview"
                                     class="w-full h-full object-cover"
                                 />
@@ -277,6 +301,7 @@
                                 </button>
                             </div>
                             
+                            <!-- Upload Area -->
                             <div 
                                 @click="triggerCoverInput"
                                 class="flex-1 border-2 border-dashed border-primary rounded-lg p-4 text-center cursor-pointer hover:border-brand-500 hover:bg-tertiary transition-colors"
@@ -290,7 +315,9 @@
                                     accept=".jpg,.jpeg,.png,.webp"
                                 />
                                 <PhotoIcon class="mx-auto h-8 w-8 text-secondary mb-2" />
-                                <p class="text-sm text-primary">{{ t('library.upload.cover_upload') }}</p>
+                                <p class="text-sm text-primary">
+                                    {{ editingItem && editingItem.cover_image ? 'تغيير الصورة' : t('library.upload.cover_upload') }}
+                                </p>
                                 <p class="text-xs text-secondary">{{ t('library.upload.cover_formats') }}</p>
                             </div>
                         </div>
@@ -341,12 +368,12 @@
                         type="submit"
                         variant="primary"
                         @click="handleSubmit"
-                        :disabled="!selectedFile || isUploading || !formData.title_ar || !formData.title_en"
+                        :disabled="(!selectedFile && !editingItem) || isUploading || !formData.title_ar || !formData.title_en"
                         :loading="isUploading"
                         class="flex items-center gap-2"
                     >
                         <CloudArrowUpIcon v-if="!isUploading" class="h-4 w-4" />
-                        {{ isUploading ? t('library.upload.uploading') : t('library.upload.upload') }}
+                        {{ isUploading ? t('library.upload.uploading') : (editingItem ? t('library.upload.update') : t('library.upload.upload')) }}
                     </Button>
                 </div>
             </div>
@@ -355,8 +382,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useLibraryStore } from '@/stores/library';
 import Button from '@/components/dashboard/component/ui/Button.vue';
 import {
     XMarkIcon,
@@ -366,9 +394,17 @@ import {
 } from '@heroicons/vue/24/outline';
 
 const { t, locale } = useI18n();
+const libraryStore = useLibraryStore();
 
 // Emits
 const emit = defineEmits(['close', 'uploaded']);
+
+// Props
+interface Props {
+    categories: any[];
+    editingItem?: any;
+}
+const props = defineProps<Props>();
 
 // Refs
 const fileInput = ref<HTMLInputElement>();
@@ -379,11 +415,6 @@ const coverFile = ref<File | null>(null);
 const coverPreview = ref<string | null>(null);
 const isUploading = ref(false);
 const uploadProgress = ref(0);
-
-interface Props {
-    categories: any[];
-}
-const props = defineProps<Props>();
 
 // Form Data
 const formData = reactive({
@@ -401,8 +432,58 @@ const formData = reactive({
     is_published: true
 });
 
+// Watch for editing item changes
+watch(() => props.editingItem, (newItem) => {
+    if (newItem) {
+        // Fill form with existing data
+        formData.title_ar = newItem.title_ar || '';
+        formData.title_en = newItem.title_en || '';
+        formData.description_ar = newItem.description_ar || '';
+        formData.description_en = newItem.description_en || '';
+        formData.author_ar = newItem.author_ar || '';
+        formData.author_en = newItem.author_en || '';
+        formData.type = newItem.type || '';
+        formData.category_id = newItem.category_id?.toString() || '';
+        formData.publish_date = newItem.publish_date || '';
+        formData.pages = newItem.pages?.toString() || '';
+        formData.is_new = newItem.is_new || false;
+        formData.is_published = newItem.is_published || false;
+        
+        // Set cover preview if exists
+        if (newItem.cover_image) {
+            coverPreview.value = newItem.cover_image;
+        }
+    } else {
+        // Reset form for new item
+        resetForm();
+    }
+}, { immediate: true });
+
 // Methods
+const resetForm = () => {
+    formData.title_ar = '';
+    formData.title_en = '';
+    formData.description_ar = '';
+    formData.description_en = '';
+    formData.author_ar = '';
+    formData.author_en = '';
+    formData.type = '';
+    formData.category_id = '';
+    formData.publish_date = '';
+    formData.pages = '';
+    formData.is_new = true;
+    formData.is_published = true;
+    
+    selectedFile.value = null;
+    coverFile.value = null;
+    coverPreview.value = null;
+    
+    if (fileInput.value) fileInput.value.value = '';
+    if (coverInput.value) coverInput.value.value = '';
+};
+
 const closeModal = () => {
+    resetForm();
     emit('close');
 };
 
@@ -486,21 +567,8 @@ const getFileType = (filename: string) => {
     return types[extension || ''] || 'File';
 };
 
-const simulateUpload = () => {
-    return new Promise<void>((resolve) => {
-        const interval = setInterval(() => {
-            uploadProgress.value += Math.random() * 10;
-            if (uploadProgress.value >= 100) {
-                uploadProgress.value = 100;
-                clearInterval(interval);
-                setTimeout(resolve, 500);
-            }
-        }, 200);
-    });
-};
-
 const handleSubmit = async () => {
-    if (!selectedFile.value || !formData.title_ar || !formData.title_en || !formData.type || !formData.category_id) {
+    if ((!selectedFile.value && !props.editingItem) || !formData.title_ar || !formData.title_en || !formData.type || !formData.category_id) {
         return;
     }
 
@@ -508,39 +576,44 @@ const handleSubmit = async () => {
     uploadProgress.value = 0;
 
     try {
-        // Simulate upload progress
-        await simulateUpload();
+        const submitData = new FormData();
+        
+        // Append basic fields
+        submitData.append('title_ar', formData.title_ar);
+        submitData.append('title_en', formData.title_en);
+        submitData.append('description_ar', formData.description_ar);
+        submitData.append('description_en', formData.description_en);
+        submitData.append('author_ar', formData.author_ar);
+        submitData.append('author_en', formData.author_en);
+        submitData.append('type', formData.type);
+        submitData.append('category_id', formData.category_id);
+        submitData.append('pages', formData.pages);
+        submitData.append('publish_date', formData.publish_date);
+        submitData.append('is_new', formData.is_new ? '1' : '0');
+        submitData.append('is_published', formData.is_published ? '1' : '0');
+        
+        // Append files only if they are selected
+        if (selectedFile.value) {
+            submitData.append('file', selectedFile.value);
+        }
+        
+        if (coverFile.value) {
+            submitData.append('cover_image', coverFile.value);
+        }
 
-        // Create new item object
-        const newItem = {
-            id: Date.now().toString(),
-            title_ar: formData.title_ar,
-            title_en: formData.title_en,
-            description_ar: formData.description_ar,
-            description_en: formData.description_en,
-            author_ar: formData.author_ar,
-            author_en: formData.author_en,
-            type: formData.type,
-            category_id: parseInt(formData.category_id),
-            cover_image: coverPreview.value,
-            file_path: URL.createObjectURL(selectedFile.value),
-            file_size: formatFileSize(selectedFile.value.size),
-            pages: formData.pages ? parseInt(formData.pages) : null,
-            publish_date: formData.publish_date || new Date().toISOString().split('T')[0],
-            downloads: 0,
-            views: 0,
-            rating: 0,
-            rating_count: 0,
-            is_new: formData.is_new,
-            is_published: formData.is_published,
-            created_at: new Date().toISOString()
-        };
-
-        emit('uploaded', newItem);
+        // Use appropriate API call based on mode
+        if (props.editingItem) {
+            submitData.append('_method', 'PUT');
+            await libraryStore.updateItem(props.editingItem.id, submitData);
+        } else {
+            await libraryStore.createItem(submitData);
+        }
+        
+        emit('uploaded');
         closeModal();
         
-    } catch (error) {
-        console.error('Upload failed:', error);
+    } catch (err: any) {
+        console.error(props.editingItem ? 'Update failed:' : 'Upload failed:', err);
         // Handle error - show notification, etc.
     } finally {
         isUploading.value = false;
@@ -607,11 +680,11 @@ onUnmounted(() => {
     max-width: 42rem;
 }
 
-.max-h-\[90vh\] {
+.max-h-[90vh] {
     max-height: 90vh;
 }
 
-.max-h-\[60vh\] {
+.max-h-[60vh] {
     max-height: 60vh;
 }
 

@@ -172,4 +172,80 @@ class ArticleController extends Controller
         $categories = ArticleCategory::all();
         return ArticleCategoryResource::collection($categories)->response();
     }
+
+    public function categoriesList(Request $request)
+{
+    $categories = ArticleCategory::all();
+    return ArticleCategoryResource::collection($categories);
+}
+
+public function storeCategory(Request $request)
+{
+    $request->validate([
+        'name_ar' => 'required|string|max:255',
+        'name_en' => 'required|string|max:255',
+        'color' => 'nullable|string|max:7',
+        'description_ar' => 'nullable|string',
+        'description_en' => 'nullable|string',
+    ]);
+
+    $category = ArticleCategory::create([
+        'name_ar' => $request->name_ar,
+        'name_en' => $request->name_en,
+        'slug' => Str::slug($request->name_en),
+        'color' => $request->color,
+        'description_ar' => $request->description_ar,
+        'description_en' => $request->description_en,
+    ]);
+
+    return new ArticleCategoryResource($category);
+}
+
+/**
+ * Update the specified category.
+ */
+public function updateCategory(Request $request, $id)
+{
+    $category = ArticleCategory::findOrFail($id);
+
+    $request->validate([
+        'name_ar' => 'sometimes|string|max:255',
+        'name_en' => 'sometimes|string|max:255',
+        'color' => 'nullable|string|max:7',
+        'description_ar' => 'nullable|string',
+        'description_en' => 'nullable|string',
+    ]);
+
+    $updateData = $request->only([
+        'name_ar', 'name_en', 'color', 'description_ar', 'description_en'
+    ]);
+
+    // Update slug if name_en changed
+    if ($request->has('name_en') && $request->name_en !== $category->name_en) {
+        $updateData['slug'] = Str::slug($request->name_en);
+    }
+
+    $category->update($updateData);
+
+    return new ArticleCategoryResource($category);
+}
+
+/**
+ * Remove the specified category.
+ */
+public function destroyCategory($id)
+{
+    $category = ArticleCategory::findOrFail($id);
+    
+    // Check if category has articles
+    if ($category->articles()->count() > 0) {
+        return response()->json([
+            'message' => 'Cannot delete category with associated articles'
+        ], 422);
+    }
+    
+    $category->delete();
+
+    return response()->json(['message' => 'Category deleted successfully']);
+}
 }

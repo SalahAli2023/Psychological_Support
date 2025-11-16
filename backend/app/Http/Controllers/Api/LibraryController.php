@@ -102,4 +102,52 @@ class LibraryController extends Controller
         $categories = LibraryCategory::all();
         return LibraryCategoryResource::collection($categories)->response();
     }
+
+
+    // إضافة إلى LibraryController.php
+
+// زيادة التحميلات
+public function incrementDownloads($id)
+{
+    $item = LibraryItem::findOrFail($id);
+    $item->increment('downloads');
+    return response()->json(['message' => 'Download count incremented']);
+}
+
+// إضافة تقييم
+public function rateItem(Request $request, $id)
+{
+    $request->validate([
+        'rating' => 'required|numeric|min:1|max:5'
+    ]);
+
+    $item = LibraryItem::findOrFail($id);
+    
+    // حساب التقييم الجديد
+    $newRatingCount = $item->rating_count + 1;
+    $newRating = (($item->rating * $item->rating_count) + $request->rating) / $newRatingCount;
+    
+    $item->update([
+        'rating' => $newRating,
+        'rating_count' => $newRatingCount
+    ]);
+
+    return new LibraryItemResource($item);
+}
+
+// جلب المفضلة
+public function favorites(Request $request)
+{
+    $favoriteIds = $request->get('ids', []);
+    
+    if (empty($favoriteIds)) {
+        return LibraryItemResource::collection(collect());
+    }
+
+    $items = LibraryItem::whereIn('id', $favoriteIds)
+        ->where('is_published', true)
+        ->get();
+
+    return LibraryItemResource::collection($items);
+}
 }
