@@ -7,10 +7,12 @@ export const useEventStore = defineStore('events', () => {
   const currentPage = ref(1)
   const totalPages = ref(1)
   const perPage = ref(15)
+  const loading = ref(false)
 
   // جلب الفعاليات من API
   const fetchEvents = async (filters = {}) => {
     try {
+      loading.value = true
       const params = {
         page: currentPage.value,
         per_page: perPage.value,
@@ -25,7 +27,24 @@ export const useEventStore = defineStore('events', () => {
       
       return response.data
     } catch (error) {
+      console.error('Error fetching events:', error)
       throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // جلب فعالية محددة
+  const fetchEventById = async (id) => {
+    try {
+      loading.value = true
+      const response = await api.get(`/events/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event:', error)
+      throw error
+    } finally {
+      loading.value = false
     }
   }
 
@@ -59,7 +78,7 @@ export const useEventStore = defineStore('events', () => {
     }
   }
 
-  // تحديث فعالية - إصدار معدل للحفاظ على التحديثات المحلية
+  // تحديث فعالية
   const updateEvent = async (eventId, eventData) => {
     try {
       const formData = new FormData()
@@ -83,9 +102,6 @@ export const useEventStore = defineStore('events', () => {
           'Content-Type': 'multipart/form-data'
         }
       })
-      
-      // لا نقوم بتحديث البيانات المحلية هنا - نتركها كما هي
-      // لأن التحديث المحلي تم مسبقاً في handleTogglePublish
       
       return response.data
     } catch (error) {
@@ -135,10 +151,12 @@ export const useEventStore = defineStore('events', () => {
     currentPage,
     totalPages,
     perPage,
+    loading,
     fetchEvents,
+    fetchEventById,
     createEvent,
     updateEvent,
-    updateEventPublishStatus, // أضف هذه الدالة الجديدة
+    updateEventPublishStatus,
     deleteEvent,
     setPage
   }
