@@ -7,6 +7,7 @@ const Dashboard = () => import('../components/dashboard/Dashboard/Index.vue');
 const Appointments = () => import('../components/dashboard/Appointments/Index.vue');
 const Users = () => import('../components/dashboard/Users/Index.vue');
 const therapists = () => import('../components/dashboard/Users/therapists/TherapistsManagement.vue');
+const clients = () => import('../components/dashboard/Users/clients/PatientsManagement.vue');
 const Articles = () => import('../components/dashboard/Articles/Index.vue');
 const ArticleCategories = () => import('../components/dashboard/Articles/ArticleCategories.vue');
 // const AddArticles = () => import('../components/dashboard/Articles/ArticleForm.vue');
@@ -74,6 +75,7 @@ const routes = [
       { path: 'appointments', name: 'appointments', component: Appointments },
       { path: 'users', name: 'users', component: Users },
       { path: 'therapists', name: 'therapists', component: therapists },
+      { path: 'clients', name: 'clients', component: clients },
       { path: 'articles', name: 'articles', component: Articles },
       { path: 'categories', name: 'categories', component: ArticleCategories },
       // { path: 'new-article', name: 'new-article', component: AddArticles },
