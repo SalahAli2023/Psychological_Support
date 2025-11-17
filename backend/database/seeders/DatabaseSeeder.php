@@ -47,6 +47,10 @@ class DatabaseSeeder extends Seeder
             LegalResourceCategorySeeder::class,
             PsychologicalScalesSeeder::class,
             UserAssessmentsSeeder::class,
+            TherapistSeeder::class,
+            TherapistQualificationSeeder::class,
+            TherapistCertificationSeeder::class,
+            TherapistScheduleSeeder::class,
         ]);
  
         // Create admin user
