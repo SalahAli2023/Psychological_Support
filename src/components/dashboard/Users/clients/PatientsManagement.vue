@@ -5,7 +5,7 @@
     
     <!-- Filters -->
     <PatientsFilters 
-      :filters="filters"
+      :filters="localFilters"
       @apply-filters="applyFilters"
       @reset-filters="resetFilters"
       @update:filters="updateFilters"
@@ -13,8 +13,8 @@
     
     <!-- Table -->
     <PatientsTable 
-      :patients="paginatedPatients"
-      :loading="loading"
+      :patients="patientsStore.patients"
+      :loading="patientsStore.loading"
       @view-profile="viewProfile"
       @edit-patient="editPatient"
       @delete-patient="deletePatient"
@@ -23,19 +23,19 @@
     
     <!-- Empty State -->
     <PatientsEmptyState 
-      v-if="!loading && paginatedPatients.length === 0"
+      v-if="!patientsStore.loading && patientsStore.patients.length === 0"
       @create-patient="openCreatePatient"
     />
     
     <!-- Pagination -->
     <PatientsPagination 
-      v-if="filteredPatients.length > 0"
-      :current-page="currentPage"
-      :total-pages="totalPages"
+      v-if="patientsStore.patients.length > 0"
+      :current-page="patientsStore.currentPage"
+      :total-pages="patientsStore.totalPages"
       :start-item="startItem"
       :end-item="endItem"
-      :total-items="filteredPatients.length"
-      :items-per-page="itemsPerPage"
+      :total-items="patientsStore.totalItems"
+      :items-per-page="patientsStore.perPage"
       :visible-pages="visiblePages"
       @go-to-page="goToPage"
       @update-items-per-page="updateItemsPerPage"
@@ -91,7 +91,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { usePatientsStore } from '@/stores/patients'
 import PatientsHeader from './components/PatientsHeader.vue'
 import PatientsFilters from './components/PatientsFilters.vue'
 import PatientsTable from './components/PatientsTable.vue'
@@ -103,20 +104,14 @@ import SessionsModal from './components/modals/SessionsModal.vue'
 import SessionModal from './components/modals/SessionModal.vue'
 import DeleteConfirmationModal from './components/modals/DeleteConfirmationModal.vue'
 
-// البيانات
-const patients = ref([])
-const loading = ref(false)
+// استخدام store المرضى
+const patientsStore = usePatientsStore()
 
-// النماذج
-const filters = reactive({
+// الفلاتر المحلية
+const localFilters = reactive({
   search: '',
   status: '',
   condition: ''
-})
-
-const pagination = reactive({
-  currentPage: 1,
-  itemsPerPage: 9
 })
 
 // النوافذ المنبثقة
@@ -146,41 +141,18 @@ const deleteSessionMessage = computed(() => {
 const patientSessions = ref([])
 
 // الحسابات
-const filteredPatients = computed(() => {
-  return patients.value.filter(patient => {
-    const matchesSearch = !filters.search || 
-      patient.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      patient.email.toLowerCase().includes(filters.search.toLowerCase()) ||
-      patient.phone.includes(filters.search)
-    
-    const matchesStatus = !filters.status || patient.status === filters.status
-    const matchesCondition = !filters.condition || 
-      patient.conditions.some(condition => 
-        condition.toLowerCase().includes(filters.condition.toLowerCase())
-      )
-    
-    return matchesSearch && matchesStatus && matchesCondition
-  })
+const startItem = computed(() => {
+  return ((patientsStore.currentPage - 1) * patientsStore.perPage) + 1
 })
 
-const paginatedPatients = computed(() => {
-  const start = (pagination.currentPage - 1) * pagination.itemsPerPage
-  const end = start + pagination.itemsPerPage
-  return filteredPatients.value.slice(start, end)
+const endItem = computed(() => {
+  return Math.min(patientsStore.currentPage * patientsStore.perPage, patientsStore.totalItems)
 })
-
-// التقسيم الصفحي
-const currentPage = computed(() => pagination.currentPage)
-const itemsPerPage = computed(() => pagination.itemsPerPage)
-const totalPages = computed(() => Math.ceil(filteredPatients.value.length / itemsPerPage.value))
-
-const startItem = computed(() => ((currentPage.value - 1) * itemsPerPage.value) + 1)
-const endItem = computed(() => Math.min(currentPage.value * itemsPerPage.value, filteredPatients.value.length))
 
 const visiblePages = computed(() => {
   const pages = []
-  const total = totalPages.value
-  const current = currentPage.value
+  const total = patientsStore.totalPages
+  const current = patientsStore.currentPage
   
   if (total <= 7) {
     for (let i = 1; i <= total; i++) pages.push(i)
@@ -205,35 +177,42 @@ const visiblePages = computed(() => {
   return pages
 })
 
-// دوال المرضى
+// دوال الفلترة
 const resetFilters = () => {
-  Object.assign(filters, {
+  Object.assign(localFilters, {
     search: '',
     status: '',
     condition: ''
   })
-  pagination.currentPage = 1
+  patientsStore.resetFilters()
+  patientsStore.setPage(1)
+  patientsStore.fetchPatients()
 }
 
 const applyFilters = () => {
-  pagination.currentPage = 1
+  patientsStore.setFilters(localFilters)
+  patientsStore.setPage(1)
+  patientsStore.fetchPatients()
 }
 
 const updateFilters = (newFilters) => {
-  Object.assign(filters, newFilters)
+  Object.assign(localFilters, newFilters)
 }
 
+// دوال التقسيم الصفحي
 const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    pagination.currentPage = page
+  if (page >= 1 && page <= patientsStore.totalPages && page !== patientsStore.currentPage) {
+    patientsStore.setPage(page)
+    patientsStore.fetchPatients()
   }
 }
 
 const updateItemsPerPage = (value) => {
-  pagination.currentPage = 1
-  pagination.itemsPerPage = parseInt(value)
+  patientsStore.setPerPage(parseInt(value))
+  patientsStore.fetchPatients()
 }
 
+// دوال المرضى
 const openCreatePatient = () => {
   editingPatient.value = null
   patientModalOpen.value = true
@@ -263,32 +242,16 @@ const savePatient = async (patientData) => {
   try {
     if (editingPatient.value) {
       // تحديث المريض الموجود
-      const index = patients.value.findIndex(p => p.id === editingPatient.value.id)
-      if (index !== -1) {
-        patients.value[index] = { 
-          ...editingPatient.value, 
-          ...patientData,
-          age: patientData.dateOfBirth ? calculateAge(patientData.dateOfBirth) : editingPatient.value.age
-        }
-      }
+      await patientsStore.updatePatient(editingPatient.value.id, patientData)
     } else {
       // إضافة مريض جديد
-      const newPatient = {
-        id: Date.now(),
-        ...patientData,
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face',
-        totalSessions: 0,
-        lastSession: null,
-        nextSession: null,
-        age: patientData.dateOfBirth ? calculateAge(patientData.dateOfBirth) : 0,
-        createdAt: new Date().toISOString().split('T')[0]
-      }
-      patients.value.unshift(newPatient)
+      await patientsStore.createPatient(patientData)
     }
     
     patientModalOpen.value = false
   } catch (error) {
     console.error('Error saving patient:', error)
+    // يمكن إضافة عرض رسالة خطأ للمستخدم
   }
 }
 
@@ -298,11 +261,15 @@ const deletePatient = (patient) => {
   deletePatientModalOpen.value = true
 }
 
-const confirmDeletePatient = () => {
+const confirmDeletePatient = async () => {
   if (patientToDelete.value) {
-    patients.value = patients.value.filter(p => p.id !== patientToDelete.value.id)
-    deletePatientModalOpen.value = false
-    patientToDelete.value = null
+    try {
+      await patientsStore.deletePatient(patientToDelete.value.id)
+      deletePatientModalOpen.value = false
+      patientToDelete.value = null
+    } catch (error) {
+      console.error('Error deleting patient:', error)
+    }
   }
 }
 
@@ -414,43 +381,13 @@ const sampleSessions = [
   }
 ]
 
-// بيانات المثال للمرضى
-const samplePatients = [
-  {
-    id: 1,
-    name: 'أحمد محمد',
-    email: 'ahmed@example.com',
-    phone: '+966500000001',
-    dateOfBirth: '1990-05-15',
-    age: 33,
-    gender: 'male',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-    conditions: ['قلق', 'اكتئاب'],
-    totalSessions: 12,
-    lastSession: '2024-01-15',
-    nextSession: '2024-01-25',
-    status: 'active',
-    address: 'الرياض، حي الملز',
-    therapyGoals: 'التقليل من نوبات القلق وتحسين النوم',
-    createdAt: '2024-01-01'
-  }
-]
-
-// جلب البيانات
-const fetchPatients = async () => {
-  loading.value = true
-  try {
-    // محاكاة جلب البيانات من API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    patients.value = samplePatients
-  } catch (error) {
-    console.error('Error fetching patients:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
+// جلب البيانات عند التحميل
 onMounted(() => {
-  fetchPatients()
+  patientsStore.fetchPatients()
 })
+
+// مراقبة تغييرات الفلاتر للتحديث التلقائي
+watch(localFilters, () => {
+  applyFilters()
+}, { deep: true })
 </script>

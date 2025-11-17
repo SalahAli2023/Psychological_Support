@@ -148,13 +148,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import ArticleHero from '@/components/frontend/layouts/ArticleHero.vue'
 import RelatedEvents from '@/components/frontend/events/RelatedEvents.vue'
 import { useTranslations } from '@/composables/useTranslations'
+import { useEventStore } from '@/stores/events'
 
-// استخدام composable الترجمة
+// استخدام composable الترجمة و store
 const { currentLanguage, translate } = useTranslations()
+const eventStore = useEventStore()
 
 // تعريف الـ props والأحداث
 const props = defineProps({
@@ -166,49 +168,8 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'navigate-to-event'])
 
-// بيانات جميع الفعاليات لاستخدامها في RelatedEvents
-const allEvents = ref([
-  {
-    id: 1,
-    title: 'أمسية التعامل مع التوتر',
-    type: 'أمسيات',
-    media: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '15 نوفمبر 2023',
-    description: 'أمسية تفاعلية للتعرف على طرق فعالة للتعامل مع التوتر والضغوط اليومية.'
-  },
-  {
-    id: 2,
-    title: 'ورشة بناء العلاقات الصحية',
-    type: 'ورش عمل',
-    media: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '22 نوفمبر 2023',
-    description: 'ورشة عملية تهدف إلى تعزيز مهارات التواصل وبناء علاقات صحية مع الآخرين.'
-  },
-  {
-    id: 3,
-    title: 'فعالية الصحة النفسية في العمل',
-    type: 'فعاليات',
-    media: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '30 نوفمبر 2023',
-    description: 'فعالية توعوية حول أهمية الصحة النفسية في بيئة العمل.'
-  },
-  {
-    id: 4,
-    title: 'أمسية التفكير الإيجابي',
-    type: 'أمسيات',
-    media: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '5 ديسمبر 2023',
-    description: 'جلسة حوارية حول قوة التفكير الإيجابي وتأثيره على الصحة النفسية.'
-  },
-  {
-    id: 5,
-    title: 'ورشة إدارة الوقت',
-    type: 'ورش عمل',
-    media: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '12 ديسمبر 2023',
-    description: 'ورشة عملية تقدم استراتيجيات فعالة لإدارة الوقت وتحقيق التوازن.'
-  }
-])
+// استخدام بيانات الفعاليات من الـ store للفعاليات ذات الصلة
+const allEvents = computed(() => eventStore.events)
 
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {

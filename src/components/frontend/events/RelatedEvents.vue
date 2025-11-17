@@ -76,9 +76,9 @@ const filteredEvents = computed(() => {
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {
   const styles = {
-    'evenings': 'bg-green-100 text-green-700',
-    'events': 'bg-blue-100 text-blue-700',
-    'workshops': 'bg-purple-100 text-purple-700'
+    'أمسيات': 'bg-green-100 text-green-700',
+    'فعاليات': 'bg-blue-100 text-blue-700',
+    'ورش عمل': 'bg-purple-100 text-purple-700'
   }
   return styles[type] || 'bg-gray-100 text-gray-700'
 }
@@ -86,9 +86,9 @@ const getCategoryStyle = (type) => {
 // دالة لترجمة التصنيف
 const getTranslatedCategory = (type) => {
   const categories = {
-    'evenings': translate('events.categories.evenings'),
-    'events': translate('events.categories.events'),
-    'workshops': translate('events.categories.workshops')
+    'أمسيات': translate('events.categories.evenings'),
+    'فعاليات': translate('events.categories.events'),
+    'ورش عمل': translate('events.categories.workshops')
   }
   return categories[type] || type
 }
