@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Therapist extends Model
 {
@@ -15,48 +17,61 @@ class Therapist extends Model
         'name_en',
         'title_ar',
         'title_en',
-        'description_ar',
-        'description_en',
-        'image',
+        'methodologies_ar',
+        'methodologies_en',
+        'specialty_ar',
+        'specialty_en',
+        'session_duration',
+        'experience',
+        'total_sessions',
+        'hourly_rate',
+        'phone',
+        'date_of_birth',
         'gender',
         'rating',
         'rating_count',
         'bio_ar',
         'bio_en',
-        'whatsapp',
-        'is_active',
+        'status'
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'rating' => 'decimal:2',
-            'rating_count' => 'integer',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'methodologies_ar' => 'array',
+        'methodologies_en' => 'array',
+        'date_of_birth' => 'date',
+        'hourly_rate' => 'decimal:2',
+        'rating' => 'decimal:2',
+    ];
 
     /**
-     * Get the user that owns the therapist.
+     * العلاقة مع المستخدم
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the specializations for the therapist.
+     * العلاقة مع المؤهلات
      */
-    public function specializations()
+    public function qualifications(): HasMany
     {
-        return $this->belongsToMany(Specialization::class, 'therapist_specializations');
+        return $this->hasMany(TherapistQualification::class);
     }
 
     /**
-     * Get the appointments for the therapist.
+     * العلاقة مع الشهادات
      */
-    public function appointments()
+    public function certifications(): HasMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(TherapistCertification::class);
+    }
+
+    /**
+     * العلاقة مع الجداول الزمنية
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(TherapistSchedule::class);
     }
 }

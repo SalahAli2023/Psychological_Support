@@ -7,40 +7,36 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TherapistResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
-        $locale = $request->query('locale') ?? $request->header('Accept-Language', 'en');
-        $locale = in_array($locale, ['ar', 'en']) ? $locale : 'en';
-
         return [
             'id' => $this->id,
-            'name' => $locale === 'ar' ? $this->name_ar : $this->name_en,
+            'user_id' => $this->user_id,
             'name_ar' => $this->name_ar,
             'name_en' => $this->name_en,
-            'title' => $locale === 'ar' ? $this->title_ar : $this->title_en,
             'title_ar' => $this->title_ar,
             'title_en' => $this->title_en,
-            'description' => $locale === 'ar' ? $this->description_ar : $this->description_en,
-            'description_ar' => $this->description_ar,
-            'description_en' => $this->description_en,
-            'image' => $this->image ? asset('storage/' . $this->image) : null,
+            'methodologies_ar' => $this->methodologies_ar,
+            'methodologies_en' => $this->methodologies_en,
+            'specialty_ar' => $this->specialty_ar,
+            'specialty_en' => $this->specialty_en,
+            'session_duration' => $this->session_duration,
+            'experience' => $this->experience,
+            'total_sessions' => $this->total_sessions,
+            'hourly_rate' => $this->hourly_rate,
+            'phone' => $this->phone,
+            'date_of_birth' => $this->date_of_birth,
             'gender' => $this->gender,
-            'rating' => (float) $this->rating,
+            'rating' => $this->rating,
             'rating_count' => $this->rating_count,
-            'bio' => $locale === 'ar' ? $this->bio_ar : $this->bio_en,
             'bio_ar' => $this->bio_ar,
             'bio_en' => $this->bio_en,
-            'whatsapp' => $this->whatsapp,
-            'is_active' => $this->is_active,
-            'specializations' => SpecializationResource::collection($this->whenLoaded('specializations')),
-            'user' => new UserResource($this->whenLoaded('user')),
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'status' => $this->status,
+            'qualifications' => TherapistQualificationResource::collection($this->whenLoaded('qualifications')),
+            'certifications' => TherapistCertificationResource::collection($this->whenLoaded('certifications')),
+            'schedules' => TherapistScheduleResource::collection($this->whenLoaded('schedules')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

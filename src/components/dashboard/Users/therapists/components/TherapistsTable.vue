@@ -5,6 +5,7 @@
         <th class="px-3 py-2 text-start font-medium text-primary text-xs">المعالج</th>
         <th class="px-3 py-2 text-start font-medium text-primary text-xs">التخصص</th>
         <th class="px-3 py-2 text-start font-medium text-primary text-xs">الحالة</th>
+        <th class="px-3 py-2 text-start font-medium text-primary text-xs">الخبرة</th>
         <th class="px-3 py-2 text-start font-medium text-primary text-xs">الجدول الأسبوعي</th>
         <th class="px-3 py-2 text-start font-medium text-primary text-xs">الإجراءات</th>
       </tr>
@@ -19,21 +20,21 @@
         <td class="px-3 py-2">
           <div class="flex items-center gap-2">
             <img 
-              :src="therapist.avatar" 
-              :alt="therapist.name.ar"
+              :src="therapist.avatar || '/images/default-avatar.png'" 
+              :alt="therapist.name_ar"
               class="w-8 h-8 rounded-full object-cover border border-primary"
             />
             <div class="min-w-0">
-              <div class="text-primary font-medium text-sm truncate">{{ therapist.name.ar }}</div>
-              <div class="text-xs text-secondary truncate">{{ therapist.name.en }}</div>
+              <div class="text-primary font-medium text-sm truncate">{{ therapist.name_ar }}</div>
+              <div class="text-xs text-secondary truncate">{{ therapist.name_en }}</div>
             </div>
           </div>
         </td>
 
         <!-- Specialty -->
         <td class="px-3 py-2 text-primary text-sm">
-          <div>{{ therapist.specialty.ar }}</div>
-          <div class="text-xs text-secondary">{{ therapist.specialty.en }}</div>
+          <div>{{ therapist.specialty_ar }}</div>
+          <div class="text-xs text-secondary">{{ therapist.specialty_en }}</div>
         </td>
 
         <!-- Status -->
@@ -44,8 +45,13 @@
             therapist.status === 'busy' ? 'bg-yellow-100 text-yellow-800' :
             'bg-red-100 text-red-800'
           ]">
-            {{ therapist.status === 'active' ? 'نشط' : therapist.status === 'busy' ? 'مشغول' : 'غير نشط' }}
+            {{ getStatusText(therapist.status) }}
           </span>
+        </td>
+
+        <!-- Experience -->
+        <td class="px-3 py-2 text-primary text-sm">
+          {{ therapist.experience || 0 }} سنة
         </td>
 
         <!-- Weekly Schedule -->
@@ -57,7 +63,7 @@
                 :key="day.key"
                 :class="[
                   'w-5 h-5 rounded text-[10px] flex items-center justify-center transition-colors',
-                  getDaySchedule(therapist.schedule, day.key).hasSlots ? 
+                  hasDaySchedule(therapist, day.key) ? 
                   'bg-brand-500 text-white' : 'bg-tertiary text-secondary'
                 ]"
                 :title="day.label"
@@ -66,7 +72,7 @@
               </div>
             </div>
             <div class="text-xs text-secondary whitespace-nowrap">
-              {{ getTotalSlots(therapist.schedule) }} أوقات
+              {{ getTotalScheduleSlots(therapist) }} أوقات
             </div>
           </div>
         </td>
@@ -128,19 +134,31 @@ const weekDays = [
   { key: 'friday', label: 'الجمعة' }
 ]
 
-const getDaySchedule = (schedule, dayKey) => {
-  return {
-    hasSlots: schedule[dayKey]?.enabled && schedule[dayKey]?.slots?.length > 0
+const getStatusText = (status) => {
+  const statusMap = {
+    'active': 'نشط',
+    'busy': 'مشغول', 
+    'inactive': 'غير نشط',
+    'away': 'غير متاح'
   }
+  return statusMap[status] || status
 }
 
-const getTotalSlots = (schedule) => {
-  let total = 0
-  Object.values(schedule).forEach(day => {
-    if (day.enabled) {
-      total += day.slots.length
-    }
-  })
-  return total
+const hasDaySchedule = (therapist, dayKey) => {
+  if (!therapist.schedules || !Array.isArray(therapist.schedules)) {
+    return false
+  }
+  
+  return therapist.schedules.some(schedule => 
+    schedule.day === dayKey && schedule.available
+  )
+}
+
+const getTotalScheduleSlots = (therapist) => {
+  if (!therapist.schedules || !Array.isArray(therapist.schedules)) {
+    return 0
+  }
+  
+  return therapist.schedules.filter(schedule => schedule.available).length
 }
 </script>

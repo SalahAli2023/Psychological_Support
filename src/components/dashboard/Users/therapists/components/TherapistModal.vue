@@ -65,7 +65,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <input 
-                    v-model="therapistForm.name.ar"
+                    v-model="therapistForm.name_ar"
                     type="text"
                     required
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
@@ -74,7 +74,7 @@
                 </div>
                 <div>
                   <input 
-                    v-model="therapistForm.name.en"
+                    v-model="therapistForm.name_en"
                     type="text"
                     required
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
@@ -105,6 +105,27 @@
                   required
                   class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   placeholder="أدخل رقم الهاتف"
+                />
+              </div>
+               <div>
+              <label class="block text-sm font-medium text-primary mb-2">الجنس</label>
+              <select 
+                v-model="therapistForm.gender"
+                class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+              >
+                <option value="male">male</option>
+                <option value="female">female</option>
+                
+              </select>
+            </div>
+             <div>
+                <label class="block text-sm font-medium text-primary mb-2">تاريخ الميلاد</label>
+                <input 
+                  v-model="therapistForm.date_of_birth"
+                  type="date"
+                  required
+                  class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+                  placeholder=" تاريخ ميلادك "
                 />
               </div>
             </div>
@@ -184,7 +205,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <input 
-                    v-model="therapistForm.specialty.ar"
+                    v-model="therapistForm.specialty_ar"
                     type="text"
                     required
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
@@ -193,7 +214,7 @@
                 </div>
                 <div>
                   <input 
-                    v-model="therapistForm.specialty.en"
+                    v-model="therapistForm.specialty_en"
                     type="text"
                     required
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
@@ -209,7 +230,7 @@
               <div class="grid grid-cols-1 gap-3">
                 <div>
                   <input 
-                    v-model="therapistForm.title.ar"
+                    v-model="therapistForm.title_ar"
                     type="text"
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                     placeholder="الرتبة بالعربية"
@@ -217,7 +238,7 @@
                 </div>
                 <div>
                   <input 
-                    v-model="therapistForm.title.en"
+                    v-model="therapistForm.title_en"
                     type="text"
                     class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                     placeholder="Title in English"
@@ -233,7 +254,7 @@
             <div class="grid grid-cols-1 gap-3">
               <div>
                 <textarea 
-                  v-model="therapistForm.bio.ar"
+                  v-model="therapistForm.bio_ar"
                   rows="3"
                   class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   placeholder="نبذة مختصرة بالعربية"
@@ -241,7 +262,7 @@
               </div>
               <div>
                 <textarea 
-                  v-model="therapistForm.bio.en"
+                  v-model="therapistForm.bio_en"
                   rows="3"
                   class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   placeholder="Brief bio in English"
@@ -256,7 +277,7 @@
             <div class="grid grid-cols-1 gap-3">
               <div>
                 <textarea 
-                  v-model="therapistForm.methodologies.ar"
+                  v-model="therapistForm.methodologies_ar"
                   rows="3"
                   class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   placeholder="المنهجيات بالعربية"
@@ -264,7 +285,7 @@
               </div>
               <div>
                 <textarea 
-                  v-model="therapistForm.methodologies.en"
+                  v-model="therapistForm.methodologies_en"
                   rows="3"
                   class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   placeholder="Methodologies in English"
@@ -316,7 +337,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <input 
-                      v-model="qualification.name.ar"
+                      v-model="qualification.name_ar"
                       type="text"
                       class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                       placeholder="اسم المؤهل بالعربية"
@@ -324,7 +345,7 @@
                   </div>
                   <div>
                     <input 
-                      v-model="qualification.name.en"
+                      v-model="qualification.name_en"
                       type="text"
                       class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                       placeholder="Qualification name in English"
@@ -339,7 +360,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <input 
-                      v-model="qualification.institution.ar"
+                      v-model="qualification.institution_ar"
                       type="text"
                       class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                       placeholder="المؤسسة بالعربية"
@@ -347,7 +368,7 @@
                   </div>
                   <div>
                     <input 
-                      v-model="qualification.institution.en"
+                      v-model="qualification.institution_en"
                       type="text"
                       class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                       placeholder="Institution in English"

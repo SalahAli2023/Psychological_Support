@@ -13,6 +13,9 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ScaleCategoryController;
 use App\Http\Controllers\Api\PsychologicalScaleController;
 use App\Http\Controllers\Api\AssessmentController;
+use App\Http\Controllers\Api\TherapistCertificationController;
+use App\Http\Controllers\Api\TherapistQualificationController;
+use App\Http\Controllers\Api\TherapistScheduleController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientConditionController;
 
@@ -79,10 +82,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
 
-    // Therapists (admin only)
+    // Therapists routes
     Route::post('/therapists', [TherapistController::class, 'store']);
     Route::put('/therapists/{id}', [TherapistController::class, 'update']);
     Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);
+
+    // Therapist Certifications
+    Route::get('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'index']);
+    Route::post('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'store']);
+    Route::put('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'update']);
+    Route::delete('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'destroy']);
+
+    // Therapist Qualifications
+    Route::get('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'index']);
+    Route::post('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'store']);
+    Route::put('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'update']);
+    Route::delete('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'destroy']);
+
+    // Therapist Schedules
+    Route::get('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'index']);
+    Route::post('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'store']);
+    Route::put('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'update']);
+    Route::delete('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'destroy']);
 
     // Library (admin only)
     Route::post('/library', [LibraryController::class, 'store']);

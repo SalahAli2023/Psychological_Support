@@ -3,12 +3,12 @@
     <!-- Therapist Header -->
     <div class="flex items-center gap-3 mb-3">
       <img 
-        :src="therapist.avatar" 
-        :alt="therapist.name.ar"
+        :src="therapist.avatar || '/images/default-avatar.png'" 
+        :alt="therapist.name_ar || 'Therapist'"
         class="w-12 h-12 rounded-full object-cover border border-primary"
       />
       <div class="flex-1">
-        <div class="text-primary font-medium text-sm">{{ therapist.name.ar }} / {{ therapist.name.en }}</div>
+        <div class="text-primary font-medium text-sm">{{ therapist.name_ar }} / {{ therapist.name_en }}</div>
         <div class="text-xs text-secondary">{{ therapist.email }}</div>
         <div class="text-xs text-secondary">{{ therapist.phone }}</div>
       </div>
@@ -18,14 +18,26 @@
         therapist.status === 'busy' ? 'bg-yellow-100 text-yellow-800' :
         'bg-red-100 text-red-800'
       ]">
-        {{ therapist.status === 'active' ? 'نشط' : therapist.status === 'busy' ? 'مشغول' : 'غير نشط' }}
+        {{ getStatusText(therapist.status) }}
       </span>
     </div>
 
     <!-- Specialty -->
     <div class="mb-3">
       <div class="text-xs text-secondary mb-1">التخصص</div>
-      <div class="text-primary text-sm">{{ therapist.specialty.ar }} / {{ therapist.specialty.en }}</div>
+      <div class="text-primary text-sm">{{ therapist.specialty_ar }} / {{ therapist.specialty_en }}</div>
+    </div>
+
+    <!-- Experience & Session Duration -->
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <div class="text-center">
+        <div class="text-xs text-secondary">الخبرة</div>
+        <div class="text-sm font-medium text-primary">{{ therapist.experience || 0 }} سنة</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs text-secondary">مدة الجلسة</div>
+        <div class="text-sm font-medium text-primary">{{ therapist.session_duration || 45 }} دقيقة</div>
+      </div>
     </div>
 
     <!-- Weekly Schedule -->
@@ -38,7 +50,7 @@
             :key="day.key"
             :class="[
               'w-5 h-5 rounded text-[10px] flex items-center justify-center transition-colors',
-              getDaySchedule(therapist.schedule, day.key).hasSlots ? 
+              hasDaySchedule(therapist, day.key) ? 
               'bg-brand-500 text-white' : 'bg-tertiary text-secondary'
             ]"
             :title="day.label"
@@ -47,7 +59,7 @@
           </div>
         </div>
         <div class="text-xs text-secondary">
-          {{ getTotalSlots(therapist.schedule) }} أوقات
+          {{ getTotalScheduleSlots(therapist) }} أوقات
         </div>
       </div>
     </div>
@@ -105,19 +117,31 @@ const weekDays = [
   { key: 'friday', label: 'الجمعة' }
 ]
 
-const getDaySchedule = (schedule, dayKey) => {
-  return {
-    hasSlots: schedule[dayKey]?.enabled && schedule[dayKey]?.slots?.length > 0
+const getStatusText = (status) => {
+  const statusMap = {
+    'active': 'نشط',
+    'busy': 'مشغول', 
+    'inactive': 'غير نشط',
+    'away': 'غير متاح'
   }
+  return statusMap[status] || status
 }
 
-const getTotalSlots = (schedule) => {
-  let total = 0
-  Object.values(schedule).forEach(day => {
-    if (day.enabled) {
-      total += day.slots.length
-    }
-  })
-  return total
+const hasDaySchedule = (therapist, dayKey) => {
+  if (!therapist.schedules || !Array.isArray(therapist.schedules)) {
+    return false
+  }
+  
+  return therapist.schedules.some(schedule => 
+    schedule.day === dayKey && schedule.available
+  )
+}
+
+const getTotalScheduleSlots = (therapist) => {
+  if (!therapist.schedules || !Array.isArray(therapist.schedules)) {
+    return 0
+  }
+  
+  return therapist.schedules.filter(schedule => schedule.available).length
 }
 </script>

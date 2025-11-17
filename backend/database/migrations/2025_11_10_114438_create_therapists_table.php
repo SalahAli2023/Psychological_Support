@@ -18,16 +18,22 @@ return new class extends Migration
             $table->string('name_en');
             $table->string('title_ar');
             $table->string('title_en');
-            $table->text('description_ar')->nullable();
-            $table->text('description_en')->nullable();
-            $table->string('image')->nullable();
+            $table->json('methodologies_ar')->nullable();
+            $table->json('methodologies_en')->nullable(); 
+            $table->string('specialty_ar');
+            $table->string('specialty_en');
+            $table->integer('session_duration')->default(45);
+            $table->integer('experience')->default(0);        
+            $table->integer('total_sessions')->default(0);
+            $table->decimal('hourly_rate', 8, 2)->nullable();
+            $table->string('phone')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->decimal('rating', 3, 2)->default(0);
             $table->integer('rating_count')->default(0);
             $table->text('bio_ar')->nullable();
             $table->text('bio_en')->nullable();
-            $table->string('whatsapp')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', ['active', 'busy', 'away'])->default('active');
             $table->timestamps();
         });
     }
