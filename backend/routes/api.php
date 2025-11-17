@@ -16,6 +16,9 @@ use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\TherapistCertificationController;
 use App\Http\Controllers\Api\TherapistQualificationController;
 use App\Http\Controllers\Api\TherapistScheduleController;
+use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\PatientConditionController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +30,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
 Route::get('/articles/categories/list', [ArticleController::class, 'categories']);
-// Route::get('/articles/categories', [ArticleController::class, 'categories']);
+
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
 
@@ -53,6 +56,10 @@ Route::post('/measures/{id}/submit', [MeasureController::class, 'submit']);
 Route::get('/legal-resource-categories', [LegalResourceController::class, 'categories']);
 Route::get('/legal-resources/search', [LegalResourceController::class, 'search']);
 
+// Psychological scales public routes
+Route::get('public/categories', [ScaleCategoryController::class, 'index']);
+Route::get('public/scales', [PsychologicalScaleController::class, 'index']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
@@ -69,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/articles/categories', [ArticleController::class, 'storeCategory']);
     Route::put('/articles/categories/{id}', [ArticleController::class, 'updateCategory']);
     Route::delete('/articles/categories/{id}', [ArticleController::class, 'destroyCategory']);
+
     // Events (admin only)
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{id}', [EventController::class, 'update']);
@@ -98,7 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'destroy']);
 
     // Library (admin only)
-     Route::post('/library', [LibraryController::class, 'store']);
+    Route::post('/library', [LibraryController::class, 'store']);
     Route::put('/library/{id}', [LibraryController::class, 'update']);
     Route::delete('/library/{id}', [LibraryController::class, 'destroy']);
 
@@ -125,9 +133,36 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/legal-resources', [LegalResourceController::class, 'store']);
     Route::put('/legal-resources/{id}', [LegalResourceController::class, 'update']);
     Route::delete('/legal-resources/{id}', [LegalResourceController::class, 'destroy']);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
+    // ==================== PATIENT MANAGEMENT ROUTES ====================
+    Route::prefix('patients')->group(function () {
+        // Patient Routes
+        Route::get('/', [PatientController::class, 'index']);
+        Route::get('/stats', [PatientController::class, 'getStats']);
+        Route::get('/export', [PatientController::class, 'export']);
+        Route::post('/', [PatientController::class, 'store']);
+        Route::get('/{patient}', [PatientController::class, 'show']);
+        Route::put('/{patient}', [PatientController::class, 'update']);
+        Route::delete('/{patient}', [PatientController::class, 'destroy']);
+
+        // Patient Conditions Routes
+        Route::prefix('{patient}')->group(function () {
+            Route::get('/conditions', [PatientConditionController::class, 'index']);
+            Route::get('/conditions/stats', [PatientConditionController::class, 'getStats']);
+            Route::get('/conditions/export', [PatientConditionController::class, 'export']);
+            Route::post('/conditions', [PatientConditionController::class, 'store']);
+            Route::post('/conditions/bulk-import', [PatientConditionController::class, 'bulkImport']);
+            
+            Route::prefix('conditions/{condition}')->group(function () {
+                Route::get('/', [PatientConditionController::class, 'show']);
+                Route::put('/', [PatientConditionController::class, 'update']);
+                Route::delete('/', [PatientConditionController::class, 'destroy']);
+                Route::patch('/toggle-status', [PatientConditionController::class, 'toggleStatus']);
+            });
+        });
+    });
+
+    // ==================== PSYCHOLOGICAL ASSESSMENT ROUTES ====================
     // Scale Categories
     Route::get('categories', [ScaleCategoryController::class, 'index']);
     Route::get('categories/{id}', [ScaleCategoryController::class, 'show']);
@@ -145,7 +180,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('assessments/statistics', [AssessmentController::class, 'getUserStatistics']);
     Route::get('assessments/{id}/result', [AssessmentController::class, 'getAssessmentResult']);
 });
-
-// Public routes
-Route::get('public/categories', [ScaleCategoryController::class, 'index']);
-Route::get('public/scales', [PsychologicalScaleController::class, 'index']);

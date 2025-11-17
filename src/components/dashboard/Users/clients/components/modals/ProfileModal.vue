@@ -32,7 +32,7 @@
               <div class="space-y-3">
                 <div>
                   <p class="text-xs text-secondary">العمر</p>
-                  <p class="text-sm font-medium text-primary">{{ patient.age }} سنة</p>
+                  <p class="text-sm font-medium text-primary">{{ calculatedAge }} سنة</p>
                 </div>
                 <div>
                   <p class="text-xs text-secondary">الجنس</p>
@@ -40,7 +40,7 @@
                 </div>
                 <div>
                   <p class="text-xs text-secondary">تاريخ الميلاد</p>
-                  <p class="text-sm font-medium text-primary">{{ patient.dateOfBirth }}</p>
+                  <p class="text-sm font-medium text-primary">{{ formattedDateOfBirth }}</p>
                 </div>
                 <div>
                   <p class="text-xs text-secondary">تاريخ التسجيل</p>
@@ -87,7 +87,7 @@
               <div class="space-y-3">
                 <div>
                   <p class="text-xs text-secondary">إجمالي الجلسات</p>
-                  <p class="text-sm font-medium text-primary">{{ patient.totalSessions }} جلسة</p>
+                  <p class="text-sm font-medium text-primary">{{ patient.totalSessions || 0 }} جلسة</p>
                 </div>
                 <div>
                   <p class="text-xs text-secondary">آخر جلسة</p>
@@ -114,19 +114,22 @@
               <h3 class="font-semibold text-primary mb-4">الحالة الصحية</h3>
               <div class="flex flex-wrap gap-2">
                 <span 
-                  v-for="condition in patient.conditions" 
+                  v-for="condition in patient.conditions || []" 
                   :key="condition"
                   class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
                 >
                   {{ condition }}
                 </span>
+                <div v-if="!patient.conditions || patient.conditions.length === 0" class="text-center w-full py-2">
+                  <p class="text-secondary">لا توجد حالات صحية مسجلة</p>
+                </div>
               </div>
             </div>
 
             <!-- أهداف العلاج -->
             <div class="bg-primary border border-primary rounded-xl p-4">
               <h3 class="font-semibold text-primary mb-4">أهداف العلاج</h3>
-              <p class="text-primary leading-relaxed">{{ patient.therapyGoals }}</p>
+              <p class="text-primary leading-relaxed">{{ patient.therapyGoals || 'لا توجد أهداف علاجية محددة' }}</p>
             </div>
 
             <!-- التقدم العلاجي -->
@@ -136,19 +139,19 @@
                 <div>
                   <div class="flex justify-between text-sm text-primary mb-1">
                     <span>التقدم العام</span>
-                    <span>65%</span>
+                    <span>{{ treatmentProgress }}%</span>
                   </div>
                   <div class="w-full bg-secondary rounded-full h-2">
-                    <div class="bg-brand-500 h-2 rounded-full" style="width: 65%"></div>
+                    <div class="bg-brand-500 h-2 rounded-full" :style="{ width: treatmentProgress + '%' }"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-sm text-primary mb-1">
                     <span>الالتزام بالجلسات</span>
-                    <span>80%</span>
+                    <span>{{ sessionCompliance }}%</span>
                   </div>
                   <div class="w-full bg-secondary rounded-full h-2">
-                    <div class="bg-green-500 h-2 rounded-full" style="width: 80%"></div>
+                    <div class="bg-green-500 h-2 rounded-full" :style="{ width: sessionCompliance + '%' }"></div>
                   </div>
                 </div>
               </div>
@@ -179,8 +182,11 @@
               <h3 class="font-semibold text-primary mb-4">آخر الملاحظات</h3>
               <div class="space-y-3">
                 <div class="p-3 bg-secondary rounded-lg">
-                  <p class="text-sm text-primary">تحسن ملحوظ في إدارة نوبات القلق. المريض يطبق تقنيات التنفس بشكل منتظم.</p>
-                  <p class="text-xs text-secondary mt-2">د. أحمد محمد - 2024-01-15</p>
+                  <p class="text-sm text-primary">{{ latestNote }}</p>
+                  <p class="text-xs text-secondary mt-2">د. أحمد محمد - {{ noteDate }}</p>
+                </div>
+                <div v-if="!hasNotes" class="text-center py-4 text-secondary">
+                  <p>لا توجد ملاحظات مسجلة</p>
                 </div>
               </div>
             </div>
@@ -192,7 +198,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   open: {
     type: Boolean,
     required: true
@@ -203,5 +211,66 @@ defineProps({
   }
 })
 
-defineEmits(['close'])
+const emit = defineEmits(['close'])
+
+// حساب العمر من تاريخ الميلاد
+const calculatedAge = computed(() => {
+  if (!props.patient.dateOfBirth) return 'غير محدد'
+  
+  try {
+    const birthDate = new Date(props.patient.dateOfBirth)
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    
+    return age
+  } catch (error) {
+    console.error('Error calculating age:', error)
+    return 'غير محدد'
+  }
+})
+
+// تنسيق تاريخ الميلاد
+const formattedDateOfBirth = computed(() => {
+  if (!props.patient.dateOfBirth) return 'غير محدد'
+  
+  try {
+    const date = new Date(props.patient.dateOfBirth)
+    return date.toLocaleDateString('ar-SA', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  } catch (error) {
+    return props.patient.dateOfBirth
+  }
+})
+
+// بيانات افتراضية للتقدم العلاجي (يمكن استبدالها ببيانات حقيقية من الـ API)
+const treatmentProgress = computed(() => {
+  // يمكن حساب هذا من بيانات حقيقية مثل عدد الجلسات المكتملة
+  return props.patient.treatmentProgress || 65
+})
+
+const sessionCompliance = computed(() => {
+  // يمكن حساب هذا من بيانات الحضور والالتزام
+  return props.patient.sessionCompliance || 80
+})
+
+// ملاحظات افتراضية (يمكن استبدالها ببيانات حقيقية من الـ API)
+const latestNote = computed(() => {
+  return props.patient.latestNote || 'تحسن ملحوظ في إدارة نوبات القلق. المريض يطبق تقنيات التنفس بشكل منتظم.'
+})
+
+const noteDate = computed(() => {
+  return props.patient.noteDate || '2024-01-15'
+})
+
+const hasNotes = computed(() => {
+  return props.patient.hasNotes !== false // إذا لم يتم تحديد، نعرض الملاحظة الافتراضية
+})
 </script>
