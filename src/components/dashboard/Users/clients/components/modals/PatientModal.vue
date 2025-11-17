@@ -357,20 +357,36 @@ const newCondition = ref({
 // تحديث النموذج عند تغيير المريض
 watch(() => props.patient, (patient) => {
   if (patient) {
+    // تحويل بيانات المريض من API للنموذج
     Object.assign(form, {
-      login: patient.login || { username: '', password: '' },
+      login: {
+        username: patient.email?.split('@')[0] || '',
+        password: ''
+      },
       profile: {
-        name: patient.profile?.name || { ar: '', en: '' },
-        email: patient.profile?.email || '',
-        phone: patient.profile?.phone || '',
-        dateOfBirth: patient.profile?.dateOfBirth || '',
-        gender: patient.profile?.gender || '',
-        address: patient.profile?.address || { ar: '', en: '' }
+        name: {
+          ar: patient.name || '',
+          en: patient.name || ''
+        },
+        email: patient.email || '',
+        phone: patient.phone || '',
+        dateOfBirth: patient.dateOfBirth || '',
+        gender: patient.gender || '',
+        address: {
+          ar: patient.address || '',
+          en: patient.address || ''
+        }
       },
       medical: {
-        conditions: patient.medical?.conditions || { ar: [], en: [] },
-        therapyGoals: patient.medical?.therapyGoals || { ar: '', en: '' },
-        status: patient.medical?.status || 'active'
+        conditions: {
+          ar: patient.conditions || [],
+          en: patient.conditions || []
+        },
+        therapyGoals: {
+          ar: patient.therapyGoals || '',
+          en: patient.therapyGoals || ''
+        },
+        status: patient.status || 'active'
       }
     })
   } else {
@@ -421,6 +437,7 @@ const removeCondition = (lang, condition) => {
 }
 
 const handleSubmit = () => {
+  // إرسال البيانات للـ API من خلال الـ store
   emit('save', { ...form })
 }
 </script>

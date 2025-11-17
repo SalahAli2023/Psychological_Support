@@ -29,7 +29,7 @@
                 />
                 <div>
                   <div class="text-primary font-medium">{{ patient.name }}</div>
-                  <div class="text-xs text-secondary">{{ patient.age }} سنة • {{ patient.gender === 'male' ? 'ذكر' : 'أنثى' }}</div>
+                  <div class="text-xs text-secondary">{{ calculateAge(patient.dateOfBirth) }} سنة • {{ patient.gender === 'male' ? 'ذكر' : 'أنثى' }}</div>
                 </div>
               </div>
             </td>
@@ -44,17 +44,23 @@
             <td class="px-4 py-3">
               <div class="flex flex-wrap gap-1">
                 <span 
-                  v-for="condition in patient.conditions.slice(0, 2)" 
+                  v-for="condition in (patient.conditions || []).slice(0, 2)" 
                   :key="condition"
                   class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full"
                 >
                   {{ condition }}
                 </span>
                 <span 
-                  v-if="patient.conditions.length > 2"
+                  v-if="patient.conditions && patient.conditions.length > 2"
                   class="px-2 py-1 bg-tertiary text-secondary text-xs rounded-full"
                 >
                   +{{ patient.conditions.length - 2 }}
+                </span>
+                <span 
+                  v-if="!patient.conditions || patient.conditions.length === 0"
+                  class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full"
+                >
+                  لا توجد
                 </span>
               </div>
             </td>
@@ -62,7 +68,7 @@
             <!-- Sessions -->
             <td class="px-4 py-3">
               <div class="space-y-1">
-                <div class="text-primary font-medium">{{ patient.totalSessions }} جلسة</div>
+                <div class="text-primary font-medium">{{ patient.totalSessions || 0 }} جلسة</div>
                 <div class="text-xs text-secondary">
                   آخر جلسة: {{ patient.lastSession || 'لا توجد' }}
                 </div>
@@ -152,7 +158,7 @@
             />
             <div>
               <div class="text-primary font-medium">{{ patient.name }}</div>
-              <div class="text-xs text-secondary">{{ patient.age }} سنة • {{ patient.gender === 'male' ? 'ذكر' : 'أنثى' }}</div>
+              <div class="text-xs text-secondary">{{ calculateAge(patient.dateOfBirth) }} سنة • {{ patient.gender === 'male' ? 'ذكر' : 'أنثى' }}</div>
             </div>
           </div>
           <span :class="[
@@ -188,17 +194,23 @@
         <div class="mb-3">
           <div class="flex flex-wrap gap-1">
             <span 
-              v-for="condition in patient.conditions.slice(0, 3)" 
+              v-for="condition in (patient.conditions || []).slice(0, 3)" 
               :key="condition"
               class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full"
             >
               {{ condition }}
             </span>
             <span 
-              v-if="patient.conditions.length > 3"
+              v-if="patient.conditions && patient.conditions.length > 3"
               class="px-2 py-1 bg-tertiary text-secondary text-xs rounded-full"
             >
               +{{ patient.conditions.length - 3 }}
+            </span>
+            <span 
+              v-if="!patient.conditions || patient.conditions.length === 0"
+              class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full"
+            >
+              لا توجد حالات
             </span>
           </div>
         </div>
@@ -206,7 +218,7 @@
         <!-- الجلسات -->
         <div class="space-y-2 mb-4">
           <div class="text-sm text-primary">
-            <span class="font-medium">{{ patient.totalSessions }} جلسة</span>
+            <span class="font-medium">{{ patient.totalSessions || 0 }} جلسة</span>
             <span class="text-secondary text-xs mr-2"> • آخر جلسة: {{ patient.lastSession || 'لا توجد' }}</span>
           </div>
           <div class="text-xs">
@@ -269,6 +281,10 @@
 </template>
 
 <script setup>
+import { usePatientsStore } from '@/stores/patients'
+
+const patientsStore = usePatientsStore()
+
 defineProps({
   patients: {
     type: Array,
@@ -281,4 +297,25 @@ defineProps({
 })
 
 defineEmits(['view-profile', 'edit-patient', 'delete-patient', 'open-sessions'])
+
+// دالة حساب العمر من تاريخ الميلاد
+const calculateAge = (dateOfBirth) => {
+  if (!dateOfBirth) return 'غير محدد'
+  
+  try {
+    const birthDate = new Date(dateOfBirth)
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    
+    return age
+  } catch (error) {
+    console.error('Error calculating age:', error)
+    return 'غير محدد'
+  }
+}
 </script>
