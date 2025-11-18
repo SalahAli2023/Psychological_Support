@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\ProgramController;
 use App\Http\Controllers\Api\LegalResourceController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ScaleCategoryController;
-use App\Http\Controllers\Api\PsychologicalScaleController;
+use App\Http\Controllers\PsychologicalScaleController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\TherapistCertificationController;
 use App\Http\Controllers\Api\TherapistQualificationController;
@@ -163,16 +163,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ==================== PSYCHOLOGICAL ASSESSMENT ROUTES ====================
-    // Scale Categories
-    Route::get('categories', [ScaleCategoryController::class, 'index']);
-    Route::get('categories/{id}', [ScaleCategoryController::class, 'show']);
-    Route::get('categories/{id}/scales', [ScaleCategoryController::class, 'getScales']);
-    
-    // Psychological Scales
-    Route::get('scales', [PsychologicalScaleController::class, 'index']);
-    Route::get('scales/{id}', [PsychologicalScaleController::class, 'show']);
-    Route::get('scales/{id}/questions', [PsychologicalScaleController::class, 'getQuestions']);
-    
+
     // Assessments (تغطي التقييمات + النتائج)
     Route::get('assessments', [AssessmentController::class, 'index']);
     Route::get('assessments/{id}', [AssessmentController::class, 'show']);
@@ -180,3 +171,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('assessments/statistics', [AssessmentController::class, 'getUserStatistics']);
     Route::get('assessments/{id}/result', [AssessmentController::class, 'getAssessmentResult']);
 });
+Route::get('scales', [PsychologicalScaleController::class, 'index']);
+Route::get('scales/{id}', [PsychologicalScaleController::class, 'show']);
+Route::post('scales', [PsychologicalScaleController::class, 'store']);
+Route::put('scales/{id}', [PsychologicalScaleController::class, 'update']);
+Route::patch('scales/{id}', [PsychologicalScaleController::class, 'update']);
+Route::delete('scales/{id}', [PsychologicalScaleController::class, 'destroy']);

@@ -2,17 +2,11 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PsychologicalScaleResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
         return [
             'id' => $this->id,
@@ -26,8 +20,9 @@ class PsychologicalScaleResource extends JsonResource
             'image_url' => $this->image_url,
             'max_score' => $this->max_score,
             'is_active' => $this->is_active,
-            'questions_count' => $this->whenCounted('questions'),
-            'category' => new ScaleCategoryResource($this->whenLoaded('category')),
+            'category' => $this->whenLoaded('category'),
+            'questions' => ScaleQuestionResource::collection($this->whenLoaded('questions')),
+            'interpretations' => ResultInterpretationResource::collection($this->whenLoaded('interpretations')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
