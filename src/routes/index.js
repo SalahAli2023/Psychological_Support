@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 // --- Backend Pages ---
 const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
@@ -60,7 +60,7 @@ const routes = [
 
 // --- إنشاء الراوتر ---
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior() {
     return { top: 0 };
