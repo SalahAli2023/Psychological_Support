@@ -1,0 +1,1 @@
+import{_ as t,c,a as e,o}from"./index-BlCgHqe2.js";const a={},n={class:"space-y-4"};function r(d,s){return o(),c("div",n,[...s[0]||(s[0]=[e("h1",{class:"text-2xl font-semibold"},"Assessments",-1),e("div",{class:"card"},"Assessments list and mock test placeholder",-1)])])}const _=t(a,[["render",r]]);export{_ as default};
