@@ -1,0 +1,1 @@
+import{_ as t,c,a as s,o}from"./index-BLa_lDjK.js";const a={},n={class:"space-y-4"};function r(l,e){return o(),c("div",n,[...e[0]||(e[0]=[s("h1",{class:"text-2xl font-semibold"},"Settings",-1),s("div",{class:"card"},"Profile & clinic settings placeholder",-1)])])}const d=t(a,[["render",r]]);export{d as default};

@@ -1,0 +1,1 @@
+import{y as t,v as a,a as r,r as e}from"./index-z49H3Yb6.js";const n={},c={class:"space-y-4"};function o(d,s){return r(),a("div",c,[...s[0]||(s[0]=[e("h1",{class:"text-2xl font-semibold"},"Assessments",-1),e("div",{class:"card"},"Assessments list and mock test placeholder",-1)])])}const i=t(n,[["render",o]]);export{i as default};

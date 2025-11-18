@@ -1,0 +1,1 @@
+import{y as a,v as e,a as r,r as t}from"./index-z49H3Yb6.js";const c={},l={class:"space-y-4"};function n(i,s){return r(),e("div",l,[...s[0]||(s[0]=[t("h1",{class:"text-2xl font-semibold"},"Settings",-1),t("div",{class:"card"},"Profile & clinic settings placeholder",-1)])])}const d=a(c,[["render",n]]);export{d as default};
