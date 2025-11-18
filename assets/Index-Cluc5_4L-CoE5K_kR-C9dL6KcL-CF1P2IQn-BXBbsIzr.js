@@ -1,0 +1,1 @@
+import{y as t,v as c,b as i,s as e}from"./index-Ciihq_8O.js";const l={},n={class:"space-y-4"};function o(a,s){return i(),c("div",n,[...s[0]||(s[0]=[e("h1",{class:"text-2xl font-semibold"},"Settings",-1),e("div",{class:"card"},"Profile & clinic settings placeholder",-1)])])}const d=t(l,[["render",o]]);export{d as default};
