@@ -1,6 +1,6 @@
 <template>
-  <div v-if="showRegistration" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="fixed inset-0 modal-overlay" @click="closeRegistration"></div>
+  <div v-if="showRegistration" class="fixed inset-0 z-900 flex items-center justify-center p-4">
+    <div class="modal-overlay fixed inset-0 "  @click="closeRegistration"></div>
     
     <div class="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-slide-up" @click.stop>
       <!-- Header -->

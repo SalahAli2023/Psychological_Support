@@ -1,7 +1,7 @@
 
 /* #9ebfeb
 #d6a29a */
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap'); */
 @import "tailwindcss";
 
 @theme {
@@ -17,8 +17,8 @@
   --color-text-light: #9CA3AF;
 
   /* الخط */
-  /* --font-sans: "Almarai", sans-serif; */
-  --font-sans: "Tajawal", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Almarai", sans-serif;
+  /* --font-sans: "Tajawal", "Segoe UI", system-ui, sans-serif; */
 }
 
 /* 🌿 القواعد العامة */
@@ -30,9 +30,9 @@
   }
 }
 
-
-
-
+@utility modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
 /* 🔽 الحركات (Animations) */
 @keyframes slide-up {
