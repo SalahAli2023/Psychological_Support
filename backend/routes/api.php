@@ -10,8 +10,6 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ProgramController;
 use App\Http\Controllers\Api\LegalResourceController;
 use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\ScaleCategoryController;
-use App\Http\Controllers\PsychologicalScaleController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\TherapistCertificationController;
 use App\Http\Controllers\Api\TherapistQualificationController;
@@ -56,9 +54,6 @@ Route::post('/measures/{id}/submit', [MeasureController::class, 'submit']);
 Route::get('/legal-resource-categories', [LegalResourceController::class, 'categories']);
 Route::get('/legal-resources/search', [LegalResourceController::class, 'search']);
 
-// Psychological scales public routes
-Route::get('public/categories', [ScaleCategoryController::class, 'index']);
-Route::get('public/scales', [PsychologicalScaleController::class, 'index']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -109,11 +104,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/library', [LibraryController::class, 'store']);
     Route::put('/library/{id}', [LibraryController::class, 'update']);
     Route::delete('/library/{id}', [LibraryController::class, 'destroy']);
-
-    // Measures (admin only)
-    Route::post('/measures', [MeasureController::class, 'store']);
-    Route::put('/measures/{id}', [MeasureController::class, 'update']);
-    Route::delete('/measures/{id}', [MeasureController::class, 'destroy']);
 
     // Appointments
     Route::get('/appointments', [AppointmentController::class, 'index']);
@@ -171,9 +161,40 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('assessments/statistics', [AssessmentController::class, 'getUserStatistics']);
     Route::get('assessments/{id}/result', [AssessmentController::class, 'getAssessmentResult']);
 });
-Route::get('scales', [PsychologicalScaleController::class, 'index']);
-Route::get('scales/{id}', [PsychologicalScaleController::class, 'show']);
-Route::post('scales', [PsychologicalScaleController::class, 'store']);
-Route::put('scales/{id}', [PsychologicalScaleController::class, 'update']);
-Route::patch('scales/{id}', [PsychologicalScaleController::class, 'update']);
-Route::delete('scales/{id}', [PsychologicalScaleController::class, 'destroy']);
+
+
+
+
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PsychologicalScaleController;
+use App\Http\Controllers\ScaleQuestionController;
+use App\Http\Controllers\QuestionOptionController;
+use App\Http\Controllers\ResultInterpretationController;
+
+
+// Categories Routes
+Route::apiResource('categories', CategoryController::class);
+Route::get('categories/active/list', [CategoryController::class, 'active']);
+Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus']);
+
+// Psychological Scales Routes
+Route::apiResource('psychological-scales', PsychologicalScaleController::class);
+Route::get('psychological-scales/active/list', [PsychologicalScaleController::class, 'active']);
+Route::get('psychological-scales/category/{categoryId}', [PsychologicalScaleController::class, 'byCategory']);
+Route::get('psychological-scales/{id}/full', [PsychologicalScaleController::class, 'getFullScale']);
+Route::patch('psychological-scales/{psychologicalScale}/toggle-status', [PsychologicalScaleController::class, 'toggleStatus']);
+
+// Scale Questions Routes
+Route::apiResource('scale-questions', ScaleQuestionController::class);
+Route::post('scale-questions/bulk', [ScaleQuestionController::class, 'bulkStore']);
+Route::post('scale-questions/reorder', [ScaleQuestionController::class, 'reorder']);
+
+// Question Options Routes
+Route::apiResource('question-options', QuestionOptionController::class);
+Route::post('question-options/bulk', [QuestionOptionController::class, 'bulkStore']);
+Route::post('question-options/reorder', [QuestionOptionController::class, 'reorder']);
+
+// Result Interpretations Routes
+Route::apiResource('result-interpretations', ResultInterpretationController::class);
+Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
+Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);

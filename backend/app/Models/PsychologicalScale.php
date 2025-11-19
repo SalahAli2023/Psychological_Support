@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class PsychologicalScale extends Model
 {
-    use HasFactory;
-
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'id',
         'category_id',
         'name_ar',
         'name_en',
@@ -30,45 +25,23 @@ class PsychologicalScale extends Model
         'is_active' => 'boolean',
     ];
 
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function questions(): HasMany
+    public function questions()
     {
-        // return $this->hasMany(ScaleQuestion::class)->orderBy('question_order');
         return $this->hasMany(ScaleQuestion::class, 'scale_id');
     }
 
-    public function interpretations(): HasMany
+    public function interpretations()
     {
-        return $this->hasMany(ResultInterpretation::class, 'scale_id'); 
-        // return $this->hasMany(ResultInterpretation::class)->orderBy('min_score');
+        return $this->hasMany(ResultInterpretation::class, 'scale_id');
     }
 
-    public function assessments(): HasMany
+    public function activeQuestions()
     {
-        return $this->hasMany(UserAssessment::class, 'scale_id');
-    }
-    
-    // Accessors
-    public function getNameAttribute(): string
-    {
-        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
-    }
-
-    public function getDescriptionAttribute(): ?string
-    {
-        return app()->getLocale() === 'ar' ? $this->description_ar : $this->description_en;
-    }
-
-    // Get interpretation for a specific score
-    public function getInterpretationForScore(int $score): ?ResultInterpretation
-    {
-        return $this->interpretations()
-            ->where('min_score', '<=', $score)
-            ->where('max_score', '>=', $score)
-            ->first();
+        return $this->hasMany(ScaleQuestion::class, 'scale_id')->orderBy('question_order');
     }
 }

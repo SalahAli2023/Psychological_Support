@@ -4,17 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class ResultInterpretation extends Model
 {
-    use HasFactory;
-
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'id',
         'scale_id',
         'min_score',
         'max_score',
@@ -25,19 +21,14 @@ class ResultInterpretation extends Model
         'color'
     ];
 
-    public function psychologicalScale(): BelongsTo
+    public function scale()
     {
-        return $this->belongsTo(PsychologicalScale::class, 'scale_id');
+        return $this->belongsTo(PsychologicalScale::class);
     }
 
-    // Accessors
-    public function getInterpretationLabelAttribute(): string
+    public function scopeForScore($query, $score)
     {
-        return app()->getLocale() === 'ar' ? $this->interpretation_label_ar : $this->interpretation_label_en;
-    }
-
-    public function getDescriptionAttribute(): ?string
-    {
-        return app()->getLocale() === 'ar' ? $this->description_ar : $this->description_en;
+        return $query->where('min_score', '<=', $score)
+                    ->where('max_score', '>=', $score);
     }
 }

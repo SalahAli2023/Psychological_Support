@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('result_interpretations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('scale_id')->constrained('psychological_scales')->onDelete('cascade');
+            $table->char('scale_id', 36);
             $table->integer('min_score');
             $table->integer('max_score');
             $table->string('interpretation_label_ar', 100);
@@ -22,16 +19,17 @@ return new class extends Migration
             $table->text('description_en')->nullable();
             $table->string('color', 20)->nullable();
             $table->timestamps();
-
-            $table->index('scale_id');
-            $table->index(['min_score', 'max_score']);
+            
+            $table->foreign('scale_id')
+                  ->references('id')
+                  ->on('psychological_scales')
+                  ->onDelete('cascade');
+                  
+            $table->index(['scale_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('result_interpretations');
     }

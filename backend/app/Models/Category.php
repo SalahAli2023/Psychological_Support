@@ -4,17 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Category extends Model
 {
-    use HasFactory;
-
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'id',
         'name_ar',
         'name_en',
         'description_ar',
@@ -27,19 +23,13 @@ class Category extends Model
         'is_active' => 'boolean',
     ];
 
-    public function psychologicalScales(): HasMany
+    public function psychologicalScales()
     {
         return $this->hasMany(PsychologicalScale::class);
     }
 
-    // Accessors for dynamic language
-    public function getNameAttribute(): string
+    public function activeScales()
     {
-        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
-    }
-
-    public function getDescriptionAttribute(): ?string
-    {
-        return app()->getLocale() === 'ar' ? $this->description_ar : $this->description_en;
+        return $this->hasMany(PsychologicalScale::class)->where('is_active', true);
     }
 }

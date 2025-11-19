@@ -4,17 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class QuestionOption extends Model
 {
-    use HasFactory;
-
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'id',
         'question_id',
         'option_text_ar',
         'option_text_en',
@@ -22,15 +18,8 @@ class QuestionOption extends Model
         'option_order'
     ];
 
-    public function question(): BelongsTo
+    public function question()
     {
-        return $this->belongsTo(ScaleQuestion::class, 'question_id');
-        //  return $this->belongsTo(ScaleQuestion::class);
-    }
-
-    // Accessor
-    public function getOptionTextAttribute(): string
-    {
-        return app()->getLocale() === 'ar' ? $this->option_text_ar : $this->option_text_en;
+        return $this->belongsTo(ScaleQuestion::class);
     }
 }

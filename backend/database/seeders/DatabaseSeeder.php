@@ -45,12 +45,19 @@ class DatabaseSeeder extends Seeder
             ArticleSeeder::class,
             LibraryItemSeeder::class,
             LegalResourceCategorySeeder::class,
-            PsychologicalScalesSeeder::class,
+           
             UserAssessmentsSeeder::class,
             TherapistSeeder::class,
             TherapistQualificationSeeder::class,
             TherapistCertificationSeeder::class,
             TherapistScheduleSeeder::class,
+
+               // seeders المقاييس النفسية (يجب أن تكون بعد الجداول الأساسية)
+            CategoriesTableSeeder::class,
+            PsychologicalScalesTableSeeder::class,
+            ScaleQuestionsTableSeeder::class,
+            QuestionOptionsTableSeeder::class,
+            ResultInterpretationsTableSeeder::class,
         ]);
  
         // Create admin user
