@@ -4,38 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class ScaleQuestion extends Model
 {
-    use HasFactory;
-
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'id',
         'scale_id',
         'question_text_ar',
         'question_text_en',
         'question_order'
     ];
 
-    public function psychologicalScale(): BelongsTo
+    public function scale()
     {
-        return $this->belongsTo(PsychologicalScale::class, 'scale_id');
+        return $this->belongsTo(PsychologicalScale::class);
     }
 
-    public function options(): HasMany
+    public function options()
     {
-        return $this->hasMany(QuestionOption::class, 'question_id');
-        // return $this->hasMany(QuestionOption::class)->orderBy('option_order');
-    }
-
-    // Accessor
-    public function getQuestionTextAttribute(): string
-    {
-        return app()->getLocale() === 'ar' ? $this->question_text_ar : $this->question_text_en;
+        return $this->hasMany(QuestionOption::class, 'question_id')->orderBy('option_order');
     }
 }

@@ -4,253 +4,211 @@ namespace App\Http\Controllers;
 
 use App\Models\PsychologicalScale;
 use App\Http\Resources\PsychologicalScaleResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class PsychologicalScaleController extends Controller
 {
     /**
-     * عرض جميع المقاييس النفسية مع كل العلاقات
+     * عرض جميع المقاييس
      */
-    public function index()
+    public function index(Request $request): AnonymousResourceCollection
     {
+        $query = PsychologicalScale::query();
+
+        // التحميل مع العلاقات
+        $query->with(['category', 'questions.options', 'interpretations']);
+
+        // التصفية حسب الفئة
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // التصفية حسب الحالة
+        if ($request->has('is_active')) {
+            $query->where('is_active', $request->boolean('is_active'));
+        }
+
+        // البحث
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name_ar', 'like', "%{$search}%")
+                  ->orWhere('name_en', 'like', "%{$search}%")
+                  ->orWhere('description_ar', 'like', "%{$search}%")
+                  ->orWhere('description_en', 'like', "%{$search}%");
+            });
+        }
+
+        // الترتيب
+        $sortField = $request->get('sort_field', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        $query->orderBy($sortField, $sortDirection);
+
+        $scales = $query->paginate($request->get('per_page', 15));
+
+        return PsychologicalScaleResource::collection($scales);
+    }
+
+    /**
+     * إنشاء مقياس جديد
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name_ar' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'description_ar' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'image_url' => 'nullable|url|max:500',
+            'max_score' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+        ]);
+
+        DB::beginTransaction();
+
         try {
-            $scales = PsychologicalScale::with([
-                'category',
-                'questions.options',
-                'interpretations'
-            ])
-            ->where('is_active', true)
-            ->orderBy('created_at', 'desc')
+            $scale = PsychologicalScale::create($validated);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'تم إنشاء المقياس بنجاح',
+                'data' => new PsychologicalScaleResource($scale->load(['category', 'questions', 'interpretations']))
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'فشل في إنشاء المقياس',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * عرض مقياس محدد
+     */
+    public function show(PsychologicalScale $psychologicalScale): PsychologicalScaleResource
+    {
+        $psychologicalScale->load([
+            'category',
+            'questions.options',
+            'interpretations'
+        ]);
+
+        return new PsychologicalScaleResource($psychologicalScale);
+    }
+
+    /**
+     * تحديث مقياس
+     */
+    public function update(Request $request, PsychologicalScale $psychologicalScale): JsonResponse
+    {
+        $validated = $request->validate([
+            'category_id' => 'sometimes|required|exists:categories,id',
+            'name_ar' => 'sometimes|required|string|max:255',
+            'name_en' => 'sometimes|required|string|max:255',
+            'description_ar' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'image_url' => 'nullable|url|max:500',
+            'max_score' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+        ]);
+
+        $psychologicalScale->update($validated);
+
+        return response()->json([
+            'message' => 'تم تحديث المقياس بنجاح',
+            'data' => new PsychologicalScaleResource($psychologicalScale->fresh()->load(['category', 'questions', 'interpretations']))
+        ]);
+    }
+
+    /**
+     * حذف مقياس
+     */
+    public function destroy(PsychologicalScale $psychologicalScale): JsonResponse
+    {
+        DB::beginTransaction();
+
+        try {
+            $psychologicalScale->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'تم حذف المقياس بنجاح'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'فشل في حذف المقياس',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * المقاييس النشطة فقط
+     */
+    public function active(): AnonymousResourceCollection
+    {
+        $scales = PsychologicalScale::where('is_active', true)
+            ->with(['category', 'questions.options'])
+            ->orderBy('name_ar')
             ->get();
 
-            return PsychologicalScaleResource::collection($scales);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to fetch psychological scales',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return PsychologicalScaleResource::collection($scales);
     }
 
     /**
-     * عرض مقياس نفسي محدد مع كل العلاقات
+     * تفعيل/تعطيل المقياس
      */
-    public function show($id)
+    public function toggleStatus(PsychologicalScale $psychologicalScale): JsonResponse
     {
-        try {
-            $scale = PsychologicalScale::with([
-                'category',
-                'questions' => function($query) {
-                    $query->orderBy('question_order');
-                },
-                'questions.options' => function($query) {
-                    $query->orderBy('option_order');
-                },
-                'interpretations' => function($query) {
-                    $query->orderBy('min_score');
-                }
-            ])
+        $psychologicalScale->update([
+            'is_active' => !$psychologicalScale->is_active
+        ]);
+
+        $status = $psychologicalScale->is_active ? 'مفعل' : 'معطل';
+
+        return response()->json([
+            'message' => "تم {$status} المقياس بنجاح",
+            'data' => new PsychologicalScaleResource($psychologicalScale)
+        ]);
+    }
+
+    /**
+     * الحصول على مقياس كامل مع أسئلته وخياراته
+     */
+    public function getFullScale($id): PsychologicalScaleResource
+    {
+        $scale = PsychologicalScale::where('id', $id)
             ->where('is_active', true)
-            ->findOrFail($id);
+            ->with(['questions' => function($query) {
+                $query->orderBy('question_order')
+                      ->with(['options' => function($query) {
+                          $query->orderBy('option_order');
+                      }]);
+            }, 'interpretations'])
+            ->firstOrFail();
 
-            return new PsychologicalScaleResource($scale);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Psychological scale not found',
-                'error' => $e->getMessage()
-            ], 404);
-        }
+        return new PsychologicalScaleResource($scale);
     }
 
     /**
-     * إنشاء مقياس نفسي جديد مع البيانات المرتبطة
+     * المقاييس حسب الفئة
      */
-    public function store(Request $request)
+    public function byCategory($categoryId): AnonymousResourceCollection
     {
-        try {
-            $validated = $request->validate([
-                'category_id' => 'required|exists:categories,id',
-                'name_ar' => 'required|string|max:255',
-                'name_en' => 'required|string|max:255',
-                'description_ar' => 'nullable|string',
-                'description_en' => 'nullable|string',
-                'image_url' => 'nullable|url',
-                'max_score' => 'required|integer|min:1',
-                'is_active' => 'boolean',
-                
-                // بيانات الأسئلة
-                'questions' => 'nullable|array',
-                'questions.*.question_text_ar' => 'required|string',
-                'questions.*.question_text_en' => 'required|string',
-                'questions.*.question_order' => 'required|integer',
-                'questions.*.options' => 'required|array|min:2',
-                'questions.*.options.*.option_text_ar' => 'required|string',
-                'questions.*.options.*.option_text_en' => 'required|string',
-                'questions.*.options.*.score_value' => 'required|integer',
-                'questions.*.options.*.option_order' => 'required|integer',
-                
-                // بيانات التفسيرات
-                'interpretations' => 'nullable|array',
-                'interpretations.*.min_score' => 'required|integer',
-                'interpretations.*.max_score' => 'required|integer',
-                'interpretations.*.interpretation_label_ar' => 'required|string',
-                'interpretations.*.interpretation_label_en' => 'required|string',
-                'interpretations.*.description_ar' => 'nullable|string',
-                'interpretations.*.description_en' => 'nullable|string',
-                'interpretations.*.color' => 'nullable|string',
-            ]);
+        $scales = PsychologicalScale::where('category_id', $categoryId)
+            ->where('is_active', true)
+            ->with(['category'])
+            ->orderBy('name_ar')
+            ->get();
 
-            // بدء المعاملة
-            return \DB::transaction(function () use ($validated) {
-                // إنشاء المقياس النفسي
-                $scale = PsychologicalScale::create([
-                    'id' => \Str::uuid(),
-                    'category_id' => $validated['category_id'],
-                    'name_ar' => $validated['name_ar'],
-                    'name_en' => $validated['name_en'],
-                    'description_ar' => $validated['description_ar'] ?? null,
-                    'description_en' => $validated['description_en'] ?? null,
-                    'image_url' => $validated['image_url'] ?? null,
-                    'max_score' => $validated['max_score'],
-                    'is_active' => $validated['is_active'] ?? true,
-                ]);
-
-                // إنشاء الأسئلة والخيارات
-                if (isset($validated['questions'])) {
-                    foreach ($validated['questions'] as $questionData) {
-                        $question = $scale->questions()->create([
-                            'id' => \Str::uuid(),
-                            'question_text_ar' => $questionData['question_text_ar'],
-                            'question_text_en' => $questionData['question_text_en'],
-                            'question_order' => $questionData['question_order'],
-                        ]);
-
-                        // إنشاء خيارات السؤال
-                        foreach ($questionData['options'] as $optionData) {
-                            $question->options()->create([
-                                'id' => \Str::uuid(),
-                                'option_text_ar' => $optionData['option_text_ar'],
-                                'option_text_en' => $optionData['option_text_en'],
-                                'score_value' => $optionData['score_value'],
-                                'option_order' => $optionData['option_order'],
-                            ]);
-                        }
-                    }
-                }
-
-                // إنشاء تفسيرات النتائج
-                if (isset($validated['interpretations'])) {
-                    foreach ($validated['interpretations'] as $interpretationData) {
-                        $scale->interpretations()->create([
-                            'id' => \Str::uuid(),
-                            'min_score' => $interpretationData['min_score'],
-                            'max_score' => $interpretationData['max_score'],
-                            'interpretation_label_ar' => $interpretationData['interpretation_label_ar'],
-                            'interpretation_label_en' => $interpretationData['interpretation_label_en'],
-                            'description_ar' => $interpretationData['description_ar'] ?? null,
-                            'description_en' => $interpretationData['description_en'] ?? null,
-                            'color' => $interpretationData['color'] ?? null,
-                        ]);
-                    }
-                }
-
-                // تحميل العلاقات وإرجاع النتيجة
-                $scale->load(['category', 'questions.options', 'interpretations']);
-
-                return response()->json([
-                    'message' => 'Psychological scale created successfully',
-                    'data' => new PsychologicalScaleResource($scale)
-                ], 201);
-            });
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to create psychological scale',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * تحديث مقياس نفسي
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $scale = PsychologicalScale::findOrFail($id);
-
-            $validated = $request->validate([
-                'category_id' => 'sometimes|exists:categories,id',
-                'name_ar' => 'sometimes|string|max:255',
-                'name_en' => 'sometimes|string|max:255',
-                'description_ar' => 'nullable|string',
-                'description_en' => 'nullable|string',
-                'image_url' => 'nullable|url',
-                'max_score' => 'sometimes|integer|min:1',
-                'is_active' => 'sometimes|boolean',
-            ]);
-
-            $scale->update($validated);
-
-            $scale->load(['category', 'questions.options', 'interpretations']);
-
-            return response()->json([
-                'message' => 'Psychological scale updated successfully',
-                'data' => new PsychologicalScaleResource($scale)
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to update psychological scale',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * حذف مقياس نفسي
-     */
-    public function destroy($id)
-    {
-        try {
-            $scale = PsychologicalScale::findOrFail($id);
-
-            // حذف جميع البيانات المرتبطة
-            \DB::transaction(function () use ($scale) {
-                // حذف خيارات الأسئلة أولاً
-                foreach ($scale->questions as $question) {
-                    $question->options()->delete();
-                }
-                
-                // ثم حذف الأسئلة
-                $scale->questions()->delete();
-                
-                // حذف تفسيرات النتائج
-                $scale->interpretations()->delete();
-                
-                // حذف التقييمات المرتبطة
-                $scale->assessments()->delete();
-                
-                // أخيراً حذف المقياس
-                $scale->delete();
-            });
-
-            return response()->json([
-                'message' => 'Psychological scale deleted successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to delete psychological scale',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return PsychologicalScaleResource::collection($scales);
     }
 }

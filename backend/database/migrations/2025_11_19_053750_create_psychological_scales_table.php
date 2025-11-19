@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('psychological_scales', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->char('category_id', 36)->nullable();
             $table->string('name_ar', 255);
             $table->string('name_en', 255);
             $table->text('description_ar')->nullable();
@@ -22,15 +19,18 @@ return new class extends Migration
             $table->integer('max_score')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-
-            $table->index(['category_id', 'is_active']);
+            
+            $table->foreign('category_id')
+                  ->references('id')
+                  ->on('categories')
+                  ->onDelete('set null');
+                  
+            $table->index(['category_id']);
+            $table->index(['is_active']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('psychological_scales');
     }
