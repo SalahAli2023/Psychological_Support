@@ -76,9 +76,9 @@
                   'bg-orange-500'
                 ]"></div>
                 <div>
-                  <h4 class="font-semibold text-primary">{{ session.title }}</h4>
-                  <p class="text-sm text-secondary">{{ session.date }} - {{ session.time }}</p>
-                  <p class="text-xs text-secondary">المعالج: {{ session.therapist }}</p>
+                  <h4 class="font-semibold text-primary">{{ session.title_ar || session.title }}</h4>
+                  <p class="text-sm text-secondary">{{ session.session_date }} - {{ session.session_time }}</p>
+                  <p class="text-xs text-secondary">المعالج: {{ session.therapist?.name_ar || session.therapist?.name || 'غير محدد' }}</p>
                 </div>
               </div>
               <div class="flex items-center gap-2">
@@ -109,7 +109,7 @@
               </div>
             </div>
             <div class="mt-3 text-sm text-primary">
-              <p>{{ session.notes }}</p>
+              <p>{{ session.notes_ar || session.notes }}</p>
             </div>
             <div v-if="session.progress" class="mt-2">
               <div class="flex justify-between text-xs text-secondary mb-1">
@@ -149,6 +149,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { usePatientSessionsStore } from '@/stores/patientSessions'
+
+const sessionsStore = usePatientSessionsStore()
 
 const props = defineProps({
   open: {
@@ -163,65 +166,27 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'add-session', 'edit-session', 'delete-session'])
 
-// بيانات الجلسات (في تطبيق حقيقي، هذه البيانات ستأتي من الـ store أو API)
-const sessions = computed(() => {
-  if (!props.patient) return []
-  
-  return [
-    {
-      id: 1,
-      patientId: props.patient.id,
-      title: 'جلسة علاج سلوكي',
-      date: '2024-01-20',
-      time: '14:00',
-      therapist: 'د. أحمد محمد',
-      status: 'scheduled',
-      progress: 0,
-      notes: 'التركيز على تقنيات إدارة القلق'
-    },
-    {
-      id: 2,
-      patientId: props.patient.id,
-      title: 'جلسة متابعة',
-      date: '2024-01-13',
-      time: '15:30',
-      therapist: 'د. أحمد محمد',
-      status: 'completed',
-      progress: 100,
-      notes: 'تحسن ملحوظ في إدارة نوبات القلق. تم تعليم المريض تمارين التنفس العميق.'
-    },
-    {
-      id: 3,
-      patientId: props.patient.id,
-      title: 'جلسة تقييم أولية',
-      date: '2024-01-06',
-      time: '11:00',
-      therapist: 'د. أحمد محمد',
-      status: 'completed',
-      progress: 100,
-      notes: 'تم تقييم الحالة وتحديد خطة العلاج المناسبة.'
-    }
-  ]
-})
+// استخدام الجلسات من الـ store
+const sessions = computed(() => sessionsStore.sessions)
 
-// إحصائيات الجلسات
+// إحصائيات الجلسات من الـ store
 const completedSessions = computed(() => 
-  sessions.value.filter(s => s.status === 'completed').length
+  sessionsStore.stats?.completed_sessions || 0
 )
 
 const scheduledSessions = computed(() => 
-  sessions.value.filter(s => s.status === 'scheduled').length
+  sessionsStore.stats?.scheduled_sessions || 0
 )
 
 const cancelledSessions = computed(() => 
-  sessions.value.filter(s => s.status === 'cancelled').length
+  sessionsStore.stats?.cancelled_sessions || 0
 )
 
-// ترتيب الجلسات بحيث تكون الجلسات المجدولة أولاً ثم المكتملة
+// ترتيب الجلسات
 const sortedSessions = computed(() => {
   return [...sessions.value].sort((a, b) => {
     const statusOrder = { scheduled: 1, completed: 2, cancelled: 3 }
-    return statusOrder[a.status] - statusOrder[b.status] || new Date(b.date) - new Date(a.date)
+    return statusOrder[a.status] - statusOrder[b.status] || new Date(b.session_date) - new Date(a.session_date)
   })
 })
 

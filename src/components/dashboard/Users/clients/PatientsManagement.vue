@@ -1,3 +1,5 @@
+[file name]: PatientsManagement.vue
+[file content begin]
 <template>
   <div class="space-y-6 p-4">
     <!-- Header -->
@@ -65,11 +67,12 @@
     />
     
     <SessionModal
-      :open="sessionModalOpen"
-      :session="editingSession"
-      @close="closeSessionModal"
-      @save="saveSession"
-    />
+  :open="sessionModalOpen"
+  :session="editingSession"
+  :patient-id="selectedPatientForSessions?.id"
+  @close="closeSessionModal"
+  @save="saveSession"
+/>
     
     <!-- Delete Confirmation Modals -->
     <DeleteConfirmationModal
@@ -93,6 +96,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { usePatientsStore } from '@/stores/patients'
+import { usePatientSessionsStore } from '@/stores/patientSessions'
 import PatientsHeader from './components/PatientsHeader.vue'
 import PatientsFilters from './components/PatientsFilters.vue'
 import PatientsTable from './components/PatientsTable.vue'
@@ -104,14 +108,16 @@ import SessionsModal from './components/modals/SessionsModal.vue'
 import SessionModal from './components/modals/SessionModal.vue'
 import DeleteConfirmationModal from './components/modals/DeleteConfirmationModal.vue'
 
-// استخدام store المرضى
+// استخدام stores
 const patientsStore = usePatientsStore()
+const sessionsStore = usePatientSessionsStore()
 
 // الفلاتر المحلية
 const localFilters = reactive({
   search: '',
   status: '',
-  condition: ''
+  condition: '',
+  sort: 'date-desc'
 })
 
 // النوافذ المنبثقة
@@ -131,14 +137,11 @@ const sessionToDelete = ref(null)
 
 // رسالة حذف الجلسة
 const deleteSessionMessage = computed(() => {
-  if (sessionToDelete.value?.title) {
-    return `هل أنت متأكد من حذف الجلسة "${sessionToDelete.value.title}"؟`
+  if (sessionToDelete.value?.title_ar) {
+    return `هل أنت متأكد من حذف الجلسة "${sessionToDelete.value.title_ar}"؟`
   }
   return 'هل أنت متأكد من حذف هذه الجلسة؟'
 })
-
-// بيانات الجلسات
-const patientSessions = ref([])
 
 // الحسابات
 const startItem = computed(() => {
@@ -182,7 +185,8 @@ const resetFilters = () => {
   Object.assign(localFilters, {
     search: '',
     status: '',
-    condition: ''
+    condition: '',
+    sort: 'date-desc'
   })
   patientsStore.resetFilters()
   patientsStore.setPage(1)
@@ -218,19 +222,36 @@ const openCreatePatient = () => {
   patientModalOpen.value = true
 }
 
-const editPatient = (patient) => {
-  editingPatient.value = patient
-  patientModalOpen.value = true
+const editPatient = async (patient) => {
+  try {
+    // جلب بيانات المريض الكاملة من الـ API
+    await patientsStore.fetchPatientById(patient.id)
+    editingPatient.value = patientsStore.currentPatient
+    patientModalOpen.value = true
+  } catch (error) {
+    console.error('Error fetching patient details:', error)
+    editingPatient.value = patient
+    patientModalOpen.value = true
+  }
 }
 
-const viewProfile = (patient) => {
-  viewingPatient.value = patient
-  profileModalOpen.value = true
+const viewProfile = async (patient) => {
+  try {
+    // جلب بيانات المريض الكاملة من الـ API
+    await patientsStore.fetchPatientById(patient.id)
+    viewingPatient.value = patientsStore.currentPatient
+    profileModalOpen.value = true
+  } catch (error) {
+    console.error('Error fetching patient profile:', error)
+    viewingPatient.value = patient
+    profileModalOpen.value = true
+  }
 }
 
 const closePatientModal = () => {
   patientModalOpen.value = false
   editingPatient.value = null
+  patientsStore.clearError()
 }
 
 const closeProfileModal = () => {
@@ -251,7 +272,7 @@ const savePatient = async (patientData) => {
     patientModalOpen.value = false
   } catch (error) {
     console.error('Error saving patient:', error)
-    // يمكن إضافة عرض رسالة خطأ للمستخدم
+    // الخطأ سيتم عرضه في الـ store
   }
 }
 
@@ -279,17 +300,41 @@ const cancelDeletePatient = () => {
 }
 
 // دوال الجلسات
-const openSessionsModal = (patient) => {
-  selectedPatientForSessions.value = patient
-  // تحميل جلسات المريض
-  patientSessions.value = sampleSessions.filter(session => session.patientId === patient.id)
-  sessionsModalOpen.value = true
+const openSessionsModal = async (patient) => {
+  try {
+    selectedPatientForSessions.value = patient
+    sessionsModalOpen.value = true
+    
+    // جلب جلسات المريض من الـ API
+    await sessionsStore.fetchSessions(patient.id)
+    
+    // جلب إحصائيات الجلسات
+    await sessionsStore.fetchStats(patient.id)
+    
+    // جلب قائمة المعالجين
+    await sessionsStore.fetchTherapists()
+    
+  } catch (error) {
+    console.error('Error opening sessions modal:', error)
+  }
 }
 
 const closeSessionsModal = () => {
   sessionsModalOpen.value = false
   selectedPatientForSessions.value = null
-  patientSessions.value = []
+  sessionsStore.clearSessions()
+  sessionsStore.clearError()
+}
+
+const refreshSessions = async () => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.fetchSessions(selectedPatientForSessions.value.id)
+      await sessionsStore.fetchStats(selectedPatientForSessions.value.id)
+    } catch (error) {
+      console.error('Error refreshing sessions:', error)
+    }
+  }
 }
 
 const openAddSessionModal = () => {
@@ -297,40 +342,53 @@ const openAddSessionModal = () => {
   sessionModalOpen.value = true
 }
 
-const editSession = (session) => {
-  editingSession.value = session
-  sessionModalOpen.value = true
+const editSession = async (session) => {
+  try {
+    // جلب بيانات الجلسة الكاملة من الـ API
+    await sessionsStore.fetchSession(selectedPatientForSessions.value.id, session.id)
+    editingSession.value = sessionsStore.formatSessionForForm(sessionsStore.currentSession)
+    sessionModalOpen.value = true
+  } catch (error) {
+    console.error('Error fetching session details:', error)
+    editingSession.value = sessionsStore.formatSessionForForm(session)
+    sessionModalOpen.value = true
+  }
 }
 
 const closeSessionModal = () => {
   sessionModalOpen.value = false
   editingSession.value = null
+  sessionsStore.clearError()
 }
 
 const saveSession = async (sessionData) => {
   try {
-    if (editingSession.value) {
+    if (editingSession.value && sessionsStore.currentSession) {
       // تحديث الجلسة
-      const index = patientSessions.value.findIndex(s => s.id === editingSession.value.id)
-      if (index !== -1) {
-        patientSessions.value[index] = { 
-          ...editingSession.value, 
-          ...sessionData 
-        }
-      }
+      await sessionsStore.updateSession(
+        selectedPatientForSessions.value.id, 
+        sessionsStore.currentSession.id, 
+        sessionData
+      )
     } else {
       // إضافة جلسة جديدة
-      const newSession = {
-        id: Date.now(),
-        patientId: selectedPatientForSessions.value.id,
-        ...sessionData
-      }
-      patientSessions.value.unshift(newSession)
+      await sessionsStore.createSession(
+        selectedPatientForSessions.value.id, 
+        sessionData
+      )
     }
     
     sessionModalOpen.value = false
+    
+    // تحديث الإحصائيات بعد الحفظ
+    await sessionsStore.fetchStats(selectedPatientForSessions.value.id)
+    
+    // تحديث قائمة الجلسات
+    await sessionsStore.fetchSessions(selectedPatientForSessions.value.id)
+    
   } catch (error) {
     console.error('Error saving session:', error)
+    // الخطأ سيتم عرضه في الـ store
   }
 }
 
@@ -340,11 +398,22 @@ const deleteSession = (session) => {
   deleteSessionModalOpen.value = true
 }
 
-const confirmDeleteSession = () => {
-  if (sessionToDelete.value) {
-    patientSessions.value = patientSessions.value.filter(s => s.id !== sessionToDelete.value.id)
-    deleteSessionModalOpen.value = false
-    sessionToDelete.value = null
+const confirmDeleteSession = async () => {
+  if (sessionToDelete.value && selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.deleteSession(
+        selectedPatientForSessions.value.id, 
+        sessionToDelete.value.id
+      )
+      
+      // تحديث الإحصائيات بعد الحذف
+      await sessionsStore.fetchStats(selectedPatientForSessions.value.id)
+      
+      deleteSessionModalOpen.value = false
+      sessionToDelete.value = null
+    } catch (error) {
+      console.error('Error deleting session:', error)
+    }
   }
 }
 
@@ -353,33 +422,110 @@ const cancelDeleteSession = () => {
   sessionToDelete.value = null
 }
 
-const calculateAge = (dateOfBirth) => {
-  const today = new Date()
-  const birthDate = new Date(dateOfBirth)
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDiff = today.getMonth() - birthDate.getMonth()
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--
+// جلب المواعيد المتاحة
+const fetchAvailableSlots = async (therapistId, sessionDate) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.fetchAvailableSlots(
+        selectedPatientForSessions.value.id,
+        therapistId,
+        sessionDate
+      )
+    } catch (error) {
+      console.error('Error fetching available slots:', error)
+    }
   }
-  
-  return age
 }
 
-// بيانات المثال للجلسات
-const sampleSessions = [
-  {
-    id: 1,
-    patientId: 1,
-    title: 'جلسة علاج سلوكي',
-    date: '2024-01-20',
-    time: '14:00',
-    therapist: 'د. أحمد محمد',
-    status: 'scheduled',
-    progress: 0,
-    notes: 'التركيز على تقنيات إدارة القلق'
+// تحديث حالة الجلسة
+const updateSessionStatus = async (sessionId, status) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.updateSessionStatus(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        status
+      )
+    } catch (error) {
+      console.error('Error updating session status:', error)
+    }
   }
-]
+}
+
+// تحديث تقدم الجلسة
+const updateSessionProgress = async (sessionId, progress) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.updateSessionProgress(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        progress
+      )
+    } catch (error) {
+      console.error('Error updating session progress:', error)
+    }
+  }
+}
+
+// إضافة ملاحظات للجلسة
+const addSessionNotes = async (sessionId, notes) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.addSessionNotes(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        notes
+      )
+    } catch (error) {
+      console.error('Error adding session notes:', error)
+    }
+  }
+}
+
+// إضافة تقرير للجلسة
+const addSessionReport = async (sessionId, report) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.addSessionReport(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        report
+      )
+    } catch (error) {
+      console.error('Error adding session report:', error)
+    }
+  }
+}
+
+// رفع مرفقات للجلسة
+const uploadSessionAttachments = async (sessionId, attachments) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.uploadSessionAttachments(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        attachments
+      )
+    } catch (error) {
+      console.error('Error uploading session attachments:', error)
+    }
+  }
+}
+
+// حذف مرفق من الجلسة
+const deleteSessionAttachment = async (sessionId, attachmentIndex) => {
+  if (selectedPatientForSessions.value) {
+    try {
+      await sessionsStore.deleteSessionAttachment(
+        selectedPatientForSessions.value.id,
+        sessionId,
+        attachmentIndex
+      )
+    } catch (error) {
+      console.error('Error deleting session attachment:', error)
+    }
+  }
+}
 
 // جلب البيانات عند التحميل
 onMounted(() => {
@@ -389,5 +535,5 @@ onMounted(() => {
 // مراقبة تغييرات الفلاتر للتحديث التلقائي
 watch(localFilters, () => {
   applyFilters()
-}, { deep: true })
+}, { deep: true, immediate: false })
 </script>

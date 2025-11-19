@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\TherapistQualificationController;
 use App\Http\Controllers\Api\TherapistScheduleController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientConditionController;
+use App\Http\Controllers\Api\PatientSessionController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -124,34 +125,53 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/legal-resources/{id}', [LegalResourceController::class, 'update']);
     Route::delete('/legal-resources/{id}', [LegalResourceController::class, 'destroy']);
 
-    // ==================== PATIENT MANAGEMENT ROUTES ====================
-    Route::prefix('patients')->group(function () {
-        // Patient Routes
-        Route::get('/', [PatientController::class, 'index']);
-        Route::get('/stats', [PatientController::class, 'getStats']);
-        Route::get('/export', [PatientController::class, 'export']);
-        Route::post('/', [PatientController::class, 'store']);
-        Route::get('/{patient}', [PatientController::class, 'show']);
-        Route::put('/{patient}', [PatientController::class, 'update']);
-        Route::delete('/{patient}', [PatientController::class, 'destroy']);
+   // ==================== PATIENT MANAGEMENT ROUTES ====================
+Route::prefix('patients')->group(function () {
+    // Patient Routes
+    Route::get('/', [PatientController::class, 'index']);
+    Route::get('/stats', [PatientController::class, 'getStats']);
+    Route::get('/export', [PatientController::class, 'export']);
+    Route::post('/', [PatientController::class, 'store']);
+    Route::get('/{patient}', [PatientController::class, 'show']);
+    Route::put('/{patient}', [PatientController::class, 'update']);
+    Route::delete('/{patient}', [PatientController::class, 'destroy']);
 
-        // Patient Conditions Routes
-        Route::prefix('{patient}')->group(function () {
-            Route::get('/conditions', [PatientConditionController::class, 'index']);
-            Route::get('/conditions/stats', [PatientConditionController::class, 'getStats']);
-            Route::get('/conditions/export', [PatientConditionController::class, 'export']);
-            Route::post('/conditions', [PatientConditionController::class, 'store']);
-            Route::post('/conditions/bulk-import', [PatientConditionController::class, 'bulkImport']);
+    // Patient Conditions Routes
+    Route::prefix('{patient}')->group(function () {
+        Route::get('/conditions', [PatientConditionController::class, 'index']);
+        Route::get('/conditions/stats', [PatientConditionController::class, 'getStats']);
+        Route::get('/conditions/export', [PatientConditionController::class, 'export']);
+        Route::post('/conditions', [PatientConditionController::class, 'store']);
+        Route::post('/conditions/bulk-import', [PatientConditionController::class, 'bulkImport']);
+        
+        Route::prefix('conditions/{condition}')->group(function () {
+            Route::get('/', [PatientConditionController::class, 'show']);
+            Route::put('/', [PatientConditionController::class, 'update']);
+            Route::delete('/', [PatientConditionController::class, 'destroy']);
+            Route::patch('/toggle-status', [PatientConditionController::class, 'toggleStatus']);
+        });
+
+        // ==================== PATIENT SESSIONS ROUTES ====================
+        Route::prefix('sessions')->group(function () {
+            Route::get('/', [PatientSessionController::class, 'index']);
+            Route::get('/stats', [PatientSessionController::class, 'getStats']);
+            Route::get('/available-slots', [PatientSessionController::class, 'getAvailableSlots']);
+            Route::post('/', [PatientSessionController::class, 'store']);
             
-            Route::prefix('conditions/{condition}')->group(function () {
-                Route::get('/', [PatientConditionController::class, 'show']);
-                Route::put('/', [PatientConditionController::class, 'update']);
-                Route::delete('/', [PatientConditionController::class, 'destroy']);
-                Route::patch('/toggle-status', [PatientConditionController::class, 'toggleStatus']);
+            Route::prefix('{session}')->group(function () {
+                Route::get('/', [PatientSessionController::class, 'show']);
+                Route::put('/', [PatientSessionController::class, 'update']);
+                Route::delete('/', [PatientSessionController::class, 'destroy']);
+                Route::patch('/status', [PatientSessionController::class, 'updateStatus']);
+                Route::patch('/progress', [PatientSessionController::class, 'updateProgress']);
+                Route::post('/notes', [PatientSessionController::class, 'addNotes']);
+                Route::post('/report', [PatientSessionController::class, 'addReport']);
+                Route::post('/attachments', [PatientSessionController::class, 'uploadAttachments']);
+                Route::delete('/attachments/{attachment}', [PatientSessionController::class, 'deleteAttachment']);
             });
         });
     });
-
+});
     // ==================== PSYCHOLOGICAL ASSESSMENT ROUTES ====================
 
     // Assessments (تغطي التقييمات + النتائج)
