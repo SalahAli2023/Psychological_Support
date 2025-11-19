@@ -22,6 +22,13 @@ use App\Http\Controllers\Api\PatientSessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/users/stats', [UserController::class, 'stats']);
+
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -61,12 +68,12 @@ Route::get('/legal-resources/search', [LegalResourceController::class, 'search']
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
+    // Route::get('/user', [AuthController::class, 'user']);
     
     // Users routes
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/stats', [UserController::class, 'stats']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
+    // Route::get('/users', [UserController::class, 'index']);
+    // Route::get('/users/stats', [UserController::class, 'stats']);
+    // Route::get('/users/{user}', [UserController::class, 'show']);
 
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);

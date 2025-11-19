@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -23,7 +25,7 @@ class UserController extends Controller
                 $searchTerm = $request->q;
                 $query->where(function($q) use ($searchTerm) {
                     $q->where('name', 'like', "%{$searchTerm}%")
-                        ->orWhere('email', 'like', "%{$searchTerm}%");
+                      ->orWhere('email', 'like', "%{$searchTerm}%");
                 });
             }
             
@@ -53,6 +55,52 @@ class UserController extends Controller
     }
 
     /**
+     * إنشاء مستخدم جديد
+     */
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'role' => ['required', Rule::in(['Admin', 'Therapist', 'Client'])],
+                'phone' => 'nullable|string|max:20',
+                'bio' => 'nullable|string',
+            ]);
+
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => $validated['role'],
+                'phone' => $validated['phone'] ?? null,
+                'bio' => $validated['bio'] ?? null,
+                'joined_at' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'data' => new UserResource($user)
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * عرض مستخدم محدد
      */
     public function show(User $user): JsonResponse
@@ -67,6 +115,87 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * تحديث مستخدم
+     */
+    public function update(Request $request, User $user): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'email' => ['sometimes', 'required', 'email', Rule::unique('users')->ignore($user->id)],
+                'password' => 'sometimes|nullable|string|min:8',
+                'role' => ['sometimes', 'required', Rule::in(['Admin', 'Therapist', 'Client'])],
+                'phone' => 'nullable|string|max:20',
+                'bio' => 'nullable|string',
+            ]);
+
+            $updateData = [
+                'name' => $validated['name'] ?? $user->name,
+                'email' => $validated['email'] ?? $user->email,
+                'role' => $validated['role'] ?? $user->role,
+                'phone' => $validated['phone'] ?? $user->phone,
+                'bio' => $validated['bio'] ?? $user->bio,
+            ];
+
+            // تحديث كلمة المرور فقط إذا تم تقديمها
+            if (isset($validated['password']) && $validated['password']) {
+                $updateData['password'] = Hash::make($validated['password']);
+            }
+
+            $user->update($updateData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+                'data' => new UserResource($user)
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * حذف مستخدم
+     */
+    public function destroy(User $user): JsonResponse
+    {
+        try {
+            // منع حذف المستخدم الحالي
+            if ($user->id === auth()->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete your own account'
+                ], 422);
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete user',
                 'error' => $e->getMessage()
             ], 500);
         }
