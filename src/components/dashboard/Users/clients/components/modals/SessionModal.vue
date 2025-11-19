@@ -20,7 +20,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">عنوان الجلسة (عربي) *</label>
               <input 
-                v-model="form.title.ar"
+                v-model="form.title_ar"
                 type="text"
                 required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -31,7 +31,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">عنوان الجلسة (إنجليزي) *</label>
               <input 
-                v-model="form.title.en"
+                v-model="form.title_en"
                 type="text"
                 required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -46,9 +46,10 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">التاريخ *</label>
               <input 
-                v-model="form.date"
+                v-model="form.session_date"
                 type="date"
                 required
+                :min="minDate"
                 @change="loadAvailableSlots"
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
@@ -57,24 +58,27 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">الوقت *</label>
               <select 
-                v-model="form.time"
+                v-model="form.session_time"
                 required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
-                :disabled="!availableSlots.length"
+                :disabled="!availableSlots.length || loadingSlots"
               >
                 <option value="">اختر الوقت المناسب</option>
                 <option 
                   v-for="slot in availableSlots" 
-                  :key="slot.value"
-                  :value="slot.value"
-                  :disabled="slot.booked"
+                  :key="slot.time"
+                  :value="slot.time"
+                  :disabled="!slot.available"
                 >
-                  {{ slot.label }} {{ slot.booked ? '(محجوز)' : '' }}
+                  {{ slot.time }} {{ !slot.available ? '(محجوز)' : '' }}
                 </option>
               </select>
-              <div v-if="form.date && form.therapist" class="mt-2 text-xs">
-                <span v-if="availableSlots.length" class="text-green-600">
-                  {{ availableSlots.filter(slot => !slot.booked).length }} مواعيد متاحة
+              <div v-if="form.session_date && form.therapist_id" class="mt-2 text-xs">
+                <span v-if="loadingSlots" class="text-blue-500">
+                  جاري تحميل المواعيد المتاحة...
+                </span>
+                <span v-else-if="availableSlots.length" class="text-green-600">
+                  {{ availableSlots.filter(slot => slot.available).length }} مواعيد متاحة
                 </span>
                 <span v-else class="text-red-500">
                   لا توجد مواعيد متاحة في هذا التاريخ
@@ -88,22 +92,31 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">المعالج *</label>
               <select 
-                v-model="form.therapist"
+                v-model="form.therapist_id"
                 @change="onTherapistChange"
+                required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                :disabled="loadingTherapists"
               >
                 <option value="">اختر المعالج</option>
-                <option value="د. أحمد محمد">د. أحمد محمد</option>
-                <option value="د. فاطمة عبدالله">د. فاطمة عبدالله</option>
-                <option value="د. خالد سعيد">د. خالد سعيد</option>
-                <option value="د. نورة الرشيد">د. نورة الرشيد</option>
+                <option 
+                  v-for="therapist in therapists" 
+                  :key="therapist.id"
+                  :value="therapist.id"
+                >
+                  {{ therapist.name_ar || therapist.name_en || therapist.name }} - {{ therapist.specialty_ar || therapist.specialty_en || 'بدون تخصص' }}
+                </option>
               </select>
+              <div v-if="loadingTherapists" class="mt-2 text-xs text-blue-500">
+                جاري تحميل قائمة المعالجين...
+              </div>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-primary mb-2">حالة الجلسة *</label>
               <select 
                 v-model="form.status"
+                required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="scheduled">مجدولة / Scheduled</option>
@@ -113,7 +126,6 @@
             </div>
           </div>
 
-          <!-- باقي الحقول تبقى كما هي -->
           <!-- التقدم ونوع الجلسة -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -133,6 +145,7 @@
               <label class="block text-sm font-medium text-primary mb-2">نوع الجلسة *</label>
               <select 
                 v-model="form.type"
+                required
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="individual">فردية / Individual</option>
@@ -144,17 +157,33 @@
             </div>
           </div>
 
-          <!-- المكان -->
-          <div>
-            <label class="block text-sm font-medium text-primary mb-2">المكان *</label>
-            <select 
-              v-model="form.location"
-              class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
-            >
-              <option value="clinic">العيادة / Clinic</option>
-              <option value="online">أونلاين / Online</option>
-              <option value="home">منزل المريض / Patient's Home</option>
-            </select>
+          <!-- المكان والمدة -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-primary mb-2">المكان *</label>
+              <select 
+                v-model="form.location"
+                required
+                class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+              >
+                <option value="clinic">العيادة / Clinic</option>
+                <option value="online">أونلاين / Online</option>
+                <option value="home">منزل المريض / Patient's Home</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-primary mb-2">مدة الجلسة (دقائق)</label>
+              <input 
+                v-model="form.duration"
+                type="number"
+                min="15"
+                max="240"
+                class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 direction-ltr"
+                placeholder="60"
+                dir="ltr"
+              />
+            </div>
           </div>
 
           <!-- الملاحظات -->
@@ -162,7 +191,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">ملاحظات (عربي)</label>
               <textarea 
-                v-model="form.notes.ar"
+                v-model="form.notes_ar"
                 rows="3"
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="أدخل ملاحظات الجلسة بالعربية..."
@@ -172,7 +201,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">ملاحظات (إنجليزي)</label>
               <textarea 
-                v-model="form.notes.en"
+                v-model="form.notes_en"
                 rows="3"
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="Enter session notes in English..."
@@ -186,7 +215,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">تقرير الجلسة (عربي)</label>
               <textarea 
-                v-model="form.report.ar"
+                v-model="form.report_ar"
                 rows="3"
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="أدخل تقرير الجلسة بالعربية..."
@@ -196,7 +225,7 @@
             <div>
               <label class="block text-sm font-medium text-primary mb-2">تقرير الجلسة (إنجليزي)</label>
               <textarea 
-                v-model="form.report.en"
+                v-model="form.report_en"
                 rows="3"
                 class="w-full rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="Enter session report in English..."
@@ -215,6 +244,8 @@
                 @change="handleFileUpload"
                 class="hidden"
                 id="file-upload"
+                ref="fileInput"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               />
               <label for="file-upload" class="cursor-pointer">
                 <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +263,8 @@
                   <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
-                  <span class="text-sm text-gray-700">{{ file.name }}</span>
+                  <span class="text-sm text-gray-700">{{ file.name || file.file_name }}</span>
+                  <span class="text-xs text-gray-500">({{ formatFileSize(file.size || file.file_size) }})</span>
                 </div>
                 <button 
                   type="button"
@@ -248,19 +280,27 @@
           </div>
         </div>
 
+        <!-- رسائل الخطأ -->
+        <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          {{ error }}
+        </div>
+
         <div class="flex justify-end gap-3 pt-4 border-t border-primary sticky bottom-0 bg-primary pb-4">
           <button 
             type="button"
             @click="$emit('close')"
             class="bg-tertiary hover:bg-primary text-primary px-4 py-2 rounded-lg text-sm"
+            :disabled="loading"
           >
             إلغاء
           </button>
           <button 
             type="submit"
             class="bg-brand-500 hover:bg-[#8FAE2F] text-white px-4 py-2 rounded-lg text-sm"
+            :disabled="loading"
           >
-            {{ session ? 'تحديث' : 'إضافة' }}
+            <span v-if="loading">جاري الحفظ...</span>
+            <span v-else>{{ session ? 'تحديث' : 'إضافة' }}</span>
           </button>
         </div>
       </form>
@@ -269,7 +309,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onMounted, computed, nextTick } from 'vue'
+import { usePatientSessionsStore } from '@/stores/patientSessions'
+
+const sessionsStore = usePatientSessionsStore()
 
 const props = defineProps({
   open: {
@@ -279,140 +322,254 @@ const props = defineProps({
   session: {
     type: Object,
     default: null
+  },
+  patientId: {
+    type: [String, Number],
+    required: true
   }
 })
 
 const emit = defineEmits(['close', 'save'])
 
 const form = reactive({
-  title: {
-    ar: '',
-    en: ''
-  },
-  date: '',
-  time: '',
-  therapist: '',
+  title_ar: '',
+  title_en: '',
+  session_date: '',
+  session_time: '',
+  therapist_id: '',
   status: 'scheduled',
   progress: 0,
   type: 'individual',
   location: 'clinic',
-  notes: {
-    ar: '',
-    en: ''
-  },
-  report: {
-    ar: '',
-    en: ''
-  },
+  notes_ar: '',
+  notes_en: '',
+  report_ar: '',
+  report_en: '',
+  duration: 60,
   attachments: []
 })
 
-// المواعيد المتاحة
+// البيانات التفاعلية
 const availableSlots = ref([])
+const therapists = ref([])
+const loadingSlots = ref(false)
+const loadingTherapists = ref(false)
+const loading = ref(false)
+const error = ref('')
+const fileInput = ref(null)
 
-// جدول الأطباء
-const therapistsSchedule = {
-  'د. أحمد محمد': {
-    workDays: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday'],
-    slots: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00']
-  },
-  'د. فاطمة عبدالله': {
-    workDays: ['sunday', 'monday', 'tuesday', 'wednesday'],
-    slots: ['08:00', '09:30', '11:00', '12:30', '15:00', '16:30']
-  },
-  'د. خالد سعيد': {
-    workDays: ['monday', 'tuesday', 'wednesday', 'thursday'],
-    slots: ['10:00', '11:00', '12:00', '13:00', '16:00', '17:00', '18:00']
-  },
-  'د. نورة الرشيد': {
-    workDays: ['sunday', 'tuesday', 'wednesday', 'thursday'],
-    slots: ['08:30', '10:00', '11:30', '13:00', '14:30', '16:00']
+// الحد الأدنى للتاريخ (اليوم)
+const minDate = computed(() => {
+  return new Date().toISOString().split('T')[0]
+})
+
+// جلب قائمة المعالجين عند فتح النافذة
+const loadTherapists = async () => {
+  try {
+    loadingTherapists.value = true
+    error.value = ''
+    
+    console.log('👨‍⚕️ جلب المعالجين...')
+    
+    await sessionsStore.fetchTherapists()
+    therapists.value = sessionsStore.therapists || []
+    
+    console.log('✅ المعالجين المحملين:', therapists.value)
+    
+    if (therapists.value.length === 0) {
+      error.value = 'لا توجد معالجين متاحين'
+    }
+  } catch (err) {
+    console.error('❌ خطأ في تحميل المعالجين:', err)
+    error.value = 'حدث خطأ في تحميل قائمة المعالجين: ' + (err.response?.data?.message || err.message)
+  } finally {
+    loadingTherapists.value = false
   }
 }
 
-// تحميل المواعيد المتاحة
-const loadAvailableSlots = () => {
-  if (!form.date || !form.therapist) {
+// تحميل المواعيد المتاحة من الـ API
+const loadAvailableSlots = async () => {
+  if (!form.session_date || !form.therapist_id) {
     availableSlots.value = []
     return
   }
 
-  const schedule = therapistsSchedule[form.therapist]
-  if (!schedule) {
-    availableSlots.value = []
-    return
-  }
-
-  // تحويل التاريخ إلى يوم الأسبوع
-  const dateObj = new Date(form.date)
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-  const dayName = days[dateObj.getDay()]
-
-  // التحقق إذا كان اليوم من أيام العمل
-  if (!schedule.workDays.includes(dayName)) {
-    availableSlots.value = []
-    return
-  }
-
-  // توليد المواعيد المتاحة
-  availableSlots.value = schedule.slots.map(slot => {
-    // محاكاة حالة الحجز (يمكن استبدالها ببيانات حقيقية)
-    const isBooked = Math.random() > 0.7
+  try {
+    loadingSlots.value = true
+    error.value = ''
     
-    return {
-      value: slot,
-      label: slot,
-      booked: isBooked
+    console.log('📅 جلب المواعيد المتاحة للمعالج:', form.therapist_id, 'التاريخ:', form.session_date)
+    
+    await sessionsStore.fetchAvailableSlots(
+      props.patientId,
+      form.therapist_id,
+      form.session_date,
+      form.duration || 60
+    )
+    
+    availableSlots.value = sessionsStore.availableSlots || []
+    
+    console.log('✅ المواعيد المتاحة:', availableSlots.value)
+    
+    // إعادة تعيين الوقت إذا لم يكن متاحاً
+    if (form.session_time && !availableSlots.value.find(slot => slot.time === form.session_time && slot.available)) {
+      form.session_time = ''
     }
-  })
+    
+  } catch (err) {
+    console.error('❌ خطأ في تحميل المواعيد المتاحة:', err)
+    error.value = 'حدث خطأ في تحميل المواعيد المتاحة: ' + (err.response?.data?.message || err.message)
+    availableSlots.value = []
+  } finally {
+    loadingSlots.value = false
+  }
 }
 
 // عند تغيير المعالج
 const onTherapistChange = () => {
-  form.time = '' // إعادة تعيين الوقت
-  if (form.date) {
+  form.session_time = '' // إعادة تعيين الوقت
+  if (form.session_date) {
     loadAvailableSlots()
+  }
+}
+
+// التحقق من توفر الموعد
+const checkTimeSlotAvailability = async () => {
+  if (!form.session_date || !form.session_time || !form.therapist_id) {
+    return false
+  }
+
+  const selectedSlot = availableSlots.value.find(slot => slot.time === form.session_time)
+  return selectedSlot ? selectedSlot.available : false
+}
+
+// معالجة إرسال النموذج
+const handleSubmit = async () => {
+  try {
+    // التحقق من الحقول المطلوبة
+    if (!form.title_ar || !form.title_en) {
+      error.value = 'يرجى إدخال عنوان الجلسة باللغتين'
+      return
+    }
+
+    if (!form.session_date) {
+      error.value = 'يرجى اختيار تاريخ الجلسة'
+      return
+    }
+
+    if (!form.session_time) {
+      error.value = 'يرجى اختيار الوقت المناسب'
+      return
+    }
+
+    if (!form.therapist_id) {
+      error.value = 'يرجى اختيار المعالج'
+      return
+    }
+
+    // التحقق من توفر الموعد
+    const isTimeSlotAvailable = await checkTimeSlotAvailability()
+    if (!isTimeSlotAvailable) {
+      error.value = 'هذا الموعد غير متاح للمعالج المحدد'
+      return
+    }
+
+    loading.value = true
+    error.value = ''
+
+    console.log('💾 حفظ بيانات الجلسة:', form)
+
+    // إرسال البيانات
+    emit('save', { ...form })
+    
+  } catch (err) {
+    console.error('❌ خطأ في حفظ الجلسة:', err)
+    error.value = 'حدث خطأ أثناء حفظ الجلسة: ' + (err.response?.data?.message || err.message)
+  } finally {
+    loading.value = false
   }
 }
 
 // تحديث النموذج عند تغيير الجلسة
 watch(() => props.session, (session) => {
   if (session) {
+    console.log('✏️ تحرير الجلسة:', session)
+    
+    // استخدام أسماء الحقول التي يتوقعها الـ API
     Object.assign(form, {
-      title: session.title || { ar: '', en: '' },
-      date: session.date || '',
-      time: session.time || '',
-      therapist: session.therapist || '',
+      title_ar: session.title_ar || '',
+      title_en: session.title_en || '',
+      session_date: session.session_date || '',
+      session_time: session.session_time || '',
+      therapist_id: session.therapist_id || '',
       status: session.status || 'scheduled',
       progress: session.progress || 0,
       type: session.type || 'individual',
       location: session.location || 'clinic',
-      notes: session.notes || { ar: '', en: '' },
-      report: session.report || { ar: '', en: '' },
+      notes_ar: session.notes_ar || '',
+      notes_en: session.notes_en || '',
+      report_ar: session.report_ar || '',
+      report_en: session.report_en || '',
+      duration: session.duration || 60,
       attachments: session.attachments || []
     })
     
+    console.log('📝 النموذج بعد التعبئة:', form)
+    
     // تحميل المواعيد إذا كان هناك تاريخ ومعالج
-    if (form.date && form.therapist) {
-      loadAvailableSlots()
+    if (form.session_date && form.therapist_id) {
+      nextTick(() => {
+        loadAvailableSlots()
+      })
     }
   } else {
+    // إعادة التعيين للنموذج الجديد
     Object.assign(form, {
-      title: { ar: '', en: '' },
-      date: '',
-      time: '',
-      therapist: '',
+      title_ar: '',
+      title_en: '',
+      session_date: '',
+      session_time: '',
+      therapist_id: '',
       status: 'scheduled',
       progress: 0,
       type: 'individual',
       location: 'clinic',
-      notes: { ar: '', en: '' },
-      report: { ar: '', en: '' },
+      notes_ar: '',
+      notes_en: '',
+      report_ar: '',
+      report_en: '',
+      duration: 60,
       attachments: []
     })
     availableSlots.value = []
   }
+  
+  // مسح الخطأ عند تغيير الجلسة
+  error.value = ''
 }, { immediate: true })
+
+// مراقبة تغييرات التاريخ والمعالج لتحميل المواعيد
+watch([() => form.session_date, () => form.therapist_id], () => {
+  if (form.session_date && form.therapist_id) {
+    loadAvailableSlots()
+  } else {
+    availableSlots.value = []
+  }
+})
+
+// مراقبة تغيير المدة لإعادة تحميل المواعيد
+watch(() => form.duration, () => {
+  if (form.session_date && form.therapist_id) {
+    loadAvailableSlots()
+  }
+})
+
+// جلب المعالجين عند فتح النافذة
+watch(() => props.open, async (isOpen) => {
+  if (isOpen) {
+    await loadTherapists()
+  }
+})
 
 // معالجة رفع الملفات
 const handleFileUpload = (event) => {
@@ -421,10 +578,14 @@ const handleFileUpload = (event) => {
     if (file.size <= 10 * 1024 * 1024) { // 10MB limit
       form.attachments.push(file)
     } else {
-      alert('الملف كبير جداً. الحد الأقصى 10MB')
+      error.value = 'الملف كبير جداً. الحد الأقصى 10MB'
     }
   })
-  event.target.value = '' // Reset file input
+  
+  // Reset file input
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
 
 // إزالة مرفق
@@ -432,12 +593,13 @@ const removeAttachment = (index) => {
   form.attachments.splice(index, 1)
 }
 
-const handleSubmit = () => {
-  if (!form.time) {
-    alert('يرجى اختيار الوقت المناسب')
-    return
-  }
-  emit('save', { ...form })
+// تنسيق حجم الملف
+const formatFileSize = (bytes) => {
+  if (!bytes) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 </script>
 
