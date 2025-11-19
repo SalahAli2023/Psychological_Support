@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+// import Users from '@/components/dashboard/Users/index.vue'
+import UserDetails from '@/components/dashboard/Users/UserDetails.vue'
 
 // --- Backend Pages ---
 const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
@@ -55,7 +57,17 @@ const routes = [
   { path: '/contact', name: 'contact', component: contact, props: true },
   { path: '/register', name: 'register', component: register, props: true },
   { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
-
+  // {
+  //   path: '/dashboard/users',
+  //   name: 'Users',
+  //   component: Users
+  // },
+  {
+    path: '/dashboard/users/:id',
+    name: 'UserDetails',
+    component: UserDetails,
+    props: true
+  },
   // Auth routes
   { 
     path: '/admin/login', 
