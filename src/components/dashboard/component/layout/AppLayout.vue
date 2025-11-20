@@ -339,8 +339,8 @@ const legalResourceItems = [
 
 const assessmentItems = [
 	{ toName: 'assessments', label: 'جميع المقاييس', icon: 'chart' },
-	{ toName: 'assessment-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
-	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
+    { toName: 'scale-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
+ 	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
 ];
 
 const settingItems = [

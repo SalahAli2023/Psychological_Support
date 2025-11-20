@@ -10,9 +10,9 @@
           getColorClass(interpretation.color)
         ]"
         :style="{ width: getInterpretationWidth(interpretation) + '%' }"
-        :title="`${interpretation.label}: ${interpretation.minScore}-${interpretation.maxScore}`"
+        :title="`${interpretation.interpretation_label_ar}: ${interpretation.min_score}-${interpretation.max_score}`"
       >
-        <span class="hidden sm:inline">{{ interpretation.label }}</span>
+        <span class="hidden sm:inline">{{ interpretation.interpretation_label_ar }}</span>
         <span class="sm:hidden">•</span>
       </div>
     </div>
@@ -34,11 +34,11 @@ const props = defineProps<{
 }>();
 
 const sortedInterpretations = computed(() => {
-  return [...props.interpretations].sort((a, b) => a.minScore - b.minScore);
+  return [...props.interpretations].sort((a, b) => a.min_score - b.min_score);
 });
 
 function getInterpretationWidth(interpretation: Interpretation) {
-  const range = interpretation.maxScore - interpretation.minScore;
+  const range = interpretation.max_score - interpretation.min_score;
   return (range / props.maxScore) * 100;
 }
 

@@ -8,6 +8,7 @@ export interface ScaleCategory {
   name_en: string
   description_ar?: string
   description_en?: string
+  color?: string
   is_active: boolean
   scales_count?: number
   created_at?: string
@@ -16,64 +17,57 @@ export interface ScaleCategory {
 
 export interface Scale {
   id: string
-  name_ar: string
-  name_en: string
+  name_ar?: string
+  name_en?: string
   description_ar?: string
   description_en?: string
-  category_id: string
+  category_id?: string
   image_url?: string
-  max_score: number
-  is_active: boolean
+  max_score?: number
+  is_active?: boolean
   questions_count?: number
   interpretations_count?: number
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
   category?: ScaleCategory
   questions?: Question[]
   interpretations?: Interpretation[]
 }
 
 export interface Question {
-  id: string
-  scale_id: string
-  question_text_ar: string
-  question_text_en: string
-  question_order: number
+  id?: string
+  scale_id?: string
+  question_text_ar?: string
+  question_text_en?: string
+  question_order?: number
   options?: Option[]
   created_at?: string
   updated_at?: string
 }
 
 export interface Option {
-  id: string
-  question_id: string
-  option_text_ar: string
-  option_text_en: string
-  score_value: number
-  option_order: number
+  id?: string
+  question_id?: string
+  option_text_ar?: string
+  option_text_en?: string
+  score_value?: number
+  option_order?: number
   created_at?: string
   updated_at?: string
 }
 
 export interface Interpretation {
-  id: string
-  scale_id: string
-  min_score: number
-  max_score: number
-  interpretation_label_ar: string
-  interpretation_label_en: string
+  id?: string
+  scale_id?: string
+  min_score?: number
+  max_score?: number
+  interpretation_label_ar?: string
+  interpretation_label_en?: string
   description_ar?: string
   description_en?: string
-  color: string
+  color?: string
   created_at?: string
   updated_at?: string
-}
-
-export interface ScaleStats {
-  total_scales: number
-  active_scales: number
-  total_questions: number
-  total_categories: number
 }
 
 export interface CreateScaleData {
@@ -83,28 +77,10 @@ export interface CreateScaleData {
   description_ar?: string
   description_en?: string
   image_url?: string
-  max_score: number
+  max_score?: number
   is_active?: boolean
-  questions?: Array<{
-    question_text_ar: string
-    question_text_en: string
-    question_order: number
-    options: Array<{
-      option_text_ar: string
-      option_text_en: string
-      score_value: number
-      option_order: number
-    }>
-  }>
-  interpretations?: Array<{
-    min_score: number
-    max_score: number
-    interpretation_label_ar: string
-    interpretation_label_en: string
-    description_ar?: string
-    description_en?: string
-    color?: string
-  }>
+  questions?: Question[]
+  interpretations?: Interpretation[]
 }
 
 export const useScalesStore = defineStore('scales', () => {
@@ -112,21 +88,28 @@ export const useScalesStore = defineStore('scales', () => {
   const scales = ref<Scale[]>([])
   const categories = ref<ScaleCategory[]>([])
   const currentScale = ref<Scale | null>(null)
-  const stats = ref<ScaleStats | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // الإجراءات
+  // الإجراءات الأساسية للمقاييس
   const fetchScales = async (params?: any) => {
     console.log('🔄 جلب المقاييس...')
     loading.value = true
     error.value = null
     
     try {
-      const response = await api.get('/v1/psychological-scales', { params })
+      const response = await api.get('/psychological-scales', { params })
       console.log('✅ استجابة المقاييس:', response.data)
       
-      scales.value = response.data.data || response.data
+      // التعامل مع استجابة Laravel المختلفة
+      if (response.data && Array.isArray(response.data)) {
+        scales.value = response.data
+      } else if (response.data && response.data.data) {
+        scales.value = response.data.data
+      } else {
+        scales.value = []
+      }
+      
       console.log(`📊 تم تحميل ${scales.value.length} مقياس`)
       
     } catch (err: any) {
@@ -138,25 +121,19 @@ export const useScalesStore = defineStore('scales', () => {
     }
   }
 
-  const fetchAllScales = async () => {
-    try {
-      console.log('🔄 جلب جميع المقاييس (للمسؤولين)...')
-      const response = await api.get('/v1/psychological-scales/admin/all')
-      scales.value = response.data.data || response.data
-    } catch (err: any) {
-      console.error('❌ خطأ في جلب جميع المقاييس:', err)
-      handleError(err)
-      throw err
-    }
-  }
-
   const fetchCategories = async () => {
     try {
       console.log('🔄 جلب تصنيفات المقاييس...')
-      const response = await api.get('/v1/categories')
+      const response = await api.get('/categories')
       console.log('✅ استجابة التصنيفات:', response.data)
       
-      categories.value = response.data.data || response.data
+      if (response.data && response.data.data) {
+        categories.value = response.data.data
+      } else {
+        categories.value = response.data
+      }
+      
+      console.log(`📂 تم تحميل ${categories.value.length} تصنيف`)
     } catch (err: any) {
       console.error('❌ خطأ في جلب التصنيفات:', err)
       handleError(err)
@@ -169,10 +146,24 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 جلب المقياس ${id}...`)
-      const response = await api.get(`/v1/psychological-scales/${id}`)
       
-      currentScale.value = response.data.data || response.data
-      return currentScale.value
+      // إضافة include لتحميل العلاقات
+      const response = await api.get(`/psychological-scales/${id}`, {
+        params: {
+          include: 'category,questions.options,interpretations'
+        }
+      })
+      
+      let scaleData
+      if (response.data && response.data.data) {
+        scaleData = response.data.data
+      } else {
+        scaleData = response.data
+      }
+      
+      console.log('✅ تم جلب بيانات المقياس:', scaleData)
+      currentScale.value = scaleData
+      return scaleData
     } catch (err: any) {
       console.error(`❌ خطأ في جلب المقياس ${id}:`, err)
       handleError(err)
@@ -183,42 +174,40 @@ export const useScalesStore = defineStore('scales', () => {
   }
 
   const fetchFullScale = async (id: string) => {
+    loading.value = true
+    error.value = null
     try {
       console.log(`🔄 جلب المقياس الكامل ${id}...`)
-      const response = await api.get(`/v1/psychological-scales/${id}/full`)
       
-      currentScale.value = response.data.data || response.data
-      return currentScale.value
+      // محاولة استخدام الـ endpoint الصحيح
+      let response
+      try {
+        response = await api.get(`/psychological-scales/${id}/full`)
+      } catch (fullError) {
+        console.log('⚠️ فشل endpoint full، جلب البيانات الأساسية...')
+        response = await api.get(`/psychological-scales/${id}`, {
+          params: { 
+            include: 'category,questions.options,interpretations' 
+          }
+        })
+      }
+      
+      let scaleData
+      if (response.data && response.data.data) {
+        scaleData = response.data.data
+      } else {
+        scaleData = response.data
+      }
+      
+      console.log('✅ المقياس الكامل:', scaleData)
+      currentScale.value = scaleData
+      return scaleData
     } catch (err: any) {
       console.error(`❌ خطأ في جلب المقياس الكامل ${id}:`, err)
       handleError(err)
       throw err
-    }
-  }
-
-  const getInterpretationForScore = async (scaleId: string, score: number) => {
-    try {
-      console.log(`🔄 جلب التفسير للدرجة ${score} في المقياس ${scaleId}...`)
-      const response = await api.get(`/v1/psychological-scales/${scaleId}/interpretation/${score}`)
-      
-      return response.data.data || response.data
-    } catch (err: any) {
-      console.error(`❌ خطأ في جلب التفسير:`, err)
-      handleError(err)
-      throw err
-    }
-  }
-
-  const fetchScalesByCategory = async (categoryId: string) => {
-    try {
-      console.log(`🔄 جلب مقاييس التصنيف ${categoryId}...`)
-      const response = await api.get(`/v1/psychological-scales/category/${categoryId}`)
-      
-      return response.data.data || response.data
-    } catch (err: any) {
-      console.error(`❌ خطأ في جلب مقاييس التصنيف:`, err)
-      handleError(err)
-      throw err
+    } finally {
+      loading.value = false
     }
   }
 
@@ -227,10 +216,28 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log('🔄 إنشاء مقياس جديد...', scaleData)
-      const response = await api.post('/v1/psychological-scales', scaleData)
       
-      const newScale = response.data.data || response.data
+      // تأكد من إرسال البيانات بشكل صحيح
+      const response = await api.post('/psychological-scales', {
+        category_id: scaleData.category_id,
+        name_ar: scaleData.name_ar,
+        name_en: scaleData.name_en,
+        description_ar: scaleData.description_ar || null,
+        description_en: scaleData.description_en || null,
+        image_url: scaleData.image_url || null,
+        max_score: scaleData.max_score || 100,
+        is_active: scaleData.is_active !== undefined ? scaleData.is_active : true
+      })
+      
+      let newScale
+      if (response.data && response.data.data) {
+        newScale = response.data.data
+      } else {
+        newScale = response.data
+      }
+      
       scales.value.unshift(newScale)
+      console.log('✅ تم إنشاء المقياس بنجاح:', newScale)
       return newScale
     } catch (err: any) {
       console.error('❌ خطأ في إنشاء المقياس:', err)
@@ -245,17 +252,25 @@ export const useScalesStore = defineStore('scales', () => {
     loading.value = true
     error.value = null
     try {
-      console.log(`🔄 تحديث المقياس ${id}...`)
-      const response = await api.put(`/v1/psychological-scales/${id}`, scaleData)
+      console.log(`🔄 تحديث المقياس ${id}...`, scaleData)
+      const response = await api.put(`/psychological-scales/${id}`, scaleData)
       
-      const updatedScale = response.data.data || response.data
+      let updatedScale
+      if (response.data && response.data.data) {
+        updatedScale = response.data.data
+      } else {
+        updatedScale = response.data
+      }
+      
       const index = scales.value.findIndex(scale => scale.id === id)
       if (index !== -1) {
-        scales.value[index] = updatedScale
+        scales.value[index] = { ...scales.value[index], ...updatedScale }
       }
       if (currentScale.value && currentScale.value.id === id) {
         currentScale.value = updatedScale
       }
+      
+      console.log('✅ تم تحديث المقياس بنجاح:', updatedScale)
       return updatedScale
     } catch (err: any) {
       console.error(`❌ خطأ في تحديث المقياس ${id}:`, err)
@@ -271,12 +286,14 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 حذف المقياس ${id}...`)
-      await api.delete(`/v1/psychological-scales/${id}`)
+      await api.delete(`/psychological-scales/${id}`)
       
       scales.value = scales.value.filter(scale => scale.id !== id)
       if (currentScale.value && currentScale.value.id === id) {
         currentScale.value = null
       }
+      
+      console.log('✅ تم حذف المقياس بنجاح')
     } catch (err: any) {
       console.error(`❌ خطأ في حذف المقياس ${id}:`, err)
       handleError(err)
@@ -286,82 +303,172 @@ export const useScalesStore = defineStore('scales', () => {
     }
   }
 
-  const duplicateScale = async (id: string) => {
-    try {
-      console.log(`🔄 نسخ المقياس ${id}...`)
-      const response = await api.post(`/v1/psychological-scales/${id}/duplicate`)
-      
-      const duplicatedScale = response.data.data || response.data
-      scales.value.unshift(duplicatedScale)
-      return duplicatedScale
-    } catch (err: any) {
-      console.error(`❌ خطأ في نسخ المقياس ${id}:`, err)
-      handleError(err)
-      throw err
-    }
-  }
-
   const toggleScaleStatus = async (id: string) => {
+    loading.value = true
+    error.value = null
     try {
       console.log(`🔄 تبديل حالة المقياس ${id}...`)
-      const response = await api.patch(`/v1/psychological-scales/${id}/toggle-status`)
+      const response = await api.patch(`/psychological-scales/${id}/toggle-status`)
       
-      const updatedScale = response.data.data
+      let updatedScale
+      if (response.data && response.data.data) {
+        updatedScale = response.data.data
+      } else {
+        updatedScale = response.data
+      }
+      
       const index = scales.value.findIndex(scale => scale.id === id)
       if (index !== -1) {
         scales.value[index].is_active = updatedScale.is_active
       }
+      
+      console.log('✅ تم تبديل الحالة بنجاح:', updatedScale)
       return updatedScale
     } catch (err: any) {
       console.error(`❌ خطأ في تبديل حالة المقياس ${id}:`, err)
       handleError(err)
       throw err
+    } finally {
+      loading.value = false
     }
   }
 
-  // دوال إضافية للتصنيفات
-  const createCategory = async (categoryData: Partial<ScaleCategory>) => {
+  // 🔥 دوال إدارة التصنيفات - المطلوبة لحل المشكلة
+  const toggleCategoryStatus = async (id: string): Promise<void> => {
     try {
-      console.log('🔄 إنشاء تصنيف جديد...')
-      const response = await api.post('/v1/categories', categoryData)
+      console.log(`🔄 تبديل حالة التصنيف ${id}...`)
       
-      const newCategory = response.data.data || response.data
-      categories.value.push(newCategory)
-      return newCategory
-    } catch (err: any) {
-      console.error('❌ خطأ في إنشاء التصنيف:', err)
-      handleError(err)
-      throw err
-    }
-  }
-
-  const updateCategory = async (id: string, categoryData: Partial<ScaleCategory>) => {
-    try {
-      console.log(`🔄 تحديث التصنيف ${id}...`)
-      const response = await api.put(`/v1/categories/${id}`, categoryData)
-      
-      const updatedCategory = response.data.data || response.data
-      const index = categories.value.findIndex(cat => cat.id === id)
-      if (index !== -1) {
-        categories.value[index] = updatedCategory
+      const category = categories.value.find(cat => cat.id === id);
+      if (!category) {
+        throw new Error('التصنيف غير موجود');
       }
-      return updatedCategory
+
+      const newStatus = !category.is_active;
+      
+      // تحديث محلي أولاً
+      category.is_active = newStatus;
+      
+      // تحديث في الخادم
+      const response = await api.patch(`/categories/${id}`, { 
+        is_active: newStatus 
+      });
+      
+      console.log('✅ تم تبديل حالة التصنيف بنجاح');
+      return response.data;
     } catch (err: any) {
-      console.error(`❌ خطأ في تحديث التصنيف ${id}:`, err)
-      handleError(err)
-      throw err
+      console.error('❌ خطأ في تبديل حالة التصنيف:', err);
+      
+      // التراجع عن التحديث المحلي في حالة الخطأ
+      const category = categories.value.find(cat => cat.id === id);
+      if (category) {
+        category.is_active = !category.is_active;
+      }
+      
+      handleError(err);
+      throw err;
     }
   }
 
-  const deleteCategory = async (id: string) => {
+  const deleteCategory = async (id: string): Promise<void> => {
+    loading.value = true;
     try {
-      console.log(`🔄 حذف التصنيف ${id}...`)
-      await api.delete(`/v1/categories/${id}`)
+      console.log(`🔄 حذف التصنيف ${id}...`);
       
-      categories.value = categories.value.filter(cat => cat.id !== id)
+      // حذف من الخادم
+      await api.delete(`/categories/${id}`);
+      
+      // حذف محلي
+      const index = categories.value.findIndex(cat => cat.id === id);
+      if (index !== -1) {
+        categories.value.splice(index, 1);
+      }
+      
+      console.log('✅ تم حذف التصنيف بنجاح');
     } catch (err: any) {
-      console.error(`❌ خطأ في حذف التصنيف ${id}:`, err)
-      handleError(err)
+      console.error('❌ خطأ في حذف التصنيف:', err);
+      handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  const createCategory = async (categoryData: any): Promise<ScaleCategory> => {
+    loading.value = true;
+    error.value = null;
+    try {
+      console.log('🔄 إنشاء تصنيف جديد...', categoryData);
+      
+      const response = await api.post('/categories', categoryData);
+      
+      let newCategory;
+      if (response.data && response.data.data) {
+        newCategory = response.data.data;
+      } else {
+        newCategory = response.data;
+      }
+      
+      categories.value.unshift(newCategory);
+      console.log('✅ تم إنشاء التصنيف بنجاح:', newCategory);
+      return newCategory;
+    } catch (err: any) {
+      console.error('❌ خطأ في إنشاء التصنيف:', err);
+      handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  const updateCategory = async (id: string, categoryData: any): Promise<ScaleCategory> => {
+    loading.value = true;
+    error.value = null;
+    try {
+      console.log(`🔄 تحديث التصنيف ${id}...`, categoryData);
+      
+      const response = await api.put(`/categories/${id}`, categoryData);
+      
+      let updatedCategory;
+      if (response.data && response.data.data) {
+        updatedCategory = response.data.data;
+      } else {
+        updatedCategory = response.data;
+      }
+      
+      // تحديث محلي
+      const index = categories.value.findIndex(cat => cat.id === id);
+      if (index !== -1) {
+        categories.value[index] = updatedCategory;
+      }
+      
+      console.log('✅ تم تحديث التصنيف بنجاح:', updatedCategory);
+      return updatedCategory;
+    } catch (err: any) {
+      console.error(`❌ خطأ في تحديث التصنيف ${id}:`, err);
+      handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // دالة لرفع الصور (اختياري)
+  const uploadImage = async (file: File) => {
+    try {
+      console.log('🔼 رفع الصورة...')
+      const formData = new FormData()
+      formData.append('image', file)
+      
+      const response = await api.post('/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      
+      console.log('✅ تم رفع الصورة:', response.data)
+      return response.data.url
+    } catch (err: any) {
+      console.error('❌ خطأ في رفع الصورة:', err)
       throw err
     }
   }
@@ -369,10 +476,20 @@ export const useScalesStore = defineStore('scales', () => {
   // دوال مساعدة
   const handleError = (err: any) => {
     if (err.response) {
-      const message = err.response.data?.message || `خطأ ${err.response.status}: فشل في العملية`
+      let message = `خطأ ${err.response.status}: `
+      
+      if (err.response.data?.errors) {
+        // أخطاء التحقق من Laravel
+        const errors = Object.values(err.response.data.errors).flat()
+        message += errors.join(', ')
+      } else if (err.response.data?.message) {
+        message += err.response.data.message
+      } else {
+        message += 'فشل في العملية'
+      }
+      
       error.value = message
       
-      // عرض تفاصيل الخطأ في الكونسول
       console.error('تفاصيل الخطأ:', {
         status: err.response.status,
         data: err.response.data,
@@ -393,29 +510,9 @@ export const useScalesStore = defineStore('scales', () => {
     currentScale.value = null
   }
 
-  const clearScales = () => {
-    scales.value = []
-  }
-
-  const clearCategories = () => {
-    categories.value = []
-  }
-
-  // الخصائص المحسوبة
-  const activeScales = () => scales.value.filter(scale => scale.is_active)
-  const scalesByCategory = (categoryId: string) => scales.value.filter(scale => scale.category_id === categoryId)
-  
   const getCategoryName = (categoryId: string) => {
     const category = categories.value.find(cat => cat.id === categoryId)
-    return category ? (document.documentElement.lang === 'ar' ? category.name_ar : category.name_en) : 'Unknown'
-  }
-
-  const getScaleName = (scale: Scale) => {
-    return document.documentElement.lang === 'ar' ? scale.name_ar : scale.name_en
-  }
-
-  const getScaleDescription = (scale: Scale) => {
-    return document.documentElement.lang === 'ar' ? scale.description_ar : scale.description_en
+    return category ? category.name_ar : 'غير معروف'
   }
 
   return {
@@ -423,40 +520,29 @@ export const useScalesStore = defineStore('scales', () => {
     scales,
     categories,
     currentScale,
-    stats,
     loading,
     error,
     
-    // الإجراءات الأساسية
+    // الإجراءات الأساسية للمقاييس
     fetchScales,
-    fetchAllScales,
     fetchCategories,
     fetchScaleById,
     fetchFullScale,
-    fetchScalesByCategory,
-    getInterpretationForScore,
     createScale,
     updateScale,
     deleteScale,
-    duplicateScale,
     toggleScaleStatus,
+    uploadImage,
     
-    // إجراءات التصنيفات
+    // 🔥 دوال إدارة التصنيفات - المضافة
+    toggleCategoryStatus,
+    deleteCategory,
     createCategory,
     updateCategory,
-    deleteCategory,
     
     // دوال مساعدة
     resetError,
     resetCurrentScale,
-    clearScales,
-    clearCategories,
-    
-    // الخصائص المحسوبة
-    activeScales,
-    scalesByCategory,
-    getCategoryName,
-    getScaleName,
-    getScaleDescription
+    getCategoryName
   }
 })

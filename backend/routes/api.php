@@ -19,6 +19,12 @@ use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientConditionController;
 use App\Http\Controllers\Api\PatientSessionController;
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PsychologicalScaleController;
+use App\Http\Controllers\ScaleQuestionController;
+use App\Http\Controllers\QuestionOptionController;
+use App\Http\Controllers\ResultInterpretationController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +69,10 @@ Route::post('/measures/{id}/submit', [MeasureController::class, 'submit']);
 Route::get('/legal-resource-categories', [LegalResourceController::class, 'categories']);
 Route::get('/legal-resources/search', [LegalResourceController::class, 'search']);
 
+// ==================== PUBLIC PSYCHOLOGICAL SCALES ROUTES ====================
+Route::get('/psychological-scales/active/list', [PsychologicalScaleController::class, 'active']);
+Route::get('/psychological-scales/category/{categoryId}', [PsychologicalScaleController::class, 'byCategory']);
+Route::get('/psychological-scales/{id}/full', [PsychologicalScaleController::class, 'getFullScale']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -138,96 +148,85 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/legal-resources/{id}', [LegalResourceController::class, 'update']);
     Route::delete('/legal-resources/{id}', [LegalResourceController::class, 'destroy']);
 
-   // ==================== PATIENT MANAGEMENT ROUTES ====================
-Route::prefix('patients')->group(function () {
-    // Patient Routes
-    Route::get('/', [PatientController::class, 'index']);
-    Route::get('/stats', [PatientController::class, 'getStats']);
-    Route::get('/export', [PatientController::class, 'export']);
-    Route::post('/', [PatientController::class, 'store']);
-    Route::get('/{patient}', [PatientController::class, 'show']);
-    Route::put('/{patient}', [PatientController::class, 'update']);
-    Route::delete('/{patient}', [PatientController::class, 'destroy']);
+    // ==================== PATIENT MANAGEMENT ROUTES ====================
+    Route::prefix('patients')->group(function () {
+        // Patient Routes
+        Route::get('/', [PatientController::class, 'index']);
+        Route::get('/stats', [PatientController::class, 'getStats']);
+        Route::get('/export', [PatientController::class, 'export']);
+        Route::post('/', [PatientController::class, 'store']);
+        Route::get('/{patient}', [PatientController::class, 'show']);
+        Route::put('/{patient}', [PatientController::class, 'update']);
+        Route::delete('/{patient}', [PatientController::class, 'destroy']);
 
-    // Patient Conditions Routes
-    Route::prefix('{patient}')->group(function () {
-        Route::get('/conditions', [PatientConditionController::class, 'index']);
-        Route::get('/conditions/stats', [PatientConditionController::class, 'getStats']);
-        Route::get('/conditions/export', [PatientConditionController::class, 'export']);
-        Route::post('/conditions', [PatientConditionController::class, 'store']);
-        Route::post('/conditions/bulk-import', [PatientConditionController::class, 'bulkImport']);
-        
-        Route::prefix('conditions/{condition}')->group(function () {
-            Route::get('/', [PatientConditionController::class, 'show']);
-            Route::put('/', [PatientConditionController::class, 'update']);
-            Route::delete('/', [PatientConditionController::class, 'destroy']);
-            Route::patch('/toggle-status', [PatientConditionController::class, 'toggleStatus']);
-        });
-
-        // ==================== PATIENT SESSIONS ROUTES ====================
-        Route::prefix('sessions')->group(function () {
-            Route::get('/', [PatientSessionController::class, 'index']);
-            Route::get('/stats', [PatientSessionController::class, 'getStats']);
-            Route::get('/available-slots', [PatientSessionController::class, 'getAvailableSlots']);
-            Route::post('/', [PatientSessionController::class, 'store']);
+        // Patient Conditions Routes
+        Route::prefix('{patient}')->group(function () {
+            Route::get('/conditions', [PatientConditionController::class, 'index']);
+            Route::get('/conditions/stats', [PatientConditionController::class, 'getStats']);
+            Route::get('/conditions/export', [PatientConditionController::class, 'export']);
+            Route::post('/conditions', [PatientConditionController::class, 'store']);
+            Route::post('/conditions/bulk-import', [PatientConditionController::class, 'bulkImport']);
             
-            Route::prefix('{session}')->group(function () {
-                Route::get('/', [PatientSessionController::class, 'show']);
-                Route::put('/', [PatientSessionController::class, 'update']);
-                Route::delete('/', [PatientSessionController::class, 'destroy']);
-                Route::patch('/status', [PatientSessionController::class, 'updateStatus']);
-                Route::patch('/progress', [PatientSessionController::class, 'updateProgress']);
-                Route::post('/notes', [PatientSessionController::class, 'addNotes']);
-                Route::post('/report', [PatientSessionController::class, 'addReport']);
-                Route::post('/attachments', [PatientSessionController::class, 'uploadAttachments']);
-                Route::delete('/attachments/{attachment}', [PatientSessionController::class, 'deleteAttachment']);
+            Route::prefix('conditions/{condition}')->group(function () {
+                Route::get('/', [PatientConditionController::class, 'show']);
+                Route::put('/', [PatientConditionController::class, 'update']);
+                Route::delete('/', [PatientConditionController::class, 'destroy']);
+                Route::patch('/toggle-status', [PatientConditionController::class, 'toggleStatus']);
+            });
+
+            // ==================== PATIENT SESSIONS ROUTES ====================
+            Route::prefix('sessions')->group(function () {
+                Route::get('/', [PatientSessionController::class, 'index']);
+                Route::get('/stats', [PatientSessionController::class, 'getStats']);
+                Route::get('/available-slots', [PatientSessionController::class, 'getAvailableSlots']);
+                Route::post('/', [PatientSessionController::class, 'store']);
+                
+                Route::prefix('{session}')->group(function () {
+                    Route::get('/', [PatientSessionController::class, 'show']);
+                    Route::put('/', [PatientSessionController::class, 'update']);
+                    Route::delete('/', [PatientSessionController::class, 'destroy']);
+                    Route::patch('/status', [PatientSessionController::class, 'updateStatus']);
+                    Route::patch('/progress', [PatientSessionController::class, 'updateProgress']);
+                    Route::post('/notes', [PatientSessionController::class, 'addNotes']);
+                    Route::post('/report', [PatientSessionController::class, 'addReport']);
+                    Route::post('/attachments', [PatientSessionController::class, 'uploadAttachments']);
+                    Route::delete('/attachments/{attachment}', [PatientSessionController::class, 'deleteAttachment']);
+                });
             });
         });
     });
-});
-    // ==================== PSYCHOLOGICAL ASSESSMENT ROUTES ====================
 
-    // Assessments (تغطي التقييمات + النتائج)
+    // ==================== PSYCHOLOGICAL ASSESSMENT ROUTES ====================
     Route::get('assessments', [AssessmentController::class, 'index']);
     Route::get('assessments/{id}', [AssessmentController::class, 'show']);
     Route::post('assessments', [AssessmentController::class, 'store']);
     Route::get('assessments/statistics', [AssessmentController::class, 'getUserStatistics']);
     Route::get('assessments/{id}/result', [AssessmentController::class, 'getAssessmentResult']);
+
+
+    // ==================== PROTECTED PSYCHOLOGICAL SCALES ROUTES ====================
+    Route::apiResource('psychological-scales', PsychologicalScaleController::class)->except(['index']);
+    Route::get('psychological-scales', [PsychologicalScaleController::class, 'index']); // Separate for auth
+    Route::patch('psychological-scales/{psychologicalScale}/toggle-status', [PsychologicalScaleController::class, 'toggleStatus']);
+    Route::put('psychological-scales/{psychologicalScale}/full', [PsychologicalScaleController::class, 'updateFullScale']);
+
+    // Categories Routes (Protected)
+    Route::apiResource('categories', CategoryController::class);
+    Route::get('categories/active/list', [CategoryController::class, 'active']);
+    Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus']);
+
+    // Scale Questions Routes (Protected)
+    Route::apiResource('scale-questions', ScaleQuestionController::class);
+    Route::post('scale-questions/bulk', [ScaleQuestionController::class, 'bulkStore']);
+    Route::post('scale-questions/reorder', [ScaleQuestionController::class, 'reorder']);
+
+    // Question Options Routes (Protected)
+    Route::apiResource('question-options', QuestionOptionController::class);
+    Route::post('question-options/bulk', [QuestionOptionController::class, 'bulkStore']);
+    Route::post('question-options/reorder', [QuestionOptionController::class, 'reorder']);
+
+    // Result Interpretations Routes (Protected)
+    Route::apiResource('result-interpretations', ResultInterpretationController::class);
+    Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
+    Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);
 });
-
-
-
-
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\PsychologicalScaleController;
-use App\Http\Controllers\ScaleQuestionController;
-use App\Http\Controllers\QuestionOptionController;
-use App\Http\Controllers\ResultInterpretationController;
-
-
-// Categories Routes
-Route::apiResource('categories', CategoryController::class);
-Route::get('categories/active/list', [CategoryController::class, 'active']);
-Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus']);
-
-// Psychological Scales Routes
-Route::apiResource('psychological-scales', PsychologicalScaleController::class);
-Route::get('psychological-scales/active/list', [PsychologicalScaleController::class, 'active']);
-Route::get('psychological-scales/category/{categoryId}', [PsychologicalScaleController::class, 'byCategory']);
-Route::get('psychological-scales/{id}/full', [PsychologicalScaleController::class, 'getFullScale']);
-Route::patch('psychological-scales/{psychologicalScale}/toggle-status', [PsychologicalScaleController::class, 'toggleStatus']);
-
-// Scale Questions Routes
-Route::apiResource('scale-questions', ScaleQuestionController::class);
-Route::post('scale-questions/bulk', [ScaleQuestionController::class, 'bulkStore']);
-Route::post('scale-questions/reorder', [ScaleQuestionController::class, 'reorder']);
-
-// Question Options Routes
-Route::apiResource('question-options', QuestionOptionController::class);
-Route::post('question-options/bulk', [QuestionOptionController::class, 'bulkStore']);
-Route::post('question-options/reorder', [QuestionOptionController::class, 'reorder']);
-
-// Result Interpretations Routes
-Route::apiResource('result-interpretations', ResultInterpretationController::class);
-Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
-Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);

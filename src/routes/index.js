@@ -16,6 +16,8 @@ const ArticleCategories = () => import('../components/dashboard/Articles/Article
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Measures/Index.vue');
+const Categories = () => import('../components/dashboard/Measures/Categories/CategoriesIndex.vue'); 
+
 
 const LegalResources = () => import('../components/dashboard/LegalResources/Index.vue')
 
@@ -94,6 +96,7 @@ const routes = [
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'libraries', name: 'libraries', component: Library },
       { path: 'events', name: 'events', component: Events },
+      { path: 'scale-categories', name: 'scale-categories', component: Categories },
 
       { path: 'assessments', name: 'assessments', component: Assessments },
       { path: 'legal-resources', name: 'legal-resources', component: LegalResources },
