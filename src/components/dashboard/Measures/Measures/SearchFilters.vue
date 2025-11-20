@@ -31,10 +31,9 @@
       class="w-full sm:w-48 rounded-lg border border-primary bg-primary px-3 py-2 text-sm text-primary"
     >
       <option value="">جميع الفئات</option>
-      <option>القلق</option>
-      <option>الاكتئاب</option>
-      <option>التوتر</option>
-      <option>الشخصية</option>
+      <option v-for="category in categories" :key="category.id" :value="category.name_ar">
+        {{ category.name_ar }}
+      </option>
     </select>
 
     <!-- الحالة -->
@@ -60,6 +59,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useScalesStore } from '@/stores/scales.ts';
+
+const scalesStore = useScalesStore();
+const categories = computed(() => scalesStore.categories);
+
 defineProps<{
   searchQuery: string;
   categoryFilter: string;

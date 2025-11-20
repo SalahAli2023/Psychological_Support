@@ -27,10 +27,10 @@
           </div>
           
           <!-- عنوان التصنيف -->
-          <h3 class="text-xl font-bold text-center mb-4 text-gray-800">{{ translate(`categories.${category.id}.title`) }}</h3>
+          <h3 class="text-xl font-bold text-center mb-4 text-gray-800">{{ getCategoryTitle(category) }}</h3>
           
           <!-- وصف التصنيف -->
-          <p class="text-gray-600 text-center mb-6 text-sm leading-relaxed">{{ translate(`categories.${category.id}.description`) }}</p>
+          <p class="text-gray-600 text-center mb-6 text-sm leading-relaxed">{{ getCategoryDescription(category) }}</p>
           
           <!-- إحصائيات التصنيف -->
           <div class="flex justify-center gap-6 mb-6 text-sm">
@@ -106,47 +106,101 @@ export default {
     const categories = categoriesData
     const { translate } = useTranslations()
 
-    // دالة الترجمة
+    // دالة الترجمة للتصنيفات
+    const getCategoryTitle = (category) => {
+      if (typeof category.title === 'object') {
+        return category.title[props.language] || category.title.ar
+      }
+      return category.title
+    }
+
+    const getCategoryDescription = (category) => {
+      if (typeof category.description === 'object') {
+        return category.description[props.language] || category.description.ar
+      }
+      return category.description
+    }
+
+    // دالة حساب عدد المقاييس في كل تصنيف
     const getMeasuresCount = (categoryId) => {
       if (categoryId === 'all') return props.measures.length
       
       const categoryMap = {
         'women': 'women',
-        'children': 'children', 
+        'children': 'children',
+        'specialists': 'specialists'
       }
       
-      return props.measures.filter(measure => 
-        measure.category === categoryMap[categoryId]
-      ).length
+      const targetCategory = categoryMap[categoryId]
+      
+      return props.measures.filter(measure => {
+        // البحث في اسم التصنيف أو ID التصنيف
+        const categoryName = measure.category?.name_ar?.toLowerCase() || ''
+        const categoryNameEn = measure.category?.name_en?.toLowerCase() || ''
+        const categoryId = measure.category_id?.toString().toLowerCase() || ''
+        
+        return categoryName.includes(targetCategory) || 
+               categoryNameEn.includes(targetCategory) ||
+               categoryId.includes(targetCategory)
+      }).length
     }
 
-    // حساب متوسط الوقت في كل تصنيف
+    // دالة حساب متوسط الوقت في كل تصنيف
     const getAverageTime = (categoryId) => {
       if (categoryId === 'all') {
+        // حساب متوسط الوقت لجميع المقاييس
         const times = props.measures.map(m => {
-          const [min] = m.time.split('-').map(Number)
-          return min
+          // إذا كان هناك وقت محدد في البيانات، استخدمه
+          if (m.time) {
+            const [min] = m.time.split('-').map(Number)
+            return min || 5 // افتراضي 5 دقائق
+          }
+          
+          // حساب الوقت بناءً على عدد الأسئلة
+          const questionsCount = m.questions?.length || 0
+          return Math.max(5, Math.min(15, Math.ceil(questionsCount * 0.5))) // تقدير الوقت
         })
-        return Math.round(times.reduce((a, b) => a + b, 0) / times.length) || 0
+        
+        const average = times.length > 0 
+          ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) 
+          : 5
+        return average || 5
       }
       
       const categoryMap = {
         'women': 'women',
         'children': 'children',
+        'specialists': 'specialists'
       }
       
-      const categoryMeasures = props.measures.filter(measure => 
-        measure.category === categoryMap[categoryId]
-      )
+      const targetCategory = categoryMap[categoryId]
       
-      if (categoryMeasures.length === 0) return 0
-      
-      const times = categoryMeasures.map(m => {
-        const [min] = m.time.split('-').map(Number)
-        return min
+      const categoryMeasures = props.measures.filter(measure => {
+        const categoryName = measure.category?.name_ar?.toLowerCase() || ''
+        const categoryNameEn = measure.category?.name_en?.toLowerCase() || ''
+        const categoryId = measure.category_id?.toString().toLowerCase() || ''
+        
+        return categoryName.includes(targetCategory) || 
+               categoryNameEn.includes(targetCategory) ||
+               categoryId.includes(targetCategory)
       })
       
-      return Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+      if (categoryMeasures.length === 0) return 5
+      
+      const times = categoryMeasures.map(m => {
+        // إذا كان هناك وقت محدد في البيانات، استخدمه
+        if (m.time) {
+          const [min] = m.time.split('-').map(Number)
+          return min || 5 // افتراضي 5 دقائق
+        }
+        
+        // حساب الوقت بناءً على عدد الأسئلة
+        const questionsCount = m.questions?.length || 0
+        return Math.max(5, Math.min(15, Math.ceil(questionsCount * 0.5))) // تقدير الوقت
+      })
+      
+      const average = Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+      return average || 5
     }
 
     // الحصول على أيقونة التصنيف النشط
@@ -162,7 +216,15 @@ export default {
       const category = categories.find(cat => 
         props.activeCategory === 'allMeasures' ? cat.id === 'all' : cat.filter === props.activeCategory
       )
-      return category ? translate(`categories.${category.id}.title`) : translate('categories.all.title')
+      
+      if (category) {
+        if (typeof category.title === 'object') {
+          return category.title[props.language] || category.title.ar
+        }
+        return category.title
+      }
+      
+      return translate('categories.all.title')
     })
 
     return {
@@ -171,7 +233,9 @@ export default {
       getMeasuresCount,
       getAverageTime,
       getActiveCategoryIcon,
-      getActiveCategoryTitle
+      getActiveCategoryTitle,
+      getCategoryTitle,
+      getCategoryDescription
     }
   }
 }
@@ -181,7 +245,6 @@ export default {
 /* CSS الضرورية فقط للتأثيرات التي لا تدعمها Tailwind */
 .category-card-hover::before {
   background: linear-gradient(135deg, rgba(158, 191, 59, 0.05) 0%, rgba(214, 162, 154, 0.05) 100%);
-  /* transition: all 0.3s ease; */
 }
 
 .category-card:hover {

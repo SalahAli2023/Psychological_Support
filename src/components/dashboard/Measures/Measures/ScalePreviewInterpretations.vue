@@ -16,13 +16,13 @@
             ]"
             :style="{ width: getInterpretationWidth(interpretation) + '%' }"
           >
-            <span class="hidden xs:inline">{{ interpretation.label }}</span>
+            <span class="hidden xs:inline">{{ interpretation.interpretation_label_ar }}</span>
             <span class="xs:hidden">•</span>
           </div>
         </div>
         <div class="flex justify-between text-xs sm:text-sm text-gray-500 mt-2">
           <span>0</span>
-          <span>{{ previewData?.maxScore }}</span>
+          <span>{{ previewData?.max_score }}</span>
         </div>
       </div>
 
@@ -39,15 +39,15 @@
           <tbody>
             <tr v-for="(interpretation, index) in previewData?.interpretations" :key="index" class="border-t border-primary">
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm">
-                {{ interpretation.minScore }} - {{ interpretation.maxScore }}
+                {{ interpretation.min_score }} - {{ interpretation.max_score }}
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm">
                 <span :class="['badge text-xs', getColorClass(interpretation.color)]">
-                  {{ interpretation.label }}
+                  {{ interpretation.interpretation_label_ar }}
                 </span>
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm">
-                {{ interpretation.description }}
+                {{ interpretation.description_ar }}
               </td>
             </tr>
           </tbody>
@@ -68,8 +68,8 @@ defineProps<{
 
 function getInterpretationWidth(interpretation: Interpretation) {
   if (!interpretation) return 0;
-  const range = interpretation.maxScore - interpretation.minScore;
-  return (range / (interpretation.maxScore || 1)) * 100;
+  const range = interpretation.max_score - interpretation.min_score;
+  return (range / (interpretation.max_score || 1)) * 100;
 }
 
 function getColorClass(color: string) {

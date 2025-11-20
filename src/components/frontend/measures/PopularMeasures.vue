@@ -16,9 +16,10 @@
           :key="measure.id"
           class="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-r-4 border-primary-pink transition-all duration-300 hover:translate-y-[-5px] hover:shadow-xl"
           @click="$emit('measure-click', measure)"
+          :class="{ 'opacity-60': !measure.is_active }"
         >
           <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <i :class="measure.icon" class="text-primary-pink"></i>
+            <i :class="getCategoryIcon(measure)" class="text-primary-pink"></i>
             {{ getTranslatedTitle(measure) }}
           </h3>
           <p class="text-gray-600 text-sm mb-4 flex-grow">
@@ -27,11 +28,11 @@
           <div class="flex justify-between text-sm text-gray-500 mb-4">
             <div class="flex items-center gap-1">
               <i class="fas fa-question-circle"></i>
-              <span>{{ measure.questions.length }} {{ translate('popularMeasures.questions') }}</span>
+              <span>{{ measure.questions_count || measure.questions?.length || 0 }} {{ translate('popularMeasures.questions') }}</span>
             </div>
             <div class="flex items-center gap-1">
               <i class="fas fa-clock"></i>
-              <span>{{ measure.time }} {{ translate('popularMeasures.minutes') }}</span>
+              <span>{{ getEstimatedTime(measure) }} {{ translate('popularMeasures.minutes') }}</span>
             </div>
           </div>
 
@@ -43,17 +44,20 @@
                   v-for="i in 5" 
                   :key="i" 
                   class="fas fa-star text-sm" 
-                  :class="i <= measure.rating 
+                  :class="i <= (measure.rating || 0) 
                     ? 'text-transparent bg-gradient-to-br from-primary-green to-primary-pink bg-clip-text' 
                     : 'text-gray-300'"
                 ></i>
               </div>
-              <span class="text-xs text-gray-500 mr-1">({{ measure.reviews }})</span>
+              <span class="text-xs text-gray-500 mr-1">({{ measure.reviews || 0 }})</span>
             </div>
           </div>
 
-          <button class="w-full py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors text-sm font-medium">
-            {{ translate('popularMeasures.start') }}
+          <button 
+            :disabled="!measure.is_active"
+            class="w-full py-2 bg-primary-green text-white rounded-lg hover:bg-secondary-green transition-colors text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {{ measure.is_active ? translate('popularMeasures.start') : translate('popularMeasures.unavailable') }}
           </button>
         </div>
       </div>
@@ -78,19 +82,43 @@ export default {
   },
   emits: ['measure-click'],
   setup(props) {
-    const {translate} = useTranslations()
+    const { translate } = useTranslations()
+
     const getTranslatedTitle = (measure) => {
-      return typeof measure.title === 'object' ? measure.title[props.language] : measure.title;
+      if (props.language === 'ar') {
+        return measure.name_ar || measure.name_en || 'بدون عنوان';
+      }
+      return measure.name_en || measure.name_ar || 'No Title';
     };
 
     const getTranslatedDescription = (measure) => {
-      return typeof measure.description === 'object' ? measure.description[props.language] : measure.description;
+      if (props.language === 'ar') {
+        return measure.description_ar || measure.description_en || 'لا يوجد وصف';
+      }
+      return measure.description_en || measure.description_ar || 'No description';
+    };
+
+    const getCategoryIcon = (measure) => {
+      const categoryName = measure.category?.name_ar?.toLowerCase();
+      const icons = {
+        'نساء': 'fas fa-female',
+        'أطفال': 'fas fa-child',
+        'متخصصين': 'fas fa-user-md'
+      };
+      return icons[categoryName] || 'fas fa-chart-bar';
+    };
+
+    const getEstimatedTime = (measure) => {
+      const questionsCount = measure.questions_count || measure.questions?.length || 0;
+      return Math.max(5, Math.min(20, Math.ceil(questionsCount * 0.8)));
     };
 
     return {
       translate,
       getTranslatedTitle,
-      getTranslatedDescription
+      getTranslatedDescription,
+      getCategoryIcon,
+      getEstimatedTime
     };
   }
 }

@@ -5,7 +5,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <FormField label="نص السؤال (العربية)">
           <input 
-            v-model="question.text.ar"
+            v-model="question.question_text_ar"
             type="text"
             class="input text-sm sm:text-base"
             :placeholder="`السؤال ${index + 1} بالعربية`"
@@ -14,7 +14,7 @@
         </FormField>
         <FormField label="نص السؤال (الإنجليزية)">
           <input 
-            v-model="question.text.en"
+            v-model="question.question_text_en"
             type="text"
             class="input text-sm sm:text-base"
             :placeholder="`Question ${index + 1} in English`"

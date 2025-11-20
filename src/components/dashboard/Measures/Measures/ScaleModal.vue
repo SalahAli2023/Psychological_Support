@@ -34,7 +34,7 @@
         <InterpretationsStep
           v-else-if="currentStep === 3"
           :interpretations="form.interpretations"
-          :max-score="form.maxScore"
+          :max-score="form.max_score"
           @add-interpretation="$emit('addInterpretation')"
           @remove-interpretation="$emit('removeInterpretation', $event)"
         />
@@ -78,7 +78,7 @@ defineEmits<{
   addQuestion: [];
   removeQuestion: [index: number];
   addOption: [questionIndex: number];
-  removeOption: [questionIndex: number, optionIndex: number];
+  removeOption: [payload: { questionIndex: number; optionIndex: number }];
   addInterpretation: [];
   removeInterpretation: [index: number];
   imageUpload: [event: Event];
