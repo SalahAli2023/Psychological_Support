@@ -114,7 +114,7 @@ const menuItems = [
   { name: { ar: translations.ar.menuItems.about, en: translations.en.menuItems.about }, path: '/about' },
   { name: { ar: translations.ar.menuItems.services, en: translations.en.menuItems.services }, path: '/services' },
   { name: { ar: translations.ar.menuItems.specialists, en: translations.en.menuItems.specialists }, path: '/Specialists' },
-  { name: { ar: translations.ar.menuItems.sessions, en: translations.en.menuItems.sessions }, path: '/sessions' },
+  { name: { ar: translations.ar.menuItems.sessions, en: translations.en.menuItems.sessions }, path: '/session' },
   { name: { ar: translations.ar.menuItems.events, en: translations.en.menuItems.events }, path: '/events' },
   { name: { ar: translations.ar.menuItems.measures, en: translations.en.menuItems.measures }, path: '/measures' },
    { name: { ar: translations.ar.menuItems.library, en: translations.en.menuItems.library }, path: '/library' },
