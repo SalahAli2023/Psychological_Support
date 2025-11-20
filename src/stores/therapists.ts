@@ -62,22 +62,31 @@ export const useTherapistStore = defineStore('therapists', () => {
   }
 
   // تحديث معالج
-  const updateTherapist = async (therapistId, therapistData) => {
-    try {
-      const response = await api.put(`/therapists/${therapistId}`, therapistData)
-      
-      // تحديث البيانات المحلية
-      const index = therapists.value.findIndex(t => t.id === therapistId)
-      if (index !== -1) {
-        therapists.value[index] = response.data.data
-      }
-      
-      return response.data
-    } catch (error) {
-      console.error('Error updating therapist:', error)
-      throw error
+const updateTherapist = async (therapistId, therapistData) => {
+  try {
+    console.log('Updating therapist:', therapistId, therapistData);
+    
+    const response = await api.put(`/therapists/${therapistId}`, therapistData)
+    
+    // تحديث البيانات المحلية
+    const index = therapists.value.findIndex(t => t.id === therapistId)
+    if (index !== -1) {
+      therapists.value[index] = response.data.data
     }
+    
+    return response.data
+  } catch (error) {
+    console.error('Error updating therapist:', error)
+    
+    // تسجيل تفاصيل الخطأ
+    if (error.response) {
+      console.error('Response error:', error.response.data)
+      console.error('Response status:', error.response.status)
+    }
+    
+    throw new Error(error.response?.data?.message || 'فشل في تحديث بيانات المعالج')
   }
+}
 
   // حذف معالج
   const deleteTherapist = async (therapistId) => {

@@ -7,7 +7,9 @@
       <!-- Header -->
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="text-lg sm:text-xl font-semibold text-primary">جدول {{ selectedTherapist.name.ar }}</h2>
+          <h2 class="text-lg sm:text-xl font-semibold text-primary">
+            جدول {{ selectedTherapist?.name_ar || selectedTherapist?.name_en || 'المعالج' }}
+          </h2>
           <p class="text-xs sm:text-sm text-secondary mt-1">إدارة الأوقات المتاحة للمواعيد</p>
         </div>
         <button 
@@ -67,7 +69,7 @@
             
             <button 
               v-if="localSchedule[day.key].enabled"
-              @click="$emit('add-time-slot', day.key)"
+              @click="addTimeSlot(day.key)"
               class="bg-tertiary hover:bg-secondary text-primary px-2 py-1 rounded-lg flex items-center gap-1 text-xs transition-colors"
             >
               <PlusIcon class="h-3 w-3" />
@@ -107,7 +109,7 @@
                 </label>
                 
                 <button 
-                  @click="$emit('remove-time-slot', day.key, index)"
+                  @click="removeTimeSlot(day.key, index)"
                   class="text-red-500 hover:text-red-700 p-1 transition-colors"
                 >
                   ✕
@@ -152,7 +154,7 @@ const props = defineProps({
   },
   selectedTherapist: {
     type: Object,
-    required: true
+    default: () => ({})
   },
   localSchedule: {
     type: Object,
@@ -174,4 +176,13 @@ const weekDays = [
   { key: 'thursday', label: 'الخميس' },
   { key: 'friday', label: 'الجمعة' }
 ]
+
+// Methods
+const addTimeSlot = (dayKey) => {
+  emit('add-time-slot', dayKey)
+}
+
+const removeTimeSlot = (dayKey, index) => {
+  emit('remove-time-slot', dayKey, index)
+}
 </script>
