@@ -35,6 +35,7 @@
     
     <!-- Modals -->
     <TherapistModal 
+      v-if="therapistModalOpen"
       :open="therapistModalOpen"
       :editing-therapist="editingTherapist"
       :therapist-form="therapistForm"
@@ -47,6 +48,7 @@
     />
     
     <ScheduleModal 
+      v-if="scheduleModalOpen"
       :open="scheduleModalOpen"
       :selected-therapist="selectedTherapist"
       :local-schedule="localSchedule"
@@ -57,6 +59,7 @@
     />
     
     <ProfileModal 
+      v-if="profileModalOpen"
       :open="profileModalOpen"
       :viewing-therapist="viewingTherapist"
       @close="closeProfileModal"
@@ -76,9 +79,6 @@ import ScheduleModal from './components/ScheduleModal.vue'
 import ProfileModal from './components/ProfileModal.vue'
 
 const therapistStore = useTherapistStore()
-
-// بيانات المثال الاحتياطية
-const sampleTherapists = ref([])
 
 // الفلاتر
 const filters = reactive({
@@ -107,9 +107,11 @@ const loading = ref(false)
 const currentStep = ref(0)
 
 const therapistForm = reactive({
-  user_id: '',
   name_ar: '',
   name_en: '',
+  email: '',
+  password: '',
+  phone: '',
   title_ar: '',
   title_en: '',
   methodologies_ar: '',
@@ -119,20 +121,18 @@ const therapistForm = reactive({
   session_duration: 45,
   experience: 0,
   hourly_rate: 0,
-  phone: '',
   date_of_birth: '',
   gender: 'male',
   bio_ar: '',
   bio_en: '',
   status: 'active',
-  qualifications: [],
-  certifications: []
+  qualifications: []
 })
 
 const localSchedule = ref({})
 
 // Computed Properties
-const therapists = computed(() => therapistStore.therapists.length > 0 ? therapistStore.therapists : sampleTherapists.value)
+const therapists = computed(() => therapistStore.therapists)
 
 const filteredTherapists = computed(() => {
   let filtered = therapists.value.filter(therapist => {
@@ -189,8 +189,6 @@ const resetFilters = () => {
 
 const updatePagination = (newPagination) => {
   Object.assign(pagination, newPagination)
-  therapistStore.setPage(newPagination.currentPage)
-  therapistStore.setPerPage(newPagination.itemsPerPage)
   loadTherapists()
 }
 
@@ -198,44 +196,17 @@ const updateStep = (step) => {
   currentStep.value = step
 }
 
-
-
-const useSampleData = () => {
-  sampleTherapists.value = [
-    {
-      id: '1',
-      name_ar: 'د. عمرو عادل',
-      name_en: 'Dr. Amro Adel',
-      email: 'amro@clinic.com',
-      phone: '+966500000001',
-      specialty_ar: 'العلاج النفسي',
-      specialty_en: 'Psychotherapy',
-      title_ar: 'استشاري الصحة النفسية ونفسي اكلينيكي',
-      title_en: 'Mental Health Consultant and Clinical Psychologist',
-      avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop&crop=face',
-      status: 'active',
-      session_duration: 45,
-      experience: 15,
-      bio_ar: 'أكثر من 15 عاماً من الخبرة في العلاج النفسي...',
-      bio_en: 'Over 15 years of experience in psychotherapy...',
-      methodologies_ar: 'العلاج المعرفي السلوكي، العلاج الجدلي السلوكي...',
-      methodologies_en: 'Cognitive Behavioral Therapy, Dialectical Behavior Therapy...',
-      qualifications: [],
-      certifications: [],
-      schedules: []
-    }
-  ]
-}
-
 const openCreateTherapist = () => {
   editingTherapist.value = null
   currentStep.value = 0
   
-  // إعادة تعيين النموذج بالشكل الصحيح
+  // إعادة تعيين النموذج
   Object.assign(therapistForm, {
-    user_id: '',
     name_ar: '',
     name_en: '',
+    email: '',
+    password: '',
+    phone: '',
     title_ar: '',
     title_en: '',
     methodologies_ar: '',
@@ -245,61 +216,74 @@ const openCreateTherapist = () => {
     session_duration: 45,
     experience: 0,
     hourly_rate: 0,
-    phone: '',
     date_of_birth: '',
     gender: 'male',
     bio_ar: '',
     bio_en: '',
     status: 'active',
-    qualifications: [],
-    certifications: []
+    qualifications: []
   })
   
   therapistModalOpen.value = true
 }
 
-const editTherapist = (therapist) => {
+const editTherapist = async (therapist) => {
   editingTherapist.value = therapist
   currentStep.value = 0
   
-  Object.assign(therapistForm, {
-    user_id: therapist.user_id || '',
-    name_ar: therapist.name_ar || '',
-    name_en: therapist.name_en || '',
-    title_ar: therapist.title_ar || '',
-    title_en: therapist.title_en || '',
-    methodologies_ar: therapist.methodologies_ar || '',
-    methodologies_en: therapist.methodologies_en || '',
-    specialty_ar: therapist.specialty_ar || '',
-    specialty_en: therapist.specialty_en || '',
-    session_duration: therapist.session_duration || 45,
-    experience: therapist.experience || 0,
-    hourly_rate: therapist.hourly_rate || 0,
-    phone: therapist.phone || '',
-    date_of_birth: therapist.date_of_birth || '',
-    gender: therapist.gender || 'male',
-    bio_ar: therapist.bio_ar || '',
-    bio_en: therapist.bio_en || '',
-    status: therapist.status || 'active',
-    qualifications: therapist.qualifications ? [...therapist.qualifications] : [],
-    certifications: therapist.certifications ? [...therapist.certifications] : []
-  })
+  try {
+    // جلب المؤهلات من API
+    const qualifications = await therapistStore.fetchQualifications(therapist.id)
+    
+    // تحميل بيانات المعالج للنموذج
+    Object.assign(therapistForm, {
+      name_ar: therapist.name_ar || '',
+      name_en: therapist.name_en || '',
+      email: therapist.user?.email || '',
+      password: '', // لا نعيد كلمة المرور
+      phone: therapist.phone || '',
+      title_ar: therapist.title_ar || '',
+      title_en: therapist.title_en || '',
+      methodologies_ar: therapist.methodologies_ar || '',
+      methodologies_en: therapist.methodologies_en || '',
+      specialty_ar: therapist.specialty_ar || '',
+      specialty_en: therapist.specialty_en || '',
+      session_duration: therapist.session_duration || 45,
+      experience: therapist.experience || 0,
+      hourly_rate: therapist.hourly_rate || 0,
+      date_of_birth: therapist.date_of_birth || '',
+      gender: therapist.gender || 'male',
+      bio_ar: therapist.bio_ar || '',
+      bio_en: therapist.bio_en || '',
+      status: therapist.status || 'active',
+      qualifications: qualifications || []
+    })
+  } catch (error) {
+    console.error('Error loading qualifications:', error)
+    // استخدام البيانات المحلية كبديل
+    Object.assign(therapistForm, {
+      // ... البيانات الأساسية
+      qualifications: therapist.qualifications || []
+    })
+  }
   
   therapistModalOpen.value = true
 }
+
 const closeTherapistModal = () => {
   therapistModalOpen.value = false
   editingTherapist.value = null
   currentStep.value = 0
 }
 
+
 const saveTherapist = async () => {
   try {
     // تحضير البيانات بشكل صحيح
     const therapistData = {
-      user_id: therapistForm.user_id || 1, // تأكد من وجود user_id صالح
       name_ar: therapistForm.name_ar,
       name_en: therapistForm.name_en,
+      phone: therapistForm.phone,
       title_ar: therapistForm.title_ar,
       title_en: therapistForm.title_en,
       methodologies_ar: Array.isArray(therapistForm.methodologies_ar) ? 
@@ -311,7 +295,6 @@ const saveTherapist = async () => {
       session_duration: parseInt(therapistForm.session_duration) || 45,
       experience: parseInt(therapistForm.experience) || 0,
       hourly_rate: parseFloat(therapistForm.hourly_rate) || 0,
-      phone: therapistForm.phone,
       date_of_birth: therapistForm.date_of_birth,
       gender: therapistForm.gender,
       bio_ar: therapistForm.bio_ar,
@@ -319,10 +302,64 @@ const saveTherapist = async () => {
       status: therapistForm.status
     }
 
+    // إضافة البريد الإلكتروني وكلمة المرور فقط للإضافة الجديدة
+    if (!editingTherapist.value) {
+      therapistData.email = therapistForm.email
+      therapistData.password = therapistForm.password
+    } else {
+      // للتحديث، نضيف البريد الإلكتروني إذا تم تغييره
+      if (therapistForm.email && therapistForm.email !== editingTherapist.value.user?.email) {
+        therapistData.email = therapistForm.email
+      }
+      // نضيف كلمة المرور فقط إذا تم إدخالها
+      if (therapistForm.password) {
+        therapistData.password = therapistForm.password
+      }
+    }
+
     if (editingTherapist.value) {
       await therapistStore.updateTherapist(editingTherapist.value.id, therapistData)
+      
+      // حفظ المؤهلات بعد تحديث المعالج
+      if (therapistForm.qualifications && therapistForm.qualifications.length > 0) {
+        // حذف المؤهلات القديمة أولاً
+        const existingQualifications = await therapistStore.fetchQualifications(editingTherapist.value.id)
+        for (const qualification of existingQualifications) {
+          await therapistStore.deleteQualification(editingTherapist.value.id, qualification.id)
+        }
+        
+        // إضافة المؤهلات الجديدة
+        for (const qualification of therapistForm.qualifications) {
+          if (qualification.name_ar && qualification.name_en) {
+            await therapistStore.createQualification(editingTherapist.value.id, {
+              name_ar: qualification.name_ar,
+              name_en: qualification.name_en,
+              institution_ar: qualification.institution_ar,
+              institution_en: qualification.institution_en,
+              year: qualification.year
+            })
+          }
+        }
+      }
     } else {
-      await therapistStore.createTherapist(therapistData)
+      const newTherapist = await therapistStore.createTherapist(therapistData)
+      
+      // حفظ المؤهلات بعد إنشاء المعالج
+      if (newTherapist && newTherapist.data && therapistForm.qualifications && therapistForm.qualifications.length > 0) {
+        const therapistId = newTherapist.data.id
+        
+        for (const qualification of therapistForm.qualifications) {
+          if (qualification.name_ar && qualification.name_en) {
+            await therapistStore.createQualification(therapistId, {
+              name_ar: qualification.name_ar,
+              name_en: qualification.name_en,
+              institution_ar: qualification.institution_ar,
+              institution_en: qualification.institution_en,
+              year: qualification.year
+            })
+          }
+        }
+      }
     }
     
     therapistModalOpen.value = false
@@ -333,7 +370,6 @@ const saveTherapist = async () => {
     alert('حدث خطأ أثناء حفظ البيانات: ' + (error.response?.data?.message || error.message))
   }
 }
-
 const addQualification = () => {
   therapistForm.qualifications.push({
     name_ar: '',
@@ -350,9 +386,6 @@ const removeQualification = (index) => {
 
 const viewProfile = async (therapist) => {
   try {
-    console.log('Viewing profile for therapist:', therapist)
-    
-    // استخدام البيانات المحلية أولاً
     viewingTherapist.value = { ...therapist }
     
     // محاولة جلب البيانات الكاملة من API
@@ -365,30 +398,35 @@ const viewProfile = async (therapist) => {
       console.warn('Could not fetch full therapist data, using local data:', apiError)
     }
     
-    profileModalOpen.value = true
-    console.log('Profile modal opened successfully')
+    // استخدام setTimeout لتجنب أخطاء التحديث المتزامن
+    setTimeout(() => {
+      profileModalOpen.value = true
+    }, 100)
+    
   } catch (error) {
     console.error('Error in viewProfile:', error)
-    // استخدام البيانات الأساسية كبديل
     viewingTherapist.value = therapist
-    profileModalOpen.value = true
+    setTimeout(() => {
+      profileModalOpen.value = true
+    }, 100)
   }
 }
 
 const closeProfileModal = () => {
   profileModalOpen.value = false
+  viewingTherapist.value = null
 }
 
 const openSchedule = async (therapist) => {
   try {
     selectedTherapist.value = therapist
-    console.log('Opening schedule for therapist:', therapist)
     
-    // استخدام البيانات المحلية إذا كانت موجودة
+    // تهيئة الجدول المحلي
+    localSchedule.value = getEmptySchedule()
+    
     if (therapist.schedules && therapist.schedules.length > 0) {
       localSchedule.value = convertSchedulesToModalFormat(therapist.schedules)
     } else {
-      // جلب الجداول من API
       try {
         const schedules = await therapistStore.fetchSchedules(therapist.id)
         localSchedule.value = convertSchedulesToModalFormat(schedules)
@@ -399,39 +437,36 @@ const openSchedule = async (therapist) => {
     }
     
     scheduleModalOpen.value = true
-    console.log('Schedule modal opened successfully')
   } catch (error) {
     console.error('Error in openSchedule:', error)
-    // استخدام جدول فارغ كبديل
     selectedTherapist.value = therapist
     localSchedule.value = getEmptySchedule()
     scheduleModalOpen.value = true
   }
 }
 
-// تحسين دالة تحويل الجداول
 const convertSchedulesToModalFormat = (schedules) => {
   const scheduleFormat = getEmptySchedule()
   
   if (schedules && Array.isArray(schedules)) {
     schedules.forEach(schedule => {
       if (scheduleFormat[schedule.day]) {
-        scheduleFormat[schedule.day] = {
-          enabled: schedule.available !== false,
-          slots: [{
-            start: schedule.start_time || '09:00',
-            end: schedule.end_time || '10:00',
-            available: schedule.available !== false
-          }]
+        if (!scheduleFormat[schedule.day].slots) {
+          scheduleFormat[schedule.day].slots = []
         }
+        
+        scheduleFormat[schedule.day].enabled = schedule.available !== false
+        scheduleFormat[schedule.day].slots.push({
+          start: schedule.start_time || '09:00',
+          end: schedule.end_time || '10:00',
+          available: schedule.available !== false
+        })
       }
     })
   }
   
   return scheduleFormat
 }
-
-
 
 const getEmptySchedule = () => ({
   saturday: { enabled: false, slots: [] },
@@ -445,9 +480,15 @@ const getEmptySchedule = () => ({
 
 const closeScheduleModal = () => {
   scheduleModalOpen.value = false
+  selectedTherapist.value = null
+  localSchedule.value = {}
 }
 
 const addTimeSlot = (dayKey) => {
+  if (!localSchedule.value[dayKey]) {
+    localSchedule.value[dayKey] = { enabled: true, slots: [] }
+  }
+  
   if (!localSchedule.value[dayKey].slots) {
     localSchedule.value[dayKey].slots = []
   }
@@ -460,66 +501,64 @@ const addTimeSlot = (dayKey) => {
 }
 
 const removeTimeSlot = (dayKey, index) => {
-  localSchedule.value[dayKey].slots.splice(index, 1)
+  if (localSchedule.value[dayKey] && localSchedule.value[dayKey].slots) {
+    localSchedule.value[dayKey].slots.splice(index, 1)
+  }
 }
 
 const saveSchedule = async () => {
   try {
     if (selectedTherapist.value) {
-      // تحويل البيانات لصيغة API وحفظها
-      const scheduleData = convertModalToScheduleFormat(localSchedule.value)
+      // تحويل الجدول المحلي إلى تنسيق API
+      const schedulesToSave = []
       
-      for (const day in scheduleData) {
-        if (scheduleData[day].enabled && scheduleData[day].slots.length > 0) {
-          for (const slot of scheduleData[day].slots) {
-            await therapistStore.createSchedule(selectedTherapist.value.id, {
-              day: day,
-              start_time: slot.start,
-              end_time: slot.end,
-              available: slot.available,
-              slot_duration: selectedTherapist.value.session_duration || 45
-            })
+      for (const day in localSchedule.value) {
+        if (localSchedule.value[day].enabled && localSchedule.value[day].slots.length > 0) {
+          for (const slot of localSchedule.value[day].slots) {
+            if (slot.available) {
+              schedulesToSave.push({
+                day: day,
+                start_time: slot.start,
+                end_time: slot.end,
+                available: true,
+                slot_duration: selectedTherapist.value.session_duration || 45,
+                recurrence: 'weekly'
+              })
+            }
           }
         }
       }
-    }
-    scheduleModalOpen.value = false
-    await loadTherapists() // إعادة تحميل البيانات
-  } catch (error) {
-    console.error('Error saving schedule:', error)
-    alert('حدث خطأ أثناء حفظ الجدول')
-  }
-}
-
-const convertModalToScheduleFormat = (modalSchedule) => {
-  return modalSchedule
-}
-
-
-
-// في المكون الرئيسي TherapistsManagement.vue
-const convertSchedulesToCardFormat = (schedules) => {
-  const scheduleFormat = getEmptySchedule()
-  
-  if (schedules && Array.isArray(schedules)) {
-    schedules.forEach(schedule => {
-      if (scheduleFormat[schedule.day]) {
-        scheduleFormat[schedule.day] = {
-          enabled: schedule.available,
-          slots: [{
-            start: schedule.start_time,
-            end: schedule.end_time,
-            available: schedule.available
-          }]
+      
+      // حذف الجداول القديمة أولاً
+      try {
+        const existingSchedules = await therapistStore.fetchSchedules(selectedTherapist.value.id)
+        for (const schedule of existingSchedules) {
+          await therapistStore.deleteSchedule(selectedTherapist.value.id, schedule.id)
+        }
+      } catch (deleteError) {
+        console.warn('Error deleting old schedules:', deleteError)
+      }
+      
+      // إضافة الجداول الجديدة
+      for (const scheduleData of schedulesToSave) {
+        try {
+          await therapistStore.createSchedule(selectedTherapist.value.id, scheduleData)
+        } catch (createError) {
+          console.error('Error creating schedule:', createError)
         }
       }
-    })
+      
+      alert('تم حفظ الجدول بنجاح')
+    }
+    
+    scheduleModalOpen.value = false
+    await loadTherapists() // إعادة تحميل البيانات للتأكد من ظهور التغييرات
+  } catch (error) {
+    console.error('Error saving schedule:', error)
+    alert('حدث خطأ أثناء حفظ الجدول: ' + (error.response?.data?.message || error.message))
   }
-  
-  return scheduleFormat
 }
 
-// ثم استخدمها عند تحميل البيانات
 const loadTherapists = async () => {
   try {
     loading.value = true
@@ -531,25 +570,18 @@ const loadTherapists = async () => {
     
     await therapistStore.fetchTherapists(apiFilters)
     
-    // تحويل بيانات الجدول للصيغة المتوقعة
-    therapistStore.therapists.forEach(therapist => {
-      therapist.schedule = convertSchedulesToCardFormat(therapist.schedules)
-    })
-    
   } catch (error) {
     console.error('Error loading therapists:', error)
-    useSampleData()
   } finally {
     loading.value = false
   }
 }
 
-
 const deleteTherapist = async (therapist) => {
   if (confirm(`هل أنت متأكد من حذف ${therapist.name_ar}؟`)) {
     try {
       await therapistStore.deleteTherapist(therapist.id)
-      await loadTherapists() // إعادة تحميل البيانات
+      await loadTherapists()
     } catch (error) {
       console.error('Error deleting therapist:', error)
       alert('حدث خطأ أثناء حذف المعالج')

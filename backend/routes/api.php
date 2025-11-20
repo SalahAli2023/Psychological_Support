@@ -102,6 +102,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
 
     // Therapists routes
+    Route::get('/therapists', [TherapistController::class, 'index']);
+    Route::get('/therapists/{id}', [TherapistController::class, 'show']);
     Route::post('/therapists', [TherapistController::class, 'store']);
     Route::put('/therapists/{id}', [TherapistController::class, 'update']);
     Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);

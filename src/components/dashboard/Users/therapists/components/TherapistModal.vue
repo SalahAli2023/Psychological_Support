@@ -85,7 +85,7 @@
             </div>
 
             <!-- Contact Information -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-sm font-medium text-primary mb-2">البريد الإلكتروني</label>
                 <input 
@@ -144,14 +144,14 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-primary mb-2">كلمة المرور</label>
-                <input 
-                  v-model="therapistForm.password"
-                  type="password"
-                  required
-                  class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
-                  placeholder="أدخل كلمة المرور"
-                />
+                 <label class="block text-sm font-medium text-primary mb-2">كلمة المرور</label>
+                  <input 
+                    v-model="therapistForm.password"
+                    type="password"
+                    :required="!editingTherapist"
+                    class="w-full rounded-lg border border-primary bg-primary px-3 py-2.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+                    placeholder="أدخل كلمة المرور"
+                  />
               </div>
             </div>
           </div>
