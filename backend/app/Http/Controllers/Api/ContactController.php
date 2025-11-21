@@ -18,26 +18,32 @@ class ContactController extends Controller
     {
         $query = Contact::query();
         
+        // البحث
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%");
+            });
+        }
+
         // التصفية حسب الحالة
-        if ($request->has('status')) {
+        if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
         
         // التصفية حسب نوع الرسالة
-        if ($request->has('message_type')) {
+        if ($request->has('message_type') && $request->message_type) {
             $query->where('message_type', $request->message_type);
         }
+
+        // // الترتيب
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $query->orderBy($sort, $order);
         
-        // البحث
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('subject', 'like', "%{$search}%");
-            });
-        }
-        
+        // $contacts = $query->paginate(20);
         $contacts = $query->latest()->paginate(20);
         
         return response()->json([
@@ -146,8 +152,91 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    /**
+     * حذف رسالة اتصال
+     */
+    public function destroy(Contact $contact): JsonResponse
     {
-        //
+        try {
+            $contact->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حذف الرسالة بنجاح'
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Contact delete error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء حذف الرسالة'
+            ], 500);
+        }
+    }
+
+    public function exportCsv()
+    {
+        $fileName = 'contacts_' . date('Y-m-d_H-i-s') . '.csv';
+        $contacts = Contact::all();
+        
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+        
+        $columns = ['ID', 'الاسم', 'البريد الإلكتروني', 'الهاتف', 'الموضوع', 'نوع الرسالة', 'الحالة', 'التاريخ'];
+        
+        $callback = function() use ($contacts, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            foreach ($contacts as $contact) {
+                $row = [
+                    $contact->id,
+                    $contact->name,
+                    $contact->email,
+                    $contact->phone ?? 'N/A',
+                    $contact->subject,
+                    $this->getMessageTypeArabic($contact->message_type),
+                    $this->getStatusArabic($contact->status),
+                    $contact->created_at->format('Y-m-d H:i')
+                ];
+                
+                fputcsv($file, $row);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function getMessageTypeArabic($type)
+    {
+        $types = [
+            'inquiry' => 'استفسار',
+            'complaint' => 'شكوى',
+            'suggestion' => 'اقتراح',
+            'support' => 'دعم فني',
+            'other' => 'أخرى'
+        ];
+        
+        return $types[$type] ?? $type;
+    }
+
+    private function getStatusArabic($status)
+    {
+        $statuses = [
+            'new' => 'جديد',
+            'in_progress' => 'قيد المعالجة',
+            'resolved' => 'تم الحل',
+            'closed' => 'مغلق'
+        ];
+        
+        return $statuses[$status] ?? $status;
     }
 }

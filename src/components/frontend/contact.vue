@@ -274,9 +274,11 @@ const submitForm = async () => {
       Object.keys(formData).forEach(key => {
         formData[key as keyof ContactFormData] = '';
       });
+      showSuccessNotification('تم الإرسال بنجاح')
       errors.value = {};
     }
   } catch (error) {
+      showErrorNotification('فشل في الإرسال')
     // Error is already handled in the store
     console.error('Contact form submission error:', error);
   }

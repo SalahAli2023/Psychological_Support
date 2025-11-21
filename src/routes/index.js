@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-// import Users from '@/components/dashboard/Users/index.vue'
 import UserDetails from '@/components/dashboard/Users/UserDetails.vue'
 
 // --- Backend Pages ---
@@ -21,7 +20,7 @@ const Categories = () => import('../components/dashboard/Measures/Categories/Cat
 
 const LegalResources = () => import('../components/dashboard/LegalResources/Index.vue')
 
-
+const Contacts = () => import('../components/dashboard/Contact/ContactsList.vue');
 
 
 const Settings = () => import('../components/dashboard/Settings/Index.vue');
@@ -51,7 +50,7 @@ const routes = [
   { path: '/', name: 'Home', component: HomePage },
   { path: '/events', name: 'Events', component: EventsPage },
   { path: '/about', name: 'About', component: AboutPage },
-   { path: '/Session', name: 'Session', component: session},
+  { path: '/Session', name: 'Session', component: session},
   { path: '/measures', name: 'Measures', component: MeasuresPage },
   { path: '/article', name: 'ArticleMain', component: ArticleMain },
   { path: '/article/:id', name: 'ArticleDetail', component: ArticleDetail, props: true },
@@ -61,11 +60,6 @@ const routes = [
   { path: '/contact', name: 'contact', component: contact, props: true },
   { path: '/register', name: 'register', component: register, props: true },
   { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
-  // {
-  //   path: '/dashboard/users',
-  //   name: 'Users',
-  //   component: Users
-  // },
   {
     path: '/dashboard/users/:id',
     name: 'UserDetails',
@@ -105,6 +99,7 @@ const routes = [
       { path: 'legal-resources', name: 'legal-resources', component: LegalResources },
       
       { path: 'settings', name: 'settings', component: Settings },
+      { path: 'contacts', name: 'contacts', component: Contacts },
     ]
   },
 

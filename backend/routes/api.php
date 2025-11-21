@@ -93,8 +93,6 @@ Route::get('/psychological-scales/{id}/full', [PsychologicalScaleController::cla
 //public contacts route
 Route::post('/contacts', [ContactController::class, 'store']);
 
-// Protected routes
-=======
 // ==================== PROTECTED ROUTES ====================
 Route::middleware('auth:sanctum')->group(function () {
     
@@ -102,14 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Route::get('/user', [AuthController::class, 'user']);
-
-    // Users routes
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
-    Route::get('/users/stats', [UserController::class, 'stats']);
 
     // Dashboard
     // 🔥 Frontend Protected Routes
@@ -292,11 +282,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('result-interpretations', ResultInterpretationController::class);
     Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
     Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);
-  
+    
     //contacts 
     Route::get('/contacts', [ContactController::class, 'index']);
     Route::get('/contacts/statistics', [ContactController::class, 'statistics']);
     Route::get('/contacts/{contact}', [ContactController::class, 'show']);
     Route::put('/contacts/{contact}', [ContactController::class, 'update']);
+    Route::delete('/contacts/{contact}', [ContactController::class, 'destroy']);
+    Route::get('/contacts/export/csv', [ContactController::class, 'exportCsv']);
 });
-    
