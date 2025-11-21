@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\TherapistScheduleController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientConditionController;
 use App\Http\Controllers\Api\PatientSessionController;
+use App\Http\Controllers\Api\ContactController;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PsychologicalScaleController;
@@ -232,3 +233,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
     Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);
 });
+
+
+
+    // Route::post('contacts', [ContactController::class, 'store']);
+    Route::post('contacts', [ContactController::class, 'store'])->withoutMiddleware(['auth:api']);
+    // مسارات تحت الحماية للمسؤولين
+        Route::get('contacts', [ContactController::class, 'index']);
+        Route::get('contacts/statistics', [ContactController::class, 'statistics']);
+        Route::get('contacts/{contact}', [ContactController::class, 'show']);
+        Route::put('contacts/{contact}', [ContactController::class, 'update']);
