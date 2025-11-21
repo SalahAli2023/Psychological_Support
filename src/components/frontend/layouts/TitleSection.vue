@@ -8,11 +8,12 @@
       {{ mainText }}
       <span :class="highlightColor">{{ highlightText }}</span>
     </h2>
-    <div
-      class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 rounded-2xl transition-all duration-500 delay-200 opacity-0"
-      :class="[gradientClass, lineClass]"
-      ref="line"
-    ></div>
+<div
+  class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 rounded-2xl transition-all duration-500 delay-200 opacity-0 bg-primary-green"
+  ref="line"
+></div>
+
+
   </div>
 </template>
 
