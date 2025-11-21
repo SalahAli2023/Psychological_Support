@@ -39,9 +39,9 @@
       </div>
 
       <!-- Main Content Layout -->
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 max-w-7xl mx-auto px-8 pb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 max-w-7xl mx-auto px-2 pb-8">
         <!-- Main Content - Article Details -->
-        <main class="bg-white rounded-1xl p-8 shadow-lg border border-gray-100">
+        <main class=" rounded-1xl p-8 shadow-lg border border-gray-100">
           <!-- Article Header with Title Above Image -->
           <div class="mb-8">
             <div class="mb-8 pb-6 border-b border-gray-200">

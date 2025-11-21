@@ -120,7 +120,7 @@ const menuItems = [
    { name: { ar: translations.ar.menuItems.library, en: translations.en.menuItems.library }, path: '/library' },
   { name: { ar: translations.ar.menuItems.testimonials, en: translations.en.menuItems.testimonials }, path: '/testimonials' },
   { name: { ar: translations.ar.menuItems.articles, en: translations.en.menuItems.articles }, path: '/article' },
-  { name: { ar: translations.ar.menuItems.faq, en: translations.en.menuItems.faq }, path: '/faq' },
+  { name: { ar: translations.ar.menuItems.LegalSocialResources, en: translations.en.menuItems.LegalSocialResources }, path: '/legal' },
   { name: { ar: translations.ar.menuItems.contact, en: translations.en.menuItems.contact }, path: '/contact' }
 ]
 

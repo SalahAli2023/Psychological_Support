@@ -8,6 +8,8 @@ export const en = {
     closeMenu: 'Close Menu'
   },
   menuItems: {
+
+     LegalSocialResources: 'Legal & Social Resources',
     Home: 'Home',
     about: 'About Us',
     services: 'Our Services',
@@ -171,7 +173,8 @@ export const en = {
       subtitle: 'We work to empower the community and provide psychological and social support programs with real impact.'
     },
     overview: {
-      title: 'Strategic Studies Center for Women and Children Support',
+      mainTitle: "About",
+      highlightTitle: "Center",
       description1: 'The Strategic Studies Center for Women and Children Support - Yemen is an independent non-profit civil institution with an independent legal personality. It was established according to the Associations and Civil Institutions Law No. (1) of 2001 and its executive regulations on 20/12/2018 under license from the Office of the Ministry of Social Affairs and Labor No. (80/M) with its main headquarters in Taiz Governorate.',
       description2: 'It aims to support women and children in particular and vulnerable and marginalized groups in general through specialized studies and research, and to contribute to developing strategies, policies and visions for empowering and improving the conditions of women, children and all vulnerable and marginalized groups and protecting them from violence and discrimination.',
       description3: 'It also works through projects, programs and activities aimed at protecting rights and freedoms, promoting democracy and good governance, building peace, security and development, and supporting formal and informal structures concerned with protecting and caring for abused women and delinquent children.',
@@ -183,11 +186,14 @@ export const en = {
       }
     },
     objectives: {
+      mainTitle: "Objectives",
+      highlightTitle: "Center",
       title: 'Our ',
       highlight: 'Objectives',
       subtitle: 'We seek to achieve ambitious goals that contribute to supporting and protecting women, children and marginalized groups in Yemen'
     },
     statistics: {
+   
       title: 'Our ',
       highlight: 'Achievements',
       subtitle: 'We are proud of what we have achieved and we always work on development and improvement',
@@ -201,6 +207,7 @@ export const en = {
   },
   visionMission: {
     title: 'Our Vision & Mission',
+     highlightTitle: 'Mission',
     subtitle: 'We strive for excellence in supporting women, children and vulnerable groups in Yemen',
     vision: {
       title: 'Our Vision',
