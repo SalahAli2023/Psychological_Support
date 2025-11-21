@@ -16,7 +16,7 @@
 
     <main class="max-w-7xl mx-auto px-6">
       <!-- حالة التحميل -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
+      <div v-if="loading && !dataLoaded" class="flex justify-center items-center py-20">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-green"></div>
         <span class="mr-3 text-gray-600">{{ translate('loading') }}</span>
       </div>
@@ -51,8 +51,8 @@
           :measures="scales"
           :filteredMeasuresCount="filteredMeasures.length"
           :language="currentLanguage"
-          @filter-change="activeFilter = $event"
-          @update:searchQuery="searchQuery = $event"
+          @filter-change="handleFilterChange"
+          @update:searchQuery="handleSearchChange"
         />
 
         <!-- جميع المقاييس -->
@@ -91,24 +91,15 @@
     <MeasureModal
       v-if="showMeasureModal"
       :measure="currentMeasure"
-      :testStep="testStep"
-      :currentQuestionIndex="currentQuestionIndex"
-      :answers="answers"
-      :testResult="testResult"
       :language="currentLanguage"
       @close="closeMeasureModal"
-      @start-test="startTest"
-      @next-question="nextQuestion"
-      @previous-question="previousQuestion"
-      @submit-test="submitTest"
-      @retake-test="retakeTest"
       @show-other-measures="showOtherMeasures"
     />
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import Header from '@/components/frontend/layouts/header.vue'
 import Hero from '@/components/frontend/layouts/hero.vue'
 import PopularMeasures from '@/components/frontend/measures/PopularMeasures.vue'
@@ -119,7 +110,7 @@ import ResourcesSection from '@/components/frontend/measures/ResourcesSection.vu
 import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
 import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
-import { useScalesStore } from '@/stores/scales'
+import { useFrontendScalesStore } from '@/stores/frontendScales.store' // 🔥 الجديد
 import { resourcesData } from '@/data/measures'
 import { useTranslations } from '@/composables/useTranslations'
 
@@ -138,8 +129,8 @@ export default {
     RegistrationModal
   },
   setup() {
-    // استخدام الـ store
-    const scalesStore = useScalesStore()
+    // استخدام الـ store الجديد الخاص بالفرونت
+    const frontendScalesStore = useFrontendScalesStore()
     
     // الحالة العامة
     const searchQuery = ref('')
@@ -147,35 +138,37 @@ export default {
     const showRegistrationModal = ref(false)
     const showMeasureModal = ref(false)
     const currentMeasure = ref(null)
-    const testStep = ref('info')
-    const currentQuestionIndex = ref(0)
-    const answers = ref([])
-    const testResult = ref(null)
     const currentLanguage = ref(localStorage.getItem('preferredLanguage') || 'ar')
 
     // تحديث اللغة تلقائيًا عند تغييرها من الهيدر
     const handleLanguageChange = (event) => {
+      console.log('🔄 تغيير اللغة إلى:', event.detail.language)
       currentLanguage.value = event.detail.language
     }
 
     onMounted(() => {
+      console.log('🚀 تحميل صفحة المقاييس مع الـ Store الجديد...')
       window.addEventListener('languageChanged', handleLanguageChange)
       fetchMeasuresData()
     })
 
     onUnmounted(() => {
+      console.log('🧹 تنظيف صفحة المقاييس...')
       window.removeEventListener('languageChanged', handleLanguageChange)
     })
 
     // البيانات
     const resources = ref(resourcesData)
 
-    // الحسابات
-    const scales = computed(() => scalesStore.scales)
-    const loading = computed(() => scalesStore.loading)
-    const error = computed(() => scalesStore.error)
+    // الحسابات من الـ Store الجديد
+    const scales = computed(() => frontendScalesStore.scales)
+    const loading = computed(() => frontendScalesStore.loading)
+    const error = computed(() => frontendScalesStore.error)
+    const dataLoaded = computed(() => frontendScalesStore.dataLoaded)
+    const popularMeasures = computed(() => frontendScalesStore.popularMeasures)
 
     const filteredMeasures = computed(() => {
+      console.log('🔍 تطبيق الفلترة...')
       let filtered = scales.value
       
       if (activeFilter.value !== 'allMeasures') {
@@ -186,7 +179,6 @@ export default {
         }
         
         filtered = filtered.filter(measure => {
-          // البحث في اسم التصنيف أو وصفه
           const categoryName = measure.category?.name_ar?.toLowerCase() || ''
           const categoryNameEn = measure.category?.name_en?.toLowerCase() || ''
           const targetCategory = categoryMap[activeFilter.value]?.toLowerCase()
@@ -212,188 +204,110 @@ export default {
         })
       }
       
+      console.log('✅ عدد النتائج بعد الفلترة:', filtered.length)
       return filtered
-    })
-    
-    const popularMeasures = computed(() => {
-      // يمكنك تعديل هذا المنطق بناءً على كيفية تحديد الشعبية في الباك إند
-      return scales.value
-        .filter(scale => scale.is_active) // المقاييس النشطة فقط
-        .slice(0, 4) // أول 4 مقاييس
     })
 
     // دوال جلب البيانات
     const fetchMeasuresData = async () => {
+      console.log('🔄 بدء جلب بيانات المقاييس من الـ Store الجديد...')
       try {
-        await scalesStore.fetchScales()
-        await scalesStore.fetchCategories()
+        // جلب البيانات بالتوازي
+        await Promise.all([
+          frontendScalesStore.fetchFrontendScales(),
+          frontendScalesStore.fetchFrontendCategories(),
+          frontendScalesStore.fetchPopularScales()
+        ])
+        
+        console.log('✅ تم تحميل جميع بيانات المقاييس بنجاح')
       } catch (err) {
         console.error('❌ فشل في تحميل بيانات المقاييس:', err)
       }
     }
 
-    // تحويل بيانات الـ API لتتوافق مع المكونات
-    const transformScaleForFrontend = (scale) => {
-      return {
-        id: scale.id,
-        title: {
-          ar: scale.name_ar,
-          en: scale.name_en
-        },
-        description: {
-          ar: scale.description_ar,
-          en: scale.description_en
-        },
-        image: scale.image_url || getDefaultImage(scale.category?.name_ar),
-        category: scale.category?.name_ar || 'عام',
-        time: '5-10', // يمكنك إضافة هذا الحقل في الباك إند
-        questions: scale.questions || [],
-        rating: 4.5, // يمكنك إضافة التقييم في الباك إند
-        reviews: Math.floor(Math.random() * 100) + 1, // بيانات تجريبية
-        icon: getCategoryIcon(scale.category?.name_ar),
-        is_active: scale.is_active
+    // معالجة تغييرات البحث والفلتر
+    const handleFilterChange = async (filter) => {
+      console.log('🎛️ تغيير الفلتر إلى:', filter)
+      activeFilter.value = filter
+      
+      // إذا كان الفلتر مختلفاً عن "الكل"، قم بجلب البيانات من السيرفر
+      if (filter !== 'allMeasures') {
+        try {
+          const categoryMap = {
+            'forWomen': 'women',
+            'forChildren': 'children',
+            'forSpecialists': 'specialists'
+          }
+          const categoryId = categoryMap[filter]
+          await frontendScalesStore.filterByCategory(categoryId)
+        } catch (error) {
+          console.error('❌ خطأ في التصفية:', error)
+        }
       }
     }
 
-    const getDefaultImage = (category) => {
-      const images = {
-        'نساء': "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80",
-        'أطفال': "https://images.unsplash.com/photo-1536623975707-c4b3b2af565d?auto=format&fit=crop&w=800&q=80",
+    const handleSearchChange = async (query) => {
+      console.log('🔎 تغيير البحث إلى:', query)
+      searchQuery.value = query
+      
+      // إذا كان البحث غير فارغ، قم بالبحث في السيرفر
+      if (query.trim()) {
+        try {
+          await frontendScalesStore.searchScales(query)
+        } catch (error) {
+          console.error('❌ خطأ في البحث:', error)
+        }
       }
-      return images[category] || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80"
-    }
-
-    const getCategoryIcon = (category) => {
-      const icons = {
-        'نساء': 'fas fa-female',
-        'أطفال': 'fas fa-child',
-        'متخصصين': 'fas fa-user-md'
-      }
-      return icons[category] || 'fas fa-chart-bar'
     }
 
     // الدوال
     const { translate } = useTranslations()
 
-    const openRegistrationModal = (measure) => {
-      // تحويل البيانات من الـ API لتتوافق مع المكون
-      currentMeasure.value = transformScaleForFrontend(measure)
-      showRegistrationModal.value = true
+    const openRegistrationModal = async (measure) => {
+      console.log('📝 فتح مودال التسجيل للمقياس:', measure.id)
+      try {
+        const fullScale = await frontendScalesStore.fetchFrontendFullScale(measure.id)
+        currentMeasure.value = fullScale
+        showRegistrationModal.value = true
+      } catch (error) {
+        console.error('❌ خطأ في جلب بيانات المقياس:', error)
+        currentMeasure.value = measure
+        showRegistrationModal.value = true
+      }
     }
 
     const closeRegistrationModal = () => {
+      console.log('❌ إغلاق مودال التسجيل')
       showRegistrationModal.value = false
+      currentMeasure.value = null
     }
 
     const handleRegistrationSuccess = () => {
+      console.log('✅ تسجيل ناجح، فتح مودال الاختبار')
       closeRegistrationModal()
       openMeasureModal()
     }
 
     const openMeasureModal = () => {
-      showMeasureModal.value = true
-      testStep.value = 'info'
-      currentQuestionIndex.value = 0
-      answers.value = new Array(currentMeasure.value.questions.length).fill(undefined)
-      testResult.value = null
+      if (currentMeasure.value) {
+        console.log('🎯 فتح مودال الاختبار')
+        showMeasureModal.value = true
+      }
     }
     
     const closeMeasureModal = () => {
+      console.log('❌ إغلاق مودال الاختبار')
       showMeasureModal.value = false
       currentMeasure.value = null
     }
     
-    const startTest = () => {
-      testStep.value = 'questions'
-    }
-    
-    const nextQuestion = () => {
-      if (currentQuestionIndex.value < currentMeasure.value.questions.length - 1) {
-        currentQuestionIndex.value++
-      }
-    }
-    
-    const previousQuestion = () => {
-      if (currentQuestionIndex.value > 0) {
-        currentQuestionIndex.value--
-      }
-    }
-    
-    const submitTest = () => {
-      testStep.value = 'loading'
-      setTimeout(() => calculateResults(), 2000)
-    }
-    
-    const calculateResults = () => {
-      let score = 0
-      const measure = currentMeasure.value
-      
-      // حساب النتيجة بناء على الإجابات
-      answers.value.forEach((answer, index) => {
-        if (answer !== undefined && measure.questions[index]?.options) {
-          const option = measure.questions[index].options[answer]
-          score += option?.score_value || 0
-        }
-      })
-          
-      // حساب أقصى درجة ممكنة
-      const maxScore = measure.questions?.reduce((total, question) => {
-        const maxOptionScore = Math.max(...question.options.map(opt => opt.score_value || 0))
-        return total + maxOptionScore
-      }, 0) || 0
-      
-      // الحصول على التفسير المناسب
-      const interpretation = getInterpretation(score, maxScore, currentLanguage.value)
-      
-      testResult.value = { 
-        score: Math.round(score), 
-        maxScore: Math.round(maxScore), 
-        interpretation 
-      }
-      
-      testStep.value = 'results'
-    }
-
-    const getInterpretation = (score, maxScore, language) => {
-      const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0
-      
-      if (percentage >= 80) {
-        return {
-          level: language === 'ar' ? 'مرتفع' : 'High',
-          desc: language === 'ar' 
-            ? 'نتيجتك تشير إلى مستوى مرتفع. ننصح بمراجعة مختص للدعم المناسب.'
-            : 'Your results indicate a high level. We recommend consulting a specialist for appropriate support.'
-        }
-      } else if (percentage >= 50) {
-        return {
-          level: language === 'ar' ? 'متوسط' : 'Medium',
-          desc: language === 'ar'
-            ? 'نتيجتك تشير إلى مستوى متوسط. ننصح بممارسة تقنيات الاسترخاء.'
-            : 'Your results indicate a medium level. We recommend practicing relaxation techniques.'
-        }
-      } else {
-        return {
-          level: language === 'ar' ? 'منخفض' : 'Low',
-          desc: language === 'ar'
-            ? 'نتيجتك تشير إلى مستوى منخفض. حافظ على ممارسة العادات الصحية.'
-            : 'Your results indicate a low level. Maintain healthy habits.'
-        }
-      }
-    }
-    
-    const retakeTest = () => {
-      testStep.value = 'info'
-      currentQuestionIndex.value = 0
-      answers.value = new Array(currentMeasure.value.questions.length).fill(undefined)
-      testResult.value = null
-    }
-    
     const showOtherMeasures = () => {
+      console.log('📋 عرض المقاييس الأخرى')
       closeMeasureModal()
     }
 
     const switchToLogin = () => {
-      console.log('Switch to login')
+      console.log('🔐 التحويل لتسجيل الدخول')
     }
 
     return {
@@ -402,10 +316,6 @@ export default {
       showRegistrationModal,
       showMeasureModal,
       currentMeasure,
-      testStep,
-      currentQuestionIndex,
-      answers,
-      testResult,
       scales,
       resources,
       filteredMeasures,
@@ -413,27 +323,19 @@ export default {
       currentLanguage,
       loading,
       error,
+      dataLoaded,
       translate,
       openRegistrationModal,
       closeRegistrationModal,
       handleRegistrationSuccess,
       openMeasureModal,
       closeMeasureModal,
-      startTest,
-      nextQuestion,
-      previousQuestion,
-      submitTest,
-      retakeTest,
       showOtherMeasures,
       switchToLogin,
-      fetchMeasuresData
+      fetchMeasuresData,
+      handleFilterChange,
+      handleSearchChange
     }
   }
 }
 </script>
-
-<style scoped>
-.hero-section {
-  background: linear-gradient(135deg, rgba(158, 191, 59, 0.05) 0%, rgba(214, 162, 154, 0.05) 100%);
-}
-</style>
