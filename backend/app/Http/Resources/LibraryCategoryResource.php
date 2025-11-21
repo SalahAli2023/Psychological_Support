@@ -24,6 +24,9 @@ class LibraryCategoryResource extends JsonResource
             'name_ar' => $this->name_ar,
             'name_en' => $this->name_en,
             'color' => $this->color,
+            'items_count' => $this->library_items_count ?? 0,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

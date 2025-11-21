@@ -432,34 +432,7 @@ const formData = reactive({
     is_published: true
 });
 
-// Watch for editing item changes
-watch(() => props.editingItem, (newItem) => {
-    if (newItem) {
-        // Fill form with existing data
-        formData.title_ar = newItem.title_ar || '';
-        formData.title_en = newItem.title_en || '';
-        formData.description_ar = newItem.description_ar || '';
-        formData.description_en = newItem.description_en || '';
-        formData.author_ar = newItem.author_ar || '';
-        formData.author_en = newItem.author_en || '';
-        formData.type = newItem.type || '';
-        formData.category_id = newItem.category_id?.toString() || '';
-        formData.publish_date = newItem.publish_date || '';
-        formData.pages = newItem.pages?.toString() || '';
-        formData.is_new = newItem.is_new || false;
-        formData.is_published = newItem.is_published || false;
-        
-        // Set cover preview if exists
-        if (newItem.cover_image) {
-            coverPreview.value = newItem.cover_image;
-        }
-    } else {
-        // Reset form for new item
-        resetForm();
-    }
-}, { immediate: true });
-
-// Methods
+// Methods - تم نقل التعريفات إلى الأعلى
 const resetForm = () => {
     formData.title_ar = '';
     formData.title_en = '';
@@ -620,6 +593,33 @@ const handleSubmit = async () => {
         uploadProgress.value = 0;
     }
 };
+
+// Watch for editing item changes - الآن بعد تعريف جميع الدوال
+watch(() => props.editingItem, (newItem) => {
+    if (newItem) {
+        // Fill form with existing data
+        formData.title_ar = newItem.title_ar || '';
+        formData.title_en = newItem.title_en || '';
+        formData.description_ar = newItem.description_ar || '';
+        formData.description_en = newItem.description_en || '';
+        formData.author_ar = newItem.author_ar || '';
+        formData.author_en = newItem.author_en || '';
+        formData.type = newItem.type || '';
+        formData.category_id = newItem.category_id?.toString() || '';
+        formData.publish_date = newItem.publish_date || '';
+        formData.pages = newItem.pages?.toString() || '';
+        formData.is_new = newItem.is_new || false;
+        formData.is_published = newItem.is_published || false;
+        
+        // Set cover preview if exists
+        if (newItem.cover_image) {
+            coverPreview.value = newItem.cover_image;
+        }
+    } else {
+        // Reset form for new item
+        resetForm();
+    }
+}, { immediate: true });
 
 // Event listeners for drag and drop
 onMounted(() => {
