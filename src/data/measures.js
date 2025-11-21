@@ -3920,34 +3920,40 @@ export const titles = {
     forSpecialists: 'للمختصين'
 };
 
-export const categoryTitles = {
-    women: { ar: 'للمرأة', en: 'For Women' },
-    children: { ar: 'للأطفال', en: 'For Children' },
-}
+
 
 export const categoriesData = [
     {
         id: 'all',
-        title: 'كل المقاييس',
-        description: 'استعرض جميع المقاييس النفسية المتاحة في المنصة',
+        title: { ar: 'جميع المقاييس', en: 'All Measures' },
+        description:{
+            ar:'استعرض جميع المقاييس النفسية المتاحة في المنصة',
+            en:"Browse all available psychological measures on the platform"
+        },
         icon: 'fas fa-layer-group',
         filter: 'allMeasures',
         color: 'bg-gradient-to-l from-primary-green to-primary-pink'
     },
     {
         id: 'women',
-        title: 'للمرأة',
-        description: 'مقاييس متخصصة لصحة المرأة النفسية والتربوية',
+        title: { ar: 'للمرأة', en: 'For Women' },
+        description:{
+            ar:'مقاييس متخصصة لصحة المرأة النفسية والتربوية',
+            en:"Specialized measures for women's mental and educational health"
+        },
         icon: 'fas fa-female',
         filter: 'forWomen',
-        color: 'bg-gradient-to-l from-primary-green to-primary-pink'
+        color: 'bg-gradient-to-l from-primary-green to-[#814251]'
     },
     {
         id: 'children',
-        title: 'للطفل',
-        description: 'مقاييس مصممة خصيصاً للأطفال والمراهقين لتقييم النمو والمهارات',
+        title: { ar: 'للأطفال', en: 'For Children' },
+        description: { 
+            ar: 'مقاييس مصممة خصيصاً للأطفال والمراهقين لتقييم النمو والمهارات',
+            en: "Measures specifically designed for children and adolescents to assess development and skills"
+        },
         icon: 'fas fa-child',
         filter: 'forChildren',
-        color: 'bg-gradient-to-l from-primary-green to-primary-pink'
+        color: 'bg-gradient-to-l from-primary-green to-[#954529]'
     }
 ];

@@ -1,27 +1,25 @@
 <template>
-  <div >
-    <!-- الهيدر -->
+  <div>
+    <!-- Header -->
     <Header />
 
     <!-- Hero -->
     <Hero
-      title="تواصــل معنا"
-      highlight="وسنسعد بخدمتك"
-      subtitle="نحن هنا للإجابة عن استفساراتك ومساعدتك في أي وقت"
-
-           :buttons="[
-        { text: 'ابدأ الرحلة', icon: 'fas fa-play-circle', primary: true },
-        { text: 'المزيد عنا', icon: 'fas fa-info-circle', primary: false }
-
+      :title="translate('contact.hero.title')"
+      :highlight="translate('contact.hero.highlight')"
+      :subtitle="translate('contact.hero.subtitle')"
+      :buttons="[
+        { text: translate('buttons.startJourney'), icon: 'fas fa-play-circle', primary: true },
+        { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
       ]"
     />
 
-    <!-- قسم التواصل -->
-    <section class="py-16 bg-white font-almarai">
+    <!-- Contact Section -->
+    <section class="py-16 bg-primary">
       <div class="max-w-6xl mx-auto px-6">
-        <!-- معلومات التواصل -->
+        <!-- Contact Information -->
         <div class="grid md:grid-cols-3 gap-6 mb-12">
-          <!-- بطاقة الهاتف -->
+          <!-- Phone Card -->
           <div
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
@@ -31,12 +29,12 @@
               <i class="fa-solid fa-phone"></i>
             </div>
             <div>
-              <h4 class="font-semibold text-gray-800">الهاتف</h4>
+              <h4 class="font-semibold text-gray-800">{{ translate('contact.section.phone') }}</h4>
               <p class="text-gray-500 text-sm">+967 777777777</p>
             </div>
           </div>
 
-          <!-- بطاقة البريد -->
+          <!-- Email Card -->
           <div
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
@@ -46,12 +44,12 @@
               <i class="fa-solid fa-envelope"></i>
             </div>
             <div>
-              <h4 class="font-semibold text-gray-800">البريد الإلكتروني</h4>
+              <h4 class="font-semibold text-gray-800">{{ translate('contact.section.email') }}</h4>
               <p class="text-gray-500 text-sm">farhm@example.com</p>
             </div>
           </div>
 
-          <!-- بطاقة الموقع -->
+          <!-- Location Card -->
           <div
             class="flex items-center gap-4 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
@@ -61,65 +59,69 @@
               <i class="fa-solid fa-map-location-dot"></i>
             </div>
             <div>
-              <h4 class="font-semibold text-gray-800">الموقع</h4>
-              <p class="text-gray-500 text-sm">اليمن - تعز</p>
+              <h4 class="font-semibold text-gray-800">{{ translate('contact.section.location') }}</h4>
+              <p class="text-gray-500 text-sm">{{ currentLanguage === 'ar' ? 'اليمن - تعز' : 'Yemen - Taiz' }}</p>
             </div>
           </div>
         </div>
 
-        <!-- نموذج الإرسال -->
+        <!-- Contact Form -->
         <div>
-          <h2 class="text-3xl font-bold text-gray-900 mb-2">أرسل رسالة</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ translate('contact.section.title') }}</h2>
           <div class="w-10 h-[2px] bg-primary-green mb-6 rounded-full"></div>
 
           <form class="space-y-6">
             <div class="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
-                placeholder="الاسم الكامل"
+                :placeholder="translate('contact.form.fullName')"
                 class="w-full border border-gray-200 rounded-full px-5 py-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent transition-all"
+                :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
               />
               <input
                 type="email"
-                placeholder="البريد الإلكتروني"
+                :placeholder="translate('contact.form.email')"
                 class="w-full border border-gray-200 rounded-full px-5 py-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent transition-all"
+                :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
               />
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
-                placeholder="الموضوع"
+                :placeholder="translate('contact.form.subject')"
                 class="w-full border border-gray-200 rounded-full px-5 py-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent transition-all"
+                :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
               />
               <input
                 type="text"
-                placeholder="نوع الرسالة"
+                :placeholder="translate('contact.form.messageType')"
                 class="w-full border border-gray-200 rounded-full px-5 py-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent transition-all"
+                :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
               />
             </div>
 
             <textarea
               rows="5"
-              placeholder="اكتب رسالتك هنا..."
+              :placeholder="translate('contact.form.message')"
               class="w-full border border-gray-200 rounded-xl px-5 py-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent transition-all"
+              :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
             ></textarea>
 
-          <div class="flex justify-start">
-  <button
-    type="submit"
-    class="px-8 py-3 rounded-2xl bg-gradient-to-tr from-primary-green to-secondary-green text-white font-semibold hover:opacity-90 transition-all shadow-md"
-  >
-    إرسال الرسالة
-  </button>
-</div>
-
+            <div class="flex justify-start">
+              <button
+                type="submit"
+                class="px-8 py-3 rounded-2xl bg-gradient-to-tr from-primary-green to-secondary-green text-white font-semibold hover:opacity-90 transition-all shadow-md"
+              >
+                {{ translate('contact.form.send') }}
+              </button>
+            </div>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- الفوتر -->
+    <!-- Footer -->
     <Footer />
   </div>
 </template>
@@ -128,9 +130,12 @@
 import Header from '@/components/frontend/layouts/header.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import Hero from '@/components/frontend/layouts/hero.vue'
+import { useTranslations } from '@/composables/useTranslations'
+
+const { translate, currentLanguage } = useTranslations()
 </script>
 
-<!-- لا تستخدم scoped -->
+<!-- No scoped style -->
 <style>
 /* يمكن إضافة أي تخصيص عام هنا */
 </style>
