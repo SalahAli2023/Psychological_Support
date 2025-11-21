@@ -29,9 +29,37 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => fake()->randomElement($roles),
+            'phone' => fake()->phoneNumber(),
+            'avatar' => null,
+            'bio' => fake()->paragraph(),
+            'joined_at' => fake()->dateTimeBetween('-1 year', 'now'),
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
+            'updated_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Admin',
+        ]);
+    }
+
+    public function therapist(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Therapist',
+        ]);
+    }
+
+    public function client(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Client',
+        ]);
+    }
+    
     /**
      * Indicate that the model's email address should be unverified.
      */

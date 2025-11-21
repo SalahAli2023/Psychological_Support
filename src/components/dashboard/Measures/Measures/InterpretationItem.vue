@@ -3,37 +3,58 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-start">
       <!-- المدى -->
       <div class="md:col-span-3">
-        <FormField label="المدى">
+        <FormField label="المدى *">
           <div class="flex gap-2 items-center">
             <input 
-              v-model="interpretation.minScore"
+              v-model="interpretation.min_score"
               type="number"
               class="input text-center text-sm sm:text-base"
+              :class="{ 'border-red-500': showErrors && (interpretation.min_score === undefined || interpretation.min_score === null) }"
               placeholder="من"
               min="0"
               :max="maxScore"
+              required
             />
             <span class="text-gray-500">-</span>
             <input 
-              v-model="interpretation.maxScore"
+              v-model="interpretation.max_score"
               type="number"
               class="input text-center text-sm sm:text-base"
+              :class="{ 'border-red-500': showErrors && (interpretation.max_score === undefined || interpretation.max_score === null) }"
               placeholder="إلى"
-              :min="interpretation.minScore"
+              :min="interpretation.min_score"
               :max="maxScore"
+              required
             />
           </div>
+          <p v-if="showErrors && (interpretation.min_score === undefined || interpretation.min_score === null)" class="text-red-500 text-xs mt-1">الحد الأدنى مطلوب</p>
+          <p v-if="showErrors && (interpretation.max_score === undefined || interpretation.max_score === null)" class="text-red-500 text-xs mt-1">الحد الأقصى مطلوب</p>
+          <p v-if="showErrors && interpretation.min_score !== undefined && interpretation.max_score !== undefined && interpretation.max_score <= interpretation.min_score" class="text-red-500 text-xs mt-1">الحد الأقصى يجب أن يكون أكبر من الحد الأدنى</p>
         </FormField>
       </div>
 
       <!-- التصنيف -->
       <div class="md:col-span-2">
-        <FormField label="التصنيف">
+        <FormField label="التصنيف *">
           <input 
-            v-model="interpretation.label"
+            v-model="interpretation.interpretation_label_ar"
             type="text"
             class="input text-sm sm:text-base"
+            :class="{ 'border-red-500': showErrors && !interpretation.interpretation_label_ar && !interpretation.interpretation_label_en }"
             placeholder="مثل: منخفض"
+          />
+          <p v-if="showErrors && !interpretation.interpretation_label_ar && !interpretation.interpretation_label_en" class="text-red-500 text-xs mt-1">التصنيف (العربية أو الإنجليزية) مطلوب</p>
+        </FormField>
+      </div>
+
+      <!-- التصنيف الإنجليزي -->
+      <div class="md:col-span-2">
+        <FormField label="التصنيف (الإنجليزية)">
+          <input 
+            v-model="interpretation.interpretation_label_en"
+            type="text"
+            class="input text-sm sm:text-base"
+            placeholder="e.g., Low"
           />
         </FormField>
       </div>
@@ -52,13 +73,13 @@
       </div>
 
       <!-- التفسير -->
-      <div class="md:col-span-4">
+      <div class="md:col-span-2">
         <FormField label="التفسير">
           <textarea 
-            v-model="interpretation.description"
+            v-model="interpretation.description_ar"
             rows="2"
             class="input text-sm sm:text-base"
-            :placeholder="`تفسير النتيجة للمدى ${interpretation.minScore}-${interpretation.maxScore}`"
+            :placeholder="`تفسير النتيجة للمدى ${interpretation.min_score}-${interpretation.max_score}`"
           ></textarea>
         </FormField>
       </div>
@@ -85,9 +106,9 @@
             getColorClass(interpretation.color)
           ]"
         >
-          {{ interpretation.label || 'تصنيف' }}: {{ interpretation.minScore }}-{{ interpretation.maxScore }}
+          {{ interpretation.interpretation_label_ar || interpretation.interpretation_label_en || 'تصنيف' }}: {{ interpretation.min_score }}-{{ interpretation.max_score }}
         </span>
-        <span class="text-sm text-gray-600">{{ interpretation.description }}</span>
+        <span class="text-sm text-gray-600">{{ interpretation.description_ar }}</span>
       </div>
     </div>
   </div>
@@ -103,6 +124,7 @@ defineProps<{
   index: number;
   maxScore: number;
   canRemove: boolean;
+  showErrors: boolean;
 }>();
 
 defineEmits<{

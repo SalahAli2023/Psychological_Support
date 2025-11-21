@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between p-6 border-b border-primary">
         <div class="flex items-center gap-4">
           <img 
-            :src="patient.avatar" 
+            :src="patientAvatar" 
             :alt="patient.name"
             class="w-16 h-16 rounded-full border-4 border-brand-500"
           />
@@ -87,11 +87,11 @@
               <div class="space-y-3">
                 <div>
                   <p class="text-xs text-secondary">إجمالي الجلسات</p>
-                  <p class="text-sm font-medium text-primary">{{ patient.totalSessions || 0 }} جلسة</p>
+                  <p class="text-sm font-medium text-primary">{{ sessionsStats.total_sessions || 0 }} جلسة</p>
                 </div>
                 <div>
                   <p class="text-xs text-secondary">آخر جلسة</p>
-                  <p class="text-sm font-medium text-primary">{{ patient.lastSession || 'لا توجد' }}</p>
+                  <p class="text-sm font-medium text-primary">{{ lastSessionDate || 'لا توجد' }}</p>
                 </div>
                 <div>
                   <p class="text-xs text-secondary">حالة المريض</p>
@@ -133,25 +133,25 @@
             </div>
 
             <!-- التقدم العلاجي -->
-            <div class="bg-primary border border-primary rounded-xl p-4">
+              <div class="bg-primary border border-primary rounded-xl p-4">
               <h3 class="font-semibold text-primary mb-4">التقدم العلاجي</h3>
               <div class="space-y-4">
                 <div>
                   <div class="flex justify-between text-sm text-primary mb-1">
                     <span>التقدم العام</span>
-                    <span>{{ treatmentProgress }}%</span>
+                    <span>{{ averageSessionProgress }}%</span>
                   </div>
                   <div class="w-full bg-secondary rounded-full h-2">
-                    <div class="bg-brand-500 h-2 rounded-full" :style="{ width: treatmentProgress + '%' }"></div>
+                    <div class="bg-brand-500 h-2 rounded-full" :style="{ width: averageSessionProgress + '%' }"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-sm text-primary mb-1">
                     <span>الالتزام بالجلسات</span>
-                    <span>{{ sessionCompliance }}%</span>
+                    <span>{{ attendanceRate }}%</span>
                   </div>
                   <div class="w-full bg-secondary rounded-full h-2">
-                    <div class="bg-green-500 h-2 rounded-full" :style="{ width: sessionCompliance + '%' }"></div>
+                    <div class="bg-green-500 h-2 rounded-full" :style="{ width: attendanceRate + '%' }"></div>
                   </div>
                 </div>
               </div>
@@ -161,11 +161,11 @@
             <div class="bg-primary border border-primary rounded-xl p-4">
               <h3 class="font-semibold text-primary mb-4">الجلسات القادمة</h3>
               <div class="space-y-3">
-                <div v-if="patient.nextSession" class="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                <div v-if="nextSession" class="flex items-center justify-between p-3 bg-secondary rounded-lg">
                   <div>
-                    <p class="font-medium text-primary">جلسة متابعة</p>
-                    <p class="text-sm text-secondary">{{ patient.nextSession }} - 02:00 م</p>
-                    <p class="text-xs text-secondary">المعالج: د. أحمد محمد</p>
+                    <p class="font-medium text-primary">{{ nextSession.title_ar || nextSession.title }}</p>
+                    <p class="text-sm text-secondary">{{ formatSessionDate(nextSession.session_date) }} - {{ nextSession.session_time }}</p>
+                    <p class="text-xs text-secondary">المعالج: {{ getTherapistName(nextSession.therapist_id) }}</p>
                   </div>
                   <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
                     مؤكدة
@@ -181,11 +181,11 @@
             <div class="bg-primary border border-primary rounded-xl p-4">
               <h3 class="font-semibold text-primary mb-4">آخر الملاحظات</h3>
               <div class="space-y-3">
-                <div class="p-3 bg-secondary rounded-lg">
-                  <p class="text-sm text-primary">{{ latestNote }}</p>
-                  <p class="text-xs text-secondary mt-2">د. أحمد محمد - {{ noteDate }}</p>
+                <div v-if="latestSessionNote" class="p-3 bg-secondary rounded-lg">
+                  <p class="text-sm text-primary">{{ latestSessionNote.notes_ar || latestSessionNote.notes }}</p>
+                  <p class="text-xs text-secondary mt-2">{{ getTherapistName(latestSessionNote.therapist_id) }} - {{ formatSessionDate(latestSessionNote.session_date) }}</p>
                 </div>
-                <div v-if="!hasNotes" class="text-center py-4 text-secondary">
+                <div v-else class="text-center py-4 text-secondary">
                   <p>لا توجد ملاحظات مسجلة</p>
                 </div>
               </div>
@@ -198,7 +198,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
+import { usePatientSessionsStore } from '@/stores/patientSessions'
+
+const sessionsStore = usePatientSessionsStore()
 
 const props = defineProps({
   open: {
@@ -212,6 +215,76 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+// جلب بيانات الجلسات عند فتح النافذة
+onMounted(() => {
+  if (props.open && props.patient?.id) {
+    loadSessionsData()
+  }
+})
+
+// مراقبة فتح النافذة لتحميل البيانات
+watch(() => props.open, (isOpen) => {
+  if (isOpen && props.patient?.id) {
+    loadSessionsData()
+  }
+})
+
+// تحميل بيانات الجلسات
+const loadSessionsData = async () => {
+  if (!props.patient?.id) return
+  
+  try {
+    await sessionsStore.fetchSessions(props.patient.id)
+    await sessionsStore.fetchStats(props.patient.id)
+    if (sessionsStore.therapists.length === 0) {
+      await sessionsStore.fetchTherapists()
+    }
+  } catch (error) {
+    console.error('Error loading sessions data:', error)
+  }
+}
+
+const averageSessionProgress = computed(() => {
+  if (!sessionsStore.sessions || sessionsStore.sessions.length === 0) return 0
+  
+  const sessionsWithProgress = sessionsStore.sessions.filter(session => 
+    session.progress && session.progress > 0
+  )
+  
+  if (sessionsWithProgress.length === 0) return 0
+  
+  const totalProgress = sessionsWithProgress.reduce((sum, session) => sum + session.progress, 0)
+  return Math.round(totalProgress / sessionsWithProgress.length)
+})
+
+// معدل الالتزام (الجلسات المكتملة من المجدولة)
+const attendanceRate = computed(() => {
+  if (!sessionsStore.sessions || sessionsStore.sessions.length === 0) return 0
+  
+  const completedSessions = sessionsStore.sessions.filter(session => session.status === 'completed').length
+  const scheduledSessions = sessionsStore.sessions.filter(session => 
+    session.status === 'scheduled' || session.status === 'completed'
+  ).length
+  
+  if (scheduledSessions === 0) return 0
+  
+  return Math.round((completedSessions / scheduledSessions) * 100)
+})
+
+
+// الصورة الافتراضية بناءً على الجنس
+const patientAvatar = computed(() => {
+  if (props.patient.avatar) {
+    return props.patient.avatar
+  }
+  
+  if (props.patient.gender === 'female') {
+    return '/images/default-female-avatar.png'
+  } else {
+    return '/images/default-female-avatar.png'
+  }
+})
 
 // حساب العمر من تاريخ الميلاد
 const calculatedAge = computed(() => {
@@ -252,25 +325,81 @@ const formattedDateOfBirth = computed(() => {
 
 // بيانات افتراضية للتقدم العلاجي (يمكن استبدالها ببيانات حقيقية من الـ API)
 const treatmentProgress = computed(() => {
-  // يمكن حساب هذا من بيانات حقيقية مثل عدد الجلسات المكتملة
   return props.patient.treatmentProgress || 65
 })
 
 const sessionCompliance = computed(() => {
-  // يمكن حساب هذا من بيانات الحضور والالتزام
   return props.patient.sessionCompliance || 80
 })
 
-// ملاحظات افتراضية (يمكن استبدالها ببيانات حقيقية من الـ API)
-const latestNote = computed(() => {
-  return props.patient.latestNote || 'تحسن ملحوظ في إدارة نوبات القلق. المريض يطبق تقنيات التنفس بشكل منتظم.'
+// === البيانات الحقيقية للجلسات ===
+
+// إحصائيات الجلسات من الـ store
+const sessionsStats = computed(() => {
+  return sessionsStore.stats || {}
 })
 
-const noteDate = computed(() => {
-  return props.patient.noteDate || '2024-01-15'
+// الجلسة القادمة
+const nextSession = computed(() => {
+  if (!sessionsStore.sessions || sessionsStore.sessions.length === 0) return null
+  
+  const today = new Date()
+  const upcomingSessions = sessionsStore.sessions
+    .filter(session => {
+      if (session.status !== 'scheduled') return false
+      const sessionDate = new Date(session.session_date)
+      return sessionDate >= today
+    })
+    .sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+  
+  return upcomingSessions[0] || null
 })
 
-const hasNotes = computed(() => {
-  return props.patient.hasNotes !== false // إذا لم يتم تحديد، نعرض الملاحظة الافتراضية
+// تاريخ آخر جلسة
+const lastSessionDate = computed(() => {
+  if (!sessionsStore.sessions || sessionsStore.sessions.length === 0) return 'لا توجد'
+  
+  const completedSessions = sessionsStore.sessions
+    .filter(session => session.status === 'completed')
+    .sort((a, b) => new Date(b.session_date) - new Date(a.session_date))
+  
+  if (completedSessions.length === 0) return 'لا توجد'
+  
+  return formatSessionDate(completedSessions[0].session_date)
 })
+
+// أحدث ملاحظة من الجلسات
+const latestSessionNote = computed(() => {
+  if (!sessionsStore.sessions || sessionsStore.sessions.length === 0) return null
+  
+  const sessionsWithNotes = sessionsStore.sessions
+    .filter(session => session.notes_ar || session.notes)
+    .sort((a, b) => new Date(b.session_date) - new Date(a.session_date))
+  
+  return sessionsWithNotes[0] || null
+})
+
+// الحصول على اسم المعالج
+const getTherapistName = (therapistId) => {
+  if (!therapistId) return 'غير محدد'
+  
+  const therapist = sessionsStore.therapists.find(t => t.id === therapistId)
+  return therapist ? (therapist.name_ar || therapist.name_en || therapist.name || 'غير محدد') : 'غير محدد'
+}
+
+// تنسيق تاريخ الجلسة
+const formatSessionDate = (dateString) => {
+  if (!dateString) return 'غير محدد'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('ar-SA', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  } catch (error) {
+    return dateString
+  }
+}
 </script>

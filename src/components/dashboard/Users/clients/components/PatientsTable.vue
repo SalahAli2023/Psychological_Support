@@ -23,7 +23,7 @@
             <td class="px-4 py-3">
               <div class="flex items-center gap-3">
                 <img 
-                  :src="patient.avatar" 
+                  :src="getPatientAvatar(patient)" 
                   :alt="patient.name"
                   class="w-10 h-10 rounded-full object-cover border border-primary"
                 />
@@ -65,19 +65,19 @@
               </div>
             </td>
 
-            <!-- Sessions -->
+            <!-- Sessions - بيانات حقيقية -->
             <td class="px-4 py-3">
               <div class="space-y-1">
-                <div class="text-primary font-medium">{{ patient.totalSessions || 0 }} جلسة</div>
+                <div class="text-primary font-medium">{{ getPatientSessionsCount(patient.id) }} جلسة</div>
                 <div class="text-xs text-secondary">
-                  آخر جلسة: {{ patient.lastSession || 'لا توجد' }}
+                  آخر جلسة: {{ getLastSessionDate(patient.id) }}
                 </div>
                 <div class="text-xs">
                   <span :class="[
                     'px-2 py-1 rounded-full',
-                    patient.nextSession ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                    getNextSession(patient.id) ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
                   ]">
-                    {{ patient.nextSession ? `القادمة: ${patient.nextSession}` : 'لا توجد جلسة قادمة' }}
+                    {{ getNextSession(patient.id) ? `القادمة: ${getNextSession(patient.id)}` : 'لا توجد جلسة قادمة' }}
                   </span>
                 </div>
               </div>
@@ -108,7 +108,7 @@
                   </svg>
                 </button>
                 <button 
-                  @click="$emit('open-sessions', patient)"
+                  @click="openSessionsAndLoad(patient)"
                   class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg flex items-center gap-1 text-xs"
                   title="الجلسات"
                 >
@@ -152,7 +152,7 @@
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-3">
             <img 
-              :src="patient.avatar" 
+              :src="getPatientAvatar(patient)" 
               :alt="patient.name"
               class="w-12 h-12 rounded-full object-cover border border-primary"
             />
@@ -215,18 +215,18 @@
           </div>
         </div>
 
-        <!-- الجلسات -->
+        <!-- الجلسات - بيانات حقيقية -->
         <div class="space-y-2 mb-4">
           <div class="text-sm text-primary">
-            <span class="font-medium">{{ patient.totalSessions || 0 }} جلسة</span>
-            <span class="text-secondary text-xs mr-2"> • آخر جلسة: {{ patient.lastSession || 'لا توجد' }}</span>
+            <span class="font-medium">{{ getPatientSessionsCount(patient.id) }} جلسة</span>
+            <span class="text-secondary text-xs mr-2"> • آخر جلسة: {{ getLastSessionDate(patient.id) }}</span>
           </div>
           <div class="text-xs">
             <span :class="[
               'px-2 py-1 rounded-full',
-              patient.nextSession ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+              getNextSession(patient.id) ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
             ]">
-              {{ patient.nextSession ? `القادمة: ${patient.nextSession}` : 'لا توجد جلسة قادمة' }}
+              {{ getNextSession(patient.id) ? `القادمة: ${getNextSession(patient.id)}` : 'لا توجد جلسة قادمة' }}
             </span>
           </div>
         </div>
@@ -245,7 +245,7 @@
               </svg>
             </button>
             <button 
-              @click="$emit('open-sessions', patient)"
+              @click="openSessionsAndLoad(patient)"
               class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg flex items-center gap-1 text-xs"
               title="الجلسات"
             >
@@ -281,9 +281,27 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch, computed } from 'vue'
 import { usePatientsStore } from '@/stores/patients'
+import { usePatientSessionsStore } from '@/stores/patientSessions'
 
 const patientsStore = usePatientsStore()
+const sessionsStore = usePatientSessionsStore()
+
+// تخزين جلسات كل مريض
+const patientSessionsMap = ref({})
+
+// جلب جلسات جميع المرضى عند تحميل المكون
+onMounted(async () => {
+  await loadAllPatientsSessions()
+})
+
+// مراقبة تغيير قائمة المرضى لتحميل الجلسات
+watch(() => patientsStore.patients, async (newPatients) => {
+  if (newPatients && newPatients.length > 0) {
+    await loadAllPatientsSessions()
+  }
+})
 
 defineProps({
   patients: {
@@ -296,7 +314,89 @@ defineProps({
   }
 })
 
-defineEmits(['view-profile', 'edit-patient', 'delete-patient', 'open-sessions'])
+const emit = defineEmits(['view-profile', 'edit-patient', 'delete-patient', 'open-sessions'])
+
+// جلب جلسات جميع المرضى
+const loadAllPatientsSessions = async () => {
+  if (!patientsStore.patients || patientsStore.patients.length === 0) return
+
+  for (const patient of patientsStore.patients) {
+    await loadPatientSessions(patient.id)
+  }
+}
+
+// جلب جلسات المريض
+const loadPatientSessions = async (patientId) => {
+  try {
+    await sessionsStore.fetchSessions(patientId)
+    patientSessionsMap.value[patientId] = [...sessionsStore.sessions]
+    console.log(`✅ جلسات المريض ${patientId}:`, patientSessionsMap.value[patientId])
+  } catch (error) {
+    console.error('Error loading patient sessions:', error)
+    patientSessionsMap.value[patientId] = []
+  }
+}
+
+// عدد جلسات المريض
+const getPatientSessionsCount = (patientId) => {
+  const sessions = patientSessionsMap.value[patientId]
+  return sessions ? sessions.length : 0
+}
+
+// تاريخ آخر جلسة
+const getLastSessionDate = (patientId) => {
+  const sessions = patientSessionsMap.value[patientId]
+  if (!sessions || sessions.length === 0) return 'لا توجد'
+  
+  // البحث عن آخر جلسة مكتملة
+  const completedSessions = sessions.filter(session => session.status === 'completed')
+  if (completedSessions.length === 0) return 'لا توجد'
+  
+  const lastSession = completedSessions.sort((a, b) => 
+    new Date(b.session_date) - new Date(a.session_date)
+  )[0]
+  
+  return formatSessionDate(lastSession.session_date)
+}
+
+// الجلسة القادمة
+const getNextSession = (patientId) => {
+  const sessions = patientSessionsMap.value[patientId]
+  if (!sessions || sessions.length === 0) return null
+  
+  const today = new Date()
+  const nextSessions = sessions
+    .filter(session => session.status === 'scheduled')
+    .filter(session => new Date(session.session_date) >= today)
+    .sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+  
+  if (nextSessions.length === 0) return null
+  
+  return formatSessionDate(nextSessions[0].session_date)
+}
+
+// تنسيق تاريخ الجلسة
+const formatSessionDate = (dateString) => {
+  if (!dateString) return 'غير محدد'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('ar-SA', {
+      month: 'long',
+      day: 'numeric'
+    })
+  } catch (error) {
+    return dateString
+  }
+}
+
+// فتح نافذة الجلسات مع تحميل البيانات
+const openSessionsAndLoad = async (patient) => {
+  // تحميل الجلسات أولاً
+  await loadPatientSessions(patient.id)
+  // ثم فتح النافذة
+  emit('open-sessions', patient)
+}
 
 // دالة حساب العمر من تاريخ الميلاد
 const calculateAge = (dateOfBirth) => {
@@ -316,6 +416,19 @@ const calculateAge = (dateOfBirth) => {
   } catch (error) {
     console.error('Error calculating age:', error)
     return 'غير محدد'
+  }
+}
+
+// دالة للحصول على الصورة الافتراضية
+const getPatientAvatar = (patient) => {
+  if (patient.avatar) {
+    return patient.avatar
+  }
+  
+  if (patient.gender === 'female') {
+    return '/images/default-female-avatar.png'
+  } else {
+    return '/images/default-female-avatar.png'
   }
 }
 </script>

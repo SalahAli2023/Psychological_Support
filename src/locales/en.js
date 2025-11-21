@@ -450,7 +450,8 @@ export const en = {
 
   measuresHero: {
 
-    title: 'Psychological Tests and Assessments',
+    title: 'Psychological Tests',
+    titleKey:' and Assessments',
     subtitle: 'Discover yourself better through trusted psychological scales',
     description: 'Choose from a wide range of validated psychological assessments designed to meet your needs'
 
@@ -723,7 +724,30 @@ export const en = {
     cancel: "Cancel",
     continue: "Continue"
   },
- "resourcesPage": {
+  
+  contact: {
+    hero: {
+      title: "Contact Us",
+      highlight: "We'll be happy to serve you",
+      subtitle: "We're here to answer your inquiries and assist you anytime"
+    },
+    section: {
+      title: "Send a Message",
+      phone: "Phone",
+      email: "Email",
+      location: "Location" 
+    },
+    form: {
+      fullName: "Full Name",
+      email: "Email Address",
+      subject: "Subject",
+      messageType: "Message Type",
+      message: "Write your message here...",
+      send: "Send Message"
+    }
+  },
+  
+  resourcesPage: {
     "title": "Legal and Social Resources",
     "description": "We provide you with a comprehensive set of legal and social resources to support women and children and protect their rights",
     
@@ -814,5 +838,5 @@ export const en = {
             "education": "Education and awareness"
         }
     }
-},
+  },
 };

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+// import Users from '@/components/dashboard/Users/index.vue'
+import UserDetails from '@/components/dashboard/Users/UserDetails.vue'
 
 // --- Backend Pages ---
 const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
@@ -14,6 +16,8 @@ const ArticleCategories = () => import('../components/dashboard/Articles/Article
 const Programs = () => import('../components/dashboard/Programs/Index.vue');
 const Library = () => import('../components/dashboard/Library/Index.vue');
 const Assessments = () => import('../components/dashboard/Measures/Measures/Index.vue');
+const Categories = () => import('../components/dashboard/Measures/Categories/CategoriesIndex.vue'); 
+
 
 const LegalResources = () => import('../components/dashboard/LegalResources/Index.vue')
 
@@ -25,6 +29,7 @@ const Events = () => import('../components/dashboard/Events/Index.vue');
 
 // --- Frontend Pages ---
 import HomePage from '../components/frontend/home.vue'
+import session  from '../components/frontend/Session/PatientSessions.vue'
 import AboutPage  from '../components/frontend/AboutPage.vue' 
 import EventsPage from '../components/frontend/EventsPage.vue'
 import MeasuresPage from '../components/frontend/MeasuresPage.vue'
@@ -46,6 +51,7 @@ const routes = [
   { path: '/', name: 'Home', component: HomePage },
   { path: '/events', name: 'Events', component: EventsPage },
   { path: '/about', name: 'About', component: AboutPage },
+   { path: '/Session', name: 'Session', component: session},
   { path: '/measures', name: 'Measures', component: MeasuresPage },
   { path: '/article', name: 'ArticleMain', component: ArticleMain },
   { path: '/article/:id', name: 'ArticleDetail', component: ArticleDetail, props: true },
@@ -55,7 +61,17 @@ const routes = [
   { path: '/contact', name: 'contact', component: contact, props: true },
   { path: '/register', name: 'register', component: register, props: true },
   { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
-
+  // {
+  //   path: '/dashboard/users',
+  //   name: 'Users',
+  //   component: Users
+  // },
+  {
+    path: '/dashboard/users/:id',
+    name: 'UserDetails',
+    component: UserDetails,
+    props: true
+  },
   // Auth routes
   { 
     path: '/admin/login', 
@@ -83,6 +99,7 @@ const routes = [
       { path: 'libraries', name: 'libraries', component: Library },
       { path: 'categories-Library', name: 'categories-Library', component: LibraryCategoryForm },
       { path: 'events', name: 'events', component: Events },
+      { path: 'scale-categories', name: 'scale-categories', component: Categories },
 
       { path: 'assessments', name: 'assessments', component: Assessments },
       { path: 'legal-resources', name: 'legal-resources', component: LegalResources },

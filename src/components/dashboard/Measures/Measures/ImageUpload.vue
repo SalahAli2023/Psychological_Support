@@ -37,6 +37,9 @@
             إزالة الصورة
           </button>
         </div>
+        <p class="text-xs text-gray-500 mt-1">
+          اختياري - يجب أن يكون رابط URL صالحاً
+        </p>
       </div>
     </div>
   </div>

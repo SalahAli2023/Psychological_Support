@@ -14,12 +14,12 @@
         <table class="min-w-full text-sm">
           <thead>
             <tr class="text-start text-secondary bg-secondary">
-              <th class="px-2 sm:px-4 py-3 text-start  font-bold text-xs sm:text-sm">اسم المقياس</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">اسم المقياس</th>
               <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm hidden sm:table-cell">الفئة</th>
               <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">الأسئلة</th>
-              <th class="px-2 sm:px-4 py-3 text-start ffont-bold text-xs sm:text-sm hidden md:table-cell">التفسير</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm hidden md:table-cell">التفسير</th>
               <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">الحالة</th>
-              <th class="px-2 sm:px-4 py-3 text-start font-boldtext-xs sm:text-sm">الإجراءات</th>
+              <th class="px-2 sm:px-4 py-3 text-start font-bold text-xs sm:text-sm">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
@@ -30,24 +30,26 @@
             >
               <td class="px-2 sm:px-4 py-3 text-primary font-medium text-xs sm:text-sm">
                 <div class="flex flex-col">
-                  <span>{{ scale.name.ar }}</span>
-                  <span class="text-xs text-secondary sm:hidden mt-1">{{ scale.category }}</span>
+                  <span>{{ scale.name_ar }}</span>
+                  <span class="text-xs text-secondary sm:hidden mt-1">{{ getCategoryName(scale.category_id) }}</span>
                 </div>
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm hidden sm:table-cell">
-                <span class="badge badge-neutral">{{ scale.category }}</span>
+                <span class="badge badge-neutral">{{ getCategoryName(scale.category_id) }}</span>
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm">
-                {{ scale.questions.length }}
+                <!-- عدد الأسئلة -->
+                {{ scale.questions?.length || scale.questions_count || 0 }}
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm hidden md:table-cell">
-                <span class="badge" :class="getInterpretationBadgeClass(scale.interpretations.length)">
-                  {{ scale.interpretations.length }} مستوى
+                <!-- عدد مستويات التفسير -->
+                <span class="badge" :class="getInterpretationBadgeClass(scale.interpretations?.length || scale.interpretations_count || 0)">
+                  {{ scale.interpretations?.length || scale.interpretations_count || 0 }} مستوى
                 </span>
               </td>
               <td class="px-2 sm:px-4 py-3 text-primary text-xs sm:text-sm">
-                <span :class="['badge', scale.active ? 'badge-brand' : 'badge-neutral']">
-                  {{ scale.active ? 'نشط' : 'غير نشط' }}
+                <span :class="['badge', scale.is_active ? 'badge-brand' : 'badge-neutral']">
+                  {{ scale.is_active ? 'نشط' : 'غير نشط' }}
                 </span>
               </td>
               <td class="px-2 sm:px-4 py-3">
@@ -111,8 +113,11 @@ import { computed } from 'vue';
 import Card from '@/components/dashboard/component/ui/Card.vue';
 import Button from '@/components/dashboard/component/ui/Button.vue';
 import Pagination from './Pagination.vue';
+import { useScalesStore } from '@/stores/scales';
 
 import type { Scale } from './types';
+
+const scalesStore = useScalesStore();
 
 defineProps<{
   scales: Scale[];
@@ -135,6 +140,10 @@ defineEmits<{
   'update:itemsPerPage': [value: number];
   clear: [];
 }>();
+
+function getCategoryName(categoryId: string) {
+  return scalesStore.getCategoryName(categoryId);
+}
 
 function getInterpretationBadgeClass(count: number) {
   if (count === 0) return 'bg-red-500 text-white';

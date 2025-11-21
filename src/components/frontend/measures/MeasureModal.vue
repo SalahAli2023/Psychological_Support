@@ -78,7 +78,7 @@
               </div>
               <div class="flex items-center text-gray-700">
                 <i class="fas fa-clock text-blue-500 ml-2"></i>
-                <span>{{ measure.time }} {{ translate('measureModal.time') }}</span>
+                <span>{{ getEstimatedTime(measure) }} {{ translate('measureModal.time') }}</span>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@
           <!-- الأسئلة في الصفحة الحالية -->
           <div 
             v-for="(question, questionIndex) in currentPageQuestions" 
-            :key="questionIndex"
+            :key="question.id || questionIndex"
             class="border border-gray-300 rounded-lg p-6 space-y-4"
           >
             <!-- عنوان السؤال -->
@@ -109,15 +109,13 @@
                 </span>
                 <span class="mx-2">•</span>
                 <span>{{ getQuestionTypeText(question.type) }}</span>
-                <span v-if="question.required" class="text-red-500 ml-2" :class="language === 'ar' ? 'ml-0 mr-2' : 'ml-2'">*</span>
               </div>
               
               <h3 class="text-lg font-normal text-gray-900">
                 {{ getTranslatedQuestion(question) }}
-                <span v-if="question.required" class="text-red-500">*</span>
               </h3>
               
-              <p v-if="question.description" class="text-sm text-gray-600">
+              <p v-if="getTranslatedDescription(question)" class="text-sm text-gray-600">
                 {{ getTranslatedDescription(question) }}
               </p>
             </div>
@@ -125,10 +123,10 @@
             <!-- الخيارات حسب نوع السؤال -->
             <div class="space-y-3">
               <!-- Multiple Choice -->
-              <div v-if="question.type === 'multiple_choice'" class="space-y-2">
+              <div v-if="question.type === 'multiple_choice' || !question.type" class="space-y-2">
                 <label
                   v-for="(option, optionIndex) in question.options"
-                  :key="optionIndex"
+                  :key="option.id || optionIndex"
                   class="flex items-center p-3 bg-white rounded-md border border-gray-300 cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50"
                   :class="{ 
                     'border-blue-500 bg-blue-50': getAnswer(getGlobalQuestionIndex(questionIndex)) === optionIndex,
@@ -147,57 +145,11 @@
                 </label>
               </div>
 
-              <!-- Checkboxes (Multiple Answers) -->
-              <div v-if="question.type === 'checkboxes'" class="space-y-2">
-                <label
-                  v-for="(option, optionIndex) in question.options"
-                  :key="optionIndex"
-                  class="flex items-center p-3 bg-white rounded-md border border-gray-300 cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50"
-                  :class="{ 
-                    'border-blue-500 bg-blue-50': (getAnswer(getGlobalQuestionIndex(questionIndex)) || []).includes(optionIndex),
-                  }"
-                >
-                  <input
-                    type="checkbox"
-                    :name="`question-${getGlobalQuestionIndex(questionIndex)}`"
-                    :value="optionIndex"
-                    v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span class="text-gray-700 flex-1 text-sm" :class="language === 'ar' ? 'mr-3 text-right' : 'ml-3 text-left'">
-                    {{ getTranslatedOption(option) }}
-                  </span>
-                </label>
-              </div>
-
-              <!-- Yes/No -->
-              <div v-if="question.type === 'yes_no'" class="flex space-x-3" :class="language === 'ar' ? 'space-x-reverse' : ''">
-                <label
-                  v-for="(option, optionIndex) in yesNoOptions"
-                  :key="optionIndex"
-                  class="flex-1 flex items-center justify-center p-3 bg-white rounded-md border border-gray-300 cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50"
-                  :class="{ 
-                    'border-blue-500 bg-blue-50': getAnswer(getGlobalQuestionIndex(questionIndex)) === option.value,
-                  }"
-                >
-                  <input
-                    type="radio"
-                    :name="`question-${getGlobalQuestionIndex(questionIndex)}`"
-                    :value="option.value"
-                    v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span class="text-gray-700 text-sm" :class="language === 'ar' ? 'mr-2' : 'ml-2'">
-                    {{ option[language] }}
-                  </span>
-                </label>
-              </div>
-
               <!-- Linear Scale -->
               <div v-if="question.type === 'linear_scale'" class="space-y-4">
                 <div class="flex justify-between text-sm text-gray-600">
-                  <span>{{ question.scaleLabels?.low[language] }}</span>
-                  <span>{{ question.scaleLabels?.high[language] }}</span>
+                  <span>{{ question.scaleLabels?.low[language] || 'منخفض' }}</span>
+                  <span>{{ question.scaleLabels?.high[language] || 'مرتفع' }}</span>
                 </div>
                 <div class="flex space-x-2 justify-center" :class="language === 'ar' ? 'space-x-reverse' : ''">
                   <label
@@ -220,43 +172,6 @@
                     </span>
                   </label>
                 </div>
-              </div>
-
-              <!-- Short Answer -->
-              <div v-if="question.type === 'short_answer'" class="space-y-2">
-                <input
-                  type="text"
-                  v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                  :placeholder="translate('measureModal.shortAnswerPlaceholder')"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                />
-              </div>
-
-              <!-- Paragraph -->
-              <div v-if="question.type === 'paragraph'" class="space-y-2">
-                <textarea
-                  v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                  :placeholder="translate('measureModal.paragraphPlaceholder')"
-                  rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-vertical"
-                ></textarea>
-              </div>
-
-              <!-- Dropdown -->
-              <div v-if="question.type === 'dropdown'" class="space-y-2">
-                <select
-                  v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                >
-                  <option value="" disabled>{{ translate('measureModal.selectOption') }}</option>
-                  <option
-                    v-for="(option, optionIndex) in question.options"
-                    :key="optionIndex"
-                    :value="optionIndex"
-                  >
-                    {{ getTranslatedOption(option) }}
-                  </option>
-                </select>
               </div>
             </div>
           </div>
@@ -367,23 +282,6 @@
                   </button>
                 </div>
               </div>
-
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <i class="fas fa-book text-blue-600 text-sm"></i>
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-medium text-gray-900 mb-1 text-sm">
-                    {{ translate('measureModal.resources.title') }}
-                  </h4>
-                  <p class="text-gray-600 text-xs mb-2">
-                    {{ translate('measureModal.resources.desc') }} {{ getTranslatedTitle(measure) }}
-                  </p>
-                  <button class="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all text-xs">
-                    {{ translate('measureModal.resources.button') }}
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -434,12 +332,8 @@ export default {
   ],
   data() {
     return {
-      questionsPerPage: 3, // عدد الأسئلة في كل صفحة
+      questionsPerPage: 3,
       currentPage: 0,
-      yesNoOptions: [
-        { value: 'yes', ar: 'نعم', en: 'Yes' },
-        { value: 'no', ar: 'لا', en: 'No' }
-      ]
     }
   },
   computed: {
@@ -454,23 +348,15 @@ export default {
     },
     
     isCurrentPageValid() {
-      // التحقق من أن جميع الأسئلة الإلزامية في الصفحة الحالية تمت الإجابة عليها
       return this.currentPageQuestions.every((question, index) => {
         const globalIndex = this.getGlobalQuestionIndex(index)
-        if (question.required) {
-          return this.isAnswerValid(globalIndex)
-        }
-        return true
+        return this.isAnswerValid(globalIndex)
       })
     },
     
     isFormComplete() {
-      // التحقق من أن جميع الأسئلة الإلزامية في النموذج تمت الإجابة عليها
       return this.measure.questions.every((question, index) => {
-        if (question.required) {
-          return this.isAnswerValid(index)
-        }
-        return true
+        return this.isAnswerValid(index)
       })
     }
   },
@@ -480,19 +366,31 @@ export default {
     },
     
     getTranslatedTitle(measure) {
-      return typeof measure.title === 'object' ? measure.title[this.language] : measure.title;
+      if (this.language === 'ar') {
+        return measure.name_ar || measure.name_en || 'بدون عنوان';
+      }
+      return measure.name_en || measure.name_ar || 'No Title';
     },
 
     getTranslatedDescription(measure) {
-      return typeof measure.description === 'object' ? measure.description[this.language] : measure.description;
+      if (this.language === 'ar') {
+        return measure.description_ar || measure.description_en || 'لا يوجد وصف';
+      }
+      return measure.description_en || measure.description_ar || 'No description';
     },
 
     getTranslatedQuestion(question) {
-      return typeof question.text === 'object' ? question.text[this.language] : question.text || question;
+      if (this.language === 'ar') {
+        return question.question_text_ar || question.question_text_en || question.text || 'بدون نص';
+      }
+      return question.question_text_en || question.question_text_ar || question.text || 'No text';
     },
 
     getTranslatedOption(option) {
-      return typeof option === 'object' ? option[this.language] : option;
+      if (this.language === 'ar') {
+        return option.option_text_ar || option.option_text_en || option.text || option;
+      }
+      return option.option_text_en || option.option_text_ar || option.text || option;
     },
 
     getTranslatedInterpretation(interpretation, key) {
@@ -504,14 +402,9 @@ export default {
     getQuestionTypeText(type) {
       const types = {
         multiple_choice: { ar: 'اختيار من متعدد', en: 'Multiple Choice' },
-        checkboxes: { ar: 'اختيار متعدد', en: 'Checkboxes' },
-        yes_no: { ar: 'نعم/لا', en: 'Yes/No' },
         linear_scale: { ar: 'مقياس خطي', en: 'Linear Scale' },
-        short_answer: { ar: 'إجابة قصيرة', en: 'Short Answer' },
-        paragraph: { ar: 'فقرة', en: 'Paragraph' },
-        dropdown: { ar: 'قائمة منسدلة', en: 'Dropdown' }
       }
-      return types[type]?.[this.language] || type;
+      return types[type]?.[this.language] || type || { ar: 'اختيار من متعدد', en: 'Multiple Choice' }[this.language];
     },
 
     getGlobalQuestionIndex(pageIndex) {
@@ -524,23 +417,12 @@ export default {
 
     isAnswerValid(questionIndex) {
       const answer = this.answers[questionIndex];
-      const question = this.measure.questions[questionIndex];
-      
-      if (answer === undefined || answer === null || answer === '') {
-        return false;
-      }
+      return answer !== undefined && answer !== null && answer !== '';
+    },
 
-      switch (question.type) {
-        case 'checkboxes':
-          return Array.isArray(answer) && answer.length > 0;
-        
-        case 'short_answer':
-        case 'paragraph':
-          return typeof answer === 'string' && answer.trim().length > 0;
-        
-        default:
-          return true;
-      }
+    getEstimatedTime(measure) {
+      const questionsCount = measure.questions_count || measure.questions?.length || 0;
+      return Math.max(5, Math.min(20, Math.ceil(questionsCount * 0.8)));
     },
     
     nextPage() {

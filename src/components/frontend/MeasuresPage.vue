@@ -8,7 +8,6 @@
       :highlight="translate('measuresHero.titleKey')"
       :subtitle="translate('measuresHero.description')"
       :subtitleKey="translate('measuresHero.subtitle')"
-
       :buttons="[
         { text: translate('measureModal.startTest'), icon: 'fas fa-play-circle', primary: true },
         { text: translate('buttons.learnMore'), icon: 'fas fa-info-circle', primary: false }
@@ -16,41 +15,65 @@
     />
 
     <main class="max-w-7xl mx-auto px-6">
-      <!-- المقاييس الأكثر استخداماً -->
-      <PopularMeasures 
-        :measures="popularMeasures"
-        :language="currentLanguage"
-        @measure-click="openRegistrationModal"
-      />
-      
-      <!-- قسم التصنيفات المدمج مع البحث والفلتر -->
-      <CategorySection 
-        :activeCategory="activeFilter"
-        :searchQuery="searchQuery"
-        :measures="measures"
-        :filteredMeasuresCount="filteredMeasures.length"
-        :language="currentLanguage"
-        @filter-change="activeFilter = $event"
-        @update:searchQuery="searchQuery = $event"
-      />
+      <!-- حالة التحميل -->
+      <div v-if="loading" class="flex justify-center items-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-green"></div>
+        <span class="mr-3 text-gray-600">{{ translate('loading') }}</span>
+      </div>
 
-      <!-- جميع المقاييس -->
-      <AllMeasures 
-        :measures="filteredMeasures"
-        :activeFilter="activeFilter"
-        :language="currentLanguage"
-        @measure-click="openRegistrationModal"
-      />
+      <!-- حالة الخطأ -->
+      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center my-8">
+        <div class="flex items-center justify-center gap-2 text-red-700 mb-2">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span class="font-medium">{{ error }}</span>
+        </div>
+        <button 
+          @click="fetchMeasuresData"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          {{ translate('retry') }}
+        </button>
+      </div>
 
-      <!-- الإرشادات -->
-      <GuidelinesSection 
-        :language="currentLanguage"
-      />
-      
-      <!-- الموارد -->
-      <ResourcesSection 
-      :resources="resources"
-      :language="currentLanguage" />
+      <!-- المحتوى الرئيسي -->
+      <div v-else>
+        <!-- المقاييس الأكثر استخداماً -->
+        <PopularMeasures 
+          :measures="popularMeasures"
+          :language="currentLanguage"
+          @measure-click="openRegistrationModal"
+        />
+        
+        <!-- قسم التصنيفات المدمج مع البحث والفلتر -->
+        <CategorySection 
+          :activeCategory="activeFilter"
+          :searchQuery="searchQuery"
+          :measures="scales"
+          :filteredMeasuresCount="filteredMeasures.length"
+          :language="currentLanguage"
+          @filter-change="activeFilter = $event"
+          @update:searchQuery="searchQuery = $event"
+        />
+
+        <!-- جميع المقاييس -->
+        <AllMeasures 
+          :measures="filteredMeasures"
+          :activeFilter="activeFilter"
+          :language="currentLanguage"
+          @measure-click="openRegistrationModal"
+        />
+
+        <!-- الإرشادات -->
+        <GuidelinesSection 
+          :language="currentLanguage"
+        />
+        
+        <!-- الموارد -->
+        <ResourcesSection 
+          :resources="resources"
+          :language="currentLanguage" 
+        />
+      </div>
     </main>
     
     <Footer />
@@ -62,7 +85,6 @@
       @close="closeRegistrationModal"
       @switch-to-login="switchToLogin"
       @registration-success="handleRegistrationSuccess"
-      
     />
 
     <!-- مودال الاختبار (يظهر بعد التسجيل) -->
@@ -97,9 +119,9 @@ import ResourcesSection from '@/components/frontend/measures/ResourcesSection.vu
 import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
 import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
-import { measuresData, resourcesData } from '@/data/measures'
+import { useScalesStore } from '@/stores/scales'
+import { resourcesData } from '@/data/measures'
 import { useTranslations } from '@/composables/useTranslations'
-
 
 export default {
   name: 'MeasuresPage',
@@ -116,6 +138,9 @@ export default {
     RegistrationModal
   },
   setup() {
+    // استخدام الـ store
+    const scalesStore = useScalesStore()
+    
     // الحالة العامة
     const searchQuery = ref('')
     const activeFilter = ref('allMeasures')
@@ -135,6 +160,7 @@ export default {
 
     onMounted(() => {
       window.addEventListener('languageChanged', handleLanguageChange)
+      fetchMeasuresData()
     })
 
     onUnmounted(() => {
@@ -142,12 +168,15 @@ export default {
     })
 
     // البيانات
-    const measures = ref(measuresData)
     const resources = ref(resourcesData)
 
     // الحسابات
+    const scales = computed(() => scalesStore.scales)
+    const loading = computed(() => scalesStore.loading)
+    const error = computed(() => scalesStore.error)
+
     const filteredMeasures = computed(() => {
-      let filtered = measures.value
+      let filtered = scales.value
       
       if (activeFilter.value !== 'allMeasures') {
         const categoryMap = {
@@ -156,17 +185,30 @@ export default {
           'forSpecialists': 'specialists'
         }
         
-        filtered = filtered.filter(measure => 
-          measure.category === categoryMap[activeFilter.value]
-        )
+        filtered = filtered.filter(measure => {
+          // البحث في اسم التصنيف أو وصفه
+          const categoryName = measure.category?.name_ar?.toLowerCase() || ''
+          const categoryNameEn = measure.category?.name_en?.toLowerCase() || ''
+          const targetCategory = categoryMap[activeFilter.value]?.toLowerCase()
+          
+          return categoryName.includes(targetCategory) || 
+                 categoryNameEn.includes(targetCategory) ||
+                 measure.category_id?.toString().includes(targetCategory)
+        })
       }
       
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         filtered = filtered.filter(measure => {
-          const title = measure.title
-          return title.toLowerCase().includes(query) || 
-                  measure.description.toLowerCase().includes(query)
+          const titleAr = measure.name_ar?.toLowerCase() || ''
+          const titleEn = measure.name_en?.toLowerCase() || ''
+          const descAr = measure.description_ar?.toLowerCase() || ''
+          const descEn = measure.description_en?.toLowerCase() || ''
+          
+          return titleAr.includes(query) || 
+                 titleEn.includes(query) ||
+                 descAr.includes(query) ||
+                 descEn.includes(query)
         })
       }
       
@@ -174,15 +216,68 @@ export default {
     })
     
     const popularMeasures = computed(() => {
-      return measures.value
-        .filter(measure => measure.rating >= 4)
-        .slice(0, 4)
+      // يمكنك تعديل هذا المنطق بناءً على كيفية تحديد الشعبية في الباك إند
+      return scales.value
+        .filter(scale => scale.is_active) // المقاييس النشطة فقط
+        .slice(0, 4) // أول 4 مقاييس
     })
 
+    // دوال جلب البيانات
+    const fetchMeasuresData = async () => {
+      try {
+        await scalesStore.fetchScales()
+        await scalesStore.fetchCategories()
+      } catch (err) {
+        console.error('❌ فشل في تحميل بيانات المقاييس:', err)
+      }
+    }
+
+    // تحويل بيانات الـ API لتتوافق مع المكونات
+    const transformScaleForFrontend = (scale) => {
+      return {
+        id: scale.id,
+        title: {
+          ar: scale.name_ar,
+          en: scale.name_en
+        },
+        description: {
+          ar: scale.description_ar,
+          en: scale.description_en
+        },
+        image: scale.image_url || getDefaultImage(scale.category?.name_ar),
+        category: scale.category?.name_ar || 'عام',
+        time: '5-10', // يمكنك إضافة هذا الحقل في الباك إند
+        questions: scale.questions || [],
+        rating: 4.5, // يمكنك إضافة التقييم في الباك إند
+        reviews: Math.floor(Math.random() * 100) + 1, // بيانات تجريبية
+        icon: getCategoryIcon(scale.category?.name_ar),
+        is_active: scale.is_active
+      }
+    }
+
+    const getDefaultImage = (category) => {
+      const images = {
+        'نساء': "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80",
+        'أطفال': "https://images.unsplash.com/photo-1536623975707-c4b3b2af565d?auto=format&fit=crop&w=800&q=80",
+      }
+      return images[category] || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80"
+    }
+
+    const getCategoryIcon = (category) => {
+      const icons = {
+        'نساء': 'fas fa-female',
+        'أطفال': 'fas fa-child',
+        'متخصصين': 'fas fa-user-md'
+      }
+      return icons[category] || 'fas fa-chart-bar'
+    }
+
     // الدوال
-    const {translate}=useTranslations()
+    const { translate } = useTranslations()
+
     const openRegistrationModal = (measure) => {
-      currentMeasure.value = measure
+      // تحويل البيانات من الـ API لتتوافق مع المكون
+      currentMeasure.value = transformScaleForFrontend(measure)
       showRegistrationModal.value = true
     }
 
@@ -232,57 +327,60 @@ export default {
     const calculateResults = () => {
       let score = 0
       const measure = currentMeasure.value
-    // حساب النتيجة بناء على الإجابات
-    answers.value.forEach((answer, index) => {
-      if (answer !== undefined && measure.scores) {
-        score += measure.scores[answer] || 0
-      }
-    })
-        
-    // الحصول على التفسير بناء على اللغة الحالية
-    let interpretation
-    if (typeof measure.interpretation === 'function') {
-      interpretation = measure.interpretation(score, currentLanguage.value)
-    } else {
-      // تفسير افتراضي إذا لم يكن هناك دالة تفسير
-      const maxPossibleScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : 0
-      const percentage = maxPossibleScore > 0 ? (score / maxPossibleScore) * 100 : 0
       
-      // if (percentage >= 80) {
-      //   interpretation = {
-      //     level: currentLanguage.value === 'ar' ? 'مرتفع' : 'High',
-      //     desc: currentLanguage.value === 'ar' 
-      //       ? 'نتيجتك تشير إلى مستوى مرتفع. ننصح بمراجعة مختص للدعم المناسب.'
-      //       : 'Your results indicate a high level. We recommend consulting a specialist for appropriate support.'
-      //   }
-      // } else if (percentage >= 50) {
-      //   interpretation = {
-      //     level: currentLanguage.value === 'ar' ? 'متوسط' : 'Medium',
-      //     desc: currentLanguage.value === 'ar'
-      //       ? 'نتيجتك تشير إلى مستوى متوسط. ننصح بممارسة تقنيات الاسترخاء.'
-      //       : 'Your results indicate a medium level. We recommend practicing relaxation techniques.'
-      //   }
-      // } else {
-      //   interpretation = {
-      //     level: currentLanguage.value === 'ar' ? 'منخفض' : 'Low',
-      //     desc: currentLanguage.value === 'ar'
-      //       ? 'نتيجتك تشير إلى مستوى منخفض. حافظ على ممارسة العادات الصحية.'
-      //       : 'Your results indicate a low level. Maintain healthy habits.'
-      //   }
-      // }
+      // حساب النتيجة بناء على الإجابات
+      answers.value.forEach((answer, index) => {
+        if (answer !== undefined && measure.questions[index]?.options) {
+          const option = measure.questions[index].options[answer]
+          score += option?.score_value || 0
+        }
+      })
+          
+      // حساب أقصى درجة ممكنة
+      const maxScore = measure.questions?.reduce((total, question) => {
+        const maxOptionScore = Math.max(...question.options.map(opt => opt.score_value || 0))
+        return total + maxOptionScore
+      }, 0) || 0
+      
+      // الحصول على التفسير المناسب
+      const interpretation = getInterpretation(score, maxScore, currentLanguage.value)
+      
+      testResult.value = { 
+        score: Math.round(score), 
+        maxScore: Math.round(maxScore), 
+        interpretation 
+      }
+      
+      testStep.value = 'results'
+    }
+
+    const getInterpretation = (score, maxScore, language) => {
+      const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0
+      
+      if (percentage >= 80) {
+        return {
+          level: language === 'ar' ? 'مرتفع' : 'High',
+          desc: language === 'ar' 
+            ? 'نتيجتك تشير إلى مستوى مرتفع. ننصح بمراجعة مختص للدعم المناسب.'
+            : 'Your results indicate a high level. We recommend consulting a specialist for appropriate support.'
+        }
+      } else if (percentage >= 50) {
+        return {
+          level: language === 'ar' ? 'متوسط' : 'Medium',
+          desc: language === 'ar'
+            ? 'نتيجتك تشير إلى مستوى متوسط. ننصح بممارسة تقنيات الاسترخاء.'
+            : 'Your results indicate a medium level. We recommend practicing relaxation techniques.'
+        }
+      } else {
+        return {
+          level: language === 'ar' ? 'منخفض' : 'Low',
+          desc: language === 'ar'
+            ? 'نتيجتك تشير إلى مستوى منخفض. حافظ على ممارسة العادات الصحية.'
+            : 'Your results indicate a low level. Maintain healthy habits.'
+        }
+      }
     }
     
-    // حساب أقصى درجة ممكنة
-    const maxScore = measure.scores ? Math.max(...measure.scores) * measure.questions.length : measure.questions.length * 3
-    
-    testResult.value = { 
-      score: Math.round(score), 
-      maxScore: Math.round(maxScore), 
-      interpretation 
-    }
-    
-    testStep.value = 'results'
-  }
     const retakeTest = () => {
       testStep.value = 'info'
       currentQuestionIndex.value = 0
@@ -308,11 +406,13 @@ export default {
       currentQuestionIndex,
       answers,
       testResult,
-      measures,
+      scales,
       resources,
       filteredMeasures,
       popularMeasures,
       currentLanguage,
+      loading,
+      error,
       translate,
       openRegistrationModal,
       closeRegistrationModal,
@@ -325,7 +425,8 @@ export default {
       submitTest,
       retakeTest,
       showOtherMeasures,
-      switchToLogin
+      switchToLogin,
+      fetchMeasuresData
     }
   }
 }
