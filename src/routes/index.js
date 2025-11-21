@@ -29,6 +29,7 @@ const Events = () => import('../components/dashboard/Events/Index.vue');
 
 // --- Frontend Pages ---
 import HomePage from '../components/frontend/home.vue'
+import session  from '../components/frontend/Session/PatientSessions.vue'
 import AboutPage  from '../components/frontend/AboutPage.vue' 
 import EventsPage from '../components/frontend/EventsPage.vue'
 import MeasuresPage from '../components/frontend/MeasuresPage.vue'
@@ -50,6 +51,7 @@ const routes = [
   { path: '/', name: 'Home', component: HomePage },
   { path: '/events', name: 'Events', component: EventsPage },
   { path: '/about', name: 'About', component: AboutPage },
+   { path: '/Session', name: 'Session', component: session},
   { path: '/measures', name: 'Measures', component: MeasuresPage },
   { path: '/article', name: 'ArticleMain', component: ArticleMain },
   { path: '/article/:id', name: 'ArticleDetail', component: ArticleDetail, props: true },

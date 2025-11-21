@@ -32,6 +32,8 @@ class TherapistResource extends JsonResource
             'bio_ar' => $this->bio_ar,
             'bio_en' => $this->bio_en,
             'status' => $this->status,
+            'email' => $this->user->email ?? null, // استخدام null coalescing
+            'user' => $this->whenLoaded('user'), // تضمين بيانات المستخدم فقط إذا كانت محملة
             'qualifications' => TherapistQualificationResource::collection($this->whenLoaded('qualifications')),
             'certifications' => TherapistCertificationResource::collection($this->whenLoaded('certifications')),
             'schedules' => TherapistScheduleResource::collection($this->whenLoaded('schedules')),
