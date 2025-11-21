@@ -29,12 +29,7 @@ use App\Http\Controllers\ResultInterpretationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
-    Route::get('/users/stats', [UserController::class, 'stats']);
+    
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -75,16 +70,22 @@ Route::get('/psychological-scales/active/list', [PsychologicalScaleController::c
 Route::get('/psychological-scales/category/{categoryId}', [PsychologicalScaleController::class, 'byCategory']);
 Route::get('/psychological-scales/{id}/full', [PsychologicalScaleController::class, 'getFullScale']);
 
+//public contacts
+Route::post('/contacts', [ContactController::class, 'store']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
     // Route::get('/user', [AuthController::class, 'user']);
-    
+
     // Users routes
-    // Route::get('/users', [UserController::class, 'index']);
-    // Route::get('/users/stats', [UserController::class, 'stats']);
-    // Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/users/stats', [UserController::class, 'stats']);
 
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
@@ -232,14 +233,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('result-interpretations', ResultInterpretationController::class);
     Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
     Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);
+
+    Route::get('/contacts', [ContactController::class, 'index']);
+    Route::get('/contacts/statistics', [ContactController::class, 'statistics']);
+    Route::get('/contacts/{contact}', [ContactController::class, 'show']);
+    Route::put('/contacts/{contact}', [ContactController::class, 'update']);
 });
-
-
-
-    // Route::post('contacts', [ContactController::class, 'store']);
-    Route::post('contacts', [ContactController::class, 'store'])->withoutMiddleware(['auth:api']);
-    // مسارات تحت الحماية للمسؤولين
-        Route::get('contacts', [ContactController::class, 'index']);
-        Route::get('contacts/statistics', [ContactController::class, 'statistics']);
-        Route::get('contacts/{contact}', [ContactController::class, 'show']);
-        Route::put('contacts/{contact}', [ContactController::class, 'update']);
+    
