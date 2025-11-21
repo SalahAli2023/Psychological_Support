@@ -1,17 +1,18 @@
 <template>
   <section class="py-20 bg-gradient-to-br from-primary-green/5 to-primary-pink/5">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in-down">
-          {{ translate('about.statistics.title') }} <span class="text-primary-green">{{ translate('about.statistics.highlight') }}</span>
-        </h2>
 
-        <p class="text-lg text-gray-600 max-w-3xl mx-auto animate-fade-in-up-delay">
-          {{ translate('about.statistics.subtitle') }}
-        </p>
-      </div>
+      <!-- العنوان باستخدام Component جاهز -->
+      <TitleSection
+        :mainText="translate('about.statistics.title')"
+        :highlightText="translate('about.statistics.highlight')"
+        textColor="text-gray-900"
+        highlightColor="text-primary-green"
+        subtitleText="translate('about.statistics.subtitle')"
+         gradientClass="bg-primary-green"
+      />
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-12">
         <div 
           v-for="stat in statistics" 
           :key="stat.id"
@@ -32,6 +33,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useTranslations } from '@/composables/useTranslations'
+import TitleSection from '@/components/frontend/layouts/TitleSection.vue'
 
 const { currentLanguage, translate } = useTranslations()
 
@@ -82,51 +84,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* نفس الأنيميشنز السابقة */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+@keyframes fadeInDown { from{opacity:0;transform:translateY(-30px);} to{opacity:1;transform:translateY(0);} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+@keyframes countUp { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-fade-in-down {
-  animation: fadeInDown 0.8s ease-out forwards;
-}
-
-.animate-fade-in-up-delay {
-  animation: fadeInUp 0.8s ease-out 0.3s forwards;
-  opacity: 0;
-}
-
-.animate-count-up {
-  animation: countUp 0.6s ease-out forwards;
-  opacity: 0;
-}
+.animate-fade-in-down { animation: fadeInDown 0.8s ease-out forwards; }
+.animate-fade-in-up-delay { animation: fadeInUp 0.8s ease-out 0.3s forwards; opacity:0; }
+.animate-count-up { animation: countUp 0.6s ease-out forwards; opacity:0; }
 </style>

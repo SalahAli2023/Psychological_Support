@@ -70,7 +70,7 @@
 <script>
 import { useScrollAnimation } from '@/assets/js/animations.js'
 import ArticleCard from '../layouts/ArticleCard.vue'
-import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
+import TitleSection from '@/components/frontend/layouts/TitleSection.vue'
 
 export default {
   name: "ArticlesSection",

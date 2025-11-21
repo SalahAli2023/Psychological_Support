@@ -125,4 +125,74 @@ const formatDate = (dateString: string) => {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+/* تحسينات الاستجابة لـ LibraryListItem */
+@media (max-width: 768px) {
+    .flex {
+        flex-direction: column;
+    }
+    
+    .w-20 {
+        width: 100%;
+        height: 120px;
+    }
+    
+    .h-24 {
+        height: 120px;
+    }
+    
+    .gap-4 {
+        gap: 1rem;
+    }
+    
+    .flex-col {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 640px) {
+    .card {
+        padding: 1rem;
+    }
+    
+    .text-sm {
+        font-size: 0.875rem;
+    }
+    
+    .text-xs {
+        font-size: 0.75rem;
+    }
+    
+    /* إعادة ترتيب العناصر في الشاشات الصغيرة */
+    .flex.items-center.gap-4 {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    /* تحسين الأزرار في الشاشات الصغيرة */
+    .flex.items-center.gap-2 {
+        width: 100%;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .line-clamp-2 {
+        -webkit-line-clamp: 3;
+    }
+    
+    .text-lg {
+        font-size: 1rem;
+    }
+    
+    .p-4 {
+        padding: 0.75rem;
+    }
+}
+
+/* تحسينات إمكانية الوصول */
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
 </style>

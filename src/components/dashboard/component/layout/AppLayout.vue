@@ -320,6 +320,7 @@ const programItems = [
 
 const libraryItems = [
 	{ toName: 'libraries', label: 'المكتبة الرئيسية', icon: 'folder' },
+	{ toName: 'categories-Library', label: ' تصنيفات المكتبة ', icon: 'folder' },
 	{ toName: 'books', label: 'الكتب', icon: 'book' },
 	{ toName: 'resources', label: 'المصادر', icon: 'document' },
 	{ toName: 'media', label: 'الوسائط', icon: 'video' }

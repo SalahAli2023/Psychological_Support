@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref, onMounted, inject, watch, computed } from 'vue'
-import TitleSection from '@/components/frontend/homepage/TitleSection.vue'
+import TitleSection from '@/components/frontend/layouts/TitleSection.vue'
 
 const { translate, currentLanguage } = inject('languageState')
 const sectionRef = ref(null)

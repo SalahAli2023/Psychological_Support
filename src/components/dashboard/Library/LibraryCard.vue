@@ -114,4 +114,58 @@ const categoryColor = computed(() => {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+/* تحسينات الاستجابة لـ LibraryCard */
+.card {
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 640px) {
+    .card {
+        margin: 0.5rem;
+    }
+    
+    .aspect-\[3\/4\] {
+        aspect-ratio: 3/4;
+    }
+}
+
+/* تحسينات للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+    .p-4 {
+        padding: 0.75rem;
+    }
+    
+    .text-sm {
+        font-size: 0.75rem;
+    }
+    
+    .text-xs {
+        font-size: 0.7rem;
+    }
+}
+
+/* تحسينات للشاشات المتوسطة */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .card {
+        flex: 0 0 calc(50% - 1rem);
+    }
+}
+
+/* تحسينات للشاشات الكبيرة */
+@media (min-width: 1024px) {
+    .card {
+        flex: 0 0 calc(33.333% - 1rem);
+    }
+}
+
+/* تحسينات التمرير السلس */
+.group:hover .group-hover\:scale-105 {
+    transform: scale(1.05);
+}
+
+/* تحسينات إمكانية الوصول */
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
 </style>
