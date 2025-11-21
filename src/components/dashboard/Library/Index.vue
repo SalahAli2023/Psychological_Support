@@ -99,7 +99,7 @@
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div class="text-base sm:text-lg">إدارة محتويات المكتبة</div>
                     <div class="text-sm text-secondary">
-                        إجمالي العناصر: {{ items.length }}
+                        إجمالي العناصر: {{ libraryStore.pagination.total }}
                     </div>
                 </div>
             </template>
@@ -142,7 +142,7 @@
                             class="border-t border-primary hover:bg-secondary transition-colors"
                         >
                             <td class="px-4 py-3 text-primary font-medium text-center">
-                                {{ index + 1 }}
+                                {{ (libraryStore.pagination.current_page - 1) * libraryStore.pagination.per_page + index + 1 }}
                             </td>
                             
                             <td class="px-4 py-3 text-primary">
@@ -200,7 +200,7 @@
                                 <span :class="['badge', item.is_published ? 'badge-brand' : 'badge-neutral']">
                                     {{ item.is_published ? 'منشور' : 'مسودة' }}
                                 </span>
-                                <span v-if="item.is_new" class="badge badge-green ml-1">
+                                <span v-if="item.is_new" class="badge badge-green mx-2">
                                     جديد
                                 </span>
                             </td>
@@ -247,12 +247,21 @@
                     إضافة محتوى جديد
                 </Button>
             </div>
+
+            <!-- Pagination for Admin -->
+            <Pagination 
+                v-if="!loading && items.length > 0"
+                :pagination="libraryStore.pagination"
+                @page-change="handlePageChange"
+                @per-page-change="handlePerPageChange"
+                class="mt-6"
+            />
         </Card>
 
         <!-- Content Layout Toggle (for non-admin users) -->
         <div v-else class="flex items-center justify-between">
             <div class="text-secondary">
-                {{ t('library.showing') }} {{ filteredItems.length }} {{ t('library.of') }} {{ totalItems }}
+                {{ t('library.showing') }} {{ libraryStore.pagination.from }}-{{ libraryStore.pagination.to }} {{ t('library.of') }} {{ libraryStore.pagination.total }}
             </div>
             <div class="flex items-center gap-2">
                 <button 
@@ -286,14 +295,14 @@
                 {{ error }}
             </div>
 
-            <div v-else-if="filteredItems.length > 0">
+            <div v-else-if="items.length > 0">
                 <!-- Grid View -->
                 <div 
                     v-if="viewMode === 'grid'" 
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 >
                     <LibraryCard 
-                        v-for="item in filteredItems"
+                        v-for="item in items"
                         :key="item.id"
                         :item="item"
                         :locale="locale"
@@ -305,7 +314,7 @@
                 <!-- List View -->
                 <div v-else class="space-y-4">
                     <LibraryListItem 
-                        v-for="item in filteredItems"
+                        v-for="item in items"
                         :key="item.id"
                         :item="item"
                         :locale="locale"
@@ -313,6 +322,14 @@
                         @view="handleView"
                     />
                 </div>
+
+                <!-- Pagination for non-admin users -->
+                <Pagination 
+                    :pagination="libraryStore.pagination"
+                    @page-change="handlePageChange"
+                    @per-page-change="handlePerPageChange"
+                    class="mt-8"
+                />
             </div>
 
             <!-- Empty State -->
@@ -358,6 +375,7 @@ import Card from '@/components/dashboard/component/ui/Card.vue';
 import LibraryCard from './LibraryCard.vue';
 import LibraryListItem from './LibraryListItem.vue';
 import UploadModal from './UploadModal.vue';
+import Pagination from './Pagination.vue';
 import DeleteConfirmModal from '@/components/dashboard/events/DeleteConfirmModal.vue';
 import {
     FolderIcon,
@@ -398,50 +416,6 @@ const error = computed(() => libraryStore.error);
 const items = computed(() => libraryStore.items);
 const categories = computed(() => libraryStore.categories);
 
-const filteredItems = computed(() => {
-    let filtered = [...items.value];
-    
-    // Client-side filtering for search
-    if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase();
-        filtered = filtered.filter(item => 
-            item.title_ar.toLowerCase().includes(query) ||
-            item.title_en.toLowerCase().includes(query) ||
-            item.description_ar?.toLowerCase().includes(query) ||
-            item.description_en?.toLowerCase().includes(query)
-        );
-    }
-    
-    // Client-side filtering for category and type
-    if (selectedCategory.value) {
-        filtered = filtered.filter(item => item.category_id.toString() === selectedCategory.value);
-    }
-    
-    if (selectedType.value) {
-        filtered = filtered.filter(item => item.type === selectedType.value);
-    }
-    
-    // Client-side sorting
-    switch (sortBy.value) {
-        case 'newest':
-            filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-            break;
-        case 'popular':
-            filtered.sort((a, b) => b.downloads - a.downloads);
-            break;
-        case 'rating':
-            filtered.sort((a, b) => b.rating - a.rating);
-            break;
-        case 'title':
-            filtered.sort((a, b) => a.title_en.localeCompare(b.title_en));
-            break;
-    }
-    
-    return filtered;
-});
-
-const totalItems = computed(() => items.value.length);
-
 const activeFilters = computed(() => {
     const filters = [];
     if (selectedCategory.value) {
@@ -476,6 +450,10 @@ const fetchItems = async () => {
     if (selectedCategory.value) params.category_id = selectedCategory.value;
     if (selectedType.value) params.type = selectedType.value;
     if (searchQuery.value) params.search = searchQuery.value;
+    
+    // إضافة معلمات الترقيم
+    params.page = libraryStore.pagination.current_page;
+    params.per_page = libraryStore.pagination.per_page;
     
     await libraryStore.fetchItems(params);
 };
@@ -564,17 +542,22 @@ const removeFilter = (filterKey: string) => {
     fetchItems();
 };
 
-const clearFilters = () => {
+const clearFilters = async () => {
     searchQuery.value = '';
     selectedCategory.value = '';
     selectedType.value = '';
-    fetchItems();
+    
+    // إعادة تعيين الصفحة إلى الأولى عند مسح الفلاتر
+    await libraryStore.changePage(1);
+    await fetchItems();
 };
 
 const handleSearch = () => {
     clearTimeout((window as any).searchTimeout);
-    (window as any).searchTimeout = setTimeout(() => {
-        fetchItems();
+    (window as any).searchTimeout = setTimeout(async () => {
+        // العودة للصفحة الأولى عند البحث
+        await libraryStore.changePage(1);
+        await fetchItems();
     }, 500);
 };
 
@@ -604,6 +587,17 @@ const handleUpload = async () => {
     } catch (err) {
         console.error('Failed to refresh after upload:', err);
     }
+};
+
+// دوال الترقيم
+const handlePageChange = async (page: number) => {
+  await libraryStore.changePage(page);
+  await fetchItems();
+};
+
+const handlePerPageChange = async (perPage: number) => {
+  await libraryStore.changePerPage(perPage);
+  await fetchItems();
 };
 
 // Lifecycle

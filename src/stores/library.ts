@@ -44,12 +44,29 @@ export interface LibraryItem {
   year?: string
 }
 
+export interface PaginationInfo {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from: number
+  to: number
+}
+
 export const useLibraryStore = defineStore('library', () => {
   const items = ref<LibraryItem[]>([])
   const categories = ref<LibraryCategory[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const favorites = ref<number[]>([])
+  const pagination = ref<PaginationInfo>({
+    current_page: 1,
+    last_page: 1,
+    per_page: 15,
+    total: 0,
+    from: 0,
+    to: 0
+  })
 
   // تحويل البيانات من API إلى تنسيق الواجهة
   const transformItemForUI = (item: LibraryItem): any => {
@@ -65,18 +82,39 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // جلب جميع العناصر
+  // جلب جميع العناصر مع الترقيم
   const fetchItems = async (params?: {
     category_id?: string
     type?: string
     search?: string
     per_page?: number
+    page?: number
   }) => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.get('/library', { params })
+      const response = await api.get('/library', { 
+        params: {
+          per_page: params?.per_page || 15,
+          page: params?.page || 1,
+          ...params
+        }
+      })
+      
       items.value = response.data.data.map(transformItemForUI)
+      
+      // تحديث معلومات الترقيم
+      if (response.data.meta) {
+        pagination.value = {
+          current_page: response.data.meta.current_page,
+          last_page: response.data.meta.last_page,
+          per_page: response.data.meta.per_page,
+          total: response.data.meta.total,
+          from: response.data.meta.from,
+          to: response.data.meta.to
+        }
+      }
+      
       return response.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch library items'
@@ -86,7 +124,7 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // جلب التصنيفات
+  // الباقي بدون تغيير...
   const fetchCategories = async () => {
     try {
       const response = await api.get('/library/categories/list')
@@ -98,7 +136,6 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // جلب عنصر واحد
   const fetchItem = async (id: number) => {
     try {
       const response = await api.get(`/library/${id}`)
@@ -109,7 +146,6 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // إنشاء عنصر جديد
   const createItem = async (formData: FormData) => {
     loading.value = true
     error.value = null
@@ -131,7 +167,6 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // تحديث عنصر
   const updateItem = async (id: number, formData: FormData) => {
     loading.value = true
     error.value = null
@@ -155,14 +190,12 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // حذف عنصر
   const deleteItem = async (id: number) => {
     loading.value = true
     error.value = null
     try {
       await api.delete(`/library/${id}`)
       items.value = items.value.filter(item => item.id !== id)
-      // إزالة من المفضلة إذا كان موجوداً
       favorites.value = favorites.value.filter(favId => favId !== id)
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to delete item'
@@ -172,11 +205,9 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // زيادة المشاهدات
   const incrementViews = async (id: number) => {
     try {
       await api.get(`/library/${id}`)
-      // تحديث العدد محلياً
       const item = items.value.find(item => item.id === id)
       if (item) {
         item.views++
@@ -186,7 +217,6 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // إدارة المفضلة
   const toggleFavorite = (id: number) => {
     const index = favorites.value.indexOf(id)
     if (index > -1) {
@@ -195,42 +225,28 @@ export const useLibraryStore = defineStore('library', () => {
       favorites.value.push(id)
     }
     
-    // تحديث العنصر في القائمة
     const item = items.value.find(item => item.id === id)
     if (item) {
       item.isFavorite = !item.isFavorite
     }
     
-    // حفظ في localStorage (اختياري)
     localStorage.setItem('library_favorites', JSON.stringify(favorites.value))
   }
 
-  // التحميل
   const downloadItem = async (id: number) => {
     try {
       const item = items.value.find(item => item.id === id)
       if (item && item.file_path) {
-        // زيادة عدد التحميلات
         item.downloads++
-        
-        // فتح رابط التحميل
         window.open(item.file_path, '_blank')
-        
-        // يمكنك إضافة API call لتسجيل التحميل إذا كان موجوداً
-        // await api.post(`/library/${id}/download`)
       }
     } catch (err) {
       console.error('Download failed:', err)
     }
   }
 
-  // التقييم
   const rateItem = async (id: number, rating: number) => {
     try {
-      // يمكنك إضافة API call للتقييم إذا كان موجوداً
-      // await api.post(`/library/${id}/rate`, { rating })
-      
-      // تحديث محلي
       const item = items.value.find(item => item.id === id)
       if (item) {
         const newRatingCount = item.rating_count + 1
@@ -243,7 +259,6 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // تحميل المفضلة من localStorage
   const loadFavorites = () => {
     const saved = localStorage.getItem('library_favorites')
     if (saved) {
@@ -251,7 +266,16 @@ export const useLibraryStore = defineStore('library', () => {
     }
   }
 
-  // التهيئة
+  // دالة لتغيير الصفحة
+  const changePage = async (page: number) => {
+    await fetchItems({ page })
+  }
+
+  // دالة لتغيير عدد العناصر في الصفحة
+  const changePerPage = async (perPage: number) => {
+    await fetchItems({ per_page: perPage, page: 1 })
+  }
+
   loadFavorites()
 
   return {
@@ -260,6 +284,7 @@ export const useLibraryStore = defineStore('library', () => {
     loading,
     error,
     favorites,
+    pagination,
     fetchItems,
     fetchCategories,
     fetchItem,
@@ -270,6 +295,8 @@ export const useLibraryStore = defineStore('library', () => {
     toggleFavorite,
     downloadItem,
     rateItem,
-    loadFavorites
+    loadFavorites,
+    changePage,
+    changePerPage
   }
 })

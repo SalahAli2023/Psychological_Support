@@ -111,7 +111,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/library', [LibraryController::class, 'store']);
     Route::put('/library/{id}', [LibraryController::class, 'update']);
     Route::delete('/library/{id}', [LibraryController::class, 'destroy']);
-
+    Route::delete('/library/categories/{id}', [LibraryController::class, 'destroyCategory']);
+     // Library Categories Routes
+    Route::get('/library/categories', [LibraryController::class, 'categoriesIndex']);
+    Route::post('/library/categories', [LibraryController::class, 'storeCategory']);
+    Route::put('/library/categories/{id}', [LibraryController::class, 'updateCategory']);
+    Route::delete('/library/categories/{id}', [LibraryController::class, 'destroyCategory']);
     // Measures (admin only)
     Route::post('/measures', [MeasureController::class, 'store']);
     Route::put('/measures/{id}', [MeasureController::class, 'update']);

@@ -36,7 +36,7 @@ import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
 import contact from '../components/frontend/contact.vue'
 import register from '../components/frontend/RegistrationPage.vue'
 import LegalSocialResources from '../components/frontend/LegalSocialResources.vue'
-
+import LibraryCategoryForm from '../components/dashboard/Library/LibraryCategoryForm.vue'
 // --- Auth Pages ---
 const Login = () => import('../components/dashboard/auth/Login.vue');
 
@@ -81,6 +81,7 @@ const routes = [
       // { path: 'new-article', name: 'new-article', component: AddArticles },
       { path: 'programs', name: 'programs', component: Programs },
       { path: 'libraries', name: 'libraries', component: Library },
+      { path: 'categories-Library', name: 'categories-Library', component: LibraryCategoryForm },
       { path: 'events', name: 'events', component: Events },
 
       { path: 'assessments', name: 'assessments', component: Assessments },
