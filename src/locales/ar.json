@@ -20,7 +20,8 @@
     "assessmentTypes": "أنواع المقاييس",
     "assessmentResults": "نتائج المقاييس",
     "legalResources": "الموارد القانونية",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "contacts":"إدارة رسائل الاتصال"
   },
       "dashboard": {
             "welcome": "مرحباً",
