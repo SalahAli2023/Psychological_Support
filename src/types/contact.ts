@@ -45,3 +45,8 @@ export interface ContactsListResponse {
         last_page: number;
     };
 }
+
+export interface ContactDeleteResponse {
+    success: boolean;
+    message: string;
+}

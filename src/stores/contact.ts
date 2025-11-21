@@ -159,7 +159,7 @@ export const useContactStore = defineStore('contact', {
         /**
          * معالجة الأخطاء بشكل مركزي
          */
-         handleError(error: any): string {
+        handleError(error: any): string {
             if (error.response?.status === 422) {
                 const errors = error.response.data.errors;
                 return Object.values(errors).flat().join(', ');
@@ -185,6 +185,32 @@ export const useContactStore = defineStore('contact', {
             this.loading = false;
             this.error = null;
             this.successMessage = null;
+        },
+
+        async deleteContact(id: number): Promise<void> {
+            this.loading = true;
+            this.error = null;
+
+            try {
+                const response = await api.delete<{ success: boolean; message: string }>(`/contacts/${id}`);
+                
+                if (response.data.success) {
+                // Remove from local state
+                this.items = this.items.filter(contact => contact.id !== id);
+                if (this.currentContact?.id === id) {
+                    this.currentContact = null;
+                }
+                } else {
+                throw new Error(response.data.message || 'Failed to delete contact');
+                }
+            } catch (error: any) {
+                this.error = this.handleError(error);
+                throw error;
+            } finally {
+                this.loading = false;
+            }
         }
     }
+
+    
 });
