@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\TherapistScheduleController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientConditionController;
 use App\Http\Controllers\Api\PatientSessionController;
+use App\Http\Controllers\Api\ContactController;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PsychologicalScaleController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\ResultInterpretationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+    
 // ==================== PUBLIC ROUTES ====================
 
 // Authentication
@@ -88,13 +90,28 @@ Route::get('/psychological-scales/active/list', [PsychologicalScaleController::c
 Route::get('/psychological-scales/category/{categoryId}', [PsychologicalScaleController::class, 'byCategory']);
 Route::get('/psychological-scales/{id}/full', [PsychologicalScaleController::class, 'getFullScale']);
 
+//public contacts route
+Route::post('/contacts', [ContactController::class, 'store']);
+
+// Protected routes
+=======
 // ==================== PROTECTED ROUTES ====================
 Route::middleware('auth:sanctum')->group(function () {
     
     // ==================== AUTHENTICATION ====================
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
-    
+
+    // Route::get('/user', [AuthController::class, 'user']);
+
+    // Users routes
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/users/stats', [UserController::class, 'stats']);
+
+    // Dashboard
     // 🔥 Frontend Protected Routes
     Route::prefix('frontend')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -275,4 +292,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('result-interpretations', ResultInterpretationController::class);
     Route::get('result-interpretations/scale/{scaleId}/score/{score}', [ResultInterpretationController::class, 'getInterpretation']);
     Route::post('result-interpretations/bulk', [ResultInterpretationController::class, 'bulkStore']);
+  
+    //contacts 
+    Route::get('/contacts', [ContactController::class, 'index']);
+    Route::get('/contacts/statistics', [ContactController::class, 'statistics']);
+    Route::get('/contacts/{contact}', [ContactController::class, 'show']);
+    Route::put('/contacts/{contact}', [ContactController::class, 'update']);
 });
+    
