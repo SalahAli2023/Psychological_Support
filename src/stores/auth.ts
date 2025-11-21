@@ -1,3 +1,4 @@
+// stores/auth.ts
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
@@ -25,7 +26,8 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
       
-      console.log('جاري الاتصال بالخادم:', `${API_URL}/login`)
+      console.log('🔄 جاري الاتصال بالخادم:', `${API_URL}/login`)
+      console.log('📧 بيانات الدخول:', { email: loginData.email })
       
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
@@ -39,29 +41,100 @@ export const useAuthStore = defineStore('auth', () => {
         })
       })
 
+      console.log('📡 حالة الاستجابة:', response.status, response.statusText)
+
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ استجابة الـ API الكاملة:', data)
         
-        // تحقق من أن المستخدم مدير
-        if (data.user.role !== 'Admin') {
-          throw new Error('غير مصرح بالدخول إلى لوحة التحكم')
+        // تحليل الاستجابة بطرق مختلفة
+        let userData, authToken
+        
+        // الطريقة 1: إذا كانت البيانات في data.data
+        if (data.data && data.data.user) {
+          userData = data.data.user
+          authToken = data.data.token || data.token
+        }
+        // الطريقة 2: إذا كانت البيانات مباشرة في data
+        else if (data.user) {
+          userData = data.user
+          authToken = data.token
+        }
+        // الطريقة 3: إذا كانت البيانات في استجابة مختلفة
+        else if (data.success && data.data) {
+          userData = data.data.user
+          authToken = data.data.token
+        }
+        // الطريقة 4: إذا كانت البيانات في جذر الاستجابة
+        else {
+          userData = data
+          authToken = data.token
         }
         
-        saveAuthData(data, loginData.remember)
+        console.log('👤 بيانات المستخدم المستخرجة:', userData)
+        console.log('🔑 التوكن المستخرج:', authToken)
+        
+        // التحقق من وجود بيانات المستخدم
+        if (!userData) {
+          throw new Error('بيانات المستخدم غير موجودة في الاستجابة')
+        }
+        
+        // التحقق من وجود الدور
+        if (!userData.role) {
+          console.warn('⚠️ حقل role غير موجود في بيانات المستخدم، استخدام قيمة افتراضية')
+          userData.role = 'Client' // أو أي قيمة افتراضية
+        }
+        
+        // التحقق من أن المستخدم مدير (إذا كان مطلوباً)
+        if (userData.role !== 'Admin') {
+          console.log('👤 نوع المستخدم:', userData.role)
+          // يمكنك إزالة هذا الشرط إذا كان مسموحاً لجميع المستخدمين
+          // throw new Error('غير مصرح بالدخول إلى لوحة التحكم - يجب أن تكون مديراً')
+        }
+        
+        saveAuthData({ user: userData, token: authToken }, loginData.remember)
         return true
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'فشل تسجيل الدخول')
+        // معالجة الأخطاء من الخادم
+        let errorMessage = 'فشل تسجيل الدخول'
+        
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+          console.log('❌ تفاصيل الخطأ من الخادم:', errorData)
+        } catch (parseError) {
+          errorMessage = `فشل تسجيل الدخول - حالة الخطأ: ${response.status}`
+        }
+        
+        throw new Error(errorMessage)
       }
 
     } catch (error: any) {
-      console.error('API Login failed:', error)
-      throw new Error(error.message || 'حدث خطأ في الاتصال بالخادم')
+      console.error('❌ فشل تسجيل الدخول:', error)
+      
+      // تحسين رسائل الخطأ
+      if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+        throw new Error('تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت وتشغيل الخادم الخلفي.')
+      }
+      
+      throw new Error(error.message || 'حدث خطأ غير متوقع في تسجيل الدخول')
     }
   }
 
   // دالة حفظ بيانات المصادقة
   const saveAuthData = (data: any, remember: boolean) => {
+    console.log('💾 حفظ بيانات المصادقة:', data)
+    
+    if (!data.token) {
+      console.error('❌ التوكن غير موجود في البيانات:', data)
+      throw new Error('بيانات المصادقة غير مكتملة - التوكن مفقود')
+    }
+    
+    if (!data.user) {
+      console.error('❌ بيانات المستخدم غير موجودة في البيانات:', data)
+      throw new Error('بيانات المصادقة غير مكتملة - بيانات المستخدم مفقودة')
+    }
+    
     token.value = data.token
     user.value = data.user
     
@@ -72,19 +145,23 @@ export const useAuthStore = defineStore('auth', () => {
       sessionStorage.setItem('admin_token', data.token)
       sessionStorage.setItem('admin_user', JSON.stringify(data.user))
     }
+    
+    console.log('✅ تم حفظ بيانات المصادقة بنجاح')
   }
 
   const logout = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
       
-      await fetch(`${API_URL}/logout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token.value}`,
-          'Accept': 'application/json'
-        }
-      })
+      if (token.value) {
+        await fetch(`${API_URL}/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token.value}`,
+            'Accept': 'application/json'
+          }
+        })
+      }
     } catch (error) {
       console.error('Logout API error:', error)
     } finally {
@@ -102,8 +179,14 @@ export const useAuthStore = defineStore('auth', () => {
     const savedUser = localStorage.getItem('admin_user') || sessionStorage.getItem('admin_user')
     
     if (savedToken && savedUser) {
-      token.value = savedToken
-      user.value = JSON.parse(savedUser)
+      try {
+        token.value = savedToken
+        user.value = JSON.parse(savedUser)
+        console.log('✅ تم استعادة بيانات المصادقة من التخزين')
+      } catch (error) {
+        console.error('❌ خطأ في تحليل بيانات المستخدم:', error)
+        logout()
+      }
     }
   }
 
