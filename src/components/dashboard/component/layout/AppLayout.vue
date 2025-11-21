@@ -95,7 +95,15 @@
 					:items="assessmentItems"
 					:collapsed="collapsed"
 				/>
-				
+				<!-- contacts مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.contacts')" 
+					icon="user" 
+					:show-label="!collapsed"
+					:items="contactItems"
+					:collapsed="collapsed"
+				/>
+
 				<!-- Settings مع قائمة فرعية -->
 				<NavItem 
 					:label="t('nav.settings')" 
@@ -206,6 +214,15 @@
 							:collapsed="false"
 						/>
 						
+						<!-- contacts مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.contacts')" 
+							icon="user" 
+							:show-label="!collapsed"
+							:items="contactItems"
+							:collapsed="collapsed"
+						/>
+
 						<!-- Settings مع قائمة فرعية -->
 						<NavItem 
 							:label="t('nav.settings')" 
@@ -341,7 +358,11 @@ const legalResourceItems = [
 const assessmentItems = [
 	{ toName: 'assessments', label: 'جميع المقاييس', icon: 'chart' },
     { toName: 'scale-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
- 	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
+	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
+];
+
+const contactItems = [
+	{ toName: 'contacts', label: 'قائمة التواصل', icon: 'book' },
 ];
 
 const settingItems = [
