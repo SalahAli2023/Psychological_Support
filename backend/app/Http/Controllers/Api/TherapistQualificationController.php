@@ -8,72 +8,186 @@ use App\Models\Therapist;
 use App\Models\TherapistQualification;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class TherapistQualificationController extends Controller
 {
     /**
      * عرض مؤهلات المعالج
      */
-    public function index(Therapist $therapist): JsonResponse
+    public function index($therapistId): JsonResponse
     {
-        $qualifications = $therapist->qualifications;
+        try {
+            $therapist = Therapist::find($therapistId);
+            
+            if (!$therapist) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Therapist not found'
+                ], 404);
+            }
 
-        return response()->json([
-            'data' => TherapistQualificationResource::collection($qualifications)
-        ]);
+            $qualifications = $therapist->qualifications()->orderBy('year', 'desc')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => TherapistQualificationResource::collection($qualifications)
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching therapist qualifications: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching qualifications'
+            ], 500);
+        }
     }
 
     /**
      * تخزين مؤهل جديد
      */
-    public function store(Request $request, Therapist $therapist): JsonResponse
+    public function store(Request $request, $therapistId): JsonResponse
     {
-        $validated = $request->validate([
-            'name_ar' => 'required|string|max:255',
-            'name_en' => 'required|string|max:255',
-            'institution_ar' => 'required|string|max:255',
-            'institution_en' => 'required|string|max:255',
-            'year' => 'nullable|integer|min:1900|max:' . date('Y')
-        ]);
+        DB::beginTransaction();
+        
+        try {
+            $therapist = Therapist::find($therapistId);
+            
+            if (!$therapist) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Therapist not found'
+                ], 404);
+            }
 
-        $qualification = $therapist->qualifications()->create($validated);
+            $validated = $request->validate([
+                'name_ar' => 'required|string|max:255',
+                'name_en' => 'required|string|max:255',
+                'institution_ar' => 'required|string|max:255',
+                'institution_en' => 'required|string|max:255',
+                'year' => 'nullable|integer|min:1900|max:' . date('Y')
+            ]);
 
-        return response()->json([
-            'message' => 'Qualification added successfully',
-            'data' => new TherapistQualificationResource($qualification)
-        ], 201);
+            $qualification = $therapist->qualifications()->create($validated);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Qualification added successfully',
+                'data' => new TherapistQualificationResource($qualification)
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating therapist qualification: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating qualification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * تحديث المؤهل
+     * تحديث المؤهل - الإصدار المصحح
      */
-    public function update(Request $request, Therapist $therapist, TherapistQualification $qualification): JsonResponse
+    public function update(Request $request, $therapistId, $qualificationId): JsonResponse
     {
-        $validated = $request->validate([
-            'name_ar' => 'sometimes|string|max:255',
-            'name_en' => 'sometimes|string|max:255',
-            'institution_ar' => 'sometimes|string|max:255',
-            'institution_en' => 'sometimes|string|max:255',
-            'year' => 'nullable|integer|min:1900|max:' . date('Y')
-        ]);
+        DB::beginTransaction();
+        
+        try {
+            // البحث عن المؤهل مباشرة أولاً
+            $qualification = TherapistQualification::find($qualificationId);
+            
+            if (!$qualification) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Qualification not found'
+                ], 404);
+            }
 
-        $qualification->update($validated);
+            // التحقق أن المؤهل يخص المعالج الصحيح
+            if ($qualification->therapist_id != $therapistId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Qualification does not belong to this therapist'
+                ], 404);
+            }
 
-        return response()->json([
-            'message' => 'Qualification updated successfully',
-            'data' => new TherapistQualificationResource($qualification)
-        ]);
+            $validated = $request->validate([
+                'name_ar' => 'sometimes|string|max:255',
+                'name_en' => 'sometimes|string|max:255',
+                'institution_ar' => 'sometimes|string|max:255',
+                'institution_en' => 'sometimes|string|max:255',
+                'year' => 'nullable|integer|min:1900|max:' . date('Y')
+            ]);
+
+            $qualification->update($validated);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Qualification updated successfully',
+                'data' => new TherapistQualificationResource($qualification)
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating therapist qualification: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating qualification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * حذف المؤهل
+     * حذف المؤهل - الإصدار المصحح
      */
-    public function destroy(Therapist $therapist, TherapistQualification $qualification): JsonResponse
+    public function destroy($therapistId, $qualificationId): JsonResponse
     {
-        $qualification->delete();
+        DB::beginTransaction();
+        
+        try {
+            // البحث عن المؤهل مباشرة أولاً
+            $qualification = TherapistQualification::find($qualificationId);
+            
+            if (!$qualification) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Qualification not found'
+                ], 404);
+            }
 
-        return response()->json([
-            'message' => 'Qualification deleted successfully'
-        ]);
+            // التحقق أن المؤهل يخص المعالج الصحيح
+            if ($qualification->therapist_id != $therapistId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Qualification does not belong to this therapist'
+                ], 404);
+            }
+
+            $qualification->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Qualification deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting therapist qualification: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting qualification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

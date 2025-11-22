@@ -28,4 +28,16 @@ class TherapistCertification extends Model
     {
         return $this->belongsTo(Therapist::class);
     }
+
+    /**
+     * الحصول على اسم الشهادة مع السنة
+     */
+    public function getFullNameAttribute(): string
+    {
+        if ($this->year_obtained) {
+            return "{$this->name} ({$this->year_obtained})";
+        }
+        
+        return $this->name;
+    }
 }

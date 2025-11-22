@@ -41,6 +41,10 @@ class Therapist extends Model
         'date_of_birth' => 'date',
         'hourly_rate' => 'decimal:2',
         'rating' => 'decimal:2',
+        'experience' => 'integer',
+        'total_sessions' => 'integer',
+        'session_duration' => 'integer',
+        'rating_count' => 'integer',
     ];
 
     /**
@@ -73,5 +77,29 @@ class Therapist extends Model
     public function schedules(): HasMany
     {
         return $this->hasMany(TherapistSchedule::class);
+    }
+
+    /**
+     * الحصول على الاسم حسب اللغة
+     */
+    public function getNameAttribute(): string
+    {
+        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
+    }
+
+    /**
+     * الحصول على التخصص حسب اللغة
+     */
+    public function getSpecialtyAttribute(): string
+    {
+        return app()->getLocale() === 'ar' ? $this->specialty_ar : $this->specialty_en;
+    }
+
+    /**
+     * التحقق إذا كان المعالج نشط
+     */
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->status === 'active';
     }
 }

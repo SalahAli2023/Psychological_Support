@@ -131,13 +131,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
 
     
-    // ==================== THERAPISTS MANAGEMENT ====================
 
 
-    // Therapists routes
-    Route::get('/therapists', [TherapistController::class, 'index']);
-    Route::get('/therapists/{id}', [TherapistController::class, 'show']);
-
+// ==================== PROTECTED THERAPIST MANAGEMENT ROUTES ====================
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Therapists Management
     Route::post('/therapists', [TherapistController::class, 'store']);
     Route::put('/therapists/{id}', [TherapistController::class, 'update']);
     Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);
@@ -159,6 +158,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'store']);
     Route::put('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'update']);
     Route::delete('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'destroy']);
+});
     
     // ==================== LIBRARY MANAGEMENT ====================
     Route::post('/library', [LibraryController::class, 'store']);
@@ -171,9 +171,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/library/categories/{id}', [LibraryController::class, 'updateCategory']);
     Route::delete('/library/categories/{id}', [LibraryController::class, 'destroyCategory']);
     // Measures (admin only)
-    Route::post('/measures', [MeasureController::class, 'store']);
-    Route::put('/measures/{id}', [MeasureController::class, 'update']);
-    Route::delete('/measures/{id}', [MeasureController::class, 'destroy']);
+    // Route::post('/measures', [MeasureController::class, 'store']);
+    // Route::put('/measures/{id}', [MeasureController::class, 'update']);
+    // Route::delete('/measures/{id}', [MeasureController::class, 'destroy']);
 
     // Appointments
     

@@ -8,6 +8,7 @@ use App\Models\Therapist;
 use App\Models\TherapistCertification;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class TherapistCertificationController extends Controller
 {
@@ -16,7 +17,7 @@ class TherapistCertificationController extends Controller
      */
     public function index(Therapist $therapist): JsonResponse
     {
-        $certifications = $therapist->certifications;
+        $certifications = $therapist->certifications()->orderBy('year_obtained', 'desc')->get();
 
         return response()->json([
             'data' => TherapistCertificationResource::collection($certifications)
@@ -34,12 +35,24 @@ class TherapistCertificationController extends Controller
             'year_obtained' => 'nullable|integer|min:1900|max:' . date('Y')
         ]);
 
-        $certification = $therapist->certifications()->create($validated);
+        try {
+            $certification = $therapist->certifications()->create($validated);
 
-        return response()->json([
-            'message' => 'Certification added successfully',
-            'data' => new TherapistCertificationResource($certification)
-        ], 201);
+            return response()->json([
+                'message' => 'Certification added successfully',
+                'data' => new TherapistCertificationResource($certification)
+            ], 201);
+
+        } catch (\Exception $e) {
+            Log::error('Error creating therapist certification: ' . $e->getMessage(), [
+                'therapist_id' => $therapist->id,
+                'error' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Error creating certification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -53,12 +66,24 @@ class TherapistCertificationController extends Controller
             'year_obtained' => 'nullable|integer|min:1900|max:' . date('Y')
         ]);
 
-        $certification->update($validated);
+        try {
+            $certification->update($validated);
 
-        return response()->json([
-            'message' => 'Certification updated successfully',
-            'data' => new TherapistCertificationResource($certification)
-        ]);
+            return response()->json([
+                'message' => 'Certification updated successfully',
+                'data' => new TherapistCertificationResource($certification)
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error updating therapist certification: ' . $e->getMessage(), [
+                'certification_id' => $certification->id,
+                'error' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Error updating certification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -66,10 +91,22 @@ class TherapistCertificationController extends Controller
      */
     public function destroy(Therapist $therapist, TherapistCertification $certification): JsonResponse
     {
-        $certification->delete();
+        try {
+            $certification->delete();
 
-        return response()->json([
-            'message' => 'Certification deleted successfully'
-        ]);
+            return response()->json([
+                'message' => 'Certification deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error deleting therapist certification: ' . $e->getMessage(), [
+                'certification_id' => $certification->id,
+                'error' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Error deleting certification: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
