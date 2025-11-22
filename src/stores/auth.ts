@@ -8,6 +8,16 @@ interface LoginData {
   remember: boolean
 }
 
+interface RegisterData {
+  name: string
+  email: string
+  password: string
+  password_confirmation: string
+  phone: string
+  country_code: string
+  role: string
+}
+
 interface User {
   id: number
   name: string
@@ -15,12 +25,150 @@ interface User {
   role: string
   phone?: string
   joined_at?: string
+  email_verified_at?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const token = ref<string | null>(localStorage.getItem('admin_token'))
   const isAuthenticated = computed(() => !!token.value)
+  const requiresVerification = ref(false)
+  const pendingEmail = ref<string>('')
+
+  const register = async (registerData: RegisterData): Promise<{success: boolean, requiresVerification?: boolean}> => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      
+      console.log('🔄 جاري إنشاء الحساب:', registerData)
+      
+      const response = await fetch(`${API_URL}/registerClint`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(registerData)
+      })
+
+      console.log('📡 حالة الاستجابة:', response.status, response.statusText)
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('✅ استجابة التسجيل:', data)
+        
+        if (data.data.requires_verification) {
+          requiresVerification.value = true
+          pendingEmail.value = registerData.email
+          return { success: true, requiresVerification: true }
+        }
+        
+        // إذا لم يتطلب التحقق (مباشرة)
+        saveAuthData({ user: data.data.user, token: data.data.token }, false)
+        return { success: true }
+      } else {
+        const errorData = await response.json()
+         // 🔥 NEW: إرجاع الأخطاء المفصلة
+        if (errorData.errors) {
+          return { 
+            success: false, 
+            errors: errorData.errors 
+          }
+        }
+        throw new Error(errorData.message || 'فشل في إنشاء الحساب')
+      }
+
+    } catch (error: any) {
+      console.error('❌ فشل التسجيل:', error)
+       if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+      return { 
+        success: false, 
+        errors: { network: 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت.' } 
+      }
+    }
+    
+    return { 
+      success: false, 
+      errors: { general: error.message || 'حدث خطأ غير متوقع في التسجيل' } 
+    }
+  }
+}
+
+  // 🔥 NEW: التحقق من البريد الإلكتروني
+  const verifyEmail = async (email: string, code: string): Promise<boolean> => {
+  try {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+    
+    console.log('🔄 جاري التحقق من الرمز:', { email, code })
+    
+    const response = await fetch(`${API_URL}/verify-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        verification_code: code // تأكد من أن هذا الحقل مضبوط بشكل صحيح
+      }),
+    });
+
+    console.log('📡 حالة استجابة التحقق:', response.status)
+    
+    // لأغراض التصحيح، اطبع الجسم المرسل
+    console.log("Request Body:", {
+      email,
+      verification_code: code
+    });
+
+    if (response.ok) {
+      const data = await response.json()
+      console.log('✅ تم تفعيل الحساب:', data)
+      
+      saveAuthData({ user: data.data.user, token: data.data.token }, false)
+      requiresVerification.value = false
+      pendingEmail.value = ''
+      return true
+    } else {
+      // اطبع الخطأ بالتفصيل
+      const errorData = await response.json()
+      console.error('❌ تفاصيل الخطأ من الخادم:', errorData)
+      throw new Error(errorData.message || 'فشل في تفعيل الحساب')
+    }
+
+  } catch (error: any) {
+    console.error('❌ فشل التحقق:', error)
+    throw new Error(error.message || 'حدث خطأ في التحقق')
+  }
+}
+
+  // 🔥 NEW: إعادة إرسال رمز التحقق
+  const resendVerificationCode = async (email: string): Promise<boolean> => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      
+      const response = await fetch(`${API_URL}/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('✅ تم إعادة إرسال الرمز:', data)
+        return true
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'فشل في إعادة إرسال الرمز')
+      }
+
+    } catch (error: any) {
+      console.error('❌ فشل إعادة الإرسال:', error)
+      throw new Error(error.message || 'حدث خطأ في إعادة الإرسال')
+    }
+  }
 
   const login = async (loginData: LoginData): Promise<boolean> => {
     try {
@@ -194,8 +342,13 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     isAuthenticated,
+     requiresVerification, // 🔥 NEW
+    pendingEmail, // 🔥 NEW
+    register, // 🔥 UPDATED
     login,
     logout,
-    initializeAuth
+    initializeAuth,
+    verifyEmail, // 🔥 NEW
+    resendVerificationCode // 🔥 NEW
   }
 })
