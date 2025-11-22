@@ -16,8 +16,8 @@ class TherapistResource extends JsonResource
             'name_en' => $this->name_en,
             'title_ar' => $this->title_ar,
             'title_en' => $this->title_en,
-            'methodologies_ar' => $this->methodologies_ar,
-            'methodologies_en' => $this->methodologies_en,
+            'methodologies_ar' => $this->methodologies_ar ?? [],
+            'methodologies_en' => $this->methodologies_en ?? [],
             'specialty_ar' => $this->specialty_ar,
             'specialty_en' => $this->specialty_en,
             'session_duration' => $this->session_duration,
@@ -32,8 +32,8 @@ class TherapistResource extends JsonResource
             'bio_ar' => $this->bio_ar,
             'bio_en' => $this->bio_en,
             'status' => $this->status,
-            'email' => $this->user->email ?? null, // استخدام null coalescing
-            'user' => $this->whenLoaded('user'), // تضمين بيانات المستخدم فقط إذا كانت محملة
+            'email' => $this->user->email ?? null,
+            'user' => $this->whenLoaded('user'),
             'qualifications' => TherapistQualificationResource::collection($this->whenLoaded('qualifications')),
             'certifications' => TherapistCertificationResource::collection($this->whenLoaded('certifications')),
             'schedules' => TherapistScheduleResource::collection($this->whenLoaded('schedules')),

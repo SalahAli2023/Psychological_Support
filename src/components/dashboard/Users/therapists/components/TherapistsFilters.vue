@@ -26,7 +26,7 @@
           <option value="">جميع الحالات</option>
           <option value="active">نشط</option>
           <option value="busy">مشغول</option>
-          <option value="inactive">غير نشط</option>
+          <option value="away">غير متاح</option>
         </select>
 
         <!-- Specialty Filter -->

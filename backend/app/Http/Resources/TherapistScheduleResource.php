@@ -13,11 +13,13 @@ class TherapistScheduleResource extends JsonResource
             'id' => $this->id,
             'therapist_id' => $this->therapist_id,
             'day' => $this->day,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
+            'start_time' => $this->start_time, // ✅ إزالة format() لأنها string
+            'end_time' => $this->end_time, // ✅ إزالة format() لأنها string
             'available' => $this->available,
+            'is_available' => (bool) $this->available,
             'recurrence' => $this->recurrence,
             'slot_duration' => $this->slot_duration,
+            'session_duration' => $this->slot_duration ?? optional($this->therapist)->session_duration ?? 60,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -21,9 +21,10 @@ class TherapistSchedule extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
+        'start_time' => 'string',
+        'end_time' => 'string',
         'available' => 'boolean',
+        'slot_duration' => 'integer',
     ];
 
     /**
@@ -32,5 +33,21 @@ class TherapistSchedule extends Model
     public function therapist(): BelongsTo
     {
         return $this->belongsTo(Therapist::class);
+    }
+
+    /**
+     * التحقق إذا كان الموعد متاح
+     */
+    public function getIsAvailableAttribute(): bool
+    {
+        return $this->available;
+    }
+
+    /**
+     * الحصول على مدة الجلسة بالدقائق
+     */
+    public function getSessionDurationAttribute(): int
+    {
+        return $this->slot_duration ?? $this->therapist->session_duration ?? 60;
     }
 }

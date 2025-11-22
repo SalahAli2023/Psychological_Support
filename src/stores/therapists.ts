@@ -1,3 +1,4 @@
+// therapists.ts - النسخة الكاملة مع التعديلات
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import api from '@/utils/api'
@@ -9,7 +10,7 @@ export const useTherapistStore = defineStore('therapists', () => {
   const perPage = ref(10)
   const loading = ref(false)
 
-  // جلب قائمة المعالجين
+  // جلب قائمة المعالجين - معدل
   const fetchTherapists = async (filters = {}) => {
     try {
       loading.value = true
@@ -24,7 +25,8 @@ export const useTherapistStore = defineStore('therapists', () => {
       
       therapists.value = response.data.data
       currentPage.value = response.data.meta.current_page
-      totalPages.value = response.data.meta.total
+      totalPages.value = response.data.meta.last_page // تم التصحيح هنا
+      perPage.value = response.data.meta.per_page
       
       return response.data
     } catch (error) {
@@ -47,38 +49,66 @@ export const useTherapistStore = defineStore('therapists', () => {
   }
 
   // إنشاء معالج جديد
-  const createTherapist = async (therapistData) => {
-    try {
-      const response = await api.post('/therapists', therapistData)
-      
-      // إضافة المعالج الجديد للقائمة
-      therapists.value.unshift(response.data.data)
-      
-      return response.data
-    } catch (error) {
-      console.error('Error creating therapist:', error)
-      throw error
-    }
+ const createTherapist = async (therapistData) => {
+  try {
+    console.log('Sending therapist data:', therapistData)
+    
+    const response = await api.post('/therapists', therapistData)
+    
+    // إضافة المعالج الجديد للقائمة
+    therapists.value.unshift(response.data.data)
+    
+    return response.data
+  } catch (error) {
+    console.error('Error creating therapist:', error)
+    console.error('Error response:', error.response)
+    console.error('Error data:', error.response?.data)
+    throw error
   }
-
-  // تحديث معالج
-const updateTherapist = async (therapistId, therapistData) => {
+}
+  // تحديث معالج - معدل
+ const updateTherapist = async (therapistId, therapistData) => {
   try {
     console.log('Updating therapist:', therapistId, therapistData);
     
-    const response = await api.put(`/therapists/${therapistId}`, therapistData)
+    // إزالة الحقول غير المطلوبة وتأكد من أن phone هو string
+    const { qualifications, certifications, schedules, user, ...dataToSend } = therapistData
+    
+    // تأكد من أن phone هو string
+    if (dataToSend.phone !== undefined) {
+      dataToSend.phone = String(dataToSend.phone)
+    }
+    
+    // تأكد من أن جميع القيم النصية هي strings
+    const stringFields = ['name_ar', 'name_en', 'title_ar', 'title_en', 'specialty_ar', 'specialty_en', 'bio_ar', 'bio_en', 'gender', 'status']
+    stringFields.forEach(field => {
+      if (dataToSend[field] !== undefined) {
+        dataToSend[field] = String(dataToSend[field])
+      }
+    })
+    
+    // تأكد من أن methodologies هي arrays
+    if (dataToSend.methodologies_ar && !Array.isArray(dataToSend.methodologies_ar)) {
+      dataToSend.methodologies_ar = [dataToSend.methodologies_ar]
+    }
+    if (dataToSend.methodologies_en && !Array.isArray(dataToSend.methodologies_en)) {
+      dataToSend.methodologies_en = [dataToSend.methodologies_en]
+    }
+    
+    console.log('Data to send after processing:', dataToSend)
+    
+    const response = await api.put(`/therapists/${therapistId}`, dataToSend)
     
     // تحديث البيانات المحلية
     const index = therapists.value.findIndex(t => t.id === therapistId)
     if (index !== -1) {
-      therapists.value[index] = response.data.data
+      therapists.value[index] = { ...therapists.value[index], ...response.data.data }
     }
     
     return response.data
   } catch (error) {
     console.error('Error updating therapist:', error)
     
-    // تسجيل تفاصيل الخطأ
     if (error.response) {
       console.error('Response error:', error.response.data)
       console.error('Response status:', error.response.status)
@@ -87,7 +117,6 @@ const updateTherapist = async (therapistId, therapistData) => {
     throw new Error(error.response?.data?.message || 'فشل في تحديث بيانات المعالج')
   }
 }
-
   // حذف معالج
   const deleteTherapist = async (therapistId) => {
     try {
@@ -103,7 +132,7 @@ const updateTherapist = async (therapistId, therapistData) => {
     }
   }
 
-  // إدارة الشهادات
+  // إدارة الشهادات - معدل
   const fetchCertifications = async (therapistId) => {
     try {
       const response = await api.get(`/therapists/${therapistId}/certifications`)
@@ -144,7 +173,7 @@ const updateTherapist = async (therapistId, therapistData) => {
     }
   }
 
-  // إدارة المؤهلات
+  // إدارة المؤهلات - معدل
   const fetchQualifications = async (therapistId) => {
     try {
       const response = await api.get(`/therapists/${therapistId}/qualifications`)
@@ -185,7 +214,7 @@ const updateTherapist = async (therapistId, therapistData) => {
     }
   }
 
-  // إدارة الجداول
+  // إدارة الجداول - معدل
   const fetchSchedules = async (therapistId) => {
     try {
       const response = await api.get(`/therapists/${therapistId}/schedules`)
@@ -225,9 +254,6 @@ const updateTherapist = async (therapistId, therapistData) => {
       throw error
     }
   }
-
-
-  
 
   // تغيير الصفحة
   const setPage = (page) => {

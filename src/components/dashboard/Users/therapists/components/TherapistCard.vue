@@ -8,7 +8,7 @@
         class="w-12 h-12 rounded-full object-cover border border-primary"
       />
       <div class="flex-1">
-        <div class="text-primary font-medium text-sm">{{ therapist.name_ar }} / {{ therapist.name_en }}</div>
+        <div class="text-primary font-medium text-sm">{{ therapist.name_ar }}</div>
         <div class="text-xs text-secondary">{{ therapist.email }}</div>
         <div class="text-xs text-secondary">{{ therapist.phone }}</div>
       </div>
@@ -25,7 +25,7 @@
     <!-- Specialty -->
     <div class="mb-3">
       <div class="text-xs text-secondary mb-1">التخصص</div>
-      <div class="text-primary text-sm">{{ therapist.specialty_ar }} / {{ therapist.specialty_en }}</div>
+      <div class="text-primary text-sm">{{ therapist.specialty_ar }}</div>
     </div>
 
     <!-- Experience & Session Duration -->
@@ -105,7 +105,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['edit-therapist', 'view-profile', 'delete-therapist', 'open-schedule'])
+const emit = defineEmits(['edit-therapist', 'view-profile', 'delete-therapist', 'open-schedule'])
 
 const weekDays = [
   { key: 'saturday', label: 'السبت' },
@@ -121,7 +121,6 @@ const getStatusText = (status) => {
   const statusMap = {
     'active': 'نشط',
     'busy': 'مشغول', 
-    'inactive': 'غير نشط',
     'away': 'غير متاح'
   }
   return statusMap[status] || status

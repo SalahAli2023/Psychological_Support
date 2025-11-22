@@ -26,7 +26,7 @@
             />
             <div class="min-w-0">
               <div class="text-primary font-medium text-sm truncate">{{ therapist.name_ar }}</div>
-              <div class="text-xs text-secondary truncate">{{ therapist.name_en }}</div>
+              <div class="text-xs text-secondary truncate">{{ therapist.email }}</div>
             </div>
           </div>
         </td>
@@ -34,7 +34,6 @@
         <!-- Specialty -->
         <td class="px-3 py-2 text-primary text-sm">
           <div>{{ therapist.specialty_ar }}</div>
-          <div class="text-xs text-secondary">{{ therapist.specialty_en }}</div>
         </td>
 
         <!-- Status -->
@@ -122,7 +121,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['edit-therapist', 'view-profile', 'delete-therapist', 'open-schedule'])
+const emit = defineEmits(['edit-therapist', 'view-profile', 'delete-therapist', 'open-schedule'])
 
 const weekDays = [
   { key: 'saturday', label: 'السبت' },
@@ -138,7 +137,6 @@ const getStatusText = (status) => {
   const statusMap = {
     'active': 'نشط',
     'busy': 'مشغول', 
-    'inactive': 'غير نشط',
     'away': 'غير متاح'
   }
   return statusMap[status] || status
