@@ -613,15 +613,71 @@ export const ar = {
       sendCode: 'حدث خطأ أثناء إرسال رمز التحقق',
       verifyCode: 'رمز التحقق غير صحيح',
       resendCode: 'حدث خطأ أثناء إعادة إرسال الرمز',
-      createAccount: 'حدث خطأ أثناء إنشاء الحساب'
+      createAccount: 'حدث خطأ أثناء إنشاء الحساب',
+      accountSetup: "حدث خطأ أثناء إعداد الحساب",
+     sendVerification: "حدث خطأ أثناء إرسال رمز التحقق",
+    validationErrors: 'يوجد أخطاء في البيانات المدخلة',
+    sendVerification: 'فشل في إرسال رمز التحقق',
+    verifyCode: 'فشل في التحقق من الرمز',
+    resendCode: 'فشل في إعادة إرسال الرمز',
+    networkError: 'تعذر الاتصال بالخادم'
     },
 
     success: {
       codeSent: 'تم إرسال رمز التحقق بنجاح',
       verified: 'تم التحقق من رقم الهاتف بنجاح',
       codeResent: 'تم إعادة إرسال رمز التحقق',
-      accountCreated: 'تم إنشاء الحساب بنجاح!'
-    }
+      accountCreated: 'تم إنشاء الحساب بنجاح!',
+      verificationSent: "تم إرسال رمز التحقق بنجاح"
+    },
+     accountStep: {
+      title: "إنشاء حساب جديد",
+      nameLabel: "الاسم الكامل",
+      namePlaceholder: "أدخل اسمك الكامل",
+      emailLabel: "البريد الإلكتروني",
+      emailPlaceholder: "أدخل بريدك الإلكتروني",
+      passwordLabel: "كلمة المرور",
+      passwordPlaceholder: "أدخل كلمة المرور",
+      passwordConfirmationLabel: "تأكيد كلمة المرور", 
+      passwordConfirmationPlaceholder: "أعد إدخال كلمة المرور",
+      continue: "متابعة",
+    nameRequired: "الاسم مطلوب",
+    emailRequired: "البريد الإلكتروني مطلوب", 
+    emailInvalid: "البريد الإلكتروني غير صحيح",
+    passwordMinLength: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+    passwordMismatch: "كلمة المرور غير متطابقة",
+    processing: "جاري المعالجة...",
+    },
+    personalStep: {
+    title: "المعلومات الشخصية",
+    countryLabel: "البلد",
+    selectCountry: "اختر البلد",
+    regionLabel: "المنطقة",
+    regionPlaceholder: "أدخل منطقتك",
+    phoneLabel: "رقم الهاتف", 
+    phonePlaceholder: "أدخل رقم الهاتف",
+    sendVerification: "إرسال رمز التحقق",
+   phoneError: "رقم الهاتف غير صحيح",
+    sending: "جاري الإرسال...",
+  },
+   steps: {
+      account: "المعلومات الأساسية",
+      personal: "المعلومات الشخصية", 
+      verification: "التحقق"
+    },
+
+     verificationStep: {
+    title: "التحقق من البريد الإلكتروني",
+    sentTo: "تم إرسال رمز التحقق إلى",
+    checkSpam: "يرجى التحقق من مجلد الرسائل غير المرغوب فيها إذا لم تستلم الرمز",
+    resendIn: "إعادة الإرسال خلال",
+    resend: "إعادة إرسال الرمز",
+  
+    editInfo: "تعديل المعلومات",
+    confirm: "تأكيد",
+    verifying: "جاري التحقق..."
+  },
+  
   },
   
   registrationPage: {

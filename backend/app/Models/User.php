@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,7 +11,6 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -27,6 +25,9 @@ class User extends Authenticatable
         'avatar',
         'bio',
         'joined_at',
+        'email_verification_code', // 🔥 NEW
+        'email_verified_at', // 🔥 NEW
+        'verification_code_expires_at', // 🔥 NEW
     ];
 
     /**
@@ -37,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verification_code', // 🔥 NEW
     ];
 
     /**
@@ -50,6 +52,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'joined_at' => 'datetime',
+            'verification_code_expires_at' => 'datetime', // 🔥 NEW
+
         ];
     }
 
@@ -120,5 +124,22 @@ class User extends Authenticatable
     public function isClient(): bool
     {
         return $this->role === 'Client';
+    }
+
+     /**
+     * Check if email is verified.
+     */
+    public function isEmailVerified(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Check if verification code is valid.
+     */
+    public function isVerificationCodeValid(): bool
+    {
+        return $this->verification_code_expires_at && 
+               $this->verification_code_expires_at->isFuture();
     }
 }
