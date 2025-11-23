@@ -3,8 +3,8 @@
         <!-- Header Section -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-primary">{{ t('library.categories.title') }}</h1>
-                <p class="text-secondary mt-2">{{ t('library.categories.subtitle') }}</p>
+                <h1 class="text-3xl font-bold text-primary">إدارة تصنيفات المكتبة</h1>
+                <p class="text-secondary mt-2">إدارة وتنظيم تصنيفات محتوى المكتبة</p>
             </div>
             <Button 
                 variant="primary" 
@@ -13,10 +13,9 @@
                 @click="showAddModal"
             >
                 <PlusIcon class="h-5 w-5" />
-                {{ t('library.categories.add_category') }}
+                إضافة تصنيف جديد
             </Button>
         </div>
-
 
         <!-- Search and Actions -->
         <Card class="p-6">
@@ -26,7 +25,7 @@
                     <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-tertiary" />
                     <input
                         v-model="searchQuery"
-                        :placeholder="t('library.categories.search_placeholder')"
+                        placeholder="ابحث في التصنيفات..."
                         class="w-full pl-10 pr-4 py-3 rounded-lg border border-primary bg-primary text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                         @input="handleSearch"
                     />
@@ -39,11 +38,11 @@
                         class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                         @change="fetchCategories"
                     >
-                        <option value="name_asc">{{ t('library.categories.sort.name_asc') }}</option>
-                        <option value="name_desc">{{ t('library.categories.sort.name_desc') }}</option>
-                        <option value="newest">{{ t('library.categories.sort.newest') }}</option>
-                        <option value="oldest">{{ t('library.categories.sort.oldest') }}</option>
-                        <option value="items_count">{{ t('library.categories.sort.items_count') }}</option>
+                        <option value="name_asc">الاسم (أ-ي)</option>
+                        <option value="name_desc">الاسم (ي-أ)</option>
+                        <option value="newest">الأحدث</option>
+                        <option value="oldest">الأقدم</option>
+                        <option value="items_count">عدد العناصر</option>
                     </select>
 
                     <Button 
@@ -52,7 +51,7 @@
                         class="flex items-center gap-2"
                     >
                         <ArrowDownTrayIcon class="h-4 w-4" />
-                        {{ t('library.categories.export') }}
+                        تصدير
                     </Button>
                 </div>
             </div>
@@ -62,10 +61,10 @@
         <Card class="p-6">
             <template #header>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <div class="text-base sm:text-lg">{{ t('library.categories.categories_list') }}</div>
-                    <div class="text-sm text-secondary">
-                        {{ t('library.categories.showing') }} {{ categoriesStore.pagination.from }}-{{ categoriesStore.pagination.to }} 
-                        {{ t('library.categories.of') }} {{ categoriesStore.pagination.total }}
+                    <div class="text-base sm:text-lg">قائمة التصنيفات</div>
+                    <div class="text-sm text-secondary" v-if="!loading">
+                        عرض {{ categoriesStore.pagination.from }}-{{ categoriesStore.pagination.to }} 
+                        من أصل {{ categoriesStore.pagination.total }}
                     </div>
                 </div>
             </template>
@@ -73,11 +72,20 @@
             <!-- Loading State -->
             <div v-if="loading" class="flex justify-center py-8">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+                <span class="mr-2 text-secondary">جاري تحميل التصنيفات...</span>
             </div>
 
             <!-- Error State -->
             <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                {{ error }}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <strong class="font-bold">خطأ!</strong>
+                        <span class="block sm:inline"> {{ error }}</span>
+                    </div>
+                    <button @click="fetchCategories" class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                        إعادة المحاولة
+                    </button>
+                </div>
             </div>
 
             <!-- Success Message -->
@@ -91,12 +99,12 @@
                     <thead>
                         <tr class="text-start text-secondary bg-secondary">
                             <th class="px-4 py-3 text-start font-medium">#</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.name') }}</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.key') }}</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.color') }}</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.items_count') }}</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.created_at') }}</th>
-                            <th class="px-4 py-3 text-start font-medium">{{ t('library.categories.actions') }}</th>
+                            <th class="px-4 py-3 text-start font-medium">الاسم</th>
+                            <th class="px-4 py-3 text-start font-medium">المفتاح</th>
+                            <th class="px-4 py-3 text-start font-medium">اللون</th>
+                            <th class="px-4 py-3 text-start font-medium">عدد العناصر</th>
+                            <th class="px-4 py-3 text-start font-medium">تاريخ الإضافة</th>
+                            <th class="px-4 py-3 text-start font-medium">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,17 +165,21 @@
                                         class="text-xs"
                                     >
                                         <PencilIcon class="h-3 w-3 mr-1" />
-                                        {{ t('library.categories.edit') }}
+                                        تعديل
                                     </Button>
                                     <Button 
                                         size="sm" 
                                         variant="outline" 
                                         @click="handleDelete(category.id)" 
                                         class="text-xs text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                                        :disabled="(category.items_count || 0) > 0"
                                     >
                                         <TrashIcon class="h-3 w-3 mr-1" />
-                                        {{ t('library.categories.delete') }}
+                                        حذف
                                     </Button>
+                                </div>
+                                <div v-if="(category.items_count || 0) > 0" class="text-xs text-red-500 mt-1">
+                                    لا يمكن الحذف - يحتوي على عناصر
                                 </div>
                             </td>
                         </tr>
@@ -178,10 +190,10 @@
             <!-- Empty State -->
             <div v-else-if="!loading && categories.length === 0" class="text-center py-8 text-secondary">
                 <FolderOpenIcon class="h-16 w-16 mx-auto mb-4 text-secondary" />
-                <h3 class="text-lg font-medium text-primary mb-2">{{ t('library.categories.no_categories') }}</h3>
-                <p class="text-secondary mb-4">{{ t('library.categories.no_categories_desc') }}</p>
+                <h3 class="text-lg font-medium text-primary mb-2">لا توجد تصنيفات</h3>
+                <p class="text-secondary mb-4">لم يتم إضافة أي تصنيفات للمكتبة بعد</p>
                 <Button @click="showAddModal" variant="outline">
-                    {{ t('library.categories.add_first_category') }}
+                    إضافة أول تصنيف
                 </Button>
             </div>
 
@@ -200,7 +212,7 @@
             <div class="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900">
-                        {{ editingCategory ? t('library.categories.edit_category') : t('library.categories.add_category') }}
+                        {{ editingCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد' }}
                     </h3>
                 </div>
                 
@@ -208,35 +220,35 @@
                     <!-- Arabic Name -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            {{ t('library.categories.name_ar') }} *
+                            الاسم بالعربية *
                         </label>
                         <input
                             v-model="form.name_ar"
                             type="text"
                             required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                            :placeholder="t('library.categories.name_ar_placeholder')"
+                            placeholder="أدخل الاسم بالعربية"
                         />
                     </div>
 
                     <!-- English Name -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            {{ t('library.categories.name_en') }} *
+                            الاسم بالإنجليزية *
                         </label>
                         <input
                             v-model="form.name_en"
                             type="text"
                             required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                            :placeholder="t('library.categories.name_en_placeholder')"
+                            placeholder="أدخل الاسم بالإنجليزية"
                         />
                     </div>
 
                     <!-- Key -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            {{ t('library.categories.key') }} *
+                            المفتاح *
                         </label>
                         <input
                             v-model="form.key"
@@ -244,16 +256,16 @@
                             required
                             pattern="[a-z0-9_]+"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                            :placeholder="t('library.categories.key_placeholder')"
-                            title="Only lowercase letters, numbers, and underscores allowed"
+                            placeholder="مثال: books_research"
+                            title="يجب أن يحتوي على أحرف صغيرة وأرقام وشرطة سفلية فقط"
                         />
-                        <p class="text-xs text-gray-500 mt-1">{{ t('library.categories.key_hint') }}</p>
+                        <p class="text-xs text-gray-500 mt-1">يجب أن يحتوي على أحرف صغيرة وأرقام وشرطة سفلية فقط</p>
                     </div>
 
                     <!-- Color -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            {{ t('library.categories.color') }} *
+                            اللون *
                         </label>
                         <div class="flex gap-2">
                             <input
@@ -268,15 +280,15 @@
                                 pattern="^#[0-9A-Fa-f]{6}$"
                                 class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                                 placeholder="#3B82F6"
-                                title="Hex color code (e.g., #3B82F6)"
+                                title="كود اللون السداسي (مثال: #3B82F6)"
                             />
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">{{ t('library.categories.color_hint') }}</p>
+                        <p class="text-xs text-gray-500 mt-1">اختر لوناً يمثل هذا التصنيف</p>
                     </div>
 
                     <!-- Preview -->
                     <div class="p-4 border border-gray-200 rounded-md bg-gray-50">
-                        <p class="text-sm font-medium text-gray-700 mb-2">{{ t('library.categories.preview') }}</p>
+                        <p class="text-sm font-medium text-gray-700 mb-2">معاينة التصنيف</p>
                         <div class="flex items-center gap-3">
                             <div 
                                 class="w-12 h-12 rounded-lg flex items-center justify-center text-white font-medium"
@@ -285,10 +297,15 @@
                                 {{ getInitials(form.name_ar) }}
                             </div>
                             <div>
-                                <p class="font-medium text-gray-900">{{ form.name_ar || t('library.categories.preview_ar') }}</p>
-                                <p class="text-sm text-gray-600">{{ form.name_en || t('library.categories.preview_en') }}</p>
+                                <p class="font-medium text-gray-900">{{ form.name_ar || 'اسم التصنيف' }}</p>
+                                <p class="text-sm text-gray-600">{{ form.name_en || 'Category Name' }}</p>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Form Error -->
+                    <div v-if="localError" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm">
+                        {{ localError }}
                     </div>
 
                     <!-- Form Actions -->
@@ -299,7 +316,7 @@
                             @click="closeModal"
                             class="flex-1"
                         >
-                            {{ t('library.categories.cancel') }}
+                            إلغاء
                         </Button>
                         <Button
                             type="submit"
@@ -307,7 +324,7 @@
                             :loading="submitting"
                             class="flex-1"
                         >
-                            {{ editingCategory ? t('library.categories.update') : t('library.categories.create') }}
+                            {{ editingCategory ? 'تحديث' : 'إنشاء' }}
                         </Button>
                     </div>
                 </form>
@@ -317,8 +334,8 @@
         <!-- Delete Confirmation Modal -->
         <DeleteConfirmModal
             :show="showDeleteConfirm"
-            :title="t('library.categories.delete_confirm_title')"
-            :message="t('library.categories.delete_confirm_message')"
+            title="تأكيد الحذف"
+            message="هل أنت متأكد من رغبتك في حذف هذا التصنيف؟"
             @confirm="confirmDelete"
             @cancel="showDeleteConfirm = false"
         />
@@ -327,17 +344,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useLibraryCategoriesStore, type LibraryCategory } from '@/stores/libraryCategories';
 import Button from '@/components/dashboard/component/ui/Button.vue';
 import Card from '@/components/dashboard/component/ui/Card.vue';
 import Pagination from './Pagination.vue';
 import DeleteConfirmModal from '@/components/dashboard/events/DeleteConfirmModal.vue';
 import {
-    FolderIcon,
-    BookOpenIcon,
-    EyeIcon,
-    ClockIcon,
     MagnifyingGlassIcon,
     ArrowDownTrayIcon,
     PlusIcon,
@@ -346,7 +358,6 @@ import {
     FolderOpenIcon
 } from '@heroicons/vue/24/outline';
 
-const { t, locale } = useI18n();
 const categoriesStore = useLibraryCategoriesStore();
 
 // Data
@@ -358,7 +369,7 @@ const editingCategory = ref<LibraryCategory | null>(null);
 const deleteTargetId = ref<number | null>(null);
 const successMessage = ref('');
 const submitting = ref(false);
-const localError = ref(''); // خطأ محلي
+const localError = ref('');
 
 const form = reactive({
     name_ar: '',
@@ -372,23 +383,9 @@ const loading = computed(() => categoriesStore.loading);
 const error = computed(() => localError.value || categoriesStore.error);
 const categories = computed(() => categoriesStore.categories);
 
-const totalItems = computed(() => {
-    return categories.value.reduce((sum, category) => sum + (category.items_count || 0), 0);
-});
-
-const activeCategories = computed(() => {
-    return categories.value.filter(category => (category.items_count || 0) > 0).length;
-});
-
-const recentlyAdded = computed(() => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    return categories.value.filter(category => new Date(category.created_at) > oneWeekAgo).length;
-});
-
 // Methods
 const fetchCategories = async () => {
-    localError.value = ''; // مسح الأخطاء المحلية
+    localError.value = '';
     try {
         const params: any = {};
         
@@ -399,8 +396,9 @@ const fetchCategories = async () => {
         params.per_page = categoriesStore.pagination.per_page;
         
         await categoriesStore.fetchCategories(params);
+        console.log('Categories loaded successfully:', categoriesStore.categories.length);
     } catch (err: any) {
-        localError.value = t('library.categories.fetch_error');
+        localError.value = 'فشل في تحميل التصنيفات. تأكد من اتصال الشبكة وحاول مرة أخرى.';
         console.error('Failed to fetch categories:', err);
     }
 };
@@ -421,6 +419,11 @@ const handleEdit = (category: LibraryCategory) => {
 };
 
 const handleDelete = (categoryId: number) => {
+    const category = categories.value.find(c => c.id === categoryId);
+    if (category && (category.items_count || 0) > 0) {
+        localError.value = 'لا يمكن حذف التصنيف لأنه يحتوي على عناصر';
+        return;
+    }
     deleteTargetId.value = categoryId;
     showDeleteConfirm.value = true;
 };
@@ -430,14 +433,14 @@ const confirmDelete = async () => {
 
     try {
         await categoriesStore.deleteCategory(deleteTargetId.value);
-        successMessage.value = t('library.categories.delete_success');
+        successMessage.value = 'تم حذف التصنيف بنجاح';
         
         setTimeout(() => {
             successMessage.value = '';
         }, 3000);
         
     } catch (err: any) {
-        localError.value = err.response?.data?.message || t('library.categories.delete_error');
+        localError.value = err.response?.data?.message || 'فشل في حذف التصنيف';
         console.error('Failed to delete category:', err);
     } finally {
         showDeleteConfirm.value = false;
@@ -452,10 +455,10 @@ const submitForm = async () => {
     try {
         if (editingCategory.value) {
             await categoriesStore.updateCategory(editingCategory.value.id, form);
-            successMessage.value = t('library.categories.update_success');
+            successMessage.value = 'تم تحديث التصنيف بنجاح';
         } else {
             await categoriesStore.createCategory(form);
-            successMessage.value = t('library.categories.create_success');
+            successMessage.value = 'تم إنشاء التصنيف بنجاح';
         }
         
         setTimeout(() => {
@@ -467,7 +470,7 @@ const submitForm = async () => {
         
     } catch (err: any) {
         localError.value = err.response?.data?.message || 
-            (editingCategory.value ? t('library.categories.update_error') : t('library.categories.create_error'));
+            (editingCategory.value ? 'فشل في تحديث التصنيف' : 'فشل في إنشاء التصنيف');
         console.error('Form submission failed:', err);
     } finally {
         submitting.value = false;
@@ -492,7 +495,7 @@ const getInitials = (name: string) => {
 };
 
 const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(locale.value === 'ar' ? 'ar-SA' : 'en-US');
+    return new Date(dateString).toLocaleDateString('ar-SA');
 };
 
 const handleSearch = () => {
@@ -504,7 +507,6 @@ const handleSearch = () => {
 };
 
 const exportCategories = () => {
-    // Implementation for exporting categories
     console.log('Exporting categories...');
 };
 
@@ -536,11 +538,6 @@ onMounted(async () => {
 .badge-neutral {
     background-color: rgb(243 244 246);
     color: rgb(55 65 81);
-}
-
-.badge-brand {
-    background-color: rgb(220 252 231);
-    color: rgb(22 101 52);
 }
 
 /* Custom scrollbar */
