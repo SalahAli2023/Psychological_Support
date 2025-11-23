@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import UserDetails from '@/components/dashboard/Users/UserDetails.vue'
+import UserDetails from '@/components/dashboard/Users/admin/Index.vue'
 
 // --- Backend Pages ---
 const AppLayout = () => import('../components/dashboard/component/layout/AppLayout.vue');
 const Dashboard = () => import('../components/dashboard/Dashboard/Index.vue');
 const Appointments = () => import('../components/dashboard/Appointments/Index.vue');
-const Users = () => import('../components/dashboard/Users/Index.vue');
+const Users = () => import('../components/dashboard/Users/admin/Index.vue');
 const therapists = () => import('../components/dashboard/Users/therapists/TherapistsManagement.vue');
 const clients = () => import('../components/dashboard/Users/clients/PatientsManagement.vue');
 const Articles = () => import('../components/dashboard/Articles/Index.vue');
