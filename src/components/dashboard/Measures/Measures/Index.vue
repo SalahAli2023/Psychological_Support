@@ -143,6 +143,12 @@ const form = reactive<ScaleForm>({
   interpretations: [createDefaultInterpretation()]
 });
 
+// 🔥 دالة التحقق من صحة UUID
+function isValidUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
+
 // دوال مساعدة لإنشاء بيانات فارغة
 function createDefaultQuestion(): Question {
   return {
@@ -379,19 +385,45 @@ function openCreate() {
   modal.value = true;
 }
 
+// 🔥 دالة التعديل المحسنة مع معالجة الأخطاء
 async function edit(scale: Scale) {
   try {
     console.log('🔄 بدء تحميل بيانات المقياس للتعديل:', scale.id);
     
+    // 🔥 التحقق أولاً من صحة UUID
+    if (!scale.id || !isValidUUID(scale.id)) {
+      console.error('❌ معرف المقياس غير صالح:', scale.id);
+      showErrorNotification('معرف المقياس غير صالح');
+      return;
+    }
+
     // إعادة تعيين النموذج أولاً
     resetForm();
     
-    // جلب البيانات الكاملة مع التأكد من تحميل جميع العلاقات
-    const fullScale = await scalesStore.fetchScaleById(scale.id);
-    console.log('✅ بيانات المقياس المحملة. الأسئلة:', fullScale.questions?.length || 0);
+    let fullScale;
+    
+    try {
+      // محاولة جلب البيانات من الخادم
+      console.log('📡 جلب البيانات من الخادم...');
+      fullScale = await scalesStore.fetchScaleById(scale.id);
+    } catch (err: any) {
+      console.warn('⚠️ فشل جلب البيانات من الخادم:', err.message);
+      
+      // 🔥 البحث عن المقياس في البيانات المحلية
+      const localScale = scales.value.find(s => s.id === scale.id);
+      if (localScale) {
+        fullScale = localScale;
+        console.log('✅ تم استخدام البيانات المحلية للمقياس');
+        showSuccessNotification('تم تحميل البيانات من النسخة المحلية');
+      } else {
+        console.error('❌ المقياس غير موجود محلياً أيضاً');
+        throw new Error('المقياس غير موجود في قاعدة البيانات أو محلياً');
+      }
+    }
     
     if (!fullScale) {
       console.error('❌ لم يتم العثور على المقياس');
+      showErrorNotification('المقياس غير موجود');
       return;
     }
     
@@ -413,20 +445,21 @@ async function edit(scale: Scale) {
       console.log('📝 معالجة الأسئلة المحملة:', fullScale.questions.length);
       
       form.questions = fullScale.questions
-        .filter(q => q.question_text_ar && q.question_text_ar.trim())
+        .filter(q => q && (q.question_text_ar || q.question_text_en))
         .map((q, index) => ({
           id: q.id,
           question_text_ar: q.question_text_ar || '',
           question_text_en: q.question_text_en || '',
           question_order: q.question_order || index + 1,
           options: (q.options && q.options.length > 0) ? 
-            q.options.map((o, optIndex) => ({
-              id: o.id,
-              option_text_ar: o.option_text_ar || '',
-              option_text_en: o.option_text_en || '',
-              score_value: o.score_value || 0,
-              option_order: o.option_order || optIndex + 1
-            })) : [createDefaultOption()]
+            q.options.filter(opt => opt && opt.option_text_ar)
+              .map((o, optIndex) => ({
+                id: o.id,
+                option_text_ar: o.option_text_ar || '',
+                option_text_en: o.option_text_en || '',
+                score_value: o.score_value || 0,
+                option_order: o.option_order || optIndex + 1
+              })) : [createDefaultOption()]
         }));
     }
     
@@ -438,16 +471,18 @@ async function edit(scale: Scale) {
     // تعبئة التفسيرات الفعلية من قاعدة البيانات
     form.interpretations = [];
     if (fullScale.interpretations && fullScale.interpretations.length > 0) {
-      form.interpretations = fullScale.interpretations.map(int => ({
-        id: int.id,
-        min_score: int.min_score || 0,
-        max_score: int.max_score || 10,
-        interpretation_label_ar: int.interpretation_label_ar || '',
-        interpretation_label_en: int.interpretation_label_en || '',
-        description_ar: int.description_ar || '',
-        description_en: int.description_en || '',
-        color: int.color || 'green'
-      }));
+      form.interpretations = fullScale.interpretations
+        .filter(int => int && (int.interpretation_label_ar || int.interpretation_label_en))
+        .map(int => ({
+          id: int.id,
+          min_score: int.min_score || 0,
+          max_score: int.max_score || 10,
+          interpretation_label_ar: int.interpretation_label_ar || '',
+          interpretation_label_en: int.interpretation_label_en || '',
+          description_ar: int.description_ar || '',
+          description_en: int.description_en || '',
+          color: int.color || 'green'
+        }));
     }
     
     // إذا لم توجد تفسيرات، نضيف تفسير فارغ واحد فقط
@@ -460,19 +495,52 @@ async function edit(scale: Scale) {
     modal.value = true;
     console.log('🎯 النموذج جاهز. الأسئلة:', form.questions.length);
     
-  } catch (err) {
+  } catch (err: any) {
     console.error('❌ Error loading scale for edit:', err);
+    
+    // 🔥 معالجة أنواع الأخطاء المختلفة
+    if (err.response?.status === 404) {
+      showErrorNotification('المقياس غير موجود في قاعدة البيانات');
+    } else if (err.message?.includes('غير موجود')) {
+      showErrorNotification('المقياس غير موجود أو تم حذفه');
+    } else if (err.response?.status === 500) {
+      showErrorNotification('خطأ في الخادم. يرجى المحاولة لاحقاً');
+    } else {
+      showErrorNotification('حدث خطأ أثناء تحميل بيانات المقياس');
+    }
   }
 }
 
 async function openPreview(scale: Scale) {
   try {
     console.log('🔄 فتح معاينة المقياس:', scale.id);
-    const fullScale = await scalesStore.fetchScaleById(scale.id);
+    
+    // 🔥 التحقق من صحة UUID
+    if (!scale.id || !isValidUUID(scale.id)) {
+      console.error('❌ معرف المقياس غير صالح للمعاينة:', scale.id);
+      showErrorNotification('معرف المقياس غير صالح');
+      return;
+    }
+
+    let fullScale;
+    
+    try {
+      fullScale = await scalesStore.fetchScaleById(scale.id);
+    } catch (err) {
+      console.warn('⚠️ فشل جلب البيانات للمعاينة، استخدام البيانات المحلية');
+      const localScale = scales.value.find(s => s.id === scale.id);
+      if (localScale) {
+        fullScale = localScale;
+      } else {
+        throw new Error('المقياس غير موجود');
+      }
+    }
+    
     previewData.value = fullScale;
     previewModal.value = true;
-  } catch (err) {
+  } catch (err: any) {
     console.error('❌ Error loading scale for preview:', err);
+    showErrorNotification('تعذر تحميل بيانات المقياس للمعاينة');
   }
 }
 
@@ -613,7 +681,7 @@ async function save() {
     const cleanQuestions = form.questions
       .filter(q => q.question_text_ar?.trim() && q.question_text_en?.trim())
       .map((q, index) => ({
-        id: q.id || undefined, // إرسال undefined بدلاً من null
+        id: q.id || undefined,
         question_text_ar: q.question_text_ar.trim(),
         question_text_en: q.question_text_en.trim(),
         question_order: index + 1,
@@ -686,6 +754,12 @@ async function save() {
     let savedScale;
     
     if (current.value) {
+      // 🔥 التحقق من صحة UUID قبل التحديث
+      if (!current.value.id || !isValidUUID(current.value.id)) {
+        showErrorNotification('معرف المقياس غير صالح للتحديث');
+        return;
+      }
+
       // التحديث
       console.log('🔄 تحديث المقياس:', current.value.id);
       const response = await api.put(`/psychological-scales/${current.value.id}/full`, scaleData);
@@ -758,7 +832,8 @@ async function save() {
     saving.value = false;
   }
 }
-// دوال مساعدة للإشعارات
+
+// 🔥 دوال مساعدة للإشعارات
 function showErrorNotification(message: string) {
   const errorDiv = document.createElement('div');
   errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-sm';
@@ -776,6 +851,12 @@ function showSuccessNotification(message: string) {
 }
 
 function deleteScale(id: string) {
+  // 🔥 التحقق من صحة UUID قبل الحذف
+  if (!id || !isValidUUID(id)) {
+    showErrorNotification('معرف المقياس غير صالح للحذف');
+    return;
+  }
+  
   deleteTargetId.value = id;
   showDeleteConfirm.value = true;
 }
@@ -785,8 +866,10 @@ async function confirmDelete() {
     try {
       await scalesStore.deleteScale(deleteTargetId.value);
       console.log('✅ تم حذف المقياس بنجاح');
+      showSuccessNotification('تم حذف المقياس بنجاح');
     } catch (err: any) {
       console.error('Error deleting scale:', err);
+      showErrorNotification('حدث خطأ أثناء حذف المقياس');
     }
   }
   showDeleteConfirm.value = false;

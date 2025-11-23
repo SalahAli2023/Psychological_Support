@@ -28,27 +28,97 @@ interface User {
   email_verified_at?: string
 }
 
+interface RegisterResponse {
+  success: boolean
+  requiresVerification?: boolean
+  errors?: any
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
-  const token = ref<string | null>(localStorage.getItem('admin_token'))
+  const token = ref<string | null>(localStorage.getItem('frontend_token'))
   const isAuthenticated = computed(() => !!token.value)
   const requiresVerification = ref(false)
   const pendingEmail = ref<string>('')
 
-  const register = async (registerData: RegisterData): Promise<{success: boolean, requiresVerification?: boolean}> => {
-    try {
+  // 🔥 NEW: استخدام api بدلاً من fetch مباشرة مع تحسينات الأمان
+  const api = {
+    async post(url: string, data: any) {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
       
+      // 🔥 NEW: إضافة header لمنع التحويل التلقائي
+      const headers: any = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+
+      // 🔥 NEW: إضافة التوكن إذا كان موجوداً
+      if (token.value) {
+        headers['Authorization'] = `Bearer ${token.value}`
+      }
+
+      const response = await fetch(`${API_URL}${url}`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data),
+        // 🔥 IMPORTANT: منع الـ redirect
+        redirect: 'manual'
+      })
+
+      // 🔥 NEW: معالجة الـ redirect يدوياً بشكل أفضل
+      if (response.status >= 300 && response.status < 400) {
+        const redirectUrl = response.headers.get('Location')
+        console.warn('⚠️ تم اكتشاف redirect:', redirectUrl)
+        
+        // إذا كان التحويل إلى admin/login، نرفضه
+        if (redirectUrl && redirectUrl.includes('/admin/login')) {
+          console.log('🚫 تم منع التحويل إلى admin/login')
+          throw new Error('REDIRECT_TO_ADMIN_BLOCKED')
+        }
+        
+        throw new Error('REDIRECT_DETECTED')
+      }
+
+      return response
+    },
+
+    async get(url: string) {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      
+      const headers: any = {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+
+      if (token.value) {
+        headers['Authorization'] = `Bearer ${token.value}`
+      }
+
+      const response = await fetch(`${API_URL}${url}`, {
+        method: 'GET',
+        headers: headers,
+        redirect: 'manual'
+      })
+
+      if (response.status >= 300 && response.status < 400) {
+        const redirectUrl = response.headers.get('Location')
+        if (redirectUrl && redirectUrl.includes('/admin/login')) {
+          console.log('🚫 تم منع التحويل إلى admin/login في GET')
+          throw new Error('REDIRECT_TO_ADMIN_BLOCKED')
+        }
+        throw new Error('REDIRECT_DETECTED')
+      }
+
+      return response
+    }
+  }
+
+  const register = async (registerData: RegisterData): Promise<RegisterResponse> => {
+    try {
       console.log('🔄 جاري إنشاء الحساب:', registerData)
       
-      const response = await fetch(`${API_URL}/registerClint`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(registerData)
-      })
+      const response = await api.post('/registerClint', registerData)
 
       console.log('📡 حالة الاستجابة:', response.status, response.statusText)
 
@@ -56,18 +126,22 @@ export const useAuthStore = defineStore('auth', () => {
         const data = await response.json()
         console.log('✅ استجابة التسجيل:', data)
         
-        if (data.data.requires_verification) {
+        if (data.data?.requires_verification) {
           requiresVerification.value = true
           pendingEmail.value = registerData.email
           return { success: true, requiresVerification: true }
         }
         
         // إذا لم يتطلب التحقق (مباشرة)
-        saveAuthData({ user: data.data.user, token: data.data.token }, false)
-        return { success: true }
+        if (data.data?.user && data.data?.token) {
+          saveAuthData({ user: data.data.user, token: data.data.token }, false)
+          return { success: true }
+        }
+        
+        throw new Error('بيانات الاستجابة غير مكتملة')
       } else {
-        const errorData = await response.json()
-         // 🔥 NEW: إرجاع الأخطاء المفصلة
+        const errorData = await response.json().catch(() => ({}))
+        
         if (errorData.errors) {
           return { 
             success: false, 
@@ -79,114 +153,116 @@ export const useAuthStore = defineStore('auth', () => {
 
     } catch (error: any) {
       console.error('❌ فشل التسجيل:', error)
-       if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+      
+      if (error.message === 'REDIRECT_TO_ADMIN_BLOCKED') {
+        return { 
+          success: false, 
+          errors: { general: 'تم منع التحويل غير المصرح به. يرجى المحاولة مرة أخرى.' } 
+        }
+      }
+      
+      if (error.message === 'REDIRECT_DETECTED') {
+        return { 
+          success: false, 
+          errors: { general: 'تم اكتشاف تحويل غير متوقع. يرجى المحاولة مرة أخرى.' } 
+        }
+      }
+      
+      if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+        return { 
+          success: false, 
+          errors: { network: 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت.' } 
+        }
+      }
+      
       return { 
         success: false, 
-        errors: { network: 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت.' } 
+        errors: { general: error.message || 'حدث خطأ غير متوقع في التسجيل' } 
       }
     }
-    
-    return { 
-      success: false, 
-      errors: { general: error.message || 'حدث خطأ غير متوقع في التسجيل' } 
-    }
   }
-}
 
   // 🔥 NEW: التحقق من البريد الإلكتروني
   const verifyEmail = async (email: string, code: string): Promise<boolean> => {
-  try {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
-    
-    console.log('🔄 جاري التحقق من الرمز:', { email, code })
-    
-    const response = await fetch(`${API_URL}/verify-email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        verification_code: code // تأكد من أن هذا الحقل مضبوط بشكل صحيح
-      }),
-    });
-
-    console.log('📡 حالة استجابة التحقق:', response.status)
-    
-    // لأغراض التصحيح، اطبع الجسم المرسل
-    console.log("Request Body:", {
-      email,
-      verification_code: code
-    });
-
-    if (response.ok) {
-      const data = await response.json()
-      console.log('✅ تم تفعيل الحساب:', data)
+    try {
+      console.log('🔄 جاري التحقق من الرمز:', { email, code })
       
-      saveAuthData({ user: data.data.user, token: data.data.token }, false)
-      requiresVerification.value = false
-      pendingEmail.value = ''
-      return true
-    } else {
-      // اطبع الخطأ بالتفصيل
-      const errorData = await response.json()
-      console.error('❌ تفاصيل الخطأ من الخادم:', errorData)
-      throw new Error(errorData.message || 'فشل في تفعيل الحساب')
-    }
+      const response = await api.post('/verify-email', {
+        email: email,
+        verification_code: code
+      })
 
-  } catch (error: any) {
-    console.error('❌ فشل التحقق:', error)
-    throw new Error(error.message || 'حدث خطأ في التحقق')
+      console.log('📡 حالة استجابة التحقق:', response.status)
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('✅ تم تفعيل الحساب:', data)
+        
+        if (data.data?.user && data.data?.token) {
+          saveAuthData({ user: data.data.user, token: data.data.token }, false)
+          requiresVerification.value = false
+          pendingEmail.value = ''
+          return true
+        }
+        
+        throw new Error('بيانات التفعيل غير مكتملة')
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('❌ تفاصيل الخطأ من الخادم:', errorData)
+        throw new Error(errorData.message || 'فشل في تفعيل الحساب')
+      }
+
+    } catch (error: any) {
+      console.error('❌ فشل التحقق:', error)
+      
+      if (error.message === 'REDIRECT_TO_ADMIN_BLOCKED') {
+        throw new Error('تم منع التحويل إلى صفحة المسؤول')
+      }
+      
+      if (error.message === 'REDIRECT_DETECTED') {
+        throw new Error('تم اكتشاف تحويل غير متوقع أثناء التحقق')
+      }
+      
+      throw new Error(error.message || 'حدث خطأ في التحقق')
+    }
   }
-}
 
   // 🔥 NEW: إعادة إرسال رمز التحقق
   const resendVerificationCode = async (email: string): Promise<boolean> => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
-      
-      const response = await fetch(`${API_URL}/resend-verification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ email })
-      })
+      const response = await api.post('/resend-verification', { email })
 
       if (response.ok) {
         const data = await response.json()
         console.log('✅ تم إعادة إرسال الرمز:', data)
         return true
       } else {
-        const errorData = await response.json()
+        const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.message || 'فشل في إعادة إرسال الرمز')
       }
 
     } catch (error: any) {
       console.error('❌ فشل إعادة الإرسال:', error)
+      
+      if (error.message === 'REDIRECT_TO_ADMIN_BLOCKED') {
+        throw new Error('تم منع التحويل إلى صفحة المسؤول')
+      }
+      
+      if (error.message === 'REDIRECT_DETECTED') {
+        throw new Error('تم اكتشاف تحويل غير متوقع أثناء إعادة الإرسال')
+      }
+      
       throw new Error(error.message || 'حدث خطأ في إعادة الإرسال')
     }
   }
 
   const login = async (loginData: LoginData): Promise<boolean> => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      console.log('🔄 جاري تسجيل الدخول:', { email: loginData.email })
       
-      console.log('🔄 جاري الاتصال بالخادم:', `${API_URL}/login`)
-      console.log('📧 بيانات الدخول:', { email: loginData.email })
-      
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          email: loginData.email,
-          password: loginData.password
-        })
+      const response = await api.post('/login', {
+        email: loginData.email,
+        password: loginData.password
       })
 
       console.log('📡 حالة الاستجابة:', response.status, response.statusText)
@@ -198,23 +274,16 @@ export const useAuthStore = defineStore('auth', () => {
         // تحليل الاستجابة بطرق مختلفة
         let userData, authToken
         
-        // الطريقة 1: إذا كانت البيانات في data.data
         if (data.data && data.data.user) {
           userData = data.data.user
           authToken = data.data.token || data.token
-        }
-        // الطريقة 2: إذا كانت البيانات مباشرة في data
-        else if (data.user) {
+        } else if (data.user) {
           userData = data.user
           authToken = data.token
-        }
-        // الطريقة 3: إذا كانت البيانات في استجابة مختلفة
-        else if (data.success && data.data) {
+        } else if (data.success && data.data) {
           userData = data.data.user
           authToken = data.data.token
-        }
-        // الطريقة 4: إذا كانت البيانات في جذر الاستجابة
-        else {
+        } else {
           userData = data
           authToken = data.token
         }
@@ -222,28 +291,18 @@ export const useAuthStore = defineStore('auth', () => {
         console.log('👤 بيانات المستخدم المستخرجة:', userData)
         console.log('🔑 التوكن المستخرج:', authToken)
         
-        // التحقق من وجود بيانات المستخدم
         if (!userData) {
           throw new Error('بيانات المستخدم غير موجودة في الاستجابة')
         }
         
-        // التحقق من وجود الدور
         if (!userData.role) {
           console.warn('⚠️ حقل role غير موجود في بيانات المستخدم، استخدام قيمة افتراضية')
-          userData.role = 'Client' // أو أي قيمة افتراضية
-        }
-        
-        // التحقق من أن المستخدم مدير (إذا كان مطلوباً)
-        if (userData.role !== 'Admin') {
-          console.log('👤 نوع المستخدم:', userData.role)
-          // يمكنك إزالة هذا الشرط إذا كان مسموحاً لجميع المستخدمين
-          // throw new Error('غير مصرح بالدخول إلى لوحة التحكم - يجب أن تكون مديراً')
+          userData.role = 'Client'
         }
         
         saveAuthData({ user: userData, token: authToken }, loginData.remember)
         return true
       } else {
-        // معالجة الأخطاء من الخادم
         let errorMessage = 'فشل تسجيل الدخول'
         
         try {
@@ -260,7 +319,14 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error: any) {
       console.error('❌ فشل تسجيل الدخول:', error)
       
-      // تحسين رسائل الخطأ
+      if (error.message === 'REDIRECT_TO_ADMIN_BLOCKED') {
+        throw new Error('تم منع التحويل إلى صفحة المسؤول. يرجى استخدام واجهة المستخدم الأمامية.')
+      }
+      
+      if (error.message === 'REDIRECT_DETECTED') {
+        throw new Error('تم اكتشاف تحويل غير متوقع. يرجى المحاولة مرة أخرى.')
+      }
+      
       if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
         throw new Error('تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت وتشغيل الخادم الخلفي.')
       }
@@ -286,12 +352,16 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = data.token
     user.value = data.user
     
+    // 🔥 NEW: استخدام مفتاح مختلف للفرونتند فقط
+    const tokenKey = 'frontend_token'
+    const userKey = 'frontend_user'
+    
     if (remember) {
-      localStorage.setItem('admin_token', data.token)
-      localStorage.setItem('admin_user', JSON.stringify(data.user))
+      localStorage.setItem(tokenKey, data.token)
+      localStorage.setItem(userKey, JSON.stringify(data.user))
     } else {
-      sessionStorage.setItem('admin_token', data.token)
-      sessionStorage.setItem('admin_user', JSON.stringify(data.user))
+      sessionStorage.setItem(tokenKey, data.token)
+      sessionStorage.setItem(userKey, JSON.stringify(data.user))
     }
     
     console.log('✅ تم حفظ بيانات المصادقة بنجاح')
@@ -299,32 +369,40 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
-      
       if (token.value) {
-        await fetch(`${API_URL}/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json'
-          }
-        })
+        await api.post('/logout', {})
       }
     } catch (error) {
       console.error('Logout API error:', error)
     } finally {
       token.value = null
       user.value = null
-      localStorage.removeItem('admin_token')
-      localStorage.removeItem('admin_user')
-      sessionStorage.removeItem('admin_token')
-      sessionStorage.removeItem('admin_user')
+      
+      // 🔥 NEW: تنظيف مفاتيح الفرونتند فقط
+      localStorage.removeItem('frontend_token')
+      localStorage.removeItem('frontend_user')
+      sessionStorage.removeItem('frontend_token')
+      sessionStorage.removeItem('frontend_user')
+      
+      console.log('✅ تم تسجيل الخروج من الفرونتند')
     }
   }
 
   const initializeAuth = () => {
-    const savedToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token')
-    const savedUser = localStorage.getItem('admin_user') || sessionStorage.getItem('admin_user')
+    // 🔥 NEW: منع التحويل التلقائي إلى admin
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/admin') && !token.value) {
+      console.log('🚫 منع الوصول إلى المسؤول بدون مصادقة - إعادة التوجيه إلى الرئيسية');
+      window.location.href = '/';
+      return;
+    }
+
+    // استخدام مفاتيح الفرونتند فقط
+    const tokenKey = 'frontend_token'
+    const userKey = 'frontend_user'
+    
+    const savedToken = localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey)
+    const savedUser = localStorage.getItem(userKey) || sessionStorage.getItem(userKey)
     
     if (savedToken && savedUser) {
       try {
@@ -342,13 +420,13 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     isAuthenticated,
-     requiresVerification, // 🔥 NEW
-    pendingEmail, // 🔥 NEW
-    register, // 🔥 UPDATED
+    requiresVerification,
+    pendingEmail,
+    register,
     login,
     logout,
     initializeAuth,
-    verifyEmail, // 🔥 NEW
-    resendVerificationCode // 🔥 NEW
+    verifyEmail,
+    resendVerificationCode
   }
 })

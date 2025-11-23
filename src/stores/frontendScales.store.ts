@@ -1,4 +1,4 @@
-// stores/frontendScales.store.js
+// stores/frontendScales.store.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import api from '@/utils/api'
@@ -12,6 +12,41 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
   const loading = ref(false)
   const error = ref(null)
   const dataLoaded = ref(false)
+
+  // 🔥 NEW: Interceptor لمنع التحويل إلى admin
+  const setupApiInterceptors = () => {
+    // إذا كنت تستخدم axios، أضف interceptor هنا
+    if (api.interceptors) {
+      api.interceptors.response.use(
+        response => response,
+        error => {
+          if (error.response?.status === 401) {
+            console.log('🔒 خطأ 401 - فتح مودال التسجيل بدلاً من التحويل إلى admin')
+            // لا تقم بأي تحويل، دع المكون الرئيسي يتعامل معه
+            return Promise.reject({ 
+              ...error, 
+              requiresLogin: true,
+              blockedRedirect: true 
+            })
+          }
+          
+          // 🔥 NEW: منع التحويل في حالات أخرى
+          if (error.response?.status >= 300 && error.response?.status < 400) {
+            console.log('🚫 تم منع تحويل غير مصرح به')
+            return Promise.reject({ 
+              ...error, 
+              blockedRedirect: true 
+            })
+          }
+          
+          return Promise.reject(error)
+        }
+      )
+    }
+  }
+
+  // استدعاء الإعداد عند إنشاء الـ store
+  setupApiInterceptors()
 
   // ==================== دوال جلب البيانات للفرونت ====================
 
@@ -123,6 +158,7 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
     }
   }
 
+  // 🔥 NEW: إرسال إجابات الاختبار للمستخدمين المسجلين
   const submitFrontendTest = async (scaleId, answers) => {
     loading.value = true
     error.value = null
@@ -139,6 +175,218 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
       console.error('❌ خطأ في إرسال الإجابات:', err)
       handleError(err)
       throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 🔥 NEW: إرسال إجابات للمستخدمين غير المسجلين
+  const submitPublicTest = async (scaleId, answers) => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log(`🔄 إرسال إجابات للمستخدمين غير المسجلين ${scaleId}...`)
+      
+      const response = await api.post(`/frontend/scales/${scaleId}/submit-public`, {
+        answers: answers
+      })
+      
+      console.log('✅ تم حساب النتيجة للمستخدمين غير المسجلين:', response.data)
+      return response.data
+    } catch (err) {
+      console.error('❌ خطأ في إرسال الإجابات العامة:', err)
+      handleError(err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 🔥 NEW: دالة محسنة لحفظ النتيجة بعد التسجيل
+  const saveAssessmentResult = async (scaleId, sessionKey) => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log(`💾 حفظ النتيجة بعد التسجيل للمقياس ${scaleId}...`)
+      console.log(`🔑 مفتاح الجلسة: ${sessionKey}`)
+      
+      // 🔥 NEW: التحقق من صحة المدخلات
+      if (!scaleId || !sessionKey) {
+        console.error('❌ بيانات غير كافية لحفظ النتيجة:', { scaleId, sessionKey })
+        return {
+          success: false,
+          message: 'بيانات غير كافية لحفظ النتيجة',
+          error: 'MISSING_REQUIRED_DATA'
+        }
+      }
+      
+      // 🔥 NEW: محاولة حفظ النتيجة
+      const response = await api.post(`/frontend/scales/${scaleId}/save-result`, {
+        session_key: sessionKey
+      })
+      
+      console.log('✅ تم حفظ النتيجة بنجاح:', response.data)
+      
+      // 🔥 NEW: التحقق من استجابة الخادم
+      if (response.data && response.data.success) {
+        return response.data
+      } else {
+        console.warn('⚠️ استجابة الخادم تشير إلى فشل:', response.data)
+        return {
+          success: false,
+          message: response.data?.message || 'فشل في حفظ النتيجة',
+          error: 'SERVER_RESPONSE_ERROR',
+          serverResponse: response.data
+        }
+      }
+      
+    } catch (err) {
+      console.error('❌ خطأ في حفظ النتيجة:', err)
+      
+      // 🔥 NEW: معالجة مفصلة للخطأ
+      let errorMessage = 'فشل في حفظ النتيجة'
+      let errorType = 'UNKNOWN_ERROR'
+      
+      if (err.response) {
+        // خطأ من الخادم
+        errorMessage = err.response.data?.message || `خطأ ${err.response.status} من الخادم`
+        errorType = `SERVER_ERROR_${err.response.status}`
+        console.error('📡 تفاصيل الخطأ من الخادم:', err.response.data)
+      } else if (err.request) {
+        // خطأ في الشبكة
+        errorMessage = 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت.'
+        errorType = 'NETWORK_ERROR'
+      } else {
+        // خطأ آخر
+        errorMessage = err.message || 'حدث خطأ غير متوقع'
+        errorType = 'CLIENT_ERROR'
+      }
+      
+      // 🔥 NEW: إرجاع بيانات افتراضية في حالة الخطأ
+      return {
+        success: false,
+        message: errorMessage,
+        error: errorType,
+        requiresLogin: err.requiresLogin || false,
+        blockedRedirect: err.blockedRedirect || false,
+        originalError: err
+      }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 🔥 NEW: دالة محسنة للتحقق من المصادقة تلقائياً
+  const submitTestWithAuthCheck = async (scaleId, answers) => {
+    loading.value = true
+    error.value = null
+    
+    try {
+      console.log(`🔄 إرسال إجابات مع التحقق من المصادقة للمقياس ${scaleId}...`)
+      console.log('📤 بيانات الإجابات المرسلة:', answers)
+      
+      // 🔥 NEW: تحقق إضافي لمنع التحويل إلى admin
+      if (window.location.pathname.includes('/admin')) {
+        console.error('❌ محاولة الوصول إلى admin من الفرونتند - فتح التسجيل')
+        return {
+          requires_login: true,
+          data: {
+            session_key: `temp_admin_block_${Date.now()}_${scaleId}`
+          },
+          message: 'يجب التسجيل لحفظ النتيجة',
+          success: false,
+          blocked_admin_redirect: true
+        }
+      }
+      
+      // محاولة الإرسال كمسجل أولاً
+      try {
+        console.log('👤 محاولة الإرسال كمستخدم مسجل...')
+        const response = await api.post(`/frontend/scales/${scaleId}/submit`, {
+          answers: answers
+        })
+        
+        console.log('✅ تم الإرسال بنجاح (مستخدم مسجل):', response.data)
+        return response.data
+        
+      } catch (authError) {
+        console.log('❌ فشل الإرسال كمسجل:', authError.response?.status, authError.response?.data)
+        
+        // إذا فشل الإرسال كمسجل، حاول كزائر
+        if (authError.response && authError.response.status === 401) {
+          console.log('🔐 المستخدم غير مسجل، محاولة الإرسال كزائر...')
+          try {
+            const publicResponse = await api.post(`/frontend/scales/${scaleId}/submit-public`, {
+              answers: answers
+            })
+            
+            console.log('✅ تم الإرسال بنجاح (مستخدم غير مسجل):', publicResponse.data)
+            
+            // إضافة علامة requires_login للاستجابة
+            const result = {
+              ...publicResponse.data,
+              requires_login: true
+            }
+            
+            // التأكد من وجود data object
+            if (!result.data) {
+              result.data = {}
+            }
+            
+            // إنشاء مفتاح جلسة مؤقت إذا لم يكن موجوداً
+            if (!result.data.session_key) {
+              result.data.session_key = `temp_${Date.now()}_${scaleId}`
+            }
+            
+            return result
+            
+          } catch (publicError) {
+            console.error('❌ فشل الإرسال كزائر:', publicError.response?.status, publicError.response?.data)
+            
+            // حتى إذا فشل الإرسال كزائر، نعيد requires_login
+            return {
+              requires_login: true,
+              data: {
+                session_key: `temp_error_${Date.now()}_${scaleId}`
+              },
+              message: 'يجب التسجيل لحفظ النتيجة',
+              success: false
+            }
+          }
+        }
+        
+        // إذا كان الخطأ ليس 401، أعد رميه
+        console.error('❌ خطأ غير متوقع في الإرسال:', authError)
+        throw authError
+      }
+      
+    } catch (err) {
+      console.error('❌ خطأ عام في إرسال الإجابات:', err)
+      
+      // 🔥 NEW: معالجة خاصة لأخطاء التحويل
+      if (err.blockedRedirect) {
+        console.log('🚫 تم منع تحويل إلى admin - فتح التسجيل')
+        return {
+          requires_login: true,
+          data: {
+            session_key: `temp_redirect_block_${Date.now()}_${scaleId}`
+          },
+          message: 'يجب التسجيل لحفظ النتيجة',
+          success: false,
+          blocked_redirect: true
+        }
+      }
+      
+      // 🔥 NEW: إرجاع response افتراضي في حالة الخطأ
+      return {
+        requires_login: true,
+        data: {
+          session_key: `temp_catch_${Date.now()}_${scaleId}`
+        },
+        message: 'حدث خطأ في الإرسال، يرجى التسجيل',
+        success: false,
+        error: err.message
+      }
     } finally {
       loading.value = false
     }
@@ -215,6 +463,19 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
   // ==================== دوال مساعدة ====================
 
   const handleError = (err) => {
+    // 🔥 NEW: معالجة خاصة لأخطاء الشبكة
+    if (err.networkError) {
+      error.value = 'تعذر الاتصال بالخادم. يرجى التأكد من تشغيل الخادم الخلفي على المنفذ 8000.'
+      console.error('🌐 خطأ في الشبكة:', err.message)
+      return
+    }
+    
+    // 🔥 NEW: معالجة خاصة لأخطاء التحويل
+    if (err.blockedRedirect) {
+      error.value = 'تم منع تحويل غير مصرح به. يرجى التسجيل للمتابعة.'
+      return
+    }
+    
     if (err.response) {
       let message = `خطأ ${err.response.status}: `
       
@@ -235,9 +496,20 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
         message: message
       })
     } else if (err.request) {
-      error.value = 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت.'
+      error.value = 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت وتشغيل الخادم الخلفي.'
     } else {
       error.value = err.message || 'حدث خطأ غير متوقع'
+    }
+  }
+
+  // 🔥 NEW: دالة للتحقق من حالة الخادم
+  const checkServerStatus = async () => {
+    try {
+      const response = await api.get('/')
+      return response.status === 200
+    } catch (error) {
+      console.error('❌ الخادم غير متاح:', error)
+      return false
     }
   }
 
@@ -298,6 +570,9 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
     fetchFrontendScaleById,
     fetchFrontendFullScale,
     submitFrontendTest,
+    submitPublicTest,
+    saveAssessmentResult,
+    submitTestWithAuthCheck,
     fetchPopularScales,
     fetchScalesByCategory,
 
@@ -311,6 +586,8 @@ export const useFrontendScalesStore = defineStore('frontendScales', () => {
     resetAllData,
     getCategoryName,
     getScaleById,
+    checkServerStatus,
+    handleError,
 
     // الحسابات المحسوبة
     activeScales,

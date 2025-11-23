@@ -307,6 +307,8 @@
     </div>
   </div>
 </template>
+
+
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -315,8 +317,11 @@ import { useProfile } from '@/composables/useProfile'
 import { countries } from '@/data/countries'
 import { t } from '@/locales'
 import { useAuthStore } from '@/stores/auth'
+import { useFrontendScalesStore } from '@/stores/frontendScales.store'
 
 const authStore = useAuthStore()
+const frontendScalesStore = useFrontendScalesStore()
+
 const props = defineProps({
   showRegistration: {
     type: Boolean,
@@ -446,6 +451,57 @@ const handleAccountSubmit = async () => {
   }
 }
 
+// 🔥 NEW: دالة محسنة لحفظ النتيجة بعد التسجيل
+const saveAssessmentResult = async () => {
+  try {
+    // إذا كان هناك session key (من الاختبار السابق)
+    const savedSessionKey = localStorage.getItem('pending_assessment_session')
+    const scaleId = localStorage.getItem('pending_assessment_scale_id')
+    
+    if (savedSessionKey && scaleId) {
+      console.log('💾 محاولة حفظ النتيجة بعد التسجيل:', { scaleId, savedSessionKey })
+      
+      const result = await frontendScalesStore.saveAssessmentResult(scaleId, savedSessionKey)
+      console.log('✅ تم حفظ النتيجة بنجاح:', result)
+      
+      // تنظيف البيانات المؤقتة
+      localStorage.removeItem('pending_assessment_session')
+      localStorage.removeItem('pending_assessment_scale_id')
+      
+      return result
+    } else {
+      console.log('ℹ️ لا توجد نتيجة معلقة للحفظ')
+    }
+  } catch (error) {
+    console.error('❌ خطأ في حفظ النتيجة بعد التسجيل:', error)
+  }
+  return null
+}
+
+// 🔥 NEW: دالة محسنة لتسجيل الدخول التلقائي بعد التسجيل
+const autoLoginAfterRegistration = async () => {
+  try {
+    console.log('🔐 محاولة تسجيل الدخول التلقائي...')
+    const loginResult = await authStore.login({
+      email: form.email,
+      password: form.password,
+      remember: true
+    })
+    
+    if (loginResult) {
+      console.log('✅ تسجيل الدخول التلقائي ناجح')
+      return true
+    } else {
+      console.error('❌ فشل تسجيل الدخول التلقائي')
+      return false
+    }
+  } catch (error) {
+    console.error('❌ خطأ في تسجيل الدخول التلقائي:', error)
+    return false
+  }
+}
+
+// 🔥 NEW: دالة handlePersonalSubmit المحسنة
 const handlePersonalSubmit = async () => {
   if (!isPersonalValid.value) return
   
@@ -461,31 +517,51 @@ const handlePersonalSubmit = async () => {
       role: 'Client'
     }
 
+    console.log('📤 بيانات التسجيل المرسلة:', registerData)
+    
     const result = await authStore.register(registerData)
     
     if (result.success && result.requiresVerification) {
+      console.log('📧 يتطلب التحقق من البريد الإلكتروني')
       currentStep.value = 3
       startResendCounter()
       showMessage(translate('registrationModal.success.verificationSent'), 'success')
     } else if (result.success) {
+      console.log('✅ تم إنشاء الحساب بنجاح')
       showMessage(translate('registrationModal.success.accountCreated'), 'success')
-      setTimeout(() => {
-        closeRegistration()
-        router.push('/measures')
-      }, 1500)
+      
+      // 🔥 NEW: تسجيل الدخول التلقائي أولاً
+      const loginSuccess = await autoLoginAfterRegistration()
+      
+      if (loginSuccess) {
+        // 🔥 NEW: حفظ النتيجة بعد التسجيل
+        console.log('💾 محاولة حفظ نتيجة الاختبار بعد التسجيل...')
+        const savedResult = await saveAssessmentResult()
+        
+        // 🔥 NEW: إرسال النتيجة المحفوظة مع الحدث
+        emit('registration-success', savedResult)
+      } else {
+        // إذا فشل تسجيل الدخول التلقائي، أرسل رسالة فقط
+        emit('registration-success', null)
+      }
     } else {
       // 🔥 NEW: معالجة الأخطاء من الباك إند
+      console.error('❌ فشل في التسجيل:', result)
       if (result.errors) {
         handleBackendErrors(result.errors)
         showErrorMessage(translate('registrationModal.errors.validationErrors'))
+      } else {
+        showErrorMessage(translate('registrationModal.errors.registrationFailed'))
       }
     }
   } catch (error) {
+    console.error('❌ خطأ في التسجيل:', error)
     showMessage(error.message || translate('registrationModal.errors.sendVerification'), 'error')
   } finally {
     isSubmitting.value = false
   }
 }
+
 const handleCodeInput = (index, event) => {
   const value = event.target.value
   if (value.length > 1) {
@@ -504,6 +580,7 @@ const handleCodeKeydown = (index, event) => {
     if (prevInput) prevInput.focus()
   }
 }
+
 // دالة لمعالجة الأخطاء من الباك إند
 const handleBackendErrors = (backendErrors) => {
   // مسح الأخطاء القديمة
@@ -512,7 +589,7 @@ const handleBackendErrors = (backendErrors) => {
   // تعيين الأخطاء الجديدة
   if (backendErrors) {
     Object.keys(backendErrors).forEach(key => {
-      errors[key] = backendErrors[key]
+      errors[key] = Array.isArray(backendErrors[key]) ? backendErrors[key][0] : backendErrors[key]
     })
   }
 }
@@ -521,25 +598,42 @@ const handleBackendErrors = (backendErrors) => {
 const showErrorMessage = (errorText) => {
   showMessage(errorText, 'error')
 }
+
+// 🔥 NEW: دالة التحقق من البريد الإلكتروني المحسنة
 const handleVerificationSubmit = async () => {
   if (!isVerificationComplete.value) return
   
   isSubmitting.value = true
   try {
     const code = verificationCode.value.join('')
+    console.log('🔐 التحقق من الرمز:', { email: form.email, code })
+    
     const success = await authStore.verifyEmail(form.email, code)
     
     if (success) {
+      console.log('✅ تم التحقق من البريد الإلكتروني بنجاح')
       showMessage(translate('registrationModal.success.accountCreated'), 'success')
       
-      // الانتقال إلى الصفحة الرئيسية بعد التأخير
-      setTimeout(() => {
-        closeRegistration()
-        router.push('/')
-      }, 1500)
+      // 🔥 NEW: تسجيل الدخول التلقائي بعد التحقق
+      const loginSuccess = await autoLoginAfterRegistration()
+      
+      if (loginSuccess) {
+        // 🔥 NEW: حفظ النتيجة بعد التحقق
+        console.log('💾 محاولة حفظ نتيجة الاختبار بعد التحقق...')
+        const savedResult = await saveAssessmentResult()
+        
+        // 🔥 NEW: إرسال النتيجة المحفوظة مع الحدث
+        emit('registration-success', savedResult)
+      } else {
+        // إذا فشل تسجيل الدخول التلقائي، أرسل رسالة فقط
+        emit('registration-success', null)
+      }
+    } else {
+      throw new Error(translate('registrationModal.errors.verificationFailed'))
     }
     
   } catch (error) {
+    console.error('❌ خطأ في التحقق:', error)
     showMessage(error.message || translate('registrationModal.errors.verifyCode'), 'error')
   } finally {
     isSubmitting.value = false
@@ -553,6 +647,7 @@ const resendVerification = async () => {
     startResendCounter()
     showMessage(translate('registrationModal.success.codeResent'), 'success')
   } catch (error) {
+    console.error('❌ خطأ في إعادة الإرسال:', error)
     showMessage(error.message || translate('registrationModal.errors.resendCode'), 'error')
   } finally {
     isSubmitting.value = false
@@ -575,7 +670,7 @@ const formatTime = (seconds) => {
   return `${minutes}:${secs.toString().padStart(2, '0')}`
 }
 
-const closeRegistration = () => {
+const closeRegistrationModal = () => {
   emit('close')
   currentStep.value = 1
   isSubmitting.value = false
@@ -600,6 +695,7 @@ onMounted(() => {
   updateDialCode()
 })
 </script>
+
 
 <style scoped>
 /* الأساسيات */

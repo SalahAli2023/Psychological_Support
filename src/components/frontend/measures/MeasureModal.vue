@@ -85,7 +85,7 @@
 
           <div class="flex justify-end pt-4">
             <button
-              @click="$emit('start-test')"
+              @click="startTest"
               class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all font-medium text-sm"
             >
               {{ translate('measureModal.startTest') }}
@@ -120,22 +120,21 @@
               </p>
             </div>
 
-            <!-- الخيارات حسب نوع السؤال -->
+            <!-- الخيارات -->
             <div class="space-y-3">
-              <!-- Multiple Choice -->
-              <div v-if="question.type === 'multiple_choice' || !question.type" class="space-y-2">
+              <div class="space-y-2">
                 <label
                   v-for="(option, optionIndex) in question.options"
                   :key="option.id || optionIndex"
                   class="flex items-center p-3 bg-white rounded-md border border-gray-300 cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50"
                   :class="{ 
-                    'border-blue-500 bg-blue-50': getAnswer(getGlobalQuestionIndex(questionIndex)) === optionIndex,
+                    'border-blue-500 bg-blue-50': getAnswer(getGlobalQuestionIndex(questionIndex)) === option.id,
                   }"
                 >
                   <input
                     type="radio"
                     :name="`question-${getGlobalQuestionIndex(questionIndex)}`"
-                    :value="optionIndex"
+                    :value="option.id"
                     v-model="answers[getGlobalQuestionIndex(questionIndex)]"
                     class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -143,35 +142,6 @@
                     {{ getTranslatedOption(option) }}
                   </span>
                 </label>
-              </div>
-
-              <!-- Linear Scale -->
-              <div v-if="question.type === 'linear_scale'" class="space-y-4">
-                <div class="flex justify-between text-sm text-gray-600">
-                  <span>{{ question.scaleLabels?.low[language] || 'منخفض' }}</span>
-                  <span>{{ question.scaleLabels?.high[language] || 'مرتفع' }}</span>
-                </div>
-                <div class="flex space-x-2 justify-center" :class="language === 'ar' ? 'space-x-reverse' : ''">
-                  <label
-                    v-for="n in (question.scaleTo - question.scaleFrom + 1)"
-                    :key="n"
-                    class="flex flex-col items-center p-3 bg-white rounded-md border border-gray-300 cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50"
-                    :class="{ 
-                      'border-blue-500 bg-blue-50': getAnswer(getGlobalQuestionIndex(questionIndex)) === (n + question.scaleFrom - 1),
-                    }"
-                  >
-                    <input
-                      type="radio"
-                      :name="`question-${getGlobalQuestionIndex(questionIndex)}`"
-                      :value="n + question.scaleFrom - 1"
-                      v-model="answers[getGlobalQuestionIndex(questionIndex)]"
-                      class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span class="text-gray-700 text-sm mt-1">
-                      {{ n + question.scaleFrom - 1 }}
-                    </span>
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -213,7 +183,7 @@
             <!-- زر التقديم -->
             <button
               v-else
-              @click="$emit('submit-test')"
+              @click="submitTest"
               :disabled="!isFormComplete"
               class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm flex items-center gap-2"
             >
@@ -232,30 +202,40 @@
         <!-- نتائج الاختبار -->
         <div v-else-if="testStep === 'results'" class="space-y-6">
           <div class="text-center space-y-4">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
-              <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+              <i class="fas fa-check-circle text-green-600 text-xl"></i>
             </div>
             
             <h3 class="text-xl font-normal text-gray-900">
-              {{ translate('measureModal.resultTitle') }}
+              {{ translate('measureModal.registrationSuccess') }}
             </h3>
 
+            <!-- عرض النتيجة -->
             <div class="space-y-2">
-              <div class="text-4xl font-normal text-blue-600">{{ testResult.score }}</div>
+              <div class="text-4xl font-normal text-blue-600">{{ testResult.data?.score || testResult.score }}</div>
               <p class="text-gray-500 text-sm">
                 {{ translate('measureModal.yourScore') }}
-                {{ testResult.maxScore }}
+                {{ testResult.data?.max_score || testResult.maxScore }}
                 {{ translate('measureModal.points') }}
               </p>
             </div>
 
+            <!-- إذا كانت النتيجة متاحة -->
             <div class="border border-gray-300 rounded-lg p-6 mt-4 text-left">
               <h4 class="text-base font-medium text-gray-900 mb-2">
-                {{ getTranslatedInterpretation(testResult.interpretation, 'level') }}
+                {{ getTranslatedInterpretation(testResult.data?.interpretation, 'interpretation_label') }}
               </h4>
               <p class="text-gray-600 text-sm leading-relaxed">
-                {{ getTranslatedInterpretation(testResult.interpretation, 'desc') }}
+                {{ getTranslatedInterpretation(testResult.data?.interpretation, 'description') }}
               </p>
+              
+              <!-- رسالة نجاح الحفظ -->
+              <div v-if="testResult.success" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-center gap-2 text-green-700">
+                  <i class="fas fa-check-circle"></i>
+                  <span class="text-sm font-medium">{{ translate('measureModal.resultSaved') }}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -288,14 +268,14 @@
           <!-- أزرار الإجراءات -->
           <div class="flex flex-col sm:flex-row gap-3 pt-4">
             <button
-              @click="$emit('retake-test')"
+              @click="retakeTest"
               class="flex-1 px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-50 transition-all font-medium text-sm flex items-center justify-center"
             >
               <i class="fas fa-redo" :class="language === 'ar' ? 'ml-2' : 'mr-2'"></i>
               {{ translate('measureModal.retake') }}
             </button>
             <button
-              @click="$emit('show-other-measures')"
+              @click="showOtherMeasures"
               class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all font-medium text-sm flex items-center justify-center"
             >
               <i class="fas fa-list" :class="language === 'ar' ? 'ml-2' : 'mr-2'"></i>
@@ -310,13 +290,13 @@
 
 <script>
 import { t } from '@/locales'
+import { useFrontendScalesStore } from '@/stores/frontendScales.store'
 
 export default {
   name: 'MeasureModal',
   props: {
     measure: { type: Object, required: true },
     testStep: { type: String, default: 'info' },
-    currentQuestionIndex: { type: Number, default: 0 },
     answers: { type: Array, default: () => [] },
     testResult: { type: Object, default: null },
     language: { type: String, default: 'ar' }
@@ -324,16 +304,17 @@ export default {
   emits: [
     'close',
     'start-test',
-    'next-question',
-    'previous-question',
     'submit-test',
     'retake-test',
-    'show-other-measures'
+    'show-other-measures',
+    'open-registration',
+    'update:testStep'
   ],
   data() {
     return {
       questionsPerPage: 3,
       currentPage: 0,
+      localLoading: false
     }
   },
   computed: {
@@ -362,7 +343,126 @@ export default {
   },
   methods: {
     translate(key) {
+      const translations = {
+        'measureModal.registrationSuccess': {
+          ar: 'تم التسجيل بنجاح!',
+          en: 'Registration Successful!'
+        },
+        'measureModal.resultSaved': {
+          ar: 'تم حفظ نتيجتك في حسابك',
+          en: 'Your result has been saved to your account'
+        },
+        'measureModal.progress': {
+          ar: 'التقدم',
+          en: 'Progress'
+        },
+        'measureModal.of': {
+          ar: 'من',
+          en: 'of'
+        },
+        'measureModal.importantInfo': {
+          ar: 'معلومات هامة',
+          en: 'Important Information'
+        },
+        'measureModal.infoList.awareness': {
+          ar: 'هذا الاختبار لأغراض التوعية فقط وليس تشخيصاً طبياً',
+          en: 'This test is for awareness purposes only and not a medical diagnosis'
+        },
+        'measureModal.infoList.confidentiality': {
+          ar: 'جميع إجاباتك سرية وآمنة',
+          en: 'All your answers are confidential and secure'
+        },
+        'measureModal.infoList.stopAnytime': {
+          ar: 'يمكنك إيقاف الاختبار في أي وقت',
+          en: 'You can stop the test at any time'
+        },
+        'measureModal.aboutTest': {
+          ar: 'عن الاختبار',
+          en: 'About the Test'
+        },
+        'measureModal.questionsCount': {
+          ar: 'أسئلة',
+          en: 'questions'
+        },
+        'measureModal.time': {
+          ar: 'دقيقة',
+          en: 'minutes'
+        },
+        'measureModal.startTest': {
+          ar: 'بدء الاختبار',
+          en: 'Start Test'
+        },
+        'measureModal.previous': {
+          ar: 'السابق',
+          en: 'Previous'
+        },
+        'measureModal.next': {
+          ar: 'التالي',
+          en: 'Next'
+        },
+        'measureModal.submit': {
+          ar: 'تقديم الإجابات',
+          en: 'Submit Answers'
+        },
+        'measureModal.calculating': {
+          ar: 'جاري حساب النتيجة...',
+          en: 'Calculating your result...'
+        },
+        'measureModal.resultTitle': {
+          ar: 'نتيجة الاختبار',
+          en: 'Test Results'
+        },
+        'measureModal.yourScore': {
+          ar: 'درجتك',
+          en: 'Your score'
+        },
+        'measureModal.points': {
+          ar: 'نقطة',
+          en: 'points'
+        },
+        'measureModal.recommendations': {
+          ar: 'التوصيات',
+          en: 'Recommendations'
+        },
+        'measureModal.consult.title': {
+          ar: 'استشارة متخصص',
+          en: 'Professional Consultation'
+        },
+        'measureModal.consult.desc': {
+          ar: 'للاستفسار عن نتيجتك أو للحصول على استشارة متخصصة',
+          en: 'To inquire about your result or get professional consultation'
+        },
+        'measureModal.consult.button': {
+          ar: 'احجز استشارة',
+          en: 'Book Consultation'
+        },
+        'measureModal.retake': {
+          ar: 'إعادة الاختبار',
+          en: 'Retake Test'
+        },
+        'measureModal.otherMeasures': {
+          ar: 'مقاييس أخرى',
+          en: 'Other Measures'
+        },
+        'measureModal.completeAllQuestions': {
+          ar: 'يرجى الإجابة على جميع الأسئلة قبل الإرسال',
+          en: 'Please answer all questions before submitting'
+        },
+        'measureModal.submitError': {
+          ar: 'حدث خطأ أثناء إرسال الاختبار',
+          en: 'An error occurred while submitting the test'
+        }
+      }
+      
+      if (translations[key]) {
+        return translations[key][this.language] || translations[key].ar
+      }
+      
       return t(key, this.language)
+    },
+    
+    updateTestStep(newStep) {
+      this.$emit('update:testStep', newStep)
     },
     
     getTranslatedTitle(measure) {
@@ -395,8 +495,11 @@ export default {
 
     getTranslatedInterpretation(interpretation, key) {
       if (!interpretation) return '';
-      const value = interpretation[key];
-      return typeof value === 'object' ? value[this.language] : value;
+      if (typeof interpretation === 'object') {
+        const value = interpretation[key];
+        return typeof value === 'object' ? value[this.language] : value;
+      }
+      return interpretation;
     },
 
     getQuestionTypeText(type) {
@@ -435,6 +538,53 @@ export default {
       if (this.currentPage > 0) {
         this.currentPage--
       }
+    },
+
+    startTest() {
+      this.$emit('start-test')
+    },
+
+    async submitTest() {
+      console.log('📤 إرسال الاختبار من المودال')
+      
+      try {
+        // التحقق من اكتمال جميع الإجابات
+        if (!this.isFormComplete) {
+          const message = this.translate('measureModal.completeAllQuestions')
+          alert(message)
+          return
+        }
+
+        console.log('✅ جميع الإجابات مكتملة، جاري الإرسال...')
+        
+        this.updateTestStep('loading')
+        this.localLoading = true
+        
+        // إرسال الإجابات إلى المكون الأب
+        this.$emit('submit-test', this.answers)
+        
+      } catch (error) {
+        console.error('❌ خطأ في إرسال الاختبار:', error)
+        
+        this.updateTestStep('questions')
+        this.localLoading = false
+        
+        const errorMessage = error.message || this.translate('measureModal.submitError')
+        alert(errorMessage)
+      }
+    },
+
+    retakeTest() {
+      this.$emit('retake-test')
+    },
+
+    showOtherMeasures() {
+      this.$emit('show-other-measures')
+    },
+
+    openRegistration() {
+      console.log('🔐 فتح التسجيل من المودال')
+      this.$emit('open-registration')
     }
   }
 }
@@ -454,5 +604,9 @@ export default {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
