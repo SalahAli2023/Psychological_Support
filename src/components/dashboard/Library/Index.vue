@@ -63,6 +63,19 @@
                         <option value="article">{{ t('library.articles') }}</option>
                     </select>
 
+
+                    <select 
+                        v-model="sortBy"
+                        class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        @change="fetchItems"
+                    >
+                        <option value="newest">{{ t('library.sort.newest') }}</option>
+                        <option value="oldest">{{ t('library.sort.oldest') }}</option>
+                        <option value="title">{{ t('library.sort.title') }}</option>
+                        <option value="popular">{{ t('library.sort.popular') }}</option>
+                        <option value="rating">{{ t('library.sort.rating') }}</option>
+                    </select>
+
                     <Button 
                         variant="outline" 
                         @click="toggleSort"
@@ -80,6 +93,7 @@
                         <XMarkIcon class="h-3 w-3 md:h-4 md:w-4" />
                         إعادة تعيين
                     </Button>
+
                 </div>
             </div>
 
@@ -462,11 +476,12 @@ const showDeleteConfirm = ref(false);
 const editingItem = ref<LibraryItem | null>(null);
 const deleteTargetId = ref<number | null>(null);
 const successMessage = ref('');
+const localError = ref('');
 
 // Computed
 const hasAuth = computed(() => authStore.isAuthenticated);
 const loading = computed(() => libraryStore.loading);
-const error = computed(() => libraryStore.error);
+const error = computed(() => localError.value || libraryStore.error);
 const items = computed(() => libraryStore.items);
 const categories = computed(() => libraryStore.categories);
 
@@ -490,30 +505,36 @@ const activeFilters = computed(() => {
     return filters;
 });
 
-const sortOptions = [
-    { value: 'newest', label: t('library.sort.newest') },
-    { value: 'popular', label: t('library.sort.popular') },
-    { value: 'rating', label: t('library.sort.rating') },
-    { value: 'title', label: t('library.sort.title') },
-];
-
 // Methods
 const fetchItems = async () => {
+    localError.value = '';
     const params: any = {};
     
     if (selectedCategory.value) params.category_id = selectedCategory.value;
     if (selectedType.value) params.type = selectedType.value;
     if (searchQuery.value) params.search = searchQuery.value;
+    if (sortBy.value) params.sort = sortBy.value;
     
     // إضافة معلمات الترقيم
     params.page = libraryStore.pagination.current_page;
     params.per_page = libraryStore.pagination.per_page;
     
-    await libraryStore.fetchItems(params);
+    try {
+        await libraryStore.fetchItems(params);
+    } catch (err: any) {
+        localError.value = 'فشل في تحميل العناصر';
+        console.error('Failed to fetch items:', err);
+    }
 };
 
 const fetchCategories = async () => {
-    await libraryStore.fetchCategories();
+    try {
+        await libraryStore.fetchCategories();
+        console.log('Categories loaded successfully:', libraryStore.categories.length);
+    } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        localError.value = 'فشل في تحميل التصنيفات';
+    }
 };
 
 const upload = () => {
@@ -543,7 +564,7 @@ const confirmDelete = async () => {
         }, 3000);
         
     } catch (err: any) {
-        error.value = err.response?.data?.message || 'فشل في حذف العنصر';
+        localError.value = err.response?.data?.message || 'فشل في حذف العنصر';
         console.error('Failed to delete item:', err);
     } finally {
         showDeleteConfirm.value = false;
@@ -566,7 +587,7 @@ const handleTogglePublish = async (item: LibraryItem) => {
         }, 3000);
         
     } catch (err: any) {
-        error.value = err.response?.data?.message || 'فشل في تحديث حالة العنصر';
+        localError.value = err.response?.data?.message || 'فشل في تحديث حالة العنصر';
         console.error('Failed to toggle publish:', err);
     }
 };
@@ -579,12 +600,6 @@ const getTypeLabel = (type: string) => {
         article: 'مقال'
     };
     return types[type] || type;
-};
-
-const toggleSort = () => {
-    const currentIndex = sortOptions.findIndex(opt => opt.value === sortBy.value);
-    const nextIndex = (currentIndex + 1) % sortOptions.length;
-    sortBy.value = sortOptions[nextIndex].value;
 };
 
 const removeFilter = (filterKey: string) => {
@@ -600,6 +615,7 @@ const clearFilters = async () => {
     searchQuery.value = '';
     selectedCategory.value = '';
     selectedType.value = '';
+    sortBy.value = 'newest';
     
     // إعادة تعيين الصفحة إلى الأولى عند مسح الفلاتر
     await libraryStore.changePage(1);
@@ -656,11 +672,16 @@ const handlePerPageChange = async (perPage: number) => {
 
 // Lifecycle
 onMounted(async () => {
-    await Promise.all([fetchItems(), fetchCategories()]);
+    try {
+        await Promise.all([fetchItems(), fetchCategories()]);
+    } catch (error) {
+        console.error('Initialization failed:', error);
+        localError.value = 'فشل في تحميل البيانات الأولية';
+    }
 });
 
 // Watchers
-watch([selectedCategory, selectedType], () => {
+watch([selectedCategory, selectedType, sortBy], () => {
     fetchItems();
 });
 </script>

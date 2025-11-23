@@ -163,13 +163,16 @@
                             >
                                 <option value="">{{ t('library.upload.select_category') }}</option>
                                 <option 
-                                    v-for="category in categories" 
+                                    v-for="category in availableCategories" 
                                     :key="category.id" 
                                     :value="category.id"
                                 >
                                     {{ locale === 'ar' ? category.name_ar : category.name_en }}
                                 </option>
                             </select>
+                            <div v-if="availableCategories.length === 0" class="text-xs text-rose-500 mt-1">
+                                {{ t('library.upload.no_categories') }}
+                            </div>
                         </div>
 
                         <!-- Type -->
@@ -368,7 +371,7 @@
                         type="submit"
                         variant="primary"
                         @click="handleSubmit"
-                        :disabled="(!selectedFile && !editingItem) || isUploading || !formData.title_ar || !formData.title_en"
+                        :disabled="(!selectedFile && !editingItem) || isUploading || !formData.title_ar || !formData.title_en || !formData.type || !formData.category_id"
                         :loading="isUploading"
                         class="flex items-center gap-2"
                     >
@@ -382,7 +385,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useLibraryStore } from '@/stores/library';
 import Button from '@/components/dashboard/component/ui/Button.vue';
@@ -432,7 +435,12 @@ const formData = reactive({
     is_published: true
 });
 
-// Methods - تم نقل التعريفات إلى الأعلى
+// Computed
+const availableCategories = computed(() => {
+    return props.categories && props.categories.length > 0 ? props.categories : libraryStore.categories;
+});
+
+// Methods
 const resetForm = () => {
     formData.title_ar = '';
     formData.title_en = '';
@@ -540,6 +548,18 @@ const getFileType = (filename: string) => {
     return types[extension || ''] || 'File';
 };
 
+// إضافة دالة لتحميل التصنيفات إذا لم تكن محملة
+const loadCategoriesIfNeeded = async () => {
+    if (availableCategories.value.length === 0) {
+        try {
+            await libraryStore.fetchCategories();
+            console.log('Categories loaded in modal:', libraryStore.categories.length);
+        } catch (error) {
+            console.error('Failed to load categories in modal:', error);
+        }
+    }
+};
+
 const handleSubmit = async () => {
     if ((!selectedFile.value && !props.editingItem) || !formData.title_ar || !formData.title_en || !formData.type || !formData.category_id) {
         return;
@@ -594,7 +614,7 @@ const handleSubmit = async () => {
     }
 };
 
-// Watch for editing item changes - الآن بعد تعريف جميع الدوال
+// Watch for editing item changes
 watch(() => props.editingItem, (newItem) => {
     if (newItem) {
         // Fill form with existing data
@@ -620,6 +640,13 @@ watch(() => props.editingItem, (newItem) => {
         resetForm();
     }
 }, { immediate: true });
+
+// استدعاء الدالة عند فتح المودال
+watch(() => props.editingItem, async (newVal) => {
+    if (newVal !== undefined) {
+        await loadCategoriesIfNeeded();
+    }
+});
 
 // Event listeners for drag and drop
 onMounted(() => {

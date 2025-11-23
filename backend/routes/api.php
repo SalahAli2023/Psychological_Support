@@ -140,46 +140,44 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
 
-    
-
-
-// ==================== PROTECTED THERAPIST MANAGEMENT ROUTES ====================
-Route::middleware('auth:sanctum')->group(function () {
-    
-    // Therapists Management
-    Route::post('/therapists', [TherapistController::class, 'store']);
-    Route::put('/therapists/{id}', [TherapistController::class, 'update']);
-    Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);
-    
-    // Therapist Certifications
-    Route::get('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'index']);
-    Route::post('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'store']);
-    Route::put('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'update']);
-    Route::delete('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'destroy']);
-    
-    // Therapist Qualifications
-    Route::get('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'index']);
-    Route::post('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'store']);
-    Route::put('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'update']);
-    Route::delete('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'destroy']);
-    
-    // Therapist Schedules
-    Route::get('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'index']);
-    Route::post('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'store']);
-    Route::put('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'update']);
-    Route::delete('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'destroy']);
-});
+    // ==================== PROTECTED THERAPIST MANAGEMENT ROUTES ====================
+    Route::middleware('auth:sanctum')->group(function () {
+        
+        // Therapists Management
+        Route::post('/therapists', [TherapistController::class, 'store']);
+        Route::put('/therapists/{id}', [TherapistController::class, 'update']);
+        Route::delete('/therapists/{id}', [TherapistController::class, 'destroy']);
+        
+        // Therapist Certifications
+        Route::get('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'index']);
+        Route::post('/therapists/{therapist}/certifications', [TherapistCertificationController::class, 'store']);
+        Route::put('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'update']);
+        Route::delete('/therapists/{therapist}/certifications/{certification}', [TherapistCertificationController::class, 'destroy']);
+        
+        // Therapist Qualifications
+        Route::get('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'index']);
+        Route::post('/therapists/{therapist}/qualifications', [TherapistQualificationController::class, 'store']);
+        Route::put('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'update']);
+        Route::delete('/therapists/{therapist}/qualifications/{qualification}', [TherapistQualificationController::class, 'destroy']);
+        
+        // Therapist Schedules
+        Route::get('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'index']);
+        Route::post('/therapists/{therapist}/schedules', [TherapistScheduleController::class, 'store']);
+        Route::put('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'update']);
+        Route::delete('/therapists/{therapist}/schedules/{schedule}', [TherapistScheduleController::class, 'destroy']);
+    });
     
     // ==================== LIBRARY MANAGEMENT ====================
     Route::post('/library', [LibraryController::class, 'store']);
     Route::put('/library/{id}', [LibraryController::class, 'update']);
     Route::delete('/library/{id}', [LibraryController::class, 'destroy']);
-    Route::delete('/library/categories/{id}', [LibraryController::class, 'destroyCategory']);
-     // Library Categories Routes
+    
+    // Library Categories Routes - تم تحديث المسارات
     Route::get('/library/categories', [LibraryController::class, 'categoriesIndex']);
     Route::post('/library/categories', [LibraryController::class, 'storeCategory']);
     Route::put('/library/categories/{id}', [LibraryController::class, 'updateCategory']);
     Route::delete('/library/categories/{id}', [LibraryController::class, 'destroyCategory']);
+    
     // Measures (admin only)
     // Route::post('/measures', [MeasureController::class, 'store']);
     // Route::put('/measures/{id}', [MeasureController::class, 'update']);

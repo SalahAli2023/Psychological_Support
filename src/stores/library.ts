@@ -9,6 +9,9 @@ export interface LibraryCategory {
   name_ar: string
   name_en: string
   color: string
+  items_count?: number
+  created_at: string
+  updated_at: string
 }
 
 export interface LibraryItem {
@@ -87,6 +90,7 @@ export const useLibraryStore = defineStore('library', () => {
     category_id?: string
     type?: string
     search?: string
+    sort?: string
     per_page?: number
     page?: number
   }) => {
@@ -118,20 +122,23 @@ export const useLibraryStore = defineStore('library', () => {
       return response.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch library items'
+      console.error('Error fetching library items:', err)
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  // الباقي بدون تغيير...
+  // جلب التصنيفات
   const fetchCategories = async () => {
     try {
       const response = await api.get('/library/categories/list')
-      categories.value = response.data.data
-      return response.data
+      categories.value = response.data.data || response.data
+      console.log('Categories loaded:', categories.value.length)
+      return categories.value
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch categories'
+      console.error('Error fetching categories:', err)
       throw err
     }
   }
@@ -268,14 +275,18 @@ export const useLibraryStore = defineStore('library', () => {
 
   // دالة لتغيير الصفحة
   const changePage = async (page: number) => {
+    pagination.value.current_page = page
     await fetchItems({ page })
   }
 
   // دالة لتغيير عدد العناصر في الصفحة
   const changePerPage = async (perPage: number) => {
+    pagination.value.per_page = perPage
+    pagination.value.current_page = 1
     await fetchItems({ per_page: perPage, page: 1 })
   }
 
+  // تهيئة أولية
   loadFavorites()
 
   return {
