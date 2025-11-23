@@ -622,15 +622,71 @@ export const en = {
       sendCode: 'An error occurred while sending the verification code',
       verifyCode: 'Invalid verification code',
       resendCode: 'An error occurred while resending the code',
-      createAccount: 'An error occurred while creating the account'
+      createAccount: 'An error occurred while creating the account',
+       accountSetup: "An error occurred during account setup",
+    sendVerification: "An error occurred while sending verification code",
+    validationErrors: 'There are errors in the submitted data',
+    sendVerification: 'Failed to send verification code',
+    verifyCode: 'Failed to verify the code',
+    resendCode: 'Failed to resend the code',
+    networkError: 'Unable to connect to the server'
+
     },
 
     success: {
       codeSent: 'Verification code sent successfully',
       verified: 'Phone number verified successfully',
       codeResent: 'Verification code resent',
-      accountCreated: 'Account created successfully!'
-    }
+      accountCreated: 'Account created successfully!',
+      verificationSent: "Verification code sent successfully"
+    },
+   accountStep: {
+  title: "Create a New Account",
+  nameLabel: "Full Name",
+  namePlaceholder: "Enter your full name",
+  emailLabel: "Email Address",
+  emailPlaceholder: "Enter your email address",
+  passwordLabel: "Password",
+  passwordPlaceholder: "Enter your password",
+  passwordConfirmationLabel: "Confirm Password",
+  passwordConfirmationPlaceholder: "Re-enter your password",
+  continue: "Continue",
+  nameRequired: "Name is required",
+  emailRequired: "Email is required",
+  emailInvalid: "Invalid email address",
+  passwordMinLength: "Password must be at least 6 characters",
+  passwordMismatch: "Passwords do not match",
+   processing: "Processing..."
+},
+
+personalStep: {
+  title: "Personal Information",
+  countryLabel: "Country",
+  selectCountry: "Select a country",
+  regionLabel: "Region",
+  regionPlaceholder: "Enter your region",
+  phoneLabel: "Phone Number",
+  phonePlaceholder: "Enter your phone number",
+  sendVerification: "Send Verification Code",
+  phoneError: "Invalid phone number",
+  sending: "Sending...",
+},
+ steps: {
+      account: "Account Info",
+      personal: "Personal Info",
+      verification: "Verification"
+    },
+    verificationStep: {
+    title: "Email Verification",
+    sentTo: "Verification code sent to",
+    checkSpam: "Please check your spam folder if you don't receive the code",
+    resendIn: "Resend in",
+    resend: "Resend Code",
+    editInfo: "Edit Information",
+    confirm: "Confirm",
+    verifying: "Verifying..."
+  },
+
   },
 
   registrationPage: {

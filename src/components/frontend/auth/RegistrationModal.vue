@@ -2,7 +2,13 @@
   <div v-if="showRegistration" class="fixed inset-0 z-900 flex items-center justify-center p-4">
     <div class="fixed inset-0 modal-overlay" @click="closeRegistration"></div>
     
-    <div class="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-slide-up" @click.stop>
+    <!-- إضافة dir و text-direction -->
+    <div 
+      class="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-slide-up" 
+      @click.stop
+      :dir="language === 'ar' ? 'rtl' : 'ltr'"
+      :class="language === 'ar' ? 'text-right' : 'text-left'"
+    >
       <!-- Header -->
       <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-start z-10">
         <div class="flex-1">
@@ -14,6 +20,24 @@
         <button @click="closeRegistration" class="flex-shrink-0 text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-lg hover:bg-gray-100">
           <i class="fas fa-times text-xl"></i>
         </button>
+      </div>
+
+    <!-- Messages Container -->
+      <div v-if="message.text" 
+          :class="['mx-6 mt-4 p-4 rounded-lg border text-sm font-medium', 
+                    message.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 
+                    'bg-red-50 border-red-200 text-red-700']">
+        {{ message.text }}
+      </div>
+
+      <!-- 🔥 NEW: عرض الأخطاء المفصلة من الباك إند -->
+      <div v-if="Object.keys(errors).length > 0 && message.type === 'error'" 
+          class="mx-6 mt-4 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
+        <ul class="list-disc list-inside space-y-1" :class="language === 'ar' ? 'text-right' : 'text-left'">
+          <li v-for="(error, field) in errors" :key="field">
+            {{ error }}
+          </li>
+        </ul>
       </div>
 
       <div class="p-6">
@@ -36,27 +60,132 @@
                   :class="currentStep >= step.number ? 'text-primary-green font-medium' : 'text-gray-500'">
               {{ step.title }}
             </span>
-            <div v-if="step.number < 3" class="absolute top-4 right-1/2 w-full h-0.5 bg-gray-300 -z-10"></div>
+            <div v-if="step.number < 3" 
+                 class="absolute top-4 h-0.5 bg-gray-300 -z-10"
+                 :class="language === 'ar' ? 'left-1/2 w-full' : 'right-1/2 w-full'"></div>
           </div>
         </div>
 
         <!-- Steps Content -->
         <div class="min-h-64">
-          <!-- Step 1: Phone Number -->
+          <!-- Step 1: Account Information -->
           <div v-if="currentStep === 1" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.phoneStep.enterPhone') }}</h3>
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.accountStep.title') }}</h3>
             
-            <form @submit.prevent="handlePhoneSubmit" class="space-y-4">
+            <form @submit.prevent="handleAccountSubmit" class="space-y-4">
+              <!-- Name -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2" 
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.accountStep.nameLabel') }}
+                </label>
+                <input 
+                  v-model="form.name"
+                  type="text"
+                  :placeholder="translate('registrationModal.accountStep.namePlaceholder')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  :class="errors.name ? 'border-red-500' : ''"
+                  :dir="language === 'ar' ? 'rtl' : 'ltr'"
+                >
+                <p v-if="errors.name" class="text-red-500 text-xs mt-1" 
+                   :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.accountStep.nameRequired') }}
+                </p>
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.accountStep.emailLabel') }}
+                </label>
+                <input 
+                  v-model="form.email"
+                  type="email"
+                  :placeholder="translate('registrationModal.accountStep.emailPlaceholder')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  :class="errors.email ? 'border-red-500' : ''"
+                  :dir="language === 'ar' ? 'rtl' : 'ltr'"
+                >
+                <p v-if="errors.email" class="text-red-500 text-xs mt-1"
+                   :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ errors.email }}
+                </p>
+              </div>
+
+              <!-- Password -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.accountStep.passwordLabel') }}
+                </label>
+                <input 
+                  v-model="form.password"
+                  type="password"
+                  :placeholder="translate('registrationModal.accountStep.passwordPlaceholder')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  :class="errors.password ? 'border-red-500' : ''"
+                  :dir="language === 'ar' ? 'rtl' : 'ltr'"
+                >
+                <p v-if="errors.password" class="text-red-500 text-xs mt-1"
+                   :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ errors.password }}
+                </p>
+              </div>
+
+              <!-- Password Confirmation -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.accountStep.passwordConfirmationLabel') }}
+                </label>
+                <input 
+                  v-model="form.password_confirmation"
+                  type="password"
+                  :placeholder="translate('registrationModal.accountStep.passwordConfirmationPlaceholder')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  :class="errors.password_confirmation ? 'border-red-500' : ''"
+                  :dir="language === 'ar' ? 'rtl' : 'ltr'"
+                >
+                <p v-if="errors.password_confirmation" class="text-red-500 text-xs mt-1"
+                   :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ errors.password_confirmation }}
+                </p>
+              </div>
+              
+              <button 
+                type="submit"
+                :disabled="!isAccountValid || isSubmitting"
+                class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              >
+                <span v-if="!isSubmitting">{{ translate('registrationModal.accountStep.continue') }}</span>
+                <span v-else class="flex items-center justify-center gap-2">
+                  <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {{ translate('registrationModal.accountStep.processing') }}
+                </span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Step 2: Personal Information -->
+          <div v-if="currentStep === 2" class="space-y-6">
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.personalStep.title') }}</h3>
+            
+            <form @submit.prevent="handlePersonalSubmit" class="space-y-4">
               <!-- Country -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.phoneStep.countryLabel') }}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.personalStep.countryLabel') }}
+                </label>
                 <div class="relative">
                   <select 
                     v-model="form.country"
                     @change="updateDialCode"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent appearance-none bg-white pr-3"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent appearance-none bg-white"
+                    :class="language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'"
                   >
-                    <option value="">{{ translate('registrationModal.phoneStep.selectCountry') }}</option>
+                    <option value="">{{ translate('registrationModal.personalStep.selectCountry') }}</option>
                     <option 
                       v-for="country in countries" 
                       :key="country.code"
@@ -65,7 +194,9 @@
                       {{ country.name }} {{ country.flag }}
                     </option>
                   </select>
-                  <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
+                  <!-- تعديل موقع السهم حسب اللغة -->
+                  <div class="absolute top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                       :class="language === 'ar' ? 'left-3' : 'right-3'">
                     <i class="fas fa-chevron-down"></i>
                   </div>
                 </div>
@@ -73,203 +204,119 @@
 
               <!-- Phone Number -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.phoneStep.phoneLabel') }}</label>
-                <div class="flex gap-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                       :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.personalStep.phoneLabel') }}
+                </label>
+                <div class="flex gap-2" :class="language === 'ar' ? 'flex-row-reverse' : ''">
                   <div class="flex-shrink-0 w-24 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-center text-gray-700">
                     {{ form.dialCode }}
                   </div>
                   <input 
                     v-model="form.phone"
                     type="tel"
-                    :placeholder="translate('registrationModal.phoneStep.phonePlaceholder')"
+                    :placeholder="translate('registrationModal.personalStep.phonePlaceholder')"
                     @input="validatePhone"
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
                     :class="errors.phone ? 'border-red-500' : ''"
+                    :dir="language === 'ar' ? 'rtl' : 'ltr'"
                   >
                 </div>
-                <p v-if="errors.phone" class="text-red-500 text-xs mt-1 text-right">{{ translate('registrationModal.phoneStep.phoneError') }}</p>
+                <p v-if="errors.phone" class="text-red-500 text-xs mt-1"
+                   :class="language === 'ar' ? 'text-right' : 'text-left'">
+                  {{ translate('registrationModal.personalStep.phoneError') }}
+                </p>
               </div>
               
               <button 
-                @click="handlePhoneSubmit"
-                :disabled="!isPhoneValid || isSubmitting"
+                type="submit"
+                :disabled="!isPersonalValid || isSubmitting"
                 class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                <span v-if="!isSubmitting">{{ translate('registrationModal.phoneStep.continue') }}</span>
+                <span v-if="!isSubmitting">{{ translate('registrationModal.personalStep.sendVerification') }}</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {{ translate('registrationModal.phoneStep.sending') }}
+                  {{ translate('registrationModal.personalStep.sending') }}
                 </span>
               </button>
             </form>
-            <!-- Verification Method Modal -->
-            <VerificationMethodModal
-              :show="showMethodModal"
-              :initial-method="selectedMethod"
-              :language="currentLanguage"
-
-              @close="showMethodModal = false"
-              @confirm="handleMethodConfirm"
-            />
           </div>
 
-
-          <!-- Step 2: Verification Code -->
-          <div v-if="currentStep === 2" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.otpStep.title') }}</h3>
+          <!-- Step 3: Email Verification -->
+          <div v-if="currentStep === 3" class="space-y-6">
+            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.verificationStep.title') }}</h3>
             
-            <form @submit.prevent="handleOtpSubmit" class="space-y-4">
+            <form @submit.prevent="handleVerificationSubmit" class="space-y-4">
               <div class="text-center space-y-2">
-                <p class="text-gray-600">{{ translate('registrationModal.otpStep.sentTo') }}</p>
-                <p class="font-semibold text-primary-green">{{ form.dialCode }} {{ form.phone }}</p>
+                <p class="text-gray-600">{{ translate('registrationModal.verificationStep.sentTo') }}</p>
+                <p class="font-semibold text-primary-green">{{ form.email }}</p>
+                <p class="text-sm text-gray-500">{{ translate('registrationModal.verificationStep.checkSpam') }}</p>
               </div>
 
-              <!-- OTP Inputs -->
-              <div class="flex justify-center gap-3">
+              <!-- Verification Code Inputs -->
+              <div class="flex justify-center gap-3 direction-ltr"> 
                 <input 
-                  v-for="n in 4"
+                  v-for="n in 6"
                   :key="n"
-                  v-model="otp[n-1]"
-                  type="number"
+                  v-model="verificationCode[n-1]"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
                   maxlength="1"
-                  @input="handleOtpInput(n-1, $event)"
-                  @keydown="handleOtpKeydown(n-1, $event)"
-                  class="w-16 h-16 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  @input="handleCodeInput(n-1, $event)"
+                  @keydown="handleCodeKeydown(n-1, $event)"
+                  @paste="handlePaste"
+                  class="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent direction-ltr verification-input"
                 >
               </div>
 
-              <!-- OTP Actions -->
+              <!-- Verification Actions -->
               <div class="text-center space-y-3">
                 <div v-if="resendCounter > 0" class="text-gray-600">
-                  <span>{{ translate('registrationModal.otpStep.resendIn') }}</span>
+                  <span>{{ translate('registrationModal.verificationStep.resendIn') }}</span>
                   <span class="font-semibold mx-1">{{ formatTime(resendCounter) }}</span>
                 </div>
-                <button 
-                  v-else
-                  type="button"
-                  @click="resendOtp"
-                  class="text-primary-green hover:text-opacity-80 font-medium transition-colors"
-                >
-                  {{ translate('registrationModal.otpStep.resend') }}
-                </button>
                 
-                <button 
-                  type="button"
-                  @click="currentStep = 1"
-                  class="text-gray-600 hover:text-gray-800 block mx-auto transition-colors"
-                >
-                  {{ translate('registrationModal.otpStep.editNumber') }}
-                </button>
+                <div class="flex justify-center gap-4">
+                  <button 
+                    v-if="resendCounter <= 0"
+                    type="button"
+                    @click="resendVerification"
+                    class="text-primary-green hover:text-opacity-80 font-medium transition-colors flex items-center gap-2"
+                  >
+                    <i class="fas fa-redo-alt text-sm"></i>
+                    {{ translate('registrationModal.verificationStep.resend') }}
+                  </button>
+                </div>
               </div>
 
               <button 
                 type="submit"
-                :disabled="!isOtpComplete || isSubmitting"
+                :disabled="!isVerificationComplete || isSubmitting"
                 class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                <span v-if="!isSubmitting">{{ translate('registrationModal.otpStep.confirm') }}</span>
+                <span v-if="!isSubmitting">{{ translate('registrationModal.verificationStep.confirm') }}</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {{ translate('registrationModal.otpStep.verifying') }}
+                  {{ translate('registrationModal.verificationStep.verifying') }}
                 </span>
               </button>
             </form>
-          </div>
-
-          <!-- Step 3: Personal Information -->
-          <div v-if="currentStep === 3" class="space-y-6">
-            <h3 class="text-lg font-semibold text-center text-gray-800">{{ translate('registrationModal.infoStep.title') }}</h3>
-            
-            <form @submit.prevent="handleInfoSubmit" class="space-y-4">
-              <!-- Name -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.infoStep.nameLabel') }}</label>
-                <input 
-                  v-model="form.name"
-                  type="text"
-                  :placeholder="translate('registrationModal.infoStep.namePlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                  :class="errors.name ? 'border-red-500' : ''"
-                >
-                <p v-if="errors.name" class="text-red-500 text-xs mt-1 text-right">{{ translate('registrationModal.infoStep.nameRequired') }}</p>
-              </div>
-
-              <!-- Email -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2 text-right">{{ translate('registrationModal.infoStep.emailLabel') }}</label>
-                <input 
-                  v-model="form.email"
-                  type="email"
-                  :placeholder="translate('registrationModal.infoStep.emailPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                  :class="errors.email ? 'border-red-500' : ''"
-                >
-                <p v-if="errors.email" class="text-red-500 text-xs mt-1 text-right">{{ errors.email }}</p>
-              </div>
-
-              <button 
-                type="submit"
-                :disabled="!form.name || isSubmitting"
-                class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-              >
-                <span v-if="!isSubmitting">{{ translate('registrationModal.infoStep.confirm') }}</span>
-                <span v-else class="flex items-center justify-center gap-2">
-                  <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {{ translate('registrationModal.infoStep.creating') }}
-                </span>
-              </button>
-            </form>
-          </div>
-
-          <!-- Step 4: Success -->
-          <div v-if="currentStep === 4" class="text-center space-y-6">
-            <h3 class="text-lg font-semibold text-gray-800">{{ translate('registrationModal.successStep.title') }}</h3>
-            <p class="text-gray-600 leading-relaxed">
-              {{ translate('registrationModal.successStep.message') }}
-            </p>
-
-            <!-- Download Buttons -->
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="https://apps.apple.com/app/id1244654624?mt=8" target="_blank" 
-                  class="flex items-center gap-3 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                <i class="fab fa-apple text-xl"></i>
-                <div class="text-right">
-                  <div class="text-xs opacity-80">{{ translate('registrationModal.successStep.availableOn') }}</div>
-                  <div class="font-semibold">{{ translate('registrationModal.successStep.appStore') }}</div>
-                </div>
-              </a>
-              
-              <a href="https://play.google.com/store/apps/details?id=com.labayh" target="_blank" 
-                  class="flex items-center gap-3 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                <i class="fab fa-google-play text-xl"></i>
-                <div class="text-right">
-                  <div class="text-xs opacity-80">{{ translate('registrationModal.successStep.availableOn') }}</div>
-                  <div class="font-semibold">{{ translate('registrationModal.successStep.googlePlay') }}</div>
-                </div>
-              </a>
-            </div>
-
-            <button 
-              @click="handleRegistrationSuccess"
-              class="w-full py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 transition-all font-medium"
-            >
-              {{ translate('registrationModal.successStep.start') }}
-            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
 import { useProfile } from '@/composables/useProfile'
 import { countries } from '@/data/countries'
 import { t } from '@/locales'
-import VerificationMethodModal from '@/components/frontend/auth/VerificationMethodModal.vue'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const props = defineProps({
   showRegistration: {
     type: Boolean,
@@ -281,6 +328,7 @@ const props = defineProps({
   }
 })
 
+const router = useRouter()
 const { showSuccess, showError } = useNotifications()
 const { login } = useProfile()
 
@@ -289,19 +337,24 @@ const currentLanguage = ref(props.language)
 const currentStep = ref(1)
 const isSubmitting = ref(false)
 const resendCounter = ref(0)
-const otp = ref(['', '', '', ''])
+const verificationCode = ref(['', '', '', '', '', ''])
 
 const form = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
   country: '+967',
   dialCode: '+967',
   phone: '',
-  name: '',
-  email: ''
+  region: ''
 })
 
 const errors = reactive({})
-const showMethodModal = ref(false)
-const selectedMethod = ref('sms')
+const message = reactive({
+  text: '',
+  type: '' // 'success' or 'error'
+})
 
 // دالة الترجمة
 const translate = (key) => {
@@ -309,22 +362,63 @@ const translate = (key) => {
 }
 
 const steps = computed(() => [
-  { number: 1, title: translate('registrationModal.steps.phone') },
-  { number: 2, title: translate('registrationModal.steps.otp') },
-  { number: 3, title: translate('registrationModal.steps.info') }
+  { number: 1, title: translate('registrationModal.steps.account') },
+  { number: 2, title: translate('registrationModal.steps.personal') },
+  { number: 3, title: translate('registrationModal.steps.verification') }
 ])
 
-const isPhoneValid = computed(() => {
+const isAccountValid = computed(() => {
+  return form.name.trim() && 
+         form.email.trim() && 
+         form.password.length >= 6 && 
+         form.password === form.password_confirmation
+})
+
+const isPersonalValid = computed(() => {
   return form.phone.length >= 9 && /^7\d{8}$/.test(form.phone)
 })
 
-const isOtpComplete = computed(() => {
-  return otp.value.every(digit => digit !== '')
+const isVerificationComplete = computed(() => {
+  return verificationCode.value.every(digit => digit !== '')
 })
+
+const showMessage = (text, type = 'success') => {
+  message.text = text
+  message.type = type
+  setTimeout(() => {
+    message.text = ''
+    message.type = ''
+  }, 5000)
+}
+
+const validateAccount = () => {
+  // Reset errors
+  Object.keys(errors).forEach(key => delete errors[key])
+
+  if (!form.name.trim()) {
+    errors.name = translate('registrationModal.accountStep.nameRequired')
+  }
+
+  if (!form.email.trim()) {
+    errors.email = translate('registrationModal.accountStep.emailRequired')
+  } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+    errors.email = translate('registrationModal.accountStep.emailInvalid')
+  }
+
+  if (form.password.length < 6) {
+    errors.password = translate('registrationModal.accountStep.passwordMinLength')
+  }
+
+  if (form.password !== form.password_confirmation) {
+    errors.password_confirmation = translate('registrationModal.accountStep.passwordMismatch')
+  }
+
+  return Object.keys(errors).length === 0
+}
 
 const validatePhone = () => {
   if (form.phone && !/^7\d{8}$/.test(form.phone)) {
-    errors.phone = translate('registrationModal.phoneStep.phoneError')
+    errors.phone = translate('registrationModal.personalStep.phoneError')
   } else {
     delete errors.phone
   }
@@ -337,102 +431,132 @@ const updateDialCode = () => {
   }
 }
 
-const handlePhoneSubmit = async () => {
-  if (!isPhoneValid.value) return
+const handleAccountSubmit = async () => {
+  if (!validateAccount()) return
   
   isSubmitting.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    showMethodModal.value = true
-  } catch (error) {
-    showError(translate('registrationModal.errors.sendCode'))
-  } finally {
-    isSubmitting.value = false
-  }
-}
-
-const handleMethodConfirm = async (method) => {
-  selectedMethod.value = method
-  isSubmitting.value = true
-  
   try {
     await new Promise(resolve => setTimeout(resolve, 1000))
     currentStep.value = 2
-    startResendCounter()
-    showSuccess(translate('registrationModal.success.codeSent'))
+    showMessage(translate('registrationModal.success.accountInfoSaved'), 'success')
   } catch (error) {
-    showError(translate('registrationModal.errors.sendCode'))
+    showMessage(translate('registrationModal.errors.accountSetup'), 'error')
   } finally {
     isSubmitting.value = false
   }
 }
 
-const handleOtpInput = (index, event) => {
+const handlePersonalSubmit = async () => {
+  if (!isPersonalValid.value) return
+  
+  isSubmitting.value = true
+  try {
+    const registerData = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      password_confirmation: form.password_confirmation,
+      phone: form.phone,
+      country_code: form.dialCode,
+      role: 'Client'
+    }
+
+    const result = await authStore.register(registerData)
+    
+    if (result.success && result.requiresVerification) {
+      currentStep.value = 3
+      startResendCounter()
+      showMessage(translate('registrationModal.success.verificationSent'), 'success')
+    } else if (result.success) {
+      showMessage(translate('registrationModal.success.accountCreated'), 'success')
+      setTimeout(() => {
+        closeRegistration()
+        router.push('/measures')
+      }, 1500)
+    } else {
+      // 🔥 NEW: معالجة الأخطاء من الباك إند
+      if (result.errors) {
+        handleBackendErrors(result.errors)
+        showErrorMessage(translate('registrationModal.errors.validationErrors'))
+      }
+    }
+  } catch (error) {
+    showMessage(error.message || translate('registrationModal.errors.sendVerification'), 'error')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+const handleCodeInput = (index, event) => {
   const value = event.target.value
   if (value.length > 1) {
-    otp.value[index] = value.slice(-1)
+    verificationCode.value[index] = value.slice(-1)
   }
   
-  if (value && index < 3) {
+  if (value && index < 5) {
     const nextInput = event.target.nextElementSibling
     if (nextInput) nextInput.focus()
   }
 }
 
-const handleOtpKeydown = (index, event) => {
-  if (event.key === 'Backspace' && !otp.value[index] && index > 0) {
+const handleCodeKeydown = (index, event) => {
+  if (event.key === 'Backspace' && !verificationCode.value[index] && index > 0) {
     const prevInput = event.target.previousElementSibling
     if (prevInput) prevInput.focus()
   }
 }
-
-const handleOtpSubmit = async () => {
-  if (!isOtpComplete.value) return
+// دالة لمعالجة الأخطاء من الباك إند
+const handleBackendErrors = (backendErrors) => {
+  // مسح الأخطاء القديمة
+  Object.keys(errors).forEach(key => delete errors[key])
   
-  isSubmitting.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    currentStep.value = 3
-    showSuccess(translate('registrationModal.success.verified'))
-  } catch (error) {
-    showError(translate('registrationModal.errors.verifyCode'))
-  } finally {
-    isSubmitting.value = false
+  // تعيين الأخطاء الجديدة
+  if (backendErrors) {
+    Object.keys(backendErrors).forEach(key => {
+      errors[key] = backendErrors[key]
+    })
   }
 }
 
-const handleInfoSubmit = async () => {
-  if (!form.name.trim()) {
-    errors.name = translate('registrationModal.infoStep.nameRequired')
-    return
-  }
+// دالة لعرض رسالة خطأ عامة
+const showErrorMessage = (errorText) => {
+  showMessage(errorText, 'error')
+}
+const handleVerificationSubmit = async () => {
+  if (!isVerificationComplete.value) return
   
   isSubmitting.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const code = verificationCode.value.join('')
+    const success = await authStore.verifyEmail(form.email, code)
     
-    const userData = {
-      id: Date.now(),
-      name: form.name,
-      email: form.email,
-      phone: form.dialCode + form.phone,
-      createdAt: new Date().toISOString()
+    if (success) {
+      showMessage(translate('registrationModal.success.accountCreated'), 'success')
+      
+      // الانتقال إلى الصفحة الرئيسية بعد التأخير
+      setTimeout(() => {
+        closeRegistration()
+        router.push('/')
+      }, 1500)
     }
     
-    login(userData)
-    currentStep.value = 4
-    showSuccess(translate('registrationModal.success.accountCreated'))
-    
   } catch (error) {
-    showError(translate('registrationModal.errors.createAccount'))
+    showMessage(error.message || translate('registrationModal.errors.verifyCode'), 'error')
   } finally {
     isSubmitting.value = false
   }
 }
 
-const handleRegistrationSuccess = () => {
-  closeRegistration()
-  emit('registration-success')
+const resendVerification = async () => {
+  isSubmitting.value = true
+  try {
+    await authStore.resendVerificationCode(form.email)
+    startResendCounter()
+    showMessage(translate('registrationModal.success.codeResent'), 'success')
+  } catch (error) {
+    showMessage(error.message || translate('registrationModal.errors.resendCode'), 'error')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const startResendCounter = () => {
@@ -443,19 +567,6 @@ const startResendCounter = () => {
       clearInterval(timer)
     }
   }, 1000)
-}
-
-const resendOtp = async () => {
-  isSubmitting.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    startResendCounter()
-    showSuccess(translate('registrationModal.success.codeResent'))
-  } catch (error) {
-    showError(translate('registrationModal.errors.resendCode'))
-  } finally {
-    isSubmitting.value = false
-  }
 }
 
 const formatTime = (seconds) => {
@@ -469,13 +580,18 @@ const closeRegistration = () => {
   currentStep.value = 1
   isSubmitting.value = false
   resendCounter.value = 0
-  otp.value = ['', '', '', '']
+  verificationCode.value = ['', '', '', '', '', '']
+  message.text = ''
+  message.type = ''
   Object.assign(form, {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
     country: '+967',
     dialCode: '+967',
     phone: '',
-    name: '',
-    email: ''
+    region: ''
   })
   Object.keys(errors).forEach(key => delete errors[key])
 }
@@ -486,7 +602,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Only necessary CSS for animations */
+/* الأساسيات */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -495,5 +611,93 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.direction-ltr {
+  direction: ltr !important;
+}
+
+.verification-input {
+  direction: ltr;
+  text-align: center;
+}
+
+/* تحسينات للغة العربية */
+[dir="rtl"] .text-right {
+  text-align: right;
+}
+
+[dir="rtl"] .text-left {
+  text-align: left;
+}
+
+/* تحسينات للغة الإنجليزية */
+[dir="ltr"] .text-right {
+  text-align: right;
+}
+
+[dir="ltr"] .text-left {
+  text-align: left;
+}
+
+/* تحسين المظهر العام للحقول */
+input, select {
+  transition: all 0.2s ease-in-out;
+}
+
+input:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* تحسين الخطوط للغة العربية */
+[dir="rtl"] {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* تحسين الخطوط للغة الإنجليزية */
+[dir="ltr"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* تحسين عرض الخطوات */
+.step-connector {
+  position: absolute;
+  top: 1rem;
+  height: 0.125rem;
+  background-color: #e5e7eb;
+  z-index: -1;
+}
+
+[dir="rtl"] .step-connector {
+  left: 50%;
+  width: 100%;
+}
+
+[dir="ltr"] .step-connector {
+  right: 50%;
+  width: 100%;
+}
+
+/* تحسين زر الإغلاق */
+.close-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* تحسين الرسائل */
+.message-success {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.message-error {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 </style>

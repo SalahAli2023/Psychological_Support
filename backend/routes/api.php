@@ -36,7 +36,10 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::post('/registerClint', [AuthController::class, 'registerClint']);
+Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('/resend-verification', [AuthController::class, 'resendVerificationCode']);
+Route::post('/send-verification', [AuthController::class, 'sendVerificationCode']);
 // 🔥 Frontend Authentication Routes
 Route::prefix('frontend')->group(function () {
     Route::post('/register', [AuthController::class, 'frontendRegister']);

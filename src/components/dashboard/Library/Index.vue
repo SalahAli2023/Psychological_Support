@@ -1,42 +1,44 @@
 <template>
-    <div class="space-y-6">
+    <div class="space-y-4 md:space-y-6">
         <!-- Header Section -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-primary">{{ t('library.title') }}</h1>
-                <p class="text-secondary mt-2">{{ t('library.subtitle') }}</p>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="text-center sm:text-start">
+                <h1 class="text-2xl sm:text-3xl font-bold text-primary">{{ t('library.title') }}</h1>
+                <p class="text-sm sm:text-base text-secondary mt-1 sm:mt-2">{{ t('library.subtitle') }}</p>
             </div>
             <Button 
                 v-if="hasAuth"
                 variant="primary" 
-                size="lg" 
-                class="flex items-center gap-2"
+                size="sm md:size-lg"
+                class="flex items-center gap-1 md:gap-2 w-full sm:w-auto justify-center"
                 @click="upload"
             >
-                <CloudArrowUpIcon class="h-5 w-5" />
-                {{ t('library.upload.upload') }}
+                <CloudArrowUpIcon class="h-4 w-4 md:h-5 md:w-5" />
+                <span class="text-sm md:text-base">{{ t('library.upload.upload') }}</span>
             </Button>
         </div>
 
         <!-- Search and Filters -->
-        <Card class="p-6">
-            <div class="flex flex-col lg:flex-row gap-4">
-                <!-- Search Input -->
-                <div class="flex-1 relative">
-                    <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-tertiary" />
-                    <input
-                        v-model="searchQuery"
-                        :placeholder="t('library.search_placeholder')"
-                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-primary bg-primary text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                        @input="handleSearch"
-                    />
+        <Card class="p-4 md:p-6">
+            <div class="flex flex-col lg:flex-row gap-3 md:gap-4 items-start lg:items-center justify-between">
+                <!-- Search Input - Left Side -->
+                <div class="w-full lg:w-64 order-2 lg:order-1">
+                    <div class="relative">
+                        <input
+                            v-model="searchQuery"
+                            :placeholder="t('library.search_placeholder')"
+                            class="w-full pr-10 pl-4 py-2 md:py-3 rounded-lg border border-primary bg-primary text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm md:text-base"
+                            @input="handleSearch"
+                        />
+                        <MagnifyingGlassIcon class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-tertiary" />
+                    </div>
                 </div>
 
-                <!-- Filter Buttons -->
-                <div class="flex flex-wrap gap-2">
+                <!-- Filter Buttons - Right Side -->
+                <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto order-1 lg:order-2">
                     <select 
                         v-model="selectedCategory"
-                        class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        class="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm md:text-base"
                         @change="fetchItems"
                     >
                         <option value="">{{ t('library.all_categories') }}</option>
@@ -51,7 +53,7 @@
 
                     <select 
                         v-model="selectedType"
-                        class="px-4 py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        class="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-lg border border-primary bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm md:text-base"
                         @change="fetchItems"
                     >
                         <option value="">{{ t('library.all_types') }}</option>
@@ -60,6 +62,7 @@
                         <option value="guide">{{ t('library.guides') }}</option>
                         <option value="article">{{ t('library.articles') }}</option>
                     </select>
+
 
                     <select 
                         v-model="sortBy"
@@ -72,70 +75,83 @@
                         <option value="popular">{{ t('library.sort.popular') }}</option>
                         <option value="rating">{{ t('library.sort.rating') }}</option>
                     </select>
+
+                    <Button 
+                        variant="outline" 
+                        @click="toggleSort"
+                        class="flex items-center gap-1 md:gap-2 justify-center text-sm md:text-base"
+                    >
+                        <BarsArrowUpIcon class="h-3 w-3 md:h-4 md:w-4" />
+                        <span class="truncate">{{ sortOptions.find(opt => opt.value === sortBy)?.label }}</span>
+                    </Button>
+
+                    <Button 
+                        @click="clearFilters"
+                        variant="outline"
+                        class="flex items-center gap-1 md:gap-2 justify-center text-sm md:text-base text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                    >
+                        <XMarkIcon class="h-3 w-3 md:h-4 md:w-4" />
+                        إعادة تعيين
+                    </Button>
+
                 </div>
             </div>
 
             <!-- Active Filters -->
-            <div v-if="activeFilters.length > 0" class="flex flex-wrap gap-2 mt-4">
+            <div v-if="activeFilters.length > 0" class="flex flex-wrap items-center gap-2 mt-3 md:mt-4">
                 <span 
                     v-for="filter in activeFilters" 
                     :key="filter.key"
-                    class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-500/20 text-brand-500 text-sm"
+                    class="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1 rounded-full bg-brand-500/20 text-brand-500 text-xs md:text-sm"
                 >
-                    {{ filter.label }}
-                    <button @click="removeFilter(filter.key)">
+                    <span class="truncate max-w-[80px] md:max-w-none">{{ filter.label }}</span>
+                    <button @click="removeFilter(filter.key)" class="flex-shrink-0">
                         <XMarkIcon class="h-3 w-3" />
                     </button>
                 </span>
-                <button 
-                    @click="clearFilters"
-                    class="text-sm text-secondary hover:text-primary"
-                >
-                    {{ t('library.clear_all') }}
-                </button>
             </div>
         </Card>
 
         <!-- Management Table for Admin -->
-        <Card v-if="hasAuth" class="p-6">
+        <Card v-if="hasAuth" class="p-4 md:p-6">
             <template #header>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <div class="text-base sm:text-lg">إدارة محتويات المكتبة</div>
-                    <div class="text-sm text-secondary">
+                <div class="flex flex-col gap-2">
+                    <div class="text-sm md:text-base font-medium">إدارة محتويات المكتبة</div>
+                    <div class="text-xs md:text-sm text-secondary">
                         إجمالي العناصر: {{ libraryStore.pagination.total }}
                     </div>
                 </div>
             </template>
 
             <!-- Loading State -->
-            <div v-if="loading" class="flex justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+            <div v-if="loading" class="flex justify-center py-6 md:py-8">
+                <div class="animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-brand-500"></div>
             </div>
 
             <!-- Error State -->
-            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 md:px-4 md:py-3 rounded-lg mb-3 md:mb-4 text-sm md:text-base">
                 {{ error }}
             </div>
 
             <!-- Success Message -->
-            <div v-else-if="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+            <div v-else-if="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-3 py-2 md:px-4 md:py-3 rounded-lg mb-3 md:mb-4 text-sm md:text-base">
                 {{ successMessage }}
             </div>
 
-            <!-- Table -->
-            <div v-if="!loading && items.length > 0" class="overflow-x-auto">
+            <!-- Table for Desktop -->
+            <div v-if="!loading && items.length > 0" class="hidden lg:block overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
                         <tr class="text-start text-secondary bg-secondary">
-                            <th class="px-4 py-3 text-start font-medium">#</th>
-                            <th class="px-4 py-3 text-start font-medium">العنوان</th>
-                            <th class="px-4 py-3 text-start font-medium">النوع</th>
-                            <th class="px-4 py-3 text-start font-medium">التصنيف</th>
-                            <th class="px-4 py-3 text-start font-medium">المشاهدات</th>
-                            <th class="px-4 py-3 text-start font-medium">التنزيلات</th>
-                            <th class="px-4 py-3 text-start font-medium">التقييم</th>
-                            <th class="px-4 py-3 text-start font-medium">الحالة</th>
-                            <th class="px-4 py-3 text-start font-medium">الإجراءات</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">#</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">العنوان</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">النوع</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">التصنيف</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">المشاهدات</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">التنزيلات</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">التقييم</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">الحالة</th>
+                            <th class="px-3 py-2 md:px-4 md:py-3 text-start font-medium text-xs md:text-sm">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -144,74 +160,76 @@
                             :key="item.id" 
                             class="border-t border-primary hover:bg-secondary transition-colors"
                         >
-                            <td class="px-4 py-3 text-primary font-medium text-center">
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary font-medium text-center text-xs md:text-sm">
                                 {{ (libraryStore.pagination.current_page - 1) * libraryStore.pagination.per_page + index + 1 }}
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <div class="flex items-center gap-3">
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <div class="flex items-center gap-2 md:gap-3">
                                     <img 
                                         v-if="item.cover_image" 
                                         :src="item.cover_image" 
                                         :alt="item.title_ar"
-                                        class="w-10 h-10 rounded-lg object-cover"
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover"
                                     >
-                                    <div v-else class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                                        <DocumentTextIcon class="h-5 w-5 text-gray-500" />
+                                    <div v-else class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                                        <DocumentTextIcon class="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
                                     </div>
-                                    <div class="flex flex-col">
-                                        <span class="font-medium text-primary">{{ item.title_ar }}</span>
-                                        <span class="text-xs text-secondary">{{ item.author_ar }}</span>
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="font-medium text-primary text-xs md:text-sm truncate">{{ item.title_ar }}</span>
+                                        <span class="text-xs text-secondary truncate">{{ item.author_ar }}</span>
                                     </div>
                                 </div>
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <span class="badge badge-neutral">
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <span class="badge badge-neutral text-xs">
                                     {{ getTypeLabel(item.type) }}
                                 </span>
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <span class="badge badge-brand">
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <span class="badge badge-brand text-xs">
                                     {{ locale === 'ar' ? item.category?.name_ar : item.category?.name_en }}
                                 </span>
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <div class="flex items-center gap-1">
-                                    <EyeIcon class="h-4 w-4 text-secondary" />
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <div class="flex items-center gap-1 text-xs md:text-sm">
+                                    <EyeIcon class="h-3 w-3 md:h-4 md:w-4 text-secondary" />
                                     {{ item.views }}
                                 </div>
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <div class="flex items-center gap-1">
-                                    <ArrowDownTrayIcon class="h-4 w-4 text-secondary" />
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <div class="flex items-center gap-1 text-xs md:text-sm">
+                                    <ArrowDownTrayIcon class="h-3 w-3 md:h-4 md:w-4 text-secondary" />
                                     {{ item.downloads }}
                                 </div>
                             </td>
                             
-                            <td class="px-4 py-3 text-primary">
-                                <div class="flex items-center gap-1">
-                                    <StarIcon class="h-4 w-4 text-yellow-500" />
+                            <td class="px-3 py-2 md:px-4 md:py-3 text-primary">
+                                <div class="flex items-center gap-1 text-xs md:text-sm">
+                                    <StarIcon class="h-3 w-3 md:h-4 md:w-4 text-yellow-500" />
                                     {{ item.rating }} ({{ item.rating_count }})
                                 </div>
                             </td>
                             
-                            <td class="px-4 py-3">
-                                <span :class="['badge', item.is_published ? 'badge-brand' : 'badge-neutral']">
-                                    {{ item.is_published ? 'منشور' : 'مسودة' }}
-                                </span>
-                                <span v-if="item.is_new" class="badge badge-green mx-2">
-                                    جديد
-                                </span>
+                            <td class="px-3 py-2 md:px-4 md:py-3">
+                                <div class="flex flex-wrap gap-1">
+                                    <span :class="['badge text-xs', item.is_published ? 'badge-brand' : 'badge-neutral']">
+                                        {{ item.is_published ? 'منشور' : 'مسودة' }}
+                                    </span>
+                                    <span v-if="item.is_new" class="badge badge-green text-xs">
+                                        جديد
+                                    </span>
+                                </div>
                             </td>
                             
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
+                            <td class="px-3 py-2 md:px-4 md:py-3">
+                                <div class="flex gap-1 md:gap-2 flex-wrap">
                                     <Button 
-                                        size="sm" 
+                                        size="xs md:size-sm"
                                         variant="outline" 
                                         @click="handleEdit(item)"
                                         class="text-xs"
@@ -223,11 +241,11 @@
                                         class="p-1 text-secondary hover:text-primary"
                                         :title="item.is_published ? 'إلغاء النشر' : 'نشر'"
                                     >
-                                        <EyeIcon v-if="item.is_published" class="h-4 w-4" />
-                                        <EyeSlashIcon v-else class="h-4 w-4" />
+                                        <EyeIcon v-if="item.is_published" class="h-3 w-3 md:h-4 md:w-4" />
+                                        <EyeSlashIcon v-else class="h-3 w-3 md:h-4 md:w-4" />
                                     </button>
                                     <Button 
-                                        size="sm" 
+                                        size="xs md:size-sm"
                                         variant="outline" 
                                         @click="handleDelete(item.id)" 
                                         class="text-xs text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
@@ -241,12 +259,105 @@
                 </table>
             </div>
 
+            <!-- Cards for Mobile Admin View -->
+            <div v-if="!loading && items.length > 0" class="lg:hidden space-y-3">
+                <div 
+                    v-for="(item, index) in items" 
+                    :key="item.id"
+                    class="bg-white border border-primary rounded-lg p-3 shadow-sm"
+                >
+                    <!-- Header -->
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <img 
+                                v-if="item.cover_image" 
+                                :src="item.cover_image" 
+                                :alt="item.title_ar"
+                                class="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                            >
+                            <div v-else class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <DocumentTextIcon class="h-5 w-5 text-gray-500" />
+                            </div>
+                            <div class="flex flex-col min-w-0 flex-1">
+                                <span class="font-medium text-primary text-sm truncate">{{ item.title_ar }}</span>
+                                <span class="text-xs text-secondary truncate">{{ item.author_ar }}</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-primary font-medium flex-shrink-0">
+                            #{{ (libraryStore.pagination.current_page - 1) * libraryStore.pagination.per_page + index + 1 }}
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
+                        <div class="flex items-center gap-1">
+                            <span class="text-secondary">النوع:</span>
+                            <span class="badge badge-neutral">{{ getTypeLabel(item.type) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-secondary">التصنيف:</span>
+                            <span class="badge badge-brand truncate">{{ locale === 'ar' ? item.category?.name_ar : item.category?.name_en }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <EyeIcon class="h-3 w-3 text-secondary" />
+                            <span>{{ item.views }} مشاهدات</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <ArrowDownTrayIcon class="h-3 w-3 text-secondary" />
+                            <span>{{ item.downloads }} تنزيلات</span>
+                        </div>
+                    </div>
+
+                    <!-- Status and Rating -->
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span :class="['badge text-xs', item.is_published ? 'badge-brand' : 'badge-neutral']">
+                            {{ item.is_published ? 'منشور' : 'مسودة' }}
+                        </span>
+                        <span v-if="item.is_new" class="badge badge-green text-xs">
+                            جديد
+                        </span>
+                        <div class="flex items-center gap-1 text-xs">
+                            <StarIcon class="h-3 w-3 text-yellow-500" />
+                            <span>{{ item.rating }} ({{ item.rating_count }})</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-2 border-t border-primary pt-2">
+                        <Button 
+                            size="xs"
+                            variant="outline" 
+                            @click="handleEdit(item)"
+                            class="flex-1 text-xs"
+                        >
+                            تعديل
+                        </Button>
+                        <button 
+                            @click="handleTogglePublish(item)" 
+                            class="p-2 text-secondary hover:text-primary border border-primary rounded-lg"
+                            :title="item.is_published ? 'إلغاء النشر' : 'نشر'"
+                        >
+                            <EyeIcon v-if="item.is_published" class="h-4 w-4" />
+                            <EyeSlashIcon v-else class="h-4 w-4" />
+                        </button>
+                        <Button 
+                            size="xs"
+                            variant="outline" 
+                            @click="handleDelete(item.id)" 
+                            class="flex-1 text-xs text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                        >
+                            حذف
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Empty State -->
-            <div v-else-if="!loading && items.length === 0" class="text-center py-8 text-secondary">
-                <FolderOpenIcon class="h-16 w-16 mx-auto mb-4 text-secondary" />
-                <h3 class="text-lg font-medium text-primary mb-2">لا توجد محتويات</h3>
-                <p class="text-secondary mb-4">لم يتم إضافة أي محتوى للمكتبة بعد</p>
-                <Button @click="upload" variant="outline">
+            <div v-else-if="!loading && items.length === 0" class="text-center py-6 md:py-8 text-secondary">
+                <FolderOpenIcon class="h-12 w-12 md:h-16 md:w-16 mx-auto mb-3 md:mb-4 text-secondary" />
+                <h3 class="text-base md:text-lg font-medium text-primary mb-1 md:mb-2">لا توجد محتويات</h3>
+                <p class="text-secondary mb-3 md:mb-4 text-sm md:text-base">لم يتم إضافة أي محتوى للمكتبة بعد</p>
+                <Button @click="upload" variant="outline" size="sm">
                     إضافة محتوى جديد
                 </Button>
             </div>
@@ -257,66 +368,24 @@
                 :pagination="libraryStore.pagination"
                 @page-change="handlePageChange"
                 @per-page-change="handlePerPageChange"
-                class="mt-6"
+                class="mt-4 md:mt-6"
             />
         </Card>
 
-        <!-- Content Layout Toggle (for non-admin users) -->
-        <div v-else class="flex items-center justify-between">
-            <div class="text-secondary">
-                {{ t('library.showing') }} {{ libraryStore.pagination.from }}-{{ libraryStore.pagination.to }} {{ t('library.of') }} {{ libraryStore.pagination.total }}
-            </div>
-            <div class="flex items-center gap-2">
-                <button 
-                    @click="viewMode = 'grid'"
-                    :class="[
-                        'p-2 rounded-lg transition-colors',
-                        viewMode === 'grid' ? 'bg-brand-500 text-white' : 'bg-tertiary text-primary hover:bg-primary'
-                    ]"
-                >
-                    <Squares2X2Icon class="h-5 w-5" />
-                </button>
-                <button 
-                    @click="viewMode = 'list'"
-                    :class="[
-                        'p-2 rounded-lg transition-colors',
-                        viewMode === 'list' ? 'bg-brand-500 text-white' : 'bg-tertiary text-primary hover:bg-primary'
-                    ]"
-                >
-                    <Bars3Icon class="h-5 w-5" />
-                </button>
-            </div>
-        </div>
-
-        <!-- Library Content (for non-admin users) -->
+        <!-- Content for non-admin users -->
         <div v-if="!hasAuth">
-            <div v-if="loading" class="flex justify-center py-12">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
+            <div v-if="loading" class="flex justify-center py-8 md:py-12">
+                <div class="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-brand-500"></div>
             </div>
 
-            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+            <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 md:px-4 md:py-3 rounded-lg text-sm md:text-base">
                 {{ error }}
             </div>
 
             <div v-else-if="items.length > 0">
-                <!-- Grid View -->
-                <div 
-                    v-if="viewMode === 'grid'" 
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                >
+                <!-- Grid View Only (removed list view toggle) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                     <LibraryCard 
-                        v-for="item in items"
-                        :key="item.id"
-                        :item="item"
-                        :locale="locale"
-                        @download="handleDownload"
-                        @view="handleView"
-                    />
-                </div>
-
-                <!-- List View -->
-                <div v-else class="space-y-4">
-                    <LibraryListItem 
                         v-for="item in items"
                         :key="item.id"
                         :item="item"
@@ -331,18 +400,18 @@
                     :pagination="libraryStore.pagination"
                     @page-change="handlePageChange"
                     @per-page-change="handlePerPageChange"
-                    class="mt-8"
+                    class="mt-6 md:mt-8"
                 />
             </div>
 
             <!-- Empty State -->
-            <div v-else class="text-center py-12">
-                <FolderOpenIcon class="mx-auto h-16 w-16 text-tertiary" />
-                <h3 class="mt-4 text-lg font-medium text-primary">{{ t('library.no_results') }}</h3>
-                <p class="mt-2 text-secondary">{{ t('library.no_results_desc') }}</p>
+            <div v-else class="text-center py-8 md:py-12">
+                <FolderOpenIcon class="mx-auto h-12 w-12 md:h-16 md:w-16 text-tertiary" />
+                <h3 class="mt-3 md:mt-4 text-base md:text-lg font-medium text-primary">{{ t('library.no_results') }}</h3>
+                <p class="mt-1 md:mt-2 text-secondary text-sm md:text-base">{{ t('library.no_results_desc') }}</p>
                 <Button 
                     variant="primary" 
-                    class="mt-4"
+                    class="mt-3 md:mt-4 text-sm md:text-base"
                     @click="clearFilters"
                 >
                     {{ t('library.clear_filters') }}
@@ -376,7 +445,6 @@ import { useLibraryStore, type LibraryItem } from '@/stores/library';
 import Button from '@/components/dashboard/component/ui/Button.vue';
 import Card from '@/components/dashboard/component/ui/Card.vue';
 import LibraryCard from './LibraryCard.vue';
-import LibraryListItem from './LibraryListItem.vue';
 import UploadModal from './UploadModal.vue';
 import Pagination from './Pagination.vue';
 import DeleteConfirmModal from '@/components/dashboard/events/DeleteConfirmModal.vue';
@@ -386,8 +454,6 @@ import {
     MagnifyingGlassIcon,
     BarsArrowUpIcon,
     XMarkIcon,
-    Squares2X2Icon,
-    Bars3Icon,
     FolderOpenIcon,
     CloudArrowUpIcon,
     DocumentTextIcon,
@@ -405,7 +471,6 @@ const searchQuery = ref('');
 const selectedCategory = ref('');
 const selectedType = ref('');
 const sortBy = ref('newest');
-const viewMode = ref<'grid' | 'list'>('grid');
 const showUploadModal = ref(false);
 const showDeleteConfirm = ref(false);
 const editingItem = ref<LibraryItem | null>(null);
@@ -623,10 +688,19 @@ watch([selectedCategory, selectedType, sortBy], () => {
 
 <style scoped>
 .badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
     font-weight: 500;
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+    }
 }
 
 .badge-brand {
@@ -646,7 +720,7 @@ watch([selectedCategory, selectedType, sortBy], () => {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -655,10 +729,32 @@ watch([selectedCategory, selectedType, sortBy], () => {
 
 ::-webkit-scrollbar-thumb {
     background: #d1d5db;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+}
+
+/* تحسينات للعرض على الجوال */
+@media (max-width: 640px) {
+    .text-xs-mobile {
+        font-size: 0.7rem;
+    }
+    
+    .p-mobile {
+        padding: 0.75rem;
+    }
+}
+
+/* منع التكسر في النصوص الطويلة */
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.min-w-0 {
+    min-width: 0;
 }
 </style>
