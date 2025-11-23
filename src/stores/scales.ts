@@ -91,6 +91,12 @@ export const useScalesStore = defineStore('scales', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  // 🔥 دالة التحقق من صحة UUID
+  const isValidUUID = (uuid: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  }
+
   // الإجراءات الأساسية للمقاييس
   const fetchScales = async (params?: any) => {
     console.log('🔄 جلب المقاييس...')
@@ -141,11 +147,19 @@ export const useScalesStore = defineStore('scales', () => {
     }
   }
 
+  // 🔥 دالة fetchScaleById المحسنة
   const fetchScaleById = async (id: string) => {
     loading.value = true
     error.value = null
     try {
       console.log(`🔄 جلب المقياس ${id}...`)
+      
+      // 🔥 التحقق من صحة UUID أولاً
+      if (!isValidUUID(id)) {
+        const errorMsg = 'معرف المقياس غير صحيح';
+        error.value = errorMsg;
+        throw new Error(errorMsg);
+      }
       
       // إضافة include لتحميل العلاقات
       const response = await api.get(`/psychological-scales/${id}`, {
@@ -161,12 +175,32 @@ export const useScalesStore = defineStore('scales', () => {
         scaleData = response.data
       }
       
+      // 🔥 التحقق من وجود البيانات الأساسية
+      if (!scaleData || !scaleData.id) {
+        const errorMsg = 'بيانات المقياس غير مكتملة';
+        error.value = errorMsg;
+        throw new Error(errorMsg);
+      }
+      
       console.log('✅ تم جلب بيانات المقياس:', scaleData)
       currentScale.value = scaleData
       return scaleData
     } catch (err: any) {
       console.error(`❌ خطأ في جلب المقياس ${id}:`, err)
-      handleError(err)
+      
+      // 🔥 معالجة أنواع الأخطاء المختلفة
+      if (err.response?.status === 404) {
+        error.value = 'المقياس غير موجود في قاعدة البيانات';
+      } else if (err.response?.status === 400) {
+        error.value = 'معرف المقياس غير صالح';
+      } else if (err.message === 'معرف المقياس غير صحيح') {
+        error.value = 'معرف المقياس غير صحيح';
+      } else if (err.message === 'بيانات المقياس غير مكتملة') {
+        error.value = 'بيانات المقياس غير مكتملة';
+      } else {
+        handleError(err);
+      }
+      
       throw err
     } finally {
       loading.value = false
@@ -178,6 +212,11 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 جلب المقياس الكامل ${id}...`)
+      
+      // 🔥 التحقق من صحة UUID أولاً
+      if (!isValidUUID(id)) {
+        throw new Error('معرف المقياس غير صحيح');
+      }
       
       // محاولة استخدام الـ endpoint الصحيح
       let response
@@ -253,6 +292,12 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 تحديث المقياس ${id}...`, scaleData)
+      
+      // 🔥 التحقق من صحة UUID
+      if (!isValidUUID(id)) {
+        throw new Error('معرف المقياس غير صالح للتحديث');
+      }
+      
       const response = await api.put(`/psychological-scales/${id}`, scaleData)
       
       let updatedScale
@@ -286,6 +331,12 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 حذف المقياس ${id}...`)
+      
+      // 🔥 التحقق من صحة UUID
+      if (!isValidUUID(id)) {
+        throw new Error('معرف المقياس غير صالح للحذف');
+      }
+      
       await api.delete(`/psychological-scales/${id}`)
       
       scales.value = scales.value.filter(scale => scale.id !== id)
@@ -308,6 +359,12 @@ export const useScalesStore = defineStore('scales', () => {
     error.value = null
     try {
       console.log(`🔄 تبديل حالة المقياس ${id}...`)
+      
+      // 🔥 التحقق من صحة UUID
+      if (!isValidUUID(id)) {
+        throw new Error('معرف المقياس غير صالح');
+      }
+      
       const response = await api.patch(`/psychological-scales/${id}/toggle-status`)
       
       let updatedScale
@@ -333,7 +390,7 @@ export const useScalesStore = defineStore('scales', () => {
     }
   }
 
-  // 🔥 دوال إدارة التصنيفات - المطلوبة لحل المشكلة
+  // دوال إدارة التصنيفات
   const toggleCategoryStatus = async (id: string): Promise<void> => {
     try {
       console.log(`🔄 تبديل حالة التصنيف ${id}...`)
@@ -534,7 +591,7 @@ export const useScalesStore = defineStore('scales', () => {
     toggleScaleStatus,
     uploadImage,
     
-    // 🔥 دوال إدارة التصنيفات - المضافة
+    // دوال إدارة التصنيفات
     toggleCategoryStatus,
     deleteCategory,
     createCategory,
