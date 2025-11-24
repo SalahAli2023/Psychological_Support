@@ -14,10 +14,12 @@ class EventResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // تحديد اللغة من الـ request أو الـ header أو الافتراضي
         $locale = $request->query('locale') ?? $request->header('Accept-Language', 'en');
         $locale = in_array($locale, ['ar', 'en']) ? $locale : 'en';
 
-        return [
+        // البيانات الأساسية
+        $data = [
             'id' => $this->id,
             'title' => $locale === 'ar' ? $this->title_ar : $this->title_en,
             'title_ar' => $this->title_ar,
@@ -45,5 +47,10 @@ class EventResource extends JsonResource
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
+
+        // إضافة حقل اللغة الحالية للمساعدة في الواجهة
+        $data['current_language'] = $locale;
+
+        return $data;
     }
 }
