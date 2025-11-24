@@ -119,6 +119,7 @@ const loadEvents = async () => {
       filters.type = categoryMap[filterCriteria.value.category] || filterCriteria.value.category
     }
 
+    console.log('Fetching events with filters:', filters)
     await eventStore.fetchEvents(filters)
   } catch (error) {
     console.error('Error loading events:', error)
@@ -127,10 +128,21 @@ const loadEvents = async () => {
 
 // مراقبة تغييرات الفلترة
 watch(() => props.filter, (newFilter) => {
+  console.log('Filter changed:', newFilter)
   filterCriteria.value = { ...newFilter }
   eventStore.currentPage = 1
   loadEvents()
 }, { deep: true, immediate: true })
+
+// مراقبة تغيير اللغة وإعادة تحميل البيانات
+watch(currentLanguage, (newLanguage) => {
+  console.log('Language changed to:', newLanguage)
+  // حفظ اللغة في localStorage
+  localStorage.setItem('preferredLanguage', newLanguage)
+  // إعادة تحميل البيانات باللغة الجديدة
+  eventStore.currentPage = 1
+  loadEvents()
+})
 
 // الفعاليات المصفاة
 const filteredEvents = computed(() => {
@@ -204,18 +216,21 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// تحويل بيانات الفعالية لتتناسب مع ArticleCard
+// دالة لتحويل بيانات الفعالية لتتناسب مع ArticleCard
 const formatEventForArticleCard = (event) => {
+  // البيانات تأتي من الـ API مترجمة بالفعل بناءً على header اللغة
+  // لذلك نستخدم الحقول المترجمة مباشرة
+  
   return {
     id: event.id,
-    title: event.title,
-    description: event.description,
+    title: event.title, // هذا الحقل يأتي مترجماً
+    description: event.description, // هذا الحقل يأتي مترجماً
     image: event.media,
     category: event.type,
     author: event.speakers && event.speakers.length > 0 ? event.speakers[0].name : translate('events.details.speakerDefault'),
     date: event.date,
     duration: event.duration,
-    location: event.location,
+    location: event.location, // هذا الحقل يأتي مترجماً
     speakers: event.speakers,
     readMoreText: translate('buttons.readMore')
   }
@@ -228,6 +243,10 @@ const handleEventClick = (event) => {
 
 // تحميل البيانات عند التهيئة
 onMounted(() => {
+  // تعيين اللغة الافتراضية في localStorage إذا لم تكن موجودة
+  if (!localStorage.getItem('preferredLanguage')) {
+    localStorage.setItem('preferredLanguage', currentLanguage.value)
+  }
   loadEvents()
 })
 </script>

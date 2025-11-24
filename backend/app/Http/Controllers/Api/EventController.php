@@ -32,6 +32,7 @@ class EventController extends Controller
 
         $events = $query->orderBy('date', 'desc')->paginate($request->get('per_page', 15));
 
+        // تمرير الـ request لـ Resource لمعرفة اللغة
         return EventResource::collection($events)->response();
     }
 

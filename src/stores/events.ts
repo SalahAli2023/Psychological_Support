@@ -8,18 +8,28 @@ export const useEventStore = defineStore('events', () => {
   const totalPages = ref(1)
   const perPage = ref(15)
   const loading = ref(false)
+  const currentEvent = ref(null)
 
-  // جلب الفعاليات من API
+  // جلب الفعاليات من API مع إضافة header اللغة
   const fetchEvents = async (filters = {}) => {
     try {
       loading.value = true
+      
+      // الحصول على اللغة من localStorage أو استخدام الافتراضي
+      const currentLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+      
       const params = {
         page: currentPage.value,
         per_page: perPage.value,
         ...filters
       }
 
-      const response = await api.get('/events', { params })
+      const response = await api.get('/events', { 
+        params,
+        headers: {
+          'Accept-Language': currentLanguage
+        }
+      })
       
       events.value = response.data.data
       currentPage.value = response.data.current_page
@@ -34,11 +44,20 @@ export const useEventStore = defineStore('events', () => {
     }
   }
 
-  // جلب فعالية محددة
+  // جلب فعالية محددة مع header اللغة
   const fetchEventById = async (id) => {
     try {
       loading.value = true
-      const response = await api.get(`/events/${id}`)
+      
+      const currentLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+      
+      const response = await api.get(`/events/${id}`, {
+        headers: {
+          'Accept-Language': currentLanguage
+        }
+      })
+      
+      currentEvent.value = response.data.data
       return response.data
     } catch (error) {
       console.error('Error fetching event:', error)
@@ -103,6 +122,12 @@ export const useEventStore = defineStore('events', () => {
         }
       })
       
+      // تحديث البيانات المحلية إذا كانت موجودة
+      const index = events.value.findIndex(event => event.id === eventId)
+      if (index !== -1) {
+        events.value[index] = response.data.data
+      }
+      
       return response.data
     } catch (error) {
       throw error
@@ -121,6 +146,12 @@ export const useEventStore = defineStore('events', () => {
           'Content-Type': 'multipart/form-data'
         }
       })
+      
+      // تحديث البيانات المحلية إذا كانت موجودة
+      const index = events.value.findIndex(event => event.id === eventId)
+      if (index !== -1) {
+        events.value[index].is_published = isPublished
+      }
       
       return response.data
     } catch (error) {
@@ -141,23 +172,154 @@ export const useEventStore = defineStore('events', () => {
     }
   }
 
+  // البحث في الفعاليات
+  const searchEvents = async (searchTerm) => {
+    try {
+      loading.value = true
+      
+      const currentLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+      
+      const response = await api.get('/events', {
+        params: {
+          search: searchTerm,
+          page: currentPage.value,
+          per_page: perPage.value
+        },
+        headers: {
+          'Accept-Language': currentLanguage
+        }
+      })
+      
+      events.value = response.data.data
+      currentPage.value = response.data.current_page
+      totalPages.value = response.data.last_page
+      
+      return response.data
+    } catch (error) {
+      console.error('Error searching events:', error)
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // تصفية الفعاليات حسب النوع
+  const filterEventsByType = async (type) => {
+    try {
+      loading.value = true
+      
+      const currentLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+      
+      const response = await api.get('/events', {
+        params: {
+          type: type,
+          page: currentPage.value,
+          per_page: perPage.value
+        },
+        headers: {
+          'Accept-Language': currentLanguage
+        }
+      })
+      
+      events.value = response.data.data
+      currentPage.value = response.data.current_page
+      totalPages.value = response.data.last_page
+      
+      return response.data
+    } catch (error) {
+      console.error('Error filtering events:', error)
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // جلب الفعاليات المنشورة فقط
+  const fetchPublishedEvents = async () => {
+    try {
+      loading.value = true
+      
+      const currentLanguage = localStorage.getItem('preferredLanguage') || 'ar'
+      
+      const response = await api.get('/events', {
+        params: {
+          is_published: true,
+          page: currentPage.value,
+          per_page: perPage.value
+        },
+        headers: {
+          'Accept-Language': currentLanguage
+        }
+      })
+      
+      events.value = response.data.data
+      currentPage.value = response.data.current_page
+      totalPages.value = response.data.last_page
+      
+      return response.data
+    } catch (error) {
+      console.error('Error fetching published events:', error)
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // إعادة تعيين الصفحة
+  const resetPage = () => {
+    currentPage.value = 1
+  }
+
   // تغيير الصفحة
   const setPage = (page) => {
     currentPage.value = page
   }
 
+  // تغيير عدد العناصر في الصفحة
+  const setPerPage = (count) => {
+    perPage.value = count
+  }
+
+  // مسح الفعالية الحالية
+  const clearCurrentEvent = () => {
+    currentEvent.value = null
+  }
+
+  // تحديث الفعالية محلياً
+  const updateEventLocally = (updatedEvent) => {
+    const index = events.value.findIndex(event => event.id === updatedEvent.id)
+    if (index !== -1) {
+      events.value[index] = updatedEvent
+    }
+    
+    if (currentEvent.value && currentEvent.value.id === updatedEvent.id) {
+      currentEvent.value = updatedEvent
+    }
+  }
+
   return {
+    // State
     events,
     currentPage,
     totalPages,
     perPage,
     loading,
+    currentEvent,
+    
+    // Actions
     fetchEvents,
     fetchEventById,
     createEvent,
     updateEvent,
     updateEventPublishStatus,
     deleteEvent,
-    setPage
+    searchEvents,
+    filterEventsByType,
+    fetchPublishedEvents,
+    resetPage,
+    setPage,
+    setPerPage,
+    clearCurrentEvent,
+    updateEventLocally
   }
 })
