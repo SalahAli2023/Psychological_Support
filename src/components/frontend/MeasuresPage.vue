@@ -79,12 +79,15 @@
     <Footer />
 
     <!-- مودال التسجيل -->
-    <RegistrationModal
-      :show-registration="showRegistrationModal"
+    <AuthModal
+      :show="showAuthModal"
+      :show-for-results="showAuthForResults"
       :language="currentLanguage"
-      @close="closeRegistrationModal"
-      @switch-to-login="switchToLogin"
-      @registration-success="handleRegistrationSuccess"
+      @close="closeAuthModal"
+      @login-success="handleLoginSuccess"
+      @register-success="handleRegistrationSuccess"
+      @password-reset="handlePasswordReset"
+      @show-results="handleShowResultsAfterAuth"
     />
 
     <!-- مودال الاختبار -->
@@ -115,7 +118,7 @@ import AllMeasures from '@/components/frontend/measures/AllMeasures.vue'
 import GuidelinesSection from '@/components/frontend/measures/GuidelinesSection.vue'
 import ResourcesSection from '@/components/frontend/measures/ResourcesSection.vue'
 import MeasureModal from '@/components/frontend/measures/MeasureModal.vue'
-import RegistrationModal from '@/components/frontend/auth/RegistrationModal.vue'
+import AuthModal from '@/components/frontend/auth/AuthModal.vue'
 import Footer from '@/components/frontend/layouts/footer.vue'
 import { useFrontendScalesStore } from '@/stores/frontendScales.store'
 import { useAuthStore } from '@/stores/auth'
@@ -134,7 +137,7 @@ export default {
     GuidelinesSection,
     ResourcesSection,
     MeasureModal,
-    RegistrationModal
+    AuthModal
   },
   setup() {
     // استخدام الـ stores
@@ -144,7 +147,8 @@ export default {
     // الحالة العامة
     const searchQuery = ref('')
     const activeFilter = ref('allMeasures')
-    const showRegistrationModal = ref(false)
+    const showAuthModal = ref(false)
+    const showAuthForResults = ref(false)
     const showMeasureModal = ref(false)
     const currentMeasure = ref(null)
     const currentLanguage = ref(localStorage.getItem('preferredLanguage') || 'ar')
@@ -154,17 +158,7 @@ export default {
     const testAnswers = ref([])
     const testResult = ref(null)
     const sessionKey = ref(null)
-    const pendingTestData = ref(null) // بيانات الاختبار المعلقة
-
-    // 🔥 NEW: فحص وتحويل من admin
-    const checkAndRedirectFromAdmin = () => {
-      const currentPath = window.location.pathname;
-      if (currentPath.includes('/admin/login')) {
-        console.log('🚫 تم اكتشاف تحويل إلى admin/login - إعادة التوجيه إلى الصفحة الرئيسية');
-        window.history.replaceState({}, '', '/measures');
-        showRegistrationModal.value = true;
-      }
-    }
+    const pendingTestData = ref(null)
 
     // تحديث اللغة تلقائيًا عند تغييرها من الهيدر
     const handleLanguageChange = (event) => {
@@ -174,22 +168,13 @@ export default {
 
     onMounted(() => {
       console.log('🚀 تحميل صفحة المقاييس...')
-      
-      // 🔥 NEW: فحص وتحويل من admin فور التحميل
-      checkAndRedirectFromAdmin()
-      
       window.addEventListener('languageChanged', handleLanguageChange)
-      
-      // 🔥 NEW: مراقبة تغييرات المسار لمنع التحويل إلى admin
-      window.addEventListener('popstate', checkAndRedirectFromAdmin)
-      
       fetchMeasuresData()
     })
 
     onUnmounted(() => {
       console.log('🧹 تنظيف صفحة المقاييس...')
       window.removeEventListener('languageChanged', handleLanguageChange)
-      window.removeEventListener('popstate', checkAndRedirectFromAdmin)
     })
 
     // البيانات
@@ -204,7 +189,6 @@ export default {
     const isAuthenticated = computed(() => authStore.isAuthenticated)
 
     const filteredMeasures = computed(() => {
-      console.log('🔍 تطبيق الفلترة...')
       let filtered = scales.value
       
       if (activeFilter.value !== 'allMeasures') {
@@ -240,7 +224,6 @@ export default {
         })
       }
       
-      console.log('✅ عدد النتائج بعد الفلترة:', filtered.length)
       return filtered
     })
 
@@ -248,13 +231,11 @@ export default {
     const fetchMeasuresData = async () => {
       console.log('🔄 بدء جلب بيانات المقاييس...')
       try {
-        // جلب البيانات بالتوازي
         await Promise.all([
           frontendScalesStore.fetchFrontendScales(),
           frontendScalesStore.fetchFrontendCategories(),
           frontendScalesStore.fetchPopularScales()
         ])
-        
         console.log('✅ تم تحميل جميع بيانات المقاييس بنجاح')
       } catch (err) {
         console.error('❌ فشل في تحميل بيانات المقاييس:', err)
@@ -263,7 +244,6 @@ export default {
 
     // معالجة تغييرات البحث والفلتر
     const handleFilterChange = async (filter) => {
-      console.log('🎛️ تغيير الفلتر إلى:', filter)
       activeFilter.value = filter
       
       if (filter !== 'allMeasures') {
@@ -282,7 +262,6 @@ export default {
     }
 
     const handleSearchChange = async (query) => {
-      console.log('🔎 تغيير البحث إلى:', query)
       searchQuery.value = query
       
       if (query.trim()) {
@@ -304,10 +283,7 @@ export default {
       try {
         const fullScale = await frontendScalesStore.fetchFrontendFullScale(measure.id)
         currentMeasure.value = fullScale
-        
-        // فتح مودال الأسئلة مباشرة
         openMeasureModal()
-        
       } catch (error) {
         console.error('❌ خطأ في جلب بيانات المقياس:', error)
         currentMeasure.value = measure
@@ -343,20 +319,11 @@ export default {
       testAnswers.value = new Array(currentMeasure.value.questions.length).fill(null)
     }
 
-    // 🔥 NEW: دالة handleTestSubmit المحسنة مع منع التحويل
+    // 🔥 NEW: دالة handleTestSubmit المحسنة
     const handleTestSubmit = async (answers) => {
       console.log('📤 معالجة إرسال الاختبار')
       
-      // 🔥 NEW: تحقق إضافي لمنع التحويل إلى admin
-      if (window.location.pathname.includes('/admin')) {
-        console.error('❌ محاولة الوصول إلى admin من الفرونتند - فتح التسجيل')
-        openRegistrationForGuest([])
-        return
-      }
-      
       try {
-        const frontendScalesStore = useFrontendScalesStore()
-        
         // تحويل الإجابات للصيغة المطلوبة
         const formattedAnswers = currentMeasure.value.questions.map((question, index) => ({
           question_id: question.id,
@@ -365,141 +332,190 @@ export default {
 
         console.log('📤 إرسال الإجابات:', formattedAnswers)
 
-        // استخدام الدالة المحسنة من الـ store
+        // 🔥 NEW: محاولة إرسال الاختبار أولاً بغض النظر عن حالة المصادقة
         const result = await frontendScalesStore.submitTestWithAuthCheck(
           currentMeasure.value.id, 
           formattedAnswers
         )
         
         console.log('📋 نتيجة الإرسال:', result)
-        
-        // 🔥 NEW: معالجة خاصة للتحويلات المحظورة
-        if (result.blocked_admin_redirect || result.blocked_redirect) {
-          console.log('🚫 تم منع تحويل إلى admin - فتح التسجيل')
-          openRegistrationForGuest(formattedAnswers)
-          return
-        }
-        
-        // 🔥 التعديل: التحقق من أن result غير undefined
-        if (!result) {
-          console.error('❌ result is undefined - فتح التسجيل مباشرة')
-          openRegistrationForGuest(formattedAnswers)
-          return
-        }
-        
-        // التحقق من requires_login بشكل صحيح
-        if (result.requires_login === true) {
-          console.log('🔐 مطلوب تسجيل دخول لحفظ النتيجة')
-          handleGuestSubmission(result, formattedAnswers)
+
+        // 🔥 NEW: التحقق من النتيجة ومعالجتها
+        if (result && result.success) {
+          // إذا تم الإرسال بنجاح
+          if (result.requires_login === true) {
+            // إذا كان مطلوب تسجيل دخول لحفظ النتيجة
+            console.log('🔐 مطلوب تسجيل دخول لحفظ النتيجة')
+            
+            // حفظ البيانات المؤقتة
+            pendingTestData.value = {
+              measure: currentMeasure.value,
+              answers: formattedAnswers,
+              result: result,
+              sessionKey: result.data?.session_key
+            }
+
+            // حفظ في localStorage للاستخدام لاحقاً
+            if (result.data?.session_key) {
+              localStorage.setItem('pending_assessment_session', result.data.session_key)
+              localStorage.setItem('pending_assessment_scale_id', currentMeasure.value.id)
+            }
+
+            // إغلاق مودال الاختبار وفتح مودال التسجيل
+            closeMeasureModal()
+            setTimeout(() => {
+              showAuthForResults.value = true
+              showAuthModal.value = true
+            }, 300)
+          } else {
+            // إذا تم حفظ النتيجة بنجاح (المستخدم مسجل)
+            console.log('✅ تم حفظ النتيجة بنجاح للمستخدم المسجل')
+            testResult.value = result
+            testStep.value = 'results'
+          }
         } else {
-          // إذا تم الإرسال بنجاح (سواء مسجل أو غير مسجل)
-          testResult.value = result
-          testStep.value = 'results'
-          console.log('✅ تم حفظ النتيجة بنجاح')
+          // إذا فشل الإرسال
+          console.error('❌ فشل في إرسال الاختبار:', result)
+          throw new Error('فشل في إرسال الاختبار')
         }
         
       } catch (error) {
         console.error('❌ خطأ في إرسال الاختبار:', error)
         
-        // في حالة الخطأ، فتح مودال التسجيل
-        openRegistrationForGuest([])
+        // في حالة الخطأ، فتح مودال التسجيل مع حفظ البيانات
+        pendingTestData.value = {
+          measure: currentMeasure.value,
+          answers: answers.map((answer, index) => ({
+            question_id: currentMeasure.value.questions[index].id,
+            option_id: answer
+          })).filter(answer => answer.option_id),
+          result: null,
+          sessionKey: null
+        }
+
+        closeMeasureModal()
+        setTimeout(() => {
+          showAuthForResults.value = true
+          showAuthModal.value = true
+        }, 300)
       }
     }
 
-    // 🔥 NEW: دالة مساعدة لمعالجة إرسال الضيوف
-    const handleGuestSubmission = (result, formattedAnswers) => {
-      sessionKey.value = result.data?.session_key
+    // 🔥 NEW: دالة محسنة لتسجيل الدخول الناجح
+    const handleLoginSuccess = async (userData) => {
+      console.log('✅ تسجيل دخول ناجح:', userData)
       
-      // حفظ البيانات المؤقتة في localStorage
-      const sessionKeyToSave = result.data?.session_key || `temp_${Date.now()}_${currentMeasure.value.id}`
-      localStorage.setItem('pending_assessment_session', sessionKeyToSave)
-      localStorage.setItem('pending_assessment_scale_id', currentMeasure.value.id)
-      
-      pendingTestData.value = {
-        measure: currentMeasure.value,
-        answers: formattedAnswers,
-        result: result
-      }
-      
-      // فتح مودال التسجيل
-      console.log('📝 فتح مودال التسجيل...')
-      closeMeasureModal()
-      setTimeout(() => {
-        showRegistrationModal.value = true
-      }, 300)
+      // محاولة حفظ الاختبار المعلق بعد تسجيل الدخول
+      await handlePendingTestAfterAuth()
     }
 
-    // 🔥 NEW: دالة لفتح التسجيل للضيوف
-    const openRegistrationForGuest = (formattedAnswers) => {
-      console.log('👤 فتح التسجيل للضيف...')
+    // 🔥 NEW: دالة محسنة للتسجيل الناجح
+    const handleRegistrationSuccess = async (userData) => {
+      console.log('✅ تسجيل ناجح:', userData)
       
-      // حفظ البيانات المؤقتة
-      localStorage.setItem('pending_assessment_session', `temp_${Date.now()}_${currentMeasure.value.id}`)
-      localStorage.setItem('pending_assessment_scale_id', currentMeasure.value.id)
-      
-      pendingTestData.value = {
-        measure: currentMeasure.value,
-        answers: formattedAnswers,
-        result: null
-      }
-      
-      closeMeasureModal()
-      setTimeout(() => {
-        showRegistrationModal.value = true
-      }, 300)
+      // محاولة حفظ الاختبار المعلق بعد التسجيل
+      await handlePendingTestAfterAuth()
     }
 
-    // فتح مودال التسجيل
-    const openRegistrationModal = () => {
-      console.log('📝 فتح مودال التسجيل')
-      showRegistrationModal.value = true
-    }
-
-    const closeRegistrationModal = () => {
-      console.log('❌ إغلاق مودال التسجيل')
-      showRegistrationModal.value = false
-    }
-
-    // 🔥 NEW: دالة handleRegistrationSuccess المحسنة مع التحقق من null
-    const handleRegistrationSuccess = async (savedResult) => {
-      console.log('✅ تسجيل ناجح، معالجة النتيجة:', savedResult)
-      console.log('📊 بيانات الاختبار المعلقة:', pendingTestData.value)
+    // 🔥 NEW: دالة محسنة لحفظ الاختبار المعلق بعد المصادقة
+    const handlePendingTestAfterAuth = async () => {
+      console.log('🔄 معالجة الاختبار المعلق بعد المصادقة')
       
-      closeRegistrationModal()
-      
-      // 🔥 NEW: التحقق من وجود بيانات اختبار معلقة
       if (!pendingTestData.value) {
-        console.log('ℹ️ لا توجد بيانات اختبار معلقة - إغلاق المودال فقط')
+        console.log('ℹ️ لا توجد بيانات اختبار معلقة')
+        closeAuthModal()
         return
       }
-      
-      // 🔥 NEW: التحقق من وجود measure في البيانات المعلقة
-      if (!pendingTestData.value.measure) {
-        console.error('❌ بيانات measure مفقودة في pendingTestData')
-        return
-      }
-      
-      if (savedResult) {
-        // إذا تم حفظ النتيجة بنجاح، عرضها مباشرة
-        console.log('💾 تم حفظ النتيجة في user_assessments بنجاح')
-        currentMeasure.value = pendingTestData.value.measure
-        testResult.value = savedResult
-        testStep.value = 'results'
-        showMeasureModal.value = true
+
+      try {
+        // 🔥 NEW: محاولة حفظ النتيجة بعد المصادقة
+        const savedResult = await saveAssessmentResultAfterAuth()
         
-        // 🔥 NEW: تنظيف البيانات المؤقتة بعد الاستخدام
-        pendingTestData.value = null
-        localStorage.removeItem('pending_assessment_session')
-        localStorage.removeItem('pending_assessment_scale_id')
-      } else if (pendingTestData.value && pendingTestData.value.measure) {
-        // إذا لم يتم حفظ النتيجة، إعادة فتح المودال مع البيانات الأصلية
-        console.log('🔄 إعادة فتح المودال مع البيانات الأصلية')
-        currentMeasure.value = pendingTestData.value.measure
-        testResult.value = pendingTestData.value.result
-        testStep.value = 'results'
-        showMeasureModal.value = true
-      } else {
-        console.error('❌ لا توجد بيانات صالحة لعرض النتيجة')
+        if (savedResult) {
+          console.log('💾 تم حفظ النتيجة بعد المصادقة:', savedResult)
+          
+          // إغلاق مودال التسجيل وفتح مودال النتائج
+          closeAuthModal()
+          setTimeout(() => {
+            currentMeasure.value = pendingTestData.value.measure
+            testResult.value = savedResult
+            testStep.value = 'results'
+            showMeasureModal.value = true
+            
+            // تنظيف البيانات المؤقتة
+            pendingTestData.value = null
+            localStorage.removeItem('pending_assessment_session')
+            localStorage.removeItem('pending_assessment_scale_id')
+          }, 300)
+        } else {
+          // إذا لم يتم حفظ النتيجة، عرض النتيجة الأصلية
+          console.log('🔄 عرض النتيجة الأصلية')
+          closeAuthModal()
+          setTimeout(() => {
+            currentMeasure.value = pendingTestData.value.measure
+            testResult.value = pendingTestData.value.result
+            testStep.value = 'results'
+            showMeasureModal.value = true
+            pendingTestData.value = null
+          }, 300)
+        }
+        
+      } catch (error) {
+        console.error('❌ خطأ في حفظ النتيجة بعد المصادقة:', error)
+        
+        // في حالة الخطأ، عرض النتيجة الأصلية
+        closeAuthModal()
+        setTimeout(() => {
+          currentMeasure.value = pendingTestData.value.measure
+          testResult.value = pendingTestData.value.result
+          testStep.value = 'results'
+          showMeasureModal.value = true
+          pendingTestData.value = null
+        }, 300)
+      }
+    }
+
+    // 🔥 NEW: دالة مساعدة لحفظ نتيجة التقييم بعد المصادقة
+    const saveAssessmentResultAfterAuth = async () => {
+      try {
+        const savedSessionKey = localStorage.getItem('pending_assessment_session')
+        const scaleId = localStorage.getItem('pending_assessment_scale_id')
+        
+        if (savedSessionKey && scaleId) {
+          console.log('💾 محاولة حفظ النتيجة بعد التسجيل:', { scaleId, savedSessionKey })
+          
+          const result = await frontendScalesStore.saveAssessmentResult(scaleId, savedSessionKey)
+          console.log('✅ تم حفظ النتيجة بنجاح:', result)
+          
+          return result
+        } else if (pendingTestData.value && pendingTestData.value.answers) {
+          // إذا لم يكن هناك session key، إعادة إرسال الاختبار
+          console.log('🔄 إعادة إرسال الاختبار بعد التسجيل')
+          const result = await frontendScalesStore.submitTestWithAuthCheck(
+            pendingTestData.value.measure.id, 
+            pendingTestData.value.answers
+          )
+          return result
+        }
+      } catch (error) {
+        console.error('❌ خطأ في حفظ النتيجة بعد التسجيل:', error)
+        throw error
+      }
+      return null
+    }
+
+    // 🔥 NEW: معالجة عرض النتائج بعد المصادقة
+    const handleShowResultsAfterAuth = () => {
+      console.log('📊 عرض النتائج بعد المصادقة')
+      if (pendingTestData.value) {
+        closeAuthModal()
+        setTimeout(() => {
+          currentMeasure.value = pendingTestData.value.measure
+          testResult.value = pendingTestData.value.result
+          testStep.value = 'results'
+          showMeasureModal.value = true
+          pendingTestData.value = null
+        }, 300)
       }
     }
 
@@ -520,16 +536,23 @@ export default {
       console.log('🔐 فتح التسجيل من الاختبار')
       closeMeasureModal()
       setTimeout(() => {
-        openRegistrationModal()
+        showAuthForResults.value = true
+        showAuthModal.value = true
       }, 300)
     }
 
-    const switchToLogin = () => {
-      console.log('🔐 التحويل لتسجيل الدخول')
-      // يمكنك إضافة منطق التحويل لتسجيل الدخول هنا
+    const handlePasswordReset = (userData) => {
+      console.log('🔑 إعادة تعيين كلمة المرور:', userData)
+      closeAuthModal()
     }
 
-    // 🔥 NEW: دالة للتحقق من اتصال الخادم
+    const closeAuthModal = () => {
+      console.log('❌ إغلاق مودال التسجيل')
+      showAuthModal.value = false
+      showAuthForResults.value = false
+    }
+
+    // دالة للتحقق من اتصال الخادم
     const checkServerConnection = async () => {
       console.log('🔍 التحقق من اتصال الخادم...')
       try {
@@ -549,7 +572,8 @@ export default {
     return {
       searchQuery,
       activeFilter,
-      showRegistrationModal,
+      showAuthModal,
+      showAuthForResults,
       showMeasureModal,
       currentMeasure,
       testStep,
@@ -565,15 +589,17 @@ export default {
       dataLoaded,
       translate,
       handleMeasureClick,
-      closeRegistrationModal,
+      closeAuthModal,
       handleRegistrationSuccess,
+      handleLoginSuccess,
+      handlePasswordReset,
+      handleShowResultsAfterAuth,
       closeMeasureModal,
       startTest,
       handleTestSubmit,
       retakeTest,
       showOtherMeasures,
       handleOpenRegistration,
-      switchToLogin,
       fetchMeasuresData,
       handleFilterChange,
       handleSearchChange,

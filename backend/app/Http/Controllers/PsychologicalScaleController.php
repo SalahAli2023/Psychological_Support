@@ -66,7 +66,7 @@ class PsychologicalScaleController extends Controller
             'name_en' => 'required|string|max:255',
             'description_ar' => 'nullable|string',
             'description_en' => 'nullable|string',
-            'image_url' => 'nullable|url|max:500',
+            'image_url' => 'nullable|url|max:5000',
             'max_score' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);
@@ -116,7 +116,7 @@ class PsychologicalScaleController extends Controller
             'name_en' => 'sometimes|required|string|max:255',
             'description_ar' => 'nullable|string',
             'description_en' => 'nullable|string',
-            'image_url' => 'nullable|url|max:500',
+            'image_url' => 'nullable|url|max:5000',
             'max_score' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);

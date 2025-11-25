@@ -43,7 +43,12 @@ class Patient extends Model
         'upcoming_session',
         'last_session',
         'completed_sessions_count',
-        'total_sessions_count'
+        'total_sessions_count',
+        'address',
+        'therapy_goals',
+        'medical_history',
+        'conditions_array',
+        'is_active'
     ];
 
     /**
@@ -119,7 +124,9 @@ class Patient extends Model
      */
     public function getAddressAttribute(): string
     {
-        return app()->getLocale() === 'ar' ? $this->address_ar : $this->address_en;
+        return app()->getLocale() === 'ar' ? 
+            ($this->address_ar ?? '') : 
+            ($this->address_en ?? '');
     }
 
     /**
@@ -127,7 +134,9 @@ class Patient extends Model
      */
     public function getTherapyGoalsAttribute(): string
     {
-        return app()->getLocale() === 'ar' ? $this->therapy_goals_ar : $this->therapy_goals_en;
+        return app()->getLocale() === 'ar' ? 
+            ($this->therapy_goals_ar ?? '') : 
+            ($this->therapy_goals_en ?? '');
     }
 
     /**
@@ -135,7 +144,9 @@ class Patient extends Model
      */
     public function getMedicalHistoryAttribute(): string
     {
-        return app()->getLocale() === 'ar' ? $this->medical_history_ar : $this->medical_history_en;
+        return app()->getLocale() === 'ar' ? 
+            ($this->medical_history_ar ?? '') : 
+            ($this->medical_history_en ?? '');
     }
 
     /**
@@ -351,6 +362,7 @@ class Patient extends Model
     {
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
@@ -377,5 +389,15 @@ class Patient extends Model
             'insuranceInfo' => $this->insurance_info,
             'referralSource' => $this->referral_source
         ];
+    }
+
+    /**
+     * نطاق للمرضى الذين هم مستخدمين بدور Client
+     */
+    public function scopeClients($query)
+    {
+        return $query->whereHas('user', function($q) {
+            $q->where('role', 'Client');
+        });
     }
 }
