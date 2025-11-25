@@ -17,6 +17,9 @@ export const useArticleStore = defineStore('articles', () => {
     try {
       const response = await api.get('/articles')
       articles.value = response.data.data
+       articles.value.forEach(article => {
+      console.log(`📎 مقال ${article.title_ar} - المرفقات:`, article.attachments)
+     })
     } catch (err: any) {
       error.value = err.response?.data?.message || 'فشل في تحميل المقالات'
       throw err
@@ -25,6 +28,27 @@ export const useArticleStore = defineStore('articles', () => {
     }
   }
 
+  // ✅ دالة جديدة لجلب تصنيفات المقاييس
+  const fetchScaleCategories = async () => {
+    try {
+      console.log('🔄 جلب تصنيفات المقاييس...')
+      const response = await api.get('/categories')
+      console.log('✅ استجابة تصنيفات المقاييس:', response.data)
+      
+      let categoriesData = []
+      if (response.data && response.data.data) {
+        categoriesData = response.data.data
+      } else if (Array.isArray(response.data)) {
+        categoriesData = response.data
+      }
+      
+      console.log(`📂 تم تحميل ${categoriesData.length} تصنيف مقياس`)
+      return categoriesData
+    } catch (err: any) {
+      console.error('❌ فشل في جلب تصنيفات المقاييس:', err)
+      throw err
+    }
+  }
   // جلب التصنيفات
   
 const fetchCategories = async () => {
@@ -73,29 +97,47 @@ const fetchCategories = async () => {
 
   // إنشاء مقال جديد
   const createArticle = async (formData: FormData) => {
-    loading.value = true
-    error.value = null
-    try {
-      const response = await api.post('/articles', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      articles.value.unshift(response.data.data)
-      return response.data.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'فشل في إنشاء المقال'
-      throw err
-    } finally {
-      loading.value = false
-    }
+  loading.value = true
+  error.value = null
+  try {
+    const response = await api.post('/articles', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    articles.value.unshift(response.data.data)
+    return response.data.data
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'فشل في إنشاء المقال'
+    throw err
+  } finally {
+    loading.value = false
   }
+}
 
   // تحديث مقال
   const updateArticle = async (id: string, formData: FormData) => {
-    loading.value = true
-    error.value = null
-    try {
+  loading.value = true
+  error.value = null
+  try {
+    // ✅ إصلاح: استخدام PUT مباشرة للبيانات البسيطة
+    if (formData.get('_method') === 'PUT' && formData.entries().next().done) {
+      // إذا كان FormData فارغاً تقريباً (مثل حالة toggle publish)
+      const simpleData: any = {}
+      for (let [key, value] of formData.entries()) {
+        if (key !== '_method') {
+          simpleData[key] = value
+        }
+      }
+      
+      const response = await api.put(`/articles/${id}`, simpleData)
+      const index = articles.value.findIndex(article => article.id === id)
+      if (index !== -1) {
+        articles.value[index] = response.data.data
+      }
+      return response.data.data
+    } else {
+      // للبيانات المعقدة (مع مرفقات)
       const response = await api.post(`/articles/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -108,14 +150,14 @@ const fetchCategories = async () => {
       }
       
       return response.data.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'فشل في تحديث المقال'
-      throw err
-    } finally {
-      loading.value = false
     }
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'فشل في تحديث المقال'
+    throw err
+  } finally {
+    loading.value = false
   }
-
+}
   // حذف مقال
   const deleteArticle = async (id: string) => {
     loading.value = true
@@ -189,6 +231,7 @@ const updateCategory = async (id: string, categoryData: any) => {
     loading,
     error,
     fetchArticles,
+    fetchScaleCategories,
     fetchCategories,
     createArticle,
     updateArticle,

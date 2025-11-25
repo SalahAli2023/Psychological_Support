@@ -39,7 +39,6 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained('article_categories')->onDelete('set null');
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
-            $table->json('attachments')->nullable(); // Store array of attachments
             $table->date('published_at')->nullable();
             $table->boolean('is_published')->default(false);
             $table->integer('views')->default(0);

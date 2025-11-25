@@ -65,7 +65,12 @@
 
           <!-- Featured Image -->
           <div class="relative rounded-2xl overflow-hidden mb-8 shadow-lg" v-if="article.image">
-            <img :src="article.image" :alt="article.title" class="w-full h-96 object-cover">
+            <img 
+              :src="getImageUrl(article.image)" 
+              :alt="article.title" 
+              class="w-full h-96 object-cover"
+              @error="handleImageError"
+            >
             <div class="absolute top-4 right-4">
               <div class="bg-[#9EBF3B] text-white px-3 py-1 rounded text-xs font-semibold">{{ article.category?.name }}</div>
             </div>
@@ -76,11 +81,12 @@
             <!-- Author Info -->
             <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-200" v-if="article.author">
               <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#9EBF3B]">
-                <img 
-                  :src="article.author.avatar || getDefaultAvatar()" 
-                  :alt="article.author.name" 
-                  class="w-full h-full object-cover"
-                >
+                 <img 
+                    :src="article.author.avatar || getDefaultAvatar()" 
+                    :alt="article.author.name" 
+                    class="w-full h-full object-cover"
+                    @error="handleImageError"
+                  >
               </div>
               <div class="flex-1">
                 <h3 class="text-base font-semibold text-gray-800 mb-1">{{ article.author.name }}</h3>
@@ -123,44 +129,51 @@
                       <i :class="getAttachmentIcon(attachment.type)"></i>
                     </div>
                     <div class="flex-1">
-                      <h4 class="text-sm font-semibold text-gray-800 mb-1">{{ attachment.title }}</h4>
+                      <h4 class="text-sm font-semibold text-gray-800 mb-1">{{ attachment.name || 'مرفق' }}</h4>
                       <span class="text-xs text-gray-500">{{ getAttachmentTypeText(attachment.type) }}</span>
+                      <span v-if="attachment.size" class="text-xs text-gray-400 ml-2">({{ formatFileSize(attachment.size) }})</span>
                     </div>
                   </div>
                 </div>
               </section>
             </div>
 
-            <!-- Test Button Section -->
-            <section class="bg-gradient-to-br from-[#9EBF3B] to-[#7CA52D] rounded-3xl p-6 md:p-10 mt-8 relative overflow-hidden">
-              <div class="absolute inset-0 opacity-30"></div>
-              <div class="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8 relative z-10">
-                <!-- الجزء الأيسر: المحتوى -->
-                <div class="flex items-center gap-4 lg:gap-6 flex-1 w-full lg:w-auto">
-                  <!-- الأيقونة -->
-                  <div class="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-xl lg:text-2xl text-white border-2 border-white/30 flex-shrink-0">
-                    <i class="fas fa-brain"></i>
+                          <!-- Test Button Section -->
+                          <!-- Test Button Section - مرتبط بـ scale_category_id -->
+              <section 
+                class="bg-gradient-to-br from-[#9EBF3B] to-[#7CA52D] rounded-3xl p-6 md:p-10 mt-8 relative overflow-hidden"
+                v-if="article.scale_category_id"
+              >
+                <div class="absolute inset-0 opacity-30"></div>
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8 relative z-10">
+                  <!-- الجزء الأيسر: المحتوى -->
+                  <div class="flex items-center gap-4 lg:gap-6 flex-1 w-full lg:w-auto">
+                    <!-- الأيقونة -->
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-xl lg:text-2xl text-white border-2 border-white/30 flex-shrink-0">
+                      <i class="fas fa-brain"></i>
+                    </div>
+                    
+                    <!-- النص -->
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-lg lg:text-xl font-bold text-white mb-2">
+                        {{ article.scale_category?.name || translate('testSection.title') }}
+                      </h3>
+                      <p class="text-sm text-white/90 leading-normal m-0 line-clamp-2">
+                        {{ translate('testSection.description') }}
+                      </p>
+                    </div>
                   </div>
                   
-                  <!-- النص -->
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-lg lg:text-xl font-bold text-white mb-2">{{ translate('testSection.title') }}</h3>
-                    <p class="text-sm text-white/90 leading-normal m-0 line-clamp-2">
-                      {{ translate('testSection.description') }}
-                    </p>
-                  </div>
+                  <!-- الزر - ينتقل إلى صفحة الاختبارات الخاصة بهذا التصنيف -->
+                  <button 
+                    @click="startTest"
+                    class="bg-white text-[#9EBF3B] border-none px-6 py-3 lg:px-8 lg:py-4 rounded-full font-bold text-sm lg:text-base cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 hover:shadow-xl hover:gap-4 active:-translate-y-0.5 whitespace-nowrap w-full lg:w-auto order-first lg:order-last"
+                  >
+                    <span>{{ translate('testSection.startButton') }}</span>
+                    <i class="fas" :class="isRTL ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+                  </button>
                 </div>
-                
-                <!-- الزر - الآن يأتي أسفل المحتوى على الشاشات الصغيرة -->
-                <button 
-                  @click="startTest"
-                  class="bg-white text-[#9EBF3B] border-none px-6 py-3 lg:px-8 lg:py-4 rounded-full font-bold text-sm lg:text-base cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 hover:shadow-xl hover:gap-4 active:-translate-y-0.5 whitespace-nowrap w-full lg:w-auto order-first lg:order-last"
-                >
-                  <span>{{ translate('testSection.startButton') }}</span>
-                  <i class="fas" :class="isRTL ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
-                </button>
-              </div>
-            </section>
+              </section>
           </div>
         </main>
 
@@ -183,9 +196,10 @@
                 <div class="flex-shrink-0">
                   <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-[#9EBF3B]">
                     <img 
-                      :src="relatedArticle.image" 
+                      :src="getImageUrl(relatedArticle.image)" 
                       :alt="relatedArticle.title" 
                       class="w-full h-full object-cover"
+                      @error="handleImageError"
                     >
                   </div>
                 </div>
@@ -326,15 +340,28 @@ export default {
     }
 
     // أيقونة المرفقات
-    const getAttachmentIcon = (type) => {
-      const icons = {
-        image: 'fas fa-image',
-        video: 'fas fa-video',
-        pdf: 'fas fa-file-pdf',
-        document: 'fas fa-file-alt'
-      }
-      return icons[type] || 'fas fa-paperclip'
-    }
+  const formatFileSize = (bytes) => {
+  if (!bytes) return '';
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+// تحديث أيقونات المرفقات
+const getAttachmentIcon = (type) => {
+  const icons = {
+    image: 'fas fa-image',
+    video: 'fas fa-video',
+    audio: 'fas fa-music',
+    document: 'fas fa-file-alt',
+    file: 'fas fa-file',
+    link: 'fas fa-link',
+    pdf: 'fas fa-file-pdf',
+    word: 'fas fa-file-word',
+    excel: 'fas fa-file-excel'
+  };
+  return icons[type] || 'fas fa-paperclip';
+}
 
     // نص نوع المرفق
     const getAttachmentTypeText = (type) => {
@@ -373,6 +400,18 @@ export default {
         }
       ]
     })
+
+   const getImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  if (path.startsWith('storage/')) return `/${path}`
+  return `/storage/${path}`
+}
+
+const handleImageError = (event) => {
+  console.error('خطأ في تحميل صورة المقال:', event.target.src)
+  event.target.style.display = 'none'
+}
 
     // معالجة زر الهيرو
     const handleHeroCta = (btn) => {
@@ -419,6 +458,7 @@ export default {
       formatDate,
       calculateReadingTime,
       getDefaultAvatar,
+      formatFileSize,
       getAttachmentIcon,
       getAttachmentTypeText,
       openAttachment,
@@ -427,7 +467,9 @@ export default {
       handleHeroCta,
       goBack,
       goToArticle,
-      fetchArticle
+      fetchArticle,
+      getImageUrl,
+      handleImageError 
     }
   }
 }
