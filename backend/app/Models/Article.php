@@ -22,8 +22,8 @@ class Article extends Model
         'introduction_en',
         'image',
         'category_id',
+        'scale_category_id',
         'author_id',
-        'attachments',
         'published_at',
         'is_published',
         'views',
@@ -32,7 +32,6 @@ class Article extends Model
     protected function casts(): array
     {
         return [
-            'attachments' => 'array',
             'published_at' => 'date',
             'is_published' => 'boolean',
             'views' => 'integer',
@@ -60,12 +59,21 @@ class Article extends Model
     {
         return $this->belongsTo(ArticleCategory::class, 'category_id');
     }
-
+    
+     public function scaleCategory()
+    {
+        return $this->belongsTo(Category::class, 'scale_category_id');
+    }
     /**
      * Get the author that owns the article.
      */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+     public function attachments()
+    {
+        return $this->hasMany(ArticleAttachment::class);
     }
 }

@@ -21,19 +21,36 @@ export interface Article {
   introduction_en?: string;
   image?: string;
   category_id: string;
-  category?: ArticleCategory;
+   scale_category_id?: string; // ✅ الحقل الجديد
+  scale_category?: { // ✅ العلاقة الجديدة
+      id: string;
+    name_ar: string;
+    name_en: string;
+    color?: string;
+  };
+    category?: ArticleCategory;
   author_id: string;
   author?: {
     id: string;
     name: string;
     email: string;
   };
-  attachments?: string[];
+   attachments?: ArticleAttachment[];
   published_at: string;
   is_published: boolean;
   views: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface ArticleAttachment {
+  id?: string;
+  url: string;
+  type: 'file' | 'image' | 'video' | 'audio' | 'document' | 'link';
+  name?: string;
+  size?: number;
+  mime_type?: string;
+  created_at?: string;
 }
 
 export interface ArticleFormData {
@@ -49,5 +66,7 @@ export interface ArticleFormData {
   image?: File | null;
   published_at: string;
   is_published: boolean;
-  attachments: string[];
+ 
+   attachments: ArticleAttachment[]; 
+  deleted_attachments?: string[];
 }

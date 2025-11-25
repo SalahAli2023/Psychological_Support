@@ -74,9 +74,10 @@
                   <div class="flex items-center gap-3">
                     <img 
                       v-if="article.image" 
-                      :src="article.image" 
+                      :src="getImageUrl(article.image)" 
                       :alt="article.title_ar"
                       class="w-10 h-10 rounded-lg object-cover"
+                      @error="handleImageError"
                     >
                     <div v-else class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center">
                       <DocumentTextIcon class="h-5 w-5 text-gray-500" />
@@ -245,6 +246,7 @@ import DeleteConfirmModal from '@/components/dashboard/events/DeleteConfirmModal
 import ArticleSearchFilters from './ArticleSearchFilters.vue'
 import { useArticleStore } from '@/stores/articles'
 import type { Article } from '@/types/article'
+import api from '@/utils/api'
 
 const articleStore = useArticleStore()
 
@@ -373,9 +375,27 @@ const handleCreate = () => {
   showForm.value = true
 }
 
-const handleEdit = (article: Article) => {
-  editingArticle.value = { ...article }
-  showForm.value = true
+const handleEdit = async (article: Article) => {
+  try {
+    console.log('🔄 جلب بيانات المقال الكاملة للتعديل...', article.id)
+    
+    // جلب البيانات الكاملة من API مع العلاقات
+    const response = await api.get(`/articles/${article.id}?include=attachments,category,author,scaleCategory`)
+    const fullArticle = response.data.data
+    
+    console.log('📦 بيانات المقال الكاملة:', fullArticle)
+    console.log('📎 المرفقات في البيانات الكاملة:', fullArticle.attachments)
+    
+    editingArticle.value = { ...fullArticle }
+    showForm.value = true
+  } catch (error) {
+    console.error('❌ فشل في جلب بيانات المقال:', error)
+    console.log('🔄 استخدام البيانات الموجودة كبديل...')
+    
+    // استخدام البيانات الموجودة كبديل مع تحميل إضافي إذا لزم الأمر
+    editingArticle.value = { ...article }
+    showForm.value = true
+  }
 }
 
 const handleDelete = async (articleId: string) => {
@@ -406,6 +426,18 @@ const confirmDelete = async () => {
     showDeleteConfirm.value = false
     deleteTargetId.value = null
   }
+}
+
+const getImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  if (path.startsWith('storage/')) return `/${path}`
+  return `/storage/${path}`
+}
+
+const handleImageError = (event) => {
+  console.error('خطأ في تحميل صورة المقال:', event.target.src)
+  event.target.style.display = 'none'
 }
 
 const handleTogglePublish = async (article: Article) => {

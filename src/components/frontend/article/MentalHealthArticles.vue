@@ -222,7 +222,7 @@ export default {
         id: article.id,
         title: article.title,
         excerpt: article.excerpt,
-        image: article.image,
+        image: this.getImageUrl(article.image),
         badge: article.category?.name || 'مقال',
         author: {
           name: article.author?.name || 'فريق الدعم النفسي'
@@ -289,7 +289,21 @@ export default {
     handlePageChange(page) {
       this.currentPage = page;
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    },
+
+   getImageUrl(path) {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  if (path.startsWith('storage/')) return `/${path}`
+  return `/storage/${path}`
+},
+
+handleImageError(event) {
+  console.error('خطأ في تحميل صورة المقال:', event.target.src)
+  event.target.style.display = 'none'
+}
+
+
   },
   async mounted() {
     await Promise.all([

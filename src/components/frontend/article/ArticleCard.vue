@@ -6,10 +6,12 @@
     <!-- Image Container -->
     <div class="overflow-hidden h-60 relative bg-gradient-to-br from-gray-100 to-gray-300">
       <div class="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-black/30 to-transparent z-10"></div>
-      <img
-        :src="article.image"
+      <!-- في القالب -->
+      <img 
+        :src="getImageUrl(article.image)" 
         :alt="article.title"
-        class="w-full h-full object-cover transition-transform duration-600 ease-in-out group-hover:scale-112"
+        class="w-full h-48 object-cover"
+        @error="handleImageError"
       />
     </div>
 
@@ -68,6 +70,20 @@ export default {
     
     return {
       readMoreText
+    }
+  },
+  // في ArticleCard.vue
+  methods: {
+    getImageUrl(path) {
+      if (!path) return null
+      if (path.startsWith('http')) return path
+      if (path.startsWith('storage/')) return `/${path}`
+      return `/storage/${path}`
+    },
+    
+    handleImageError(event) {
+      console.error('خطأ في تحميل صورة المقال:', event.target.src)
+      event.target.style.display = 'none'
     }
   }
 }

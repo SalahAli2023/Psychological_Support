@@ -46,7 +46,7 @@ class ArticleSeeder extends Seeder
                 'introduction_ar' => 'القلق من أكثر المشكلات النفسية انتشاراً في عصرنا الحالي، فكيف يمكننا التعامل معه بفعالية؟',
                 'introduction_en' => 'Anxiety is one of the most common psychological problems in our modern era, so how can we deal with it effectively?',
                 'image' => 'articles/anxiety-article.jpg',
-                'attachments' => json_encode(['guide.pdf', 'worksheet.docx']),
+                
                 'published_at' => now()->subDays(5),
                 'is_published' => true,
                 'views' => 150,
@@ -73,7 +73,7 @@ class ArticleSeeder extends Seeder
                 'introduction_ar' => 'التربية الفعالة هي فن وعلم يحتاج إلى فهم عمق لاحتياجات الطفل النفسية',
                 'introduction_en' => 'Effective parenting is an art and science that requires deep understanding of children\'s psychological needs',
                 'image' => 'articles/parenting-article.jpg',
-                'attachments' => json_encode(['parenting-guide.pdf']),
+                
                 'published_at' => now()->subDays(3),
                 'is_published' => true,
                 'views' => 89,
@@ -100,7 +100,7 @@ class ArticleSeeder extends Seeder
                 'introduction_ar' => 'العلاج المعرفي السلوكي يساعد في تغيير أنماط التفكير والسلوك غير المفيدة',
                 'introduction_en' => 'Cognitive behavioral therapy helps change unhelpful thinking and behavior patterns',
                 'image' => 'articles/cbt-article.jpg',
-                'attachments' => null,
+                
                 'published_at' => now()->subDays(1),
                 'is_published' => true,
                 'views' => 45,
@@ -127,7 +127,7 @@ class ArticleSeeder extends Seeder
                 'introduction_ar' => 'العلاقات الصحية هي أساس السعادة والاستقرار النفسي في حياتنا',
                 'introduction_en' => 'Healthy relationships are the foundation of happiness and psychological stability in our lives',
                 'image' => 'articles/relationships-article.jpg',
-                'attachments' => json_encode(['communication-worksheet.pdf']),
+                
                 'published_at' => now(),
                 'is_published' => false, // مسودة
                 'views' => 0,
