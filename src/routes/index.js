@@ -38,7 +38,7 @@ import Specialists from '../components/frontend/Specialists/TherapistList.vue'
 import therapisteDetail from '../components/frontend/Specialists/TherapistProfile.vue'
 import LibraryMain from '../components/frontend/libraray/LibraryMain.vue'
 import contact from '../components/frontend/contact.vue'
-import register from '../components/frontend/RegistrationPage.vue'
+// import register from '../components/frontend/RegistrationPage.vue'
 import LegalSocialResources from '../components/frontend/LegalSocialResources.vue'
 import LibraryCategoryForm from '../components/dashboard/Library/LibraryCategoryForm.vue'
 // --- Auth Pages ---
@@ -58,7 +58,7 @@ const routes = [
   { path: '/therapist/:id', name: 'therapisteDetail', component: therapisteDetail, props: true },
   { path: '/library', name: 'library', component: LibraryMain, props: true },
   { path: '/contact', name: 'contact', component: contact, props: true },
-  { path: '/register', name: 'register', component: register, props: true },
+  // { path: '/register', name: 'register', component: register, props: true },
   { path: '/legal', name: 'legal', component: LegalSocialResources, props: true },
   {
     path: '/dashboard/users/:id',

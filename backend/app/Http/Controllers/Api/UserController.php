@@ -157,74 +157,84 @@ class UserController extends Controller
     /**
      * تحديث مستخدم
      */
-   public function update(Request $request, User $user): JsonResponse
-{
-    try {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => ['sometimes', 'required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'sometimes|nullable|string|min:8',
-            'role' => ['sometimes', 'required', Rule::in(['Admin', 'Therapist', 'Client'])],
-            'phone' => 'nullable|string|max:20',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'bio' => 'nullable|string|max:1000',
-            'joined_at' => 'nullable|date',
-            'remove_avatar' => 'sometimes|boolean',
-        ]);
-
-        $updateData = [
-            'name' => $validated['name'] ?? $user->name,
-            'email' => $validated['email'] ?? $user->email,
-            'role' => $validated['role'] ?? $user->role,
-            'phone' => $validated['phone'] ?? $user->phone,
-            'bio' => $validated['bio'] ?? $user->bio,
-            'joined_at' => $validated['joined_at'] ?? $user->joined_at,
-        ];
-
-        // تحديث كلمة المرور فقط إذا تم تقديمها
-        if (isset($validated['password']) && $validated['password']) {
-            $updateData['password'] = Hash::make($validated['password']);
-        }
-
-        // تحديث الصورة الشخصية إذا تم تقديمها
-        if ($request->hasFile('avatar')) {
-            // حذف الصورة القديمة إذا كانت موجودة
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+    public function update(Request $request, User $user): JsonResponse
+    {
+        try {
+            // تحويل remove_avatar إلى boolean إذا كان موجوداً
+            if ($request->has('remove_avatar')) {
+                $request->merge([
+                    'remove_avatar' => filter_var($request->remove_avatar, FILTER_VALIDATE_BOOLEAN)
+                ]);
             }
-            $updateData['avatar'] = $request->file('avatar')->store('avatars', 'public');
-        }
 
-        // حذف الصورة الشخصية إذا طلب المستخدم ذلك
-        if (isset($validated['remove_avatar']) && $validated['remove_avatar']) {
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            $validated = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'email' => ['sometimes', 'required', 'email', Rule::unique('users')->ignore($user->id)],
+                'password' => 'sometimes|nullable|string|min:8',
+                'role' => ['sometimes', 'required', Rule::in(['Admin', 'Therapist', 'Client'])],
+                'phone' => 'nullable|string|max:20',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'bio' => 'nullable|string|max:1000',
+                'joined_at' => 'nullable|date',
+                'remove_avatar' => 'sometimes|boolean',
+            ]);
+
+            $updateData = [
+                'name' => $validated['name'] ?? $user->name,
+                'email' => $validated['email'] ?? $user->email,
+                'role' => $validated['role'] ?? $user->role,
+                'phone' => $validated['phone'] ?? $user->phone,
+                'bio' => $validated['bio'] ?? $user->bio,
+                'joined_at' => $validated['joined_at'] ?? $user->joined_at,
+            ];
+
+            // تحديث كلمة المرور فقط إذا تم تقديمها
+            if (isset($validated['password']) && $validated['password']) {
+                $updateData['password'] = Hash::make($validated['password']);
             }
-            $updateData['avatar'] = null;
+
+            // تحديث الصورة الشخصية إذا تم تقديمها
+            if ($request->hasFile('avatar')) {
+                // حذف الصورة القديمة إذا كانت موجودة
+                if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+                $updateData['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            }
+
+            // حذف الصورة الشخصية إذا طلب المستخدم ذلك
+            if (isset($validated['remove_avatar']) && $validated['remove_avatar'] === true) {
+                if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+                $updateData['avatar'] = null;
+            }
+
+            $user->update($updateData);
+
+            // إعادة تحميل المستخدم للحصول على البيانات المحدثة
+            $user->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+                'data' => new UserResource($user)
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $user->update($updateData);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User updated successfully',
-            'data' => new UserResource($user)
-        ]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to update user',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
     /**
      * حذف مستخدم
@@ -298,6 +308,75 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch user statistics',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * تحديث الصورة الشخصية فقط
+     */
+    public function updateAvatar(Request $request, User $user): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            ]);
+
+            // حذف الصورة القديمة إذا كانت موجودة
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            
+            $user->update(['avatar' => $avatarPath]);
+            $user->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Avatar updated successfully',
+                'data' => new UserResource($user)
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update avatar',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * حذف الصورة الشخصية
+     */
+    public function removeAvatar(User $user): JsonResponse
+    {
+        try {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $user->update(['avatar' => null]);
+            $user->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Avatar removed successfully',
+                'data' => new UserResource($user)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove avatar',
                 'error' => $e->getMessage()
             ], 500);
         }

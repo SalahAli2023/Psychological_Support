@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -25,9 +28,9 @@ class User extends Authenticatable
         'avatar',
         'bio',
         'joined_at',
-        'email_verification_code', // 🔥 NEW
-        'email_verified_at', // 🔥 NEW
-        'verification_code_expires_at', // 🔥 NEW
+        'email_verification_code',
+        'email_verified_at',
+        'verification_code_expires_at',
     ];
 
     /**
@@ -38,7 +41,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'email_verification_code', // 🔥 NEW
+        'email_verification_code',
     ];
 
     /**
@@ -52,9 +55,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'joined_at' => 'datetime',
-            'verification_code_expires_at' => 'datetime', // 🔥 NEW
-
+            'verification_code_expires_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the patient profile for this user.
+     */
+    public function patient(): HasOne
+    {
+        return $this->hasOne(Patient::class);
     }
 
     /**
@@ -126,7 +136,7 @@ class User extends Authenticatable
         return $this->role === 'Client';
     }
 
-     /**
+    /**
      * Check if email is verified.
      */
     public function isEmailVerified(): bool
