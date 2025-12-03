@@ -8,6 +8,8 @@ export const en = {
     closeMenu: 'Close Menu'
   },
   menuItems: {
+
+     LegalSocialResources: 'Legal & Social Resources',
     Home: 'Home',
     about: 'About Us',
     services: 'Our Services',
@@ -62,7 +64,10 @@ export const en = {
     resetFilters: 'Reset Filters',
     download: 'Download Book',
     preview: 'Preview',
-    rateBook: 'Rate Book'
+    rateBook: 'Rate Book',
+    retry: 'Retry',
+    previous: 'Previous',
+    next: 'Next'
   },
   breadcrumb: {
     articles: 'Articles'
@@ -168,7 +173,8 @@ export const en = {
       subtitle: 'We work to empower the community and provide psychological and social support programs with real impact.'
     },
     overview: {
-      title: 'Strategic Studies Center for Women and Children Support',
+      mainTitle: "About",
+      highlightTitle: "Center",
       description1: 'The Strategic Studies Center for Women and Children Support - Yemen is an independent non-profit civil institution with an independent legal personality. It was established according to the Associations and Civil Institutions Law No. (1) of 2001 and its executive regulations on 20/12/2018 under license from the Office of the Ministry of Social Affairs and Labor No. (80/M) with its main headquarters in Taiz Governorate.',
       description2: 'It aims to support women and children in particular and vulnerable and marginalized groups in general through specialized studies and research, and to contribute to developing strategies, policies and visions for empowering and improving the conditions of women, children and all vulnerable and marginalized groups and protecting them from violence and discrimination.',
       description3: 'It also works through projects, programs and activities aimed at protecting rights and freedoms, promoting democracy and good governance, building peace, security and development, and supporting formal and informal structures concerned with protecting and caring for abused women and delinquent children.',
@@ -180,11 +186,14 @@ export const en = {
       }
     },
     objectives: {
+      mainTitle: "Objectives",
+      highlightTitle: "Center",
       title: 'Our ',
       highlight: 'Objectives',
       subtitle: 'We seek to achieve ambitious goals that contribute to supporting and protecting women, children and marginalized groups in Yemen'
     },
     statistics: {
+   
       title: 'Our ',
       highlight: 'Achievements',
       subtitle: 'We are proud of what we have achieved and we always work on development and improvement',
@@ -198,6 +207,7 @@ export const en = {
   },
   visionMission: {
     title: 'Our Vision & Mission',
+     highlightTitle: 'Mission',
     subtitle: 'We strive for excellence in supporting women, children and vulnerable groups in Yemen',
     vision: {
       title: 'Our Vision',
@@ -447,7 +457,8 @@ export const en = {
 
   measuresHero: {
 
-    title: 'Psychological Tests and Assessments',
+    title: 'Psychological Tests',
+    titleKey:' and Assessments',
     subtitle: 'Discover yourself better through trusted psychological scales',
     description: 'Choose from a wide range of validated psychological assessments designed to meet your needs'
 
@@ -550,7 +561,7 @@ export const en = {
       "Choose a time when you feel relaxed and focused",
       "Answer honestly and without hesitation — there are no right or wrong answers",
       "Read each question carefully before responding",
-      "Don’t spend too much time thinking about each question",
+      "Don't spend too much time thinking about each question",
       "Make sure you're in a quiet and suitable environment",
       "These results are for guidance only and do not replace professional consultation"
     ]
@@ -611,15 +622,71 @@ export const en = {
       sendCode: 'An error occurred while sending the verification code',
       verifyCode: 'Invalid verification code',
       resendCode: 'An error occurred while resending the code',
-      createAccount: 'An error occurred while creating the account'
+      createAccount: 'An error occurred while creating the account',
+       accountSetup: "An error occurred during account setup",
+    sendVerification: "An error occurred while sending verification code",
+    validationErrors: 'There are errors in the submitted data',
+    sendVerification: 'Failed to send verification code',
+    verifyCode: 'Failed to verify the code',
+    resendCode: 'Failed to resend the code',
+    networkError: 'Unable to connect to the server'
+
     },
 
     success: {
       codeSent: 'Verification code sent successfully',
       verified: 'Phone number verified successfully',
       codeResent: 'Verification code resent',
-      accountCreated: 'Account created successfully!'
-    }
+      accountCreated: 'Account created successfully!',
+      verificationSent: "Verification code sent successfully"
+    },
+   accountStep: {
+  title: "Create a New Account",
+  nameLabel: "Full Name",
+  namePlaceholder: "Enter your full name",
+  emailLabel: "Email Address",
+  emailPlaceholder: "Enter your email address",
+  passwordLabel: "Password",
+  passwordPlaceholder: "Enter your password",
+  passwordConfirmationLabel: "Confirm Password",
+  passwordConfirmationPlaceholder: "Re-enter your password",
+  continue: "Continue",
+  nameRequired: "Name is required",
+  emailRequired: "Email is required",
+  emailInvalid: "Invalid email address",
+  passwordMinLength: "Password must be at least 6 characters",
+  passwordMismatch: "Passwords do not match",
+   processing: "Processing..."
+},
+
+personalStep: {
+  title: "Personal Information",
+  countryLabel: "Country",
+  selectCountry: "Select a country",
+  regionLabel: "Region",
+  regionPlaceholder: "Enter your region",
+  phoneLabel: "Phone Number",
+  phonePlaceholder: "Enter your phone number",
+  sendVerification: "Send Verification Code",
+  phoneError: "Invalid phone number",
+  sending: "Sending...",
+},
+ steps: {
+      account: "Account Info",
+      personal: "Personal Info",
+      verification: "Verification"
+    },
+    verificationStep: {
+    title: "Email Verification",
+    sentTo: "Verification code sent to",
+    checkSpam: "Please check your spam folder if you don't receive the code",
+    resendIn: "Resend in",
+    resend: "Resend Code",
+    editInfo: "Edit Information",
+    confirm: "Confirm",
+    verifying: "Verifying..."
+  },
+
   },
 
   registrationPage: {
@@ -720,104 +787,119 @@ export const en = {
     cancel: "Cancel",
     continue: "Continue"
   },
-  "resourcesPage": {
+  
+  contact: {
+    hero: {
+      title: "Contact Us",
+      highlight: "We'll be happy to serve you",
+      subtitle: "We're here to answer your inquiries and assist you anytime"
+    },
+    section: {
+      title: "Send a Message",
+      phone: "Phone",
+      email: "Email",
+      location: "Location" 
+    },
+    form: {
+      fullName: "Full Name",
+      email: "Email Address",
+      subject: "Subject",
+      messageType: "Message Type",
+      message: "Write your message here...",
+      send: "Send Message"
+    }
+  },
+  
+  resourcesPage: {
     "title": "Legal and Social Resources",
     "description": "We provide you with a comprehensive set of legal and social resources to support women and children and protect their rights",
     
+    "searchPlaceholder": "Search in legal resources...",
+    "allTypes": "All Types", 
+    "noResults": "No matching results found",
+    "quickActions": {
+        "title": "Quick Actions"
+    },
+    
     "legalResources": {
-      "title": "Legal Resources",
-      "description": "Legislation and laws for the protection of women and children"
+        "title": "Legal Resources",
+        "description": "Legislation and laws for the protection of women and children"
     },
     
     "socialResources": {
-      "title": "Social Resources",
-      "description": "Support programs and community initiatives"
-    },
-    
-    "lawsSection": {
-      "title": "Yemeni Law Articles"
-    },
-    
-    "womenChildrenRights": {
-      "title": "Key Rights for Women and Children",
-      "list": {
-        "right1": "Basic women's rights in work and education",
-        "right2": "Children's rights to care and protection",
-        "right3": "Laws specifically protecting women from violence",
-        "right4": "Legislation related to custody and alimony"
-      }
-    },
-    
-    "communitySupport": {
-      "title": "Community Support",
-      "list": {
-        "support1": "Support groups for women",
-        "support2": "Support groups for children and adolescents",
-        "support3": "The role of civil society in protecting women and children",
-        "support4": "Community awareness programs"
-      }
-    },
-    
-    "positiveEducation": {
-      "title": "Positive Parenting",
-      "list": {
-        "education1": "Basics of family mental health",
-        "education2": "Prevention of domestic and community violence",
-        "education3": "Skills for dealing with daily pressures",
-        "education4": "Cooperation between home and school"
-      }
+        "title": "Social Resources",
+        "description": "Support programs and community initiatives"
     },
     
     "emergencyContacts": {
-      "title": "Helplines and Emergency Services",
-      "description": "Contact us anytime for immediate assistance",
-      
-      "emergencyNumbers": {
-        "title": "Emergency Phone Numbers",
-        "description": "24/7 available emergency services"
-      },
-      
-      "directChat": {
-        "title": "Direct Chat",
-        "description": "Instant communication with the center",
-        "button": "Start Chat"
-      },
-      
-      "supportLines": {
-        "title": "Support Lines",
-        "description": "Helplines and psychological support",
-        "womenSupport": "Women Support: 0800-111-222",
-        "childrenSupport": "Children Support: 0800-333-444"
-      },
-      
-      "contactInfo": {
-        "title": "Contact Information",
-        "description": "Email and general communication"
-      }
+        "title": "Helplines and Emergency Services",
+        "description": "Contact us anytime for immediate assistance",
+        
+        // النصوص التي ستبقى بالعربية (لا تحتاج ترجمة)
+        "emergency": "الطوارئ",
+        "psychologicalSupport": "الدعم النفسي",
+        
+        "emergencyNumbers": {
+            "title": "Emergency Phone Numbers",
+            "description": "24/7 available emergency services"
+        },
+        
+        "directChat": {
+            "title": "Direct Chat",
+            "description": "Instant communication with the center",
+            "button": "Start Chat"
+        },
+        
+        "supportLines": {
+            "title": "Support Lines", 
+            "description": "Helplines and psychological support",
+            "womenSupport": "Women Support: 0800-111-222",
+            "childrenSupport": "Children Support: 0800-333-444"
+        },
+        
+        "contactInfo": {
+            "title": "Contact Information",
+            "description": "Email and general communication"
+        }
+    },
+    
+    "womenChildrenRights": {
+        "title": "Key Rights for Women and Children",
+        "list": {
+            "right1": "Basic women's rights in work and education",
+            "right2": "Children's rights to care and protection",
+            "right3": "Laws specifically protecting women from violence",
+            "right4": "Legislation related to custody and alimony"
+        }
+    },
+    
+    "communitySupport": {
+        "title": "Community Support",
+        "list": {
+            "support1": "Support groups for women",
+            "support2": "Support groups for children and adolescents", 
+            "support3": "The role of civil society in protecting women and children",
+            "support4": "Community awareness programs"
+        }
     },
     
     "supportingOrganizations": {
-      "title": "Supporting Organizations and Partners",
-      "description": "We work with a network of supporting organizations to provide the best services",
-      
-      "list": {
-        "hospitals": "Hospitals",
-        "courts": "Courts",
-        "police": "Police",
-        "schools": "Schools"
-      },
-      
-      "descriptions": {
-        "healthcare": "Healthcare and medical services",
-        "legalServices": "Judicial and legal services",
-        "protection": "Protection and security",
-        "education": "Education and awareness"
-      }
+        "title": "Supporting Organizations and Partners",
+        "description": "We work with a network of supporting organizations to provide the best services",
+        
+        "list": {
+            "hospitals": "Hospitals",
+            "courts": "Courts",
+            "police": "Police", 
+            "schools": "Schools"
+        },
+        
+        "descriptions": {
+            "healthcare": "Healthcare and medical services",
+            "legalServices": "Judicial and legal services",
+            "protection": "Protection and security",
+            "education": "Education and awareness"
+        }
     }
   },
-  "resourcesSection": {
-    "title": "Helpful Resources",
-    "description": "A collection of useful resources and articles to support your mental health"
-  }
 };
-  

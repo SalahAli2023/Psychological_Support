@@ -1,7 +1,6 @@
 <!-- EventDetails.vue -->
 <template>
   <div class="min-h-screen bg-gray-50">
-
     <!-- مسار التنقل (Breadcrumb) -->
     <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-6 py-4">
@@ -23,18 +22,14 @@
     </div>
 
     <!-- محتوى الصفحة الرئيسي -->
-
     <div class="max-w-7xl mx-auto py-8">
-
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- العمود الأيسر - محتوى الفعالية -->
         <div class="lg:col-span-2">
           
           <!-- الصورة الرئيسية أولاً -->
-
           <div class="bg-white rounded-2xl shadow-1xl overflow-hidden mb-8">
-
             <img 
               :src="event.media" 
               :alt="event.title" 
@@ -43,9 +38,7 @@
           </div>
 
           <!-- رأس الفعالية -->
-
           <div class="bg-white rounded-2xl shadow-1xl p-6 mb-8">
-
             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
               <div class="flex-1">
                 <!-- العنوان -->
@@ -97,16 +90,13 @@
           </div>
 
           <!-- محتوى الفعالية -->
-
           <div class="bg-white rounded-2xl shadow-1xl p-6">
-
             <!-- النبذة العامة -->
             <div class="mb-8">
               <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-primary-green inline-block">
                 {{ currentLanguage === 'ar' ? 'نبذة عن الفعالية' : 'Event Overview' }}
               </h2>
-              <p class="text-gray-700 leading-relaxed text-lg">
-                {{ event.fullDescription }}
+              <p class="text-gray-700 leading-relaxed text-lg" v-html="formatDescription(event.description_ar)">
               </p>
             </div>
 
@@ -117,7 +107,7 @@
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div 
-                  v-for="(topic, index) in event.topics" 
+                  v-for="(topic, index) in getDefaultTopics()" 
                   :key="index"
                   class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-300"
                 >
@@ -132,14 +122,12 @@
         <!-- العمود الأيمن - Sidebar -->
         <div class="lg:col-span-1">
           <div class="sticky top-8 space-y-6">
-            
             <!-- استخدام مكون RelatedEvents -->
             <RelatedEvents 
               :events="allEvents"
               :currentEvent="event"
               @event-click="handleRelatedEventClick"
             />
-
           </div>
         </div>
       </div>
@@ -148,13 +136,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import ArticleHero from '@/components/frontend/layouts/ArticleHero.vue'
 import RelatedEvents from '@/components/frontend/events/RelatedEvents.vue'
 import { useTranslations } from '@/composables/useTranslations'
+import { useEventStore } from '@/stores/events'
 
-// استخدام composable الترجمة
+// استخدام composable الترجمة و store
 const { currentLanguage, translate } = useTranslations()
+const eventStore = useEventStore()
+const router = useRouter()
 
 // تعريف الـ props والأحداث
 const props = defineProps({
@@ -166,49 +158,50 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'navigate-to-event'])
 
-// بيانات جميع الفعاليات لاستخدامها في RelatedEvents
-const allEvents = ref([
-  {
-    id: 1,
-    title: 'أمسية التعامل مع التوتر',
-    type: 'أمسيات',
-    media: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '15 نوفمبر 2023',
-    description: 'أمسية تفاعلية للتعرف على طرق فعالة للتعامل مع التوتر والضغوط اليومية.'
-  },
-  {
-    id: 2,
-    title: 'ورشة بناء العلاقات الصحية',
-    type: 'ورش عمل',
-    media: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '22 نوفمبر 2023',
-    description: 'ورشة عملية تهدف إلى تعزيز مهارات التواصل وبناء علاقات صحية مع الآخرين.'
-  },
-  {
-    id: 3,
-    title: 'فعالية الصحة النفسية في العمل',
-    type: 'فعاليات',
-    media: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '30 نوفمبر 2023',
-    description: 'فعالية توعوية حول أهمية الصحة النفسية في بيئة العمل.'
-  },
-  {
-    id: 4,
-    title: 'أمسية التفكير الإيجابي',
-    type: 'أمسيات',
-    media: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '5 ديسمبر 2023',
-    description: 'جلسة حوارية حول قوة التفكير الإيجابي وتأثيره على الصحة النفسية.'
-  },
-  {
-    id: 5,
-    title: 'ورشة إدارة الوقت',
-    type: 'ورش عمل',
-    media: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    date: '12 ديسمبر 2023',
-    description: 'ورشة عملية تقدم استراتيجيات فعالة لإدارة الوقت وتحقيق التوازن.'
+// استخدام بيانات الفعاليات من الـ store للفعاليات ذات الصلة
+const allEvents = computed(() => eventStore.events)
+
+// دالة لتنسيق النص وإضافة فواصل للمواضيع المغطاة
+const formatTopics = (topicsText) => {
+  if (!topicsText) return [];
+  
+  // إذا كان نصاً عادياً، نقسمه بناء على الفواصل
+  if (typeof topicsText === 'string') {
+    return topicsText.split(/[،,]/).map(topic => topic.trim()).filter(topic => topic);
   }
-])
+  
+  // إذا كان مصفوفة بالفعل، نعيدها كما هي
+  return topicsText;
+}
+
+// دالة لتحويل النص إلى فقرات
+const formatDescription = (text) => {
+  if (!text) return '';
+  return text.replace(/\n/g, '<br>');
+}
+
+// دالة للحصول على المواضيع الافتراضية
+const getDefaultTopics = () => {
+  if (currentLanguage.value === 'ar') {
+    return [
+      'أساسيات الصحة النفسية',
+      'التعامل مع الضغوط النفسية',
+      'تحسين جودة الحياة',
+      'مهارات التواصل الفعال',
+      'إدارة المشاعر والغضب',
+      'تعزيز الثقة بالنفس'
+    ]
+  } else {
+    return [
+      'Mental Health Basics',
+      'Dealing with Psychological Stress',
+      'Improving Quality of Life',
+      'Effective Communication Skills',
+      'Managing Emotions and Anger',
+      'Building Self-Confidence'
+    ]
+  }
+}
 
 // دالة للحصول على نمط التصنيف
 const getCategoryStyle = (type) => {
@@ -223,9 +216,9 @@ const getCategoryStyle = (type) => {
 // دالة لترجمة التصنيف
 const getTranslatedCategory = (type) => {
   const categories = {
-    'أمسيات': currentLanguage === 'ar' ? 'أمسيات' : 'Evenings',
-    'فعاليات': currentLanguage === 'ar' ? 'فعاليات' : 'Events',
-    'ورش عمل': currentLanguage === 'ar' ? 'ورش عمل' : 'Workshops'
+    'أمسيات': currentLanguage.value === 'ar' ? 'أمسيات' : 'Evenings',
+    'فعاليات': currentLanguage.value === 'ar' ? 'فعاليات' : 'Events',
+    'ورش عمل': currentLanguage.value === 'ar' ? 'ورش عمل' : 'Workshops'
   }
   return categories[type] || type
 }
@@ -237,12 +230,31 @@ const handleRelatedEventClick = (relatedEvent) => {
 
 // معالجة العودة إلى صفحة الفعاليات عبر مسار التنقل
 const handleBackToEvents = () => {
+  // مسح حالة الصفحة من localStorage
+  localStorage.removeItem('lastEventPage')
   emit('close')
+  
+  // استخدام router للعودة للصفحة الرئيسية
+  router.push('/events')
+}
+
+// معالجة تحديث الصفحة
+const handlePageRefresh = () => {
+  // حفظ حالة الصفحة الحالية في localStorage
+  localStorage.setItem('lastEventPage', 'details')
 }
 
 // التأكد من أن الصفحة تبدأ من الأعلى
 onMounted(() => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  
+  // إضافة مستمع لتحديث الصفحة
+  window.addEventListener('beforeunload', handlePageRefresh)
+})
+
+onUnmounted(() => {
+  // إزالة المستمع عند تدمير المكون
+  window.removeEventListener('beforeunload', handlePageRefresh)
 })
 </script>
 

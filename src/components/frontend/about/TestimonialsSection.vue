@@ -1,21 +1,23 @@
 <template>
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-          {{ translate('testimonials.title') }}<span class="text-primary-pink">{{ translate('testimonials.highlight') }}</span>
-        </h2>
-        <p class="text-base text-gray-600 max-w-2xl mx-auto">
-          {{ translate('testimonials.subtitle') }}
-        </p>
-      </div>
+      
+      <!-- استخدام Component العنوان الجاهز -->
+      <TitleSection
+        :mainText="translate('testimonials.title')"
+        :highlightText="translate('testimonials.highlight')"
+        :subtitle="translate('testimonials.subtitle')"
+        textColor="text-gray-900"
+        highlightColor="text-primary-green"
+         gradientClass="bg-primary-green"
+      />
 
       <!-- السلايدر -->
       <div class="relative overflow-hidden">
-        <!-- العناصر المنزلقة -->
         <div 
           class="flex transition-transform duration-500 ease-in-out"
-          :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+          :style="sliderStyle"
+          :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
         >
           <div 
             v-for="(group, groupIndex) in testimonialGroups" 
@@ -62,20 +64,20 @@
         
         <!-- أزرار التنقل -->
         <button 
-          @click="prevSlide"
+          @click="currentLanguage === 'ar' ? nextSlide() : prevSlide()"
+          class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-primary-green hover:text-white transition-all duration-300 z-10"
+        >
+          <i class="fas fa-chevron-left text-xs"></i>
+        </button>
+
+        <button 
+          @click="currentLanguage === 'ar' ? prevSlide() : nextSlide()"
           class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-primary-green hover:text-white transition-all duration-300 z-10"
         >
           <i class="fas fa-chevron-right text-xs"></i>
         </button>
         
-        <button 
-          @click="nextSlide"
-          class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-200 items-center justify-center hover:bg-primary-green hover:text-white transition-all duration-300 z-10"
-        >
-          <i class="fas fa-chevron-left text-xs"></i>
-        </button>
-        
-        <!-- النقاط الإرشادية - دائماً 3 دوائر -->
+        <!-- النقاط الإرشادية -->
         <div class="flex justify-center gap-1 mt-6">
           <button 
             v-for="index in 3" 
@@ -93,6 +95,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useTranslations } from '@/composables/useTranslations'
+import TitleSection from '@/components/frontend/layouts/TitleSection.vue'
 
 const { currentLanguage, translate } = useTranslations()
 
@@ -101,117 +104,18 @@ const autoPlay = ref(true)
 const itemsPerGroup = ref(3)
 let autoPlayInterval
 
+// بيانات التوصيات
 const testimonials = [
-  {
-    id: 1,
-    text: {
-      ar: 'تجربة رائعة مع الفريق المتخصص، ساعدوني في تخطي أصعب المراحل بحرفية عالية واهتمام حقيقي.',
-      en: 'Amazing experience with the specialized team, they helped me overcome the most difficult stages with high professionalism and genuine care.'
-    },
-    rating: 5,
-    name: {
-      ar: 'أحمد محمد',
-      en: 'Ahmed Mohammed'
-    },
-    role: 'beneficiary',
-    initials: {
-      ar: 'أح',
-      en: 'AM'
-    }
-  },
-  {
-    id: 2,
-    text: {
-      ar: 'الورش التدريبية ممتازة والمحتوى علمي وعملي، استفدت كثيرًا في مجال عملي كأخصائي نفسي.',
-      en: 'The training workshops are excellent and the content is scientific and practical, I benefited a lot in my work as a psychologist.'
-    },
-    rating: 5,
-    name: {
-      ar: 'د. فاطمة علي',
-      en: 'Dr. Fatima Ali'
-    },
-    role: 'psychologist',
-    initials: {
-      ar: 'فط',
-      en: 'FA'
-    }
-  },
-  {
-    id: 3,
-    text: {
-      ar: 'السرية والاحترافية كانتا على أعلى مستوى، أشعر بالأمان والثقة في التعامل مع المنصة.',
-      en: 'Confidentiality and professionalism were at the highest level, I feel safe and confident in dealing with the platform.'
-    },
-    rating: 4,
-    name: {
-      ar: 'سارة عبدالله',
-      en: 'Sara Abdullah'
-    },
-    role: 'consultation',
-    initials: {
-      ar: 'سر',
-      en: 'SA'
-    }
-  },
-  {
-    id: 4,
-    text: {
-      ar: 'خدمة مميزة وفريق محترف، ساعدني في تطوير مهاراتي وتحسين أدائي الوظيفي بشكل ملحوظ.',
-      en: 'Distinctive service and professional team, helped me develop my skills and significantly improve my job performance.'
-    },
-    rating: 5,
-    name: {
-      ar: 'خالد الحربي',
-      en: 'Khalid Al-Harbi'
-    },
-    role: 'manager',
-    initials: {
-      ar: 'خل',
-      en: 'KH'
-    }
-  },
-  {
-    id: 5,
-    text: {
-      ar: 'الدعم المستمر والمتابعة كانت ممتازة، أشكر الفريق على جهودهم المتميزة.',
-      en: 'Continuous support and follow-up were excellent, I thank the team for their outstanding efforts.'
-    },
-    rating: 4,
-    name: {
-      ar: 'نورة السعد',
-      en: 'Nora Al-Saad'
-    },
-    role: 'teacher',
-    initials: {
-      ar: 'نو',
-      en: 'NS'
-    }
-  },
-  {
-    id: 6,
-    text: {
-      ar: 'التجربة فاقت توقعاتي، الخدمة سريعة والمحتوى قيم ومفيد للغاية.',
-      en: 'The experience exceeded my expectations, the service is fast and the content is very valuable and useful.'
-    },
-    rating: 5,
-    name: {
-      ar: 'محمد الشمري',
-      en: 'Mohammed Al-Shammari'
-    },
-    role: 'student',
-    initials: {
-      ar: 'مح',
-      en: 'MS'
-    }
-  }
+  { id: 1, text: { ar: 'تجربة رائعة مع الفريق المتخصص، ساعدوني في تخطي أصعب المراحل بحرفية عالية واهتمام حقيقي.', en: 'Amazing experience with the specialized team, they helped me overcome the most difficult stages with high professionalism and genuine care.' }, rating: 5, name: { ar: 'أحمد محمد', en: 'Ahmed Mohammed' }, role: 'beneficiary', initials: { ar: 'أح', en: 'AM' } },
+  { id: 2, text: { ar: 'الورش التدريبية ممتازة والمحتوى علمي وعملي، استفدت كثيرًا في مجال عملي كأخصائي نفسي.', en: 'The training workshops are excellent and the content is scientific and practical, I benefited a lot in my work as a psychologist.' }, rating: 5, name: { ar: 'د. فاطمة علي', en: 'Dr. Fatima Ali' }, role: 'psychologist', initials: { ar: 'فط', en: 'FA' } },
+  { id: 3, text: { ar: 'السرية والاحترافية كانتا على أعلى مستوى، أشعر بالأمان والثقة في التعامل مع المنصة.', en: 'Confidentiality and professionalism were at the highest level, I feel safe and confident in dealing with the platform.' }, rating: 4, name: { ar: 'سارة عبدالله', en: 'Sara Abdullah' }, role: 'consultation', initials: { ar: 'سر', en: 'SA' } },
+  { id: 4, text: { ar: 'خدمة مميزة وفريق محترف، ساعدني في تطوير مهاراتي وتحسين أدائي الوظيفي بشكل ملحوظ.', en: 'Distinctive service and professional team, helped me develop my skills and significantly improve my job performance.' }, rating: 5, name: { ar: 'خالد الحربي', en: 'Khalid Al-Harbi' }, role: 'manager', initials: { ar: 'خل', en: 'KH' } },
+  { id: 5, text: { ar: 'الدعم المستمر والمتابعة كانت ممتازة، أشكر الفريق على جهودهم المتميزة.', en: 'Continuous support and follow-up were excellent, I thank the team for their outstanding efforts.' }, rating: 4, name: { ar: 'نورة السعد', en: 'Nora Al-Saad' }, role: 'teacher', initials: { ar: 'نو', en: 'NS' } },
+  { id: 6, text: { ar: 'التجربة فاقت توقعاتي، الخدمة سريعة والمحتوى قيم ومفيد للغاية.', en: 'The experience exceeded my expectations, the service is fast and the content is very valuable and useful.' }, rating: 5, name: { ar: 'محمد الشمري', en: 'Mohammed Al-Shammari' }, role: 'student', initials: { ar: 'مح', en: 'MS' } }
 ]
 
-// دالة للحصول على الأحرف الأولى بناءً على اللغة
-const getInitials = (testimonial) => {
-  return currentLanguage.value === 'ar' ? testimonial.initials.ar : testimonial.initials.en
-}
-
-// دالة لترجمة الأدوار
+// دوال مساعدة
+const getInitials = (testimonial) => currentLanguage.value === 'ar' ? testimonial.initials.ar : testimonial.initials.en
 const getTranslatedRole = (roleKey) => {
   const roles = {
     beneficiary: translate('testimonials.roles.beneficiary'),
@@ -227,18 +131,13 @@ const getTranslatedRole = (roleKey) => {
 // تحديث عدد العناصر حسب حجم الشاشة
 const updateItemsPerGroup = () => {
   const width = window.innerWidth
-  if (width < 768) {
-    itemsPerGroup.value = 1
-  } else if (width < 1024) {
-    itemsPerGroup.value = 2
-  } else {
-    itemsPerGroup.value = 3
-  }
-  // إعادة تعيين الفهرس عند تغيير التجميع
+  if (width < 768) itemsPerGroup.value = 1
+  else if (width < 1024) itemsPerGroup.value = 2
+  else itemsPerGroup.value = 3
   currentIndex.value = 0
 }
 
-// تجميع الآراء في مجموعات - مع computed لتفعيل التحديث التلقائي
+// مجموعات التوصيات
 const testimonialGroups = computed(() => {
   const groups = []
   for (let i = 0; i < testimonials.length; i += itemsPerGroup.value) {
@@ -246,109 +145,38 @@ const testimonialGroups = computed(() => {
   }
   return groups
 })
-
 const totalGroups = computed(() => testimonialGroups.value.length)
 
-// حساب الفهرس للدوائر الثلاثة
+// السلايدر حسب اللغة
+const sliderStyle = computed(() => {
+  const direction = currentLanguage.value === 'ar' ? -1 : 1
+  return { transform: `translateX(${currentIndex.value * -100 * direction}%)` }
+})
+
+// الدوائر الثلاث
 const getCalculatedIndex = (dotIndex) => {
   const total = totalGroups.value
-  if (total <= 3) {
-    return dotIndex
-  }
-  
-  // إذا كان هناك أكثر من 3 مجموعات، نحسب الفهرس بناءً على الموضع الحالي
-  if (currentIndex.value < 2) {
-    return dotIndex
-  } else if (currentIndex.value >= total - 2) {
-    return total - 3 + dotIndex
-  } else {
-    return currentIndex.value - 1 + dotIndex
-  }
+  if (total <= 3) return dotIndex
+  if (currentIndex.value < 2) return dotIndex
+  else if (currentIndex.value >= total - 2) return total - 3 + dotIndex
+  else return currentIndex.value - 1 + dotIndex
 }
+const getDotClass = (dotIndex) => getCalculatedIndex(dotIndex) === currentIndex.value ? 'bg-primary-green w-3' : 'bg-gray-300'
+const goToCalculatedSlide = (dotIndex) => { currentIndex.value = getCalculatedIndex(dotIndex); resetAutoPlay() }
 
-// الحصول على كلاس الدوائر
-const getDotClass = (dotIndex) => {
-  const calculatedIndex = getCalculatedIndex(dotIndex)
-  return calculatedIndex === currentIndex.value ? 'bg-primary-green w-3' : 'bg-gray-300'
-}
+// التنقل
+const nextSlide = () => { if(totalGroups.value>0) { currentIndex.value=(currentIndex.value+1)%totalGroups.value; resetAutoPlay() } }
+const prevSlide = () => { if(totalGroups.value>0) { currentIndex.value=(currentIndex.value-1+totalGroups.value)%totalGroups.value; resetAutoPlay() } }
+const resetAutoPlay = () => { if(autoPlay.value){clearInterval(autoPlayInterval); startAutoPlay()} }
+const startAutoPlay = () => { if(autoPlay.value && totalGroups.value>1){ autoPlayInterval=setInterval(()=>{nextSlide()},5000) } }
+const stopAutoPlay = () => clearInterval(autoPlayInterval)
 
-// الانتقال إلى السلايدر المحسوب
-const goToCalculatedSlide = (dotIndex) => {
-  const targetIndex = getCalculatedIndex(dotIndex)
-  if (targetIndex >= 0 && targetIndex < totalGroups.value) {
-    currentIndex.value = targetIndex
-    resetAutoPlay()
-  }
-}
+watch(totalGroups, (newVal, oldVal) => { if(newVal!==oldVal){ currentIndex.value=0; resetAutoPlay() } })
+watch(currentLanguage, () => {}) // تحديث الأحرف تلقائياً
 
-const nextSlide = () => {
-  if (totalGroups.value > 0) {
-    currentIndex.value = (currentIndex.value + 1) % totalGroups.value
-    resetAutoPlay()
-  }
-}
-
-const prevSlide = () => {
-  if (totalGroups.value > 0) {
-    currentIndex.value = (currentIndex.value - 1 + totalGroups.value) % totalGroups.value
-    resetAutoPlay()
-  }
-}
-
-const goToSlide = (index) => {
-  if (index >= 0 && index < totalGroups.value) {
-    currentIndex.value = index
-    resetAutoPlay()
-  }
-}
-
-const resetAutoPlay = () => {
-  if (autoPlay.value) {
-    clearInterval(autoPlayInterval)
-    startAutoPlay()
-  }
-}
-
-const startAutoPlay = () => {
-  if (autoPlay.value && totalGroups.value > 1) {
-    autoPlayInterval = setInterval(() => {
-      nextSlide()
-    }, 5000)
-  }
-}
-
-const stopAutoPlay = () => {
-  clearInterval(autoPlayInterval)
-}
-
-// مراقبة تغيير عدد المجموعات لإعادة تعيين التشغيل التلقائي
-watch(totalGroups, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
-    currentIndex.value = 0
-    resetAutoPlay()
-  }
-})
-
-// مراقبة تغيير اللغة لتحديث الأحرف الأولى
-watch(currentLanguage, () => {
-  // سيتم تحديث الأحرف الأولى تلقائياً عبر دالة getInitials
-})
-
-// دالة لإعادة الحساب عند تغيير حجم النافذة
-const handleResize = () => {
-  updateItemsPerGroup()
-}
-
-onMounted(() => {
-  updateItemsPerGroup()
-  window.addEventListener('resize', handleResize)
-  startAutoPlay()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  stopAutoPlay()
-})
+const handleResize = () => updateItemsPerGroup()
+onMounted(() => { updateItemsPerGroup(); window.addEventListener('resize', handleResize); startAutoPlay() })
+onUnmounted(() => { window.removeEventListener('resize', handleResize); stopAutoPlay() })
 </script>
 
 <style scoped>
@@ -358,18 +186,6 @@ onUnmounted(() => {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-/* تحسينات للجوال */
-@media (max-width: 768px) {
-  .px-2 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-}
-
-/* تأثيرات للسيولة */
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease;
-}
+@media (max-width: 768px) { .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } }
+.slide-enter-active, .slide-leave-active { transition: all 0.5s ease; }
 </style>

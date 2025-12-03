@@ -37,7 +37,7 @@
 
 
         <a
-          href="#"
+          href=""
           class="bg-primary-green hover:bg-secondary-green text-white font-semibold h-14 w-[200px] rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 text-lg animate-fadeUp delay-[600ms]"
         >
           {{ translate('hero.button') }}

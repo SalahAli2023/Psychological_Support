@@ -21,20 +21,17 @@
       </div>
 
       <div class="flex flex-row items-center gap-3 md:gap-6 sm:gap-4 relative">
-        <router-link
-          to="/join"
-          class="bg-primary-green text-white font-semibold h-12 w-[130px] sm:w-[180px] md:w-[200px] rounded-2xl flex items-center justify-center gap-2 hover:bg-secondary-green transition-all duration-300 shadow-md hover:shadow-lg text-base sm:text-lg"
-        >
-          <img
-            src="https://injazalarab.org/_nuxt/img/compus-arrow.7f03aae.svg"
-            :alt="t('header.arrowAlt')"
-            class="w-5 sm:w-7"
-          />
-
-       <span class="text-white">{{ t('header.joinUs') }}</span>
-
-
-        </router-link>
+<button
+  @click="handleJoinClick"
+  class="bg-primary-green text-white font-semibold h-12 w-[130px] sm:w-[180px] md:w-[200px] rounded-2xl flex items-center justify-center gap-2 hover:bg-secondary-green transition-all duration-300 shadow-md hover:shadow-lg text-base sm:text-lg cursor-pointer"
+>
+  <img
+    src="https://injazalarab.org/_nuxt/img/compus-arrow.7f03aae.svg"
+    :alt="t('header.arrowAlt')"
+    class="w-5 sm:w-7"
+  />
+  <span class="text-white">{{ t('header.joinUs') }}</span>
+</button>
 
         <button
           @click="toggleLanguage"
@@ -114,13 +111,13 @@ const menuItems = [
   { name: { ar: translations.ar.menuItems.about, en: translations.en.menuItems.about }, path: '/about' },
   { name: { ar: translations.ar.menuItems.services, en: translations.en.menuItems.services }, path: '/services' },
   { name: { ar: translations.ar.menuItems.specialists, en: translations.en.menuItems.specialists }, path: '/Specialists' },
-  { name: { ar: translations.ar.menuItems.sessions, en: translations.en.menuItems.sessions }, path: '/sessions' },
+  { name: { ar: translations.ar.menuItems.sessions, en: translations.en.menuItems.sessions }, path: '/session' },
   { name: { ar: translations.ar.menuItems.events, en: translations.en.menuItems.events }, path: '/events' },
   { name: { ar: translations.ar.menuItems.measures, en: translations.en.menuItems.measures }, path: '/measures' },
    { name: { ar: translations.ar.menuItems.library, en: translations.en.menuItems.library }, path: '/library' },
   { name: { ar: translations.ar.menuItems.testimonials, en: translations.en.menuItems.testimonials }, path: '/testimonials' },
   { name: { ar: translations.ar.menuItems.articles, en: translations.en.menuItems.articles }, path: '/article' },
-  { name: { ar: translations.ar.menuItems.faq, en: translations.en.menuItems.faq }, path: '/faq' },
+  { name: { ar: translations.ar.menuItems.LegalSocialResources, en: translations.en.menuItems.LegalSocialResources }, path: '/legal' },
   { name: { ar: translations.ar.menuItems.contact, en: translations.en.menuItems.contact }, path: '/contact' }
 ]
 

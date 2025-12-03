@@ -9,6 +9,7 @@
         :placeholder="translate('events.filter.searchPlaceholder')"
         class="w-full px-12 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-primary-green focus:ring-4 focus:ring-primary-green/20 transition-all duration-300 text-base shadow-sm hover:shadow-md"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
+        @input="handleSearchInput"
       />
       <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
     </div>
@@ -19,6 +20,7 @@
         v-model="selectedCategory"
         class="w-full md:w-48 px-4 py-4 bg-white border border-gray-300 rounded-2xl text-gray-800 focus:outline-none focus:border-primary-green focus:ring-4 focus:ring-primary-green/20 transition-all duration-300 appearance-none shadow-sm hover:shadow-md text-base"
         :dir="currentLanguage === 'ar' ? 'rtl' : 'ltr'"
+        @change="handleFilterChange"
       >
         <option value="all">{{ translate('events.filter.allEvents') }}</option>
         <option value="evenings">{{ translate('events.filter.evenings') }}</option>
@@ -30,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useTranslations } from '@/composables/useTranslations'
 
 // استخدام composable الترجمة
@@ -38,11 +40,45 @@ const { currentLanguage, translate } = useTranslations()
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
+let searchTimeout = null
 
 const emit = defineEmits(['filter-change'])
 
-// مراقبة التغييرات وإرسالها للوالد
-watch([searchQuery, selectedCategory], () => {
+// دالة debounce يدوية
+const debounce = (func, wait) => {
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(searchTimeout)
+      func(...args)
+    }
+    clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(later, wait)
+  }
+}
+
+// دالة debounce للبحث
+const debouncedEmit = debounce(() => {
+  emit('filter-change', {
+    search: searchQuery.value,
+    category: selectedCategory.value
+  })
+}, 500)
+
+// معالجة إدخال البحث
+const handleSearchInput = () => {
+  debouncedEmit()
+}
+
+// معالجة تغيير التصنيف
+const handleFilterChange = () => {
+  emit('filter-change', {
+    search: searchQuery.value,
+    category: selectedCategory.value
+  })
+}
+
+// مراقبة التغييرات وإرسالها للوالد (بدون debounce للتصنيف)
+watch(selectedCategory, () => {
   emit('filter-change', {
     search: searchQuery.value,
     category: selectedCategory.value

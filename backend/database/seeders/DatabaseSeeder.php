@@ -1,0 +1,66 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {    User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'Admin',
+            'joined_at' => now(),
+        ]);
+
+        // Create sample therapist user
+        $therapistUser = User::create([
+            'name' => 'Dr. Sample Therapist',
+            'email' => 'therapist@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'Therapist',
+            'joined_at' => now(),
+        ]);
+
+        // Create sample client user
+        User::create([
+            'name' => 'Sample Client',
+            'email' => 'client@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'Client',
+            'joined_at' => now(),
+        ]);
+        // Seed categories and initial data
+        $this->call([
+            ArticleCategorySeeder::class,
+            SpecializationSeeder::class,
+           LibraryCategorySeeder::class,
+            ArticleSeeder::class,
+            LibraryItemSeeder::class,
+            LegalResourceCategorySeeder::class,
+           
+            UserAssessmentsSeeder::class,
+            TherapistSeeder::class,
+            TherapistQualificationSeeder::class,
+            TherapistCertificationSeeder::class,
+            TherapistScheduleSeeder::class,
+
+               // seeders المقاييس النفسية (يجب أن تكون بعد الجداول الأساسية)
+            CategoriesTableSeeder::class,
+            PsychologicalScalesTableSeeder::class,
+            ScaleQuestionsTableSeeder::class,
+            QuestionOptionsTableSeeder::class,
+            ResultInterpretationsTableSeeder::class,
+        ]);
+ 
+        // Create admin user
+       
+    }
+}

@@ -29,10 +29,9 @@
   }
 }
 
-
-
-
-
+@utility modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 /* 🔽 الحركات (Animations) */
 @keyframes slide-up {
   from {

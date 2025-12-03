@@ -6,7 +6,7 @@
     <!-- صورة الكتاب -->
     <div class="relative h-48 overflow-hidden">
       <img 
-        :src="book.cover" 
+        :src="book.cover || '/images/default-book-cover.jpg'" 
         :alt="book.title" 
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
       />
@@ -19,6 +19,12 @@
       >
         <i :class="book.isFavorite ? 'fas text-red-500' : 'far text-gray-600'" class="fa-heart"></i>
       </button>
+
+      <!-- شارة النوع -->
+      <div class="absolute top-2 right-2 bg-primary-green text-white px-2 py-1 rounded-full text-xs font-medium" 
+           :class="isRTL ? 'left-2 right-auto' : 'right-2 left-auto'">
+        {{ getTypeLabel(book.type) }}
+      </div>
     </div>
     
     <!-- معلومات الكتاب -->
@@ -37,6 +43,21 @@
           </i>
         </div>
         <span class="text-xs text-gray-500" :class="isRTL ? 'mr-1' : 'ml-1'">({{ book.rating }})</span>
+      </div>
+      
+      <!-- إحصائيات إضافية -->
+      <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
+        <span class="flex items-center gap-1">
+          <i class="fas fa-eye"></i>
+          {{ book.views }}
+        </span>
+        <span class="flex items-center gap-1">
+          <i class="fas fa-download"></i>
+          {{ book.downloads }}
+        </span>
+        <span v-if="book.is_new" class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+          جديد
+        </span>
       </div>
     </div>
   </div>
@@ -58,8 +79,19 @@ export default {
     
     const isRTL = currentLanguage.value === 'ar'
     
+    const getTypeLabel = (type) => {
+      const types = {
+        book: 'كتاب',
+        research: 'بحث',
+        guide: 'دليل',
+        article: 'مقال'
+      }
+      return types[type] || type
+    }
+    
     return {
-      isRTL
+      isRTL,
+      getTypeLabel
     }
   },
   emits: ['toggle-favorite', 'open-modal']

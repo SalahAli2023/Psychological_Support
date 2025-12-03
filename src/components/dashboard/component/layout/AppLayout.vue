@@ -1,13 +1,13 @@
 <template>
 	<div class="min-h-screen bg-primary flex">
 		<!-- Floating settings button -->
-  <RouterLink
-  :to="{ name: 'settings' }"
-  class="fixed end-3 bottom-4 z-50 inline-grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white shadow-lg hover:bg-[#8FAE2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-  aria-label="Open settings"
->
-  <Cog6ToothIcon class="h-6 w-6" />
-</RouterLink>
+		<RouterLink
+			:to="{ name: 'settings' }"
+			class="fixed end-3 bottom-4 z-50 inline-grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white shadow-lg hover:bg-[#8FAE2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+			aria-label="Open settings"
+		>
+			<Cog6ToothIcon class="h-6 w-6" />
+		</RouterLink>
 
 		<!-- Desktop Sidebar -->
 		<aside :class="['hidden md:flex shrink-0 flex-col border-r border-primary transition-all duration-300 bg-secondary', collapsed ? 'w-20' : 'w-72']">
@@ -15,63 +15,226 @@
 				<img src="@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png" :alt="t('app.title')" :class="[collapsed ? 'w-10' : 'w-44', 'h-auto']" />
 			</div>
 			<nav class="flex-1 px-2 py-2 space-y-1">
-				<NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" :show-label="!collapsed" />
-				<NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" :show-label="!collapsed" />
-				<NavItem to-name="users" :label="t('nav.users')" icon="users" :show-label="!collapsed" />
-				<NavItem to-name="articles" :label="t('nav.articles')" icon="document" :show-label="!collapsed" />
-				<NavItem to-name="programs" :label="t('nav.programs')" icon="academic" :show-label="!collapsed" />
-				<NavItem to-name="library" :label="t('nav.library')" icon="folder" :show-label="!collapsed" />
-				<NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" :show-label="!collapsed" />
-				<NavItem to-name="settings" :label="t('nav.settings')" icon="cog" :show-label="!collapsed" />
+				<!-- Dashboard مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.dashboard')" 
+					icon="home" 
+					:show-label="!collapsed"
+					:items="dashboardItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Appointments مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.appointments')" 
+					icon="calendar" 
+					:show-label="!collapsed"
+					:items="appointmentItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Users مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.users')" 
+					icon="users" 
+					:show-label="!collapsed"
+					:items="userItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Articles مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.articles')" 
+					icon="document" 
+					:show-label="!collapsed"
+					:items="articleItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Programs مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.programs')" 
+					icon="academic" 
+					:show-label="!collapsed"
+					:items="programItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Library مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.library')" 
+					icon="folder" 
+					:show-label="!collapsed"
+					:items="libraryItems"
+					:collapsed="collapsed"
+				/>
+
+				<!-- Events مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.events')" 
+					icon="calendar" 
+					:show-label="!collapsed"
+					:items="eventItems"
+					:collapsed="collapsed"
+				/>
+
+				<!-- 🔥 الموارد القانونية - الجديدة -->
+				<NavItem 
+					:label="t('nav.legalResources')" 
+					icon="scale" 
+					:show-label="!collapsed"
+					:items="legalResourceItems"
+					:collapsed="collapsed"
+				/>
+				
+				<!-- Assessments مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.assessments')" 
+					icon="chart" 
+					:show-label="!collapsed"
+					:items="assessmentItems"
+					:collapsed="collapsed"
+				/>
+				<!-- contacts مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.contacts')" 
+					icon="user" 
+					:show-label="!collapsed"
+					:items="contactItems"
+					:collapsed="collapsed"
+				/>
+
+				<!-- Settings مع قائمة فرعية -->
+				<NavItem 
+					:label="t('nav.settings')" 
+					icon="cog" 
+					:show-label="!collapsed"
+					:items="settingItems"
+					:collapsed="collapsed"
+				/>
 			</nav>
 		</aside>
 
-       <!-- Mobile Drawer -->
-<transition name="slide">
-  <div
-    v-if="drawer"
-    class="fixed inset-0 z-[9999] flex md:hidden"
-  >
-    <!-- الخلفية الداكنة -->
-    <div
-      class="absolute inset-0 bg-black/40"
-      @click="drawer = false"
-    ></div>
+		<!-- Mobile Drawer -->
+		<transition name="slide">
+			<div v-if="drawer" class="fixed inset-0 z-[9999] flex md:hidden">
+				<!-- الخلفية الداكنة -->
+				<div class="absolute inset-0 bg-black/40" @click="drawer = false"></div>
 
-    <!-- القائمة -->
-    <aside
-      class="relative h-full w-72 bg-secondary border-e border-primary shadow-xl p-3 transform transition-transform duration-300 ease-in-out"
-    >
-      <div class="mb-2 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img
-            src='@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png'
-            :alt="t('app.title')"
-            class="h-10 w-auto"
-          />
-        </div>
-        <button
-          class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary"
-          @click="drawer = false"
-        >
-          <XMarkIcon class="h-5 w-5" />
-        </button>
-      </div>
+				<!-- القائمة -->
+				<aside class="relative h-full w-72 bg-secondary border-e border-primary shadow-xl p-3 transform transition-transform duration-300 ease-in-out">
+					<div class="mb-2 flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<img src='@/assets/images/dashboard/TqUYX8k9ugYomJilTLVf.png' :alt="t('app.title')" class="h-10 w-auto" />
+						</div>
+						<button class="inline-grid h-9 w-9 place-items-center rounded-lg hover:bg-tertiary text-primary" @click="drawer = false">
+							<XMarkIcon class="h-5 w-5" />
+						</button>
+					</div>
 
-      <nav class="space-y-1">
-        <NavItem to-name="Dashboard" :label="t('nav.dashboard')" icon="home" />
-        <NavItem to-name="appointments" :label="t('nav.appointments')" icon="calendar" />
-        <NavItem to-name="users" :label="t('nav.users')" icon="users" />
-        <NavItem to-name="articles" :label="t('nav.articles')" icon="document" />
-        <NavItem to-name="programs" :label="t('nav.programs')" icon="academic" />
-        <NavItem to-name="library" :label="t('nav.library')" icon="folder" />
-        <NavItem to-name="assessments" :label="t('nav.assessments')" icon="chart" />
-        <NavItem to-name="settings" :label="t('nav.settings')" icon="cog" />
-      </nav>
-    </aside>
-  </div>
-</transition>
+					<nav class="space-y-1">
+						<!-- Dashboard مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.dashboard')" 
+							icon="home" 
+							:show-label="true"
+							:items="dashboardItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Appointments مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.appointments')" 
+							icon="calendar" 
+							:show-label="true"
+							:items="appointmentItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Users مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.users')" 
+							icon="users" 
+							:show-label="true"
+							:items="userItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Articles مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.articles')" 
+							icon="document" 
+							:show-label="true"
+							:items="articleItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Programs مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.programs')" 
+							icon="academic" 
+							:show-label="true"
+							:items="programItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Library مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.library')" 
+							icon="folder" 
+							:show-label="true"
+							:items="libraryItems"
+							:collapsed="false"
+						/>
 
+						<!-- Events مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.events')" 
+							icon="calendar" 
+							:show-label="true"
+							:items="eventItems"
+							:collapsed="false"
+						/>
+
+						<!-- 🔥 الموارد القانونية - الجديدة -->
+						<NavItem 
+							:label="t('nav.legalResources')" 
+							icon="scale" 
+							:show-label="true"
+							:items="legalResourceItems"
+							:collapsed="false"
+						/>
+						
+						<!-- Assessments مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.assessments')" 
+							icon="chart" 
+							:show-label="true"
+							:items="assessmentItems"
+							:collapsed="false"
+						/>
+						
+						<!-- contacts مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.contacts')" 
+							icon="user" 
+							:show-label="!collapsed"
+							:items="contactItems"
+							:collapsed="collapsed"
+						/>
+
+						<!-- Settings مع قائمة فرعية -->
+						<NavItem 
+							:label="t('nav.settings')" 
+							icon="cog" 
+							:show-label="true"
+							:items="settingItems"
+							:collapsed="false"
+						/>
+					</nav>
+				</aside>
+			</div>
+		</transition>
 
 		<!-- Content -->
 		<div class="flex-1 flex flex-col">
@@ -122,13 +285,92 @@ import { RouterView, RouterLink } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NavItem from './NavItem.vue';
-import { SunIcon, MoonIcon, LanguageIcon, Cog6ToothIcon, Bars3Icon, XMarkIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import { 
+	SunIcon, 
+	MoonIcon, 
+	LanguageIcon, 
+	Cog6ToothIcon, 
+	Bars3Icon, 
+	XMarkIcon, 
+	ChevronDoubleLeftIcon, 
+	ChevronDoubleRightIcon, 
+	MagnifyingGlassIcon
+} from '@heroicons/vue/24/outline';
 
 const { t, locale } = useI18n();
 
 const drawer = ref(false);
 const collapsed = ref(false);
 const avatarOpen = ref(false);
+
+// تعريف العناصر الفرعية لكل قائمة
+const dashboardItems = [
+	{ toName: 'Dashboard', label: 'لوحة التحكم الرئيسية', icon: 'home' },
+	{ toName: 'stats', label: 'الإحصائيات', icon: 'chartBar' },
+	{ toName: 'reports', label: 'التقارير', icon: 'document' }
+];
+
+const appointmentItems = [
+	{ toName: 'appointments', label: 'جميع المواعيد', icon: 'calendar' },
+	{ toName: 'upcoming', label: 'المواعيد القادمة', icon: 'clock' },
+	{ toName: 'history', label: 'سجل المواعيد', icon: 'folder' }
+];
+
+const userItems = [
+	{ toName: 'users', label: 'جميع المستخدمين', icon: 'users' },
+	{ toName: 'clients', label: 'العملاء', icon: 'user' },
+	{ toName: 'therapists', label: 'المعالجين', icon: 'academic' },
+	{ toName: 'admins', label: 'المشرفين', icon: 'shield' }
+];
+
+const articleItems = [
+	{ toName: 'articles', label: 'جميع المقالات', icon: 'document' },
+	{ toName: 'categories', label: 'تصنيفات المقالات', icon: 'folder' },
+	// { toName: 'new-article', label: 'مقال جديد', icon: 'plus' }
+];
+
+const programItems = [
+	{ toName: 'programs', label: 'جميع البرامج', icon: 'academic' },
+	{ toName: 'therapy', label: 'برامج العلاج', icon: 'heart' },
+	{ toName: 'workshops', label: 'ورش العمل', icon: 'users' }
+];
+
+const libraryItems = [
+	{ toName: 'libraries', label: 'المكتبة الرئيسية', icon: 'folder' },
+	{ toName: 'categories-Library', label: ' تصنيفات المكتبة ', icon: 'folder' },
+	{ toName: 'books', label: 'الكتب', icon: 'book' },
+	{ toName: 'resources', label: 'المصادر', icon: 'document' },
+	{ toName: 'media', label: 'الوسائط', icon: 'video' }
+];
+
+// العناصر الفرعية للفعاليات - فقط جميع الفعاليات
+const eventItems = [
+	{ toName: 'events', label: 'جميع الفعاليات', icon: 'calendar' }
+];
+
+// 🔥 العناصر الفرعية للموارد القانونية - الجديدة
+const legalResourceItems = [
+	{ toName: 'legal-resources', label: 'جميع الموارد', icon: 'scale' },
+	{ toName: 'legal-categories', label: 'تصنيفات الموارد', icon: 'folder' },
+	{ toName: 'new-legal-resource', label: 'مورد جديد', icon: 'plus' }
+];
+
+const assessmentItems = [
+	{ toName: 'assessments', label: 'جميع المقاييس', icon: 'chart' },
+    { toName: 'scale-categories', label: 'تصنيفات المقاييس', icon: 'folder' },
+	{ toName: 'assessment-results', label: 'نتائج المقاييس', icon: 'chartBar' }
+];
+
+const contactItems = [
+	{ toName: 'contacts', label: 'قائمة التواصل', icon: 'book' },
+];
+
+const settingItems = [
+	{ toName: 'settings', label: 'الإعدادات العامة', icon: 'cog' },
+	{ toName: 'profile', label: 'الملف الشخصي', icon: 'user' },
+	{ toName: 'security', label: 'الأمان', icon: 'shield' },
+	{ toName: 'notifications', label: 'الإشعارات', icon: 'bell' }
+];
 
 const toggleLocale = () => {
 	const next = locale.value === 'en' ? 'ar' : 'en';
@@ -173,6 +415,4 @@ if (savedTheme === 'dark') {
 .slide-leave-to {
   transform: translateX(-100%);
 }
-
-
 </style>
